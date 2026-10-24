@@ -136,4 +136,4 @@ The landing page (`landing/`) was started by Peter's Kiro (v1/v2 and its spec, i
 
 ## License
 
-To be decided before the repository is made public.
+The code and documentation in this repository are licensed under the [Apache License 2.0](LICENSE). Data, fonts and libraries keep their own licences; see [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md). The demo cases are synthetic and derived from [phenopacket-store](https://github.com/monarch-initiative/phenopacket-store) (BSD-3-Clause).
