@@ -59,7 +59,7 @@ export default defineMessages(
       promise: '把零散的症状描述整理成一份可交给专科医生的简报：列出可与医生讨论的可能疾病，并附上每一项背后的依据。',
       fieldLabel: '症状经过',
       demoLoaded: '演示患者：{title}',
-      fieldHint: '写明是谁、多大年龄、您注意到了什么、从什么时候开始。没有发生过的情况也有帮助，例如“从未有过癫痫发作”。',
+      fieldHint: '写明是谁、多大年龄、您注意到了什么、从什么时候开始。没有发生过的情况也有帮助，例如“从未抽搐过”。',
       placeholder: '例如：我们的女儿 3 岁。她学走路比较晚，经常摔倒……',
       privacy: '您的症状描述保存在此浏览器中。它们只会被发送去识别特征，不会保存在我们的服务器上。',
       countOver: '已超出 {max} 字符上限 {over} 个字符',
@@ -234,7 +234,7 @@ export default defineMessages(
       fieldLabel: 'Historique des symptômes',
       demoLoaded: 'Patient de démonstration : {title}',
       fieldHint:
-        'De qui il s’agit, son âge, ce que vous avez remarqué et depuis quand. Ce qui ne s’est pas produit aide aussi, par exemple « n’a jamais fait de crise d’épilepsie ».',
+        'De qui il s’agit, son âge, ce que vous avez remarqué et depuis quand. Ce qui ne s’est pas produit aide aussi, par exemple « n’a jamais eu de convulsion ».',
       placeholder: 'Par exemple : Notre fille a 3 ans. Elle a marché tard et tombe souvent…',
       privacy:
         'Vos notes restent dans ce navigateur. Elles ne sont envoyées que pour trouver les caractéristiques et ne sont pas conservées sur notre serveur.',
