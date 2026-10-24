@@ -154,7 +154,7 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T03 Deployment path + full-app smoke checks | Ian | `wrangler.toml` at repo root, `scripts/build-site.sh`, `functions/api/health.ts`, Cloudflare Pages project; deployment secrets outside repo; claim extended to `.gitignore` for `.dev.vars` and `.wrangler/` | DEPLOYED_VERIFIED (pushed `53263d4fe019fd1265f82df97e8a30f5cab0151a`; live https://hackachusetts-2026.pages.dev verified 12:03 ET) | 12:30 |
 | T04 Topic-neutral landing skeleton | Peter | `landing/**`, `.kiro/specs/landing/**` | IN_PROGRESS (Peter) | TBD (Peter) |
 | T05 Pitch narrative + under-3-minute video storyboard | Peter | Presentation/copy assets; never claim a feature works without a real demo | OPEN | TBD |
-| T06 README skeleton + Kiro write-up draft | Peter | `README.md` (exclusive once claimed); Kiro write-up from **real usage log**, not made-up entries | OPEN | TBD |
+| T06 README + Kiro write-up | Ian (Peter released T06 in the team chat ~14:35 ET) | `README.md`, `docs/KIRO_WRITEUP.md`; Kiro write-up from **real usage log**, not made-up entries | CLAIMED (Ian) | 15:20 |
 | T07 Domain module + approved public datasets | Jerry | `engine/**`, `.kiro/specs/engine/**` (repo-root TypeScript domain engine; runs on Cloudflare Workers, fetch only, no fs; called from `functions/api/*`) | CLAIMED (Jerry) | TBD (Jerry) |
 | T08 Module tests / property-based test use | Jerry | `engine/test/**` (property-based tests with fast-check); record true Kiro usage | CLAIMED (Jerry) | TBD (Jerry) |
 | T09 API contract, mock response examples | Ian + relevant owners approve; **Ian is sole file editor**; Jerry approves the engine interface fields | `docs/CONTRACT.md`, `.kiro/specs/rare-disease-detective/**` | REVIEWING (contract v0.1 draft and spec pushed `f77cc31658296dfe0cbc956c9b180ba7b5262f6e`; pending APPROVE by Jerry and Ian) | 12:25 (v0.1 draft) |
@@ -174,6 +174,7 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T11h Board refresh: functions live, demo-npc1, late claims | Ian | `BRIEFING.md` | PUSHED (`4d80302`) | 13:55 |
 | T11i Board refresh after T16–T18f deploys | Ian | `BRIEFING.md` | PUSHED (`86d41c9`); claimed late; recorded 14:50 ET | 14:55 |
 | T11j Claim T24 smoke script and T25 QA pass | Ian | `BRIEFING.md` | CLAIMED (Ian) | 14:35 |
+| T11k Record T06 hand-over from Peter to Ian | Ian | `BRIEFING.md` | CLAIMED (Ian) | TBD |
 | T12 Art direction note | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`8460be2`); Ian picked the white direction (Option B) at ~12:20 ET but judged both options not good enough; refinement continues as T12b | 12:25 |
 | T12b Refined white art direction variants | Ian; Ian picks | `docs/art-direction/**` | PUSHED (`9208298`); Ian picking B1/B2/B3 | 12:45 |
 | T12c Ian-approved art direction | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`e8fe0f8`); approved by Ian 12:33 ET: B1 UI + B2 typography | 12:35 |
@@ -197,7 +198,7 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T21 Kiro IDE 1.x hooks and steering | Ian | `.kiro/hooks/**`, `.kiro/steering/medical-data.md`, `.kiro/steering/release-check.md` | PUSHED (`6c6ce91`, `68ec5cb`) | 13:05 |
 | T22 Kiro project power `rdd-medical-data` | Ian | `.kiro/powers/rdd-medical-data/**` | PUSHED (`c5f619f`, `47521fa`) | 13:10 |
 | T23 Pre-registered re-rank experiment (research only, not shipped) | Ian | `docs/research/ranking-benchmark.md`, `functions/_lib/rerank.ts` + test (not wired into any endpoint), `scripts/ranking-benchmark.ts`, `scripts/benchmark-data/**` | PUSHED (`4682cdd`); claimed late; recorded 13:50 ET | — |
-| T24 End-to-end smoke script (spec task 5.1) | Ian | `scripts/smoke.mjs` | CLAIMED (Ian) | 15:15 |
+| T24 End-to-end smoke script (spec task 5.1) | Ian | `scripts/smoke.mjs` | PUSHED (`00ff364`) | 15:15 |
 | T25 Accessibility, responsive and definition-of-done QA pass (spec tasks 3.8, 5.2, 5.3) | Ian | `docs/QA.md`, `docs/qa/**` (screenshots) | CLAIMED (Ian) | 15:30 |
 
 From 12:35 ET every Ian task diff gets a first-pass review by the read-only Kiro agent rdd-reviewer before the assistant's review.
