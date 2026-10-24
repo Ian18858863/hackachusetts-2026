@@ -1520,8 +1520,9 @@ const RECORDED_RANK: RankResponse = {
   }
 };
 
-/** Recorded POST /api/next-questions response for NPC1_QUESTION_CANDIDATES (the five candidates the app sends, limit 5; recorded at 2026-10-24T19:22Z UTC). */
-const RECORDED_QUESTIONS: NextQuestionsResponse = {
+/** Recorded POST /api/next-questions response for NPC1_QUESTION_CANDIDATES (the five candidates the app sends, limit 5; recorded at 2026-10-24T19:57Z UTC from the T18o fallback). */
+// Typed by assertion: the live answer carries the additive `noAnnotationData` field (see questions.ts).
+const RECORDED_QUESTIONS = {
   "version": "0.1",
   "source": "live",
   "questions": [
@@ -1551,7 +1552,8 @@ const RECORDED_QUESTIONS: NextQuestionsResponse = {
         },
         {
           "diseaseId": "ORPHA:480556",
-          "frequency": null
+          "frequency": null,
+          "noAnnotationData": true
         },
         {
           "diseaseId": "ORPHA:33574",
@@ -1561,73 +1563,7 @@ const RECORDED_QUESTIONS: NextQuestionsResponse = {
           }
         }
       ],
-      "why": "Obligate (4/4) in Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; listed without a frequency for Niemann-Pick disease, type C2; not listed for Isolated neonatal sclerosing cholangitis; Occasional in Glutamate-cysteine ligase deficiency",
-      "score": 1
-    },
-    {
-      "hpoId": "HP:0001399",
-      "label": "Hepatic failure",
-      "question": "Has anyone noticed hepatic failure?",
-      "discriminates": [
-        {
-          "diseaseId": "OMIM:257220",
-          "frequency": null
-        },
-        {
-          "diseaseId": "ORPHA:2274",
-          "frequency": null
-        },
-        {
-          "diseaseId": "OMIM:607625",
-          "frequency": null
-        },
-        {
-          "diseaseId": "ORPHA:480556",
-          "frequency": {
-            "label": "Obligate",
-            "source": "OMIM:617394",
-            "raw": "4/4"
-          }
-        },
-        {
-          "diseaseId": "ORPHA:33574",
-          "frequency": null
-        }
-      ],
-      "why": "Not listed for Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; not listed for Niemann-Pick disease, type C2; Obligate (4/4) in Isolated neonatal sclerosing cholangitis; not listed for Glutamate-cysteine ligase deficiency",
-      "score": 1
-    },
-    {
-      "hpoId": "HP:0001409",
-      "label": "Portal hypertension",
-      "question": "Has anyone noticed portal hypertension?",
-      "discriminates": [
-        {
-          "diseaseId": "OMIM:257220",
-          "frequency": null
-        },
-        {
-          "diseaseId": "ORPHA:2274",
-          "frequency": null
-        },
-        {
-          "diseaseId": "OMIM:607625",
-          "frequency": null
-        },
-        {
-          "diseaseId": "ORPHA:480556",
-          "frequency": {
-            "label": "Obligate",
-            "source": "OMIM:617394",
-            "raw": "4/4"
-          }
-        },
-        {
-          "diseaseId": "ORPHA:33574",
-          "frequency": null
-        }
-      ],
-      "why": "Not listed for Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; not listed for Niemann-Pick disease, type C2; Obligate (4/4) in Isolated neonatal sclerosing cholangitis; not listed for Glutamate-cysteine ligase deficiency",
+      "why": "Obligate (4/4) in Niemann-pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; listed without a frequency for Niemann-pick disease, type C2; Occasional in Glutamate-cysteine ligase deficiency",
       "score": 1
     },
     {
@@ -1649,7 +1585,8 @@ const RECORDED_QUESTIONS: NextQuestionsResponse = {
         },
         {
           "diseaseId": "ORPHA:480556",
-          "frequency": null
+          "frequency": null,
+          "noAnnotationData": true
         },
         {
           "diseaseId": "ORPHA:33574",
@@ -1659,7 +1596,7 @@ const RECORDED_QUESTIONS: NextQuestionsResponse = {
           }
         }
       ],
-      "why": "Not listed for Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; not listed for Niemann-Pick disease, type C2; not listed for Isolated neonatal sclerosing cholangitis; Obligate in Glutamate-cysteine ligase deficiency",
+      "why": "Not listed for Niemann-pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; not listed for Niemann-pick disease, type C2; Obligate in Glutamate-cysteine ligase deficiency",
       "score": 1
     },
     {
@@ -1688,22 +1625,91 @@ const RECORDED_QUESTIONS: NextQuestionsResponse = {
         },
         {
           "diseaseId": "ORPHA:480556",
-          "frequency": null
+          "frequency": null,
+          "noAnnotationData": true
         },
         {
           "diseaseId": "ORPHA:33574",
           "frequency": null
         }
       ],
-      "why": "Obligate (4/4) in Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; listed without a frequency for Niemann-Pick disease, type C2; not listed for Isolated neonatal sclerosing cholangitis; not listed for Glutamate-cysteine ligase deficiency",
+      "why": "Obligate (4/4) in Niemann-pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; listed without a frequency for Niemann-pick disease, type C2; not listed for Glutamate-cysteine ligase deficiency",
+      "score": 1
+    },
+    {
+      "hpoId": "HP:0002206",
+      "label": "Pulmonary fibrosis",
+      "question": "Has anyone noticed pulmonary fibrosis?",
+      "discriminates": [
+        {
+          "diseaseId": "OMIM:257220",
+          "frequency": null
+        },
+        {
+          "diseaseId": "ORPHA:2274",
+          "frequency": null
+        },
+        {
+          "diseaseId": "OMIM:607625",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:607625",
+            "raw": "1/1"
+          }
+        },
+        {
+          "diseaseId": "ORPHA:480556",
+          "frequency": null,
+          "noAnnotationData": true
+        },
+        {
+          "diseaseId": "ORPHA:33574",
+          "frequency": null
+        }
+      ],
+      "why": "Not listed for Niemann-pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; Obligate (1/1) in Niemann-pick disease, type C2; not listed for Glutamate-cysteine ligase deficiency",
+      "score": 1
+    },
+    {
+      "hpoId": "HP:0025435",
+      "label": "Increased circulating lactate dehydrogenase concentration",
+      "question": "Has anyone noticed increased circulating lactate dehydrogenase concentration?",
+      "discriminates": [
+        {
+          "diseaseId": "OMIM:257220",
+          "frequency": null
+        },
+        {
+          "diseaseId": "ORPHA:2274",
+          "frequency": null
+        },
+        {
+          "diseaseId": "OMIM:607625",
+          "frequency": null
+        },
+        {
+          "diseaseId": "ORPHA:480556",
+          "frequency": null,
+          "noAnnotationData": true
+        },
+        {
+          "diseaseId": "ORPHA:33574",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:230450",
+            "raw": "1/1"
+          }
+        }
+      ],
+      "why": "Not listed for Niemann-pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; not listed for Niemann-pick disease, type C2; Obligate (1/1) in Glutamate-cysteine ligase deficiency",
       "score": 1
     }
   ],
   "dataVersions": {
     "hpo": "2026-09-01",
-    "fetchedAt": "2026-10-24T19:22:56.292Z"
+    "fetchedAt": "2026-10-24T19:57:48.505Z"
   }
-};
+} as NextQuestionsResponse;
 
 /** Recorded GET /api/trials response for NPC1_TRIALS_CONDITION with ids OMIM:257220,MONDO:0009757, as the app sends for candidate 1 (recorded at 2026-10-24T19:20Z UTC). */
 const RECORDED_TRIALS: TrialsResponse = {

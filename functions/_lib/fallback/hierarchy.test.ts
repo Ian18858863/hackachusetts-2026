@@ -127,6 +127,104 @@ test("caps: observed and feature lookups are limited", async () => {
   assert.equal(calls.length, 3);
 });
 
+// ------------------------------------------------ T18o: score order and budget
+
+/** Lookup that answers from `table` only for the first `n` calls, then null (budget spent). */
+function limitedLookup(table: Record<string, string[]>, n: number, calls: string[] = []): AncestorLookup {
+  return async (id) => {
+    calls.push(id);
+    return calls.length <= n ? (table[id] ?? []) : null;
+  };
+}
+
+test("features are looked up lazily in score order and stop once limit have passed", async () => {
+  const calls: string[] = [];
+  const out = await dropRelatedToPatient(SCORED, options(lookupFrom(ANCESTORS, calls), { limit: 2 }));
+  assert.deepEqual(ids(out), ["HP:0001249", "HP:0002206"]);
+  // 2 observed, then round 1: Intellectual disability + Gait ataxia (dropped),
+  // round 2: Pulmonary fibrosis. Nothing further down the list is looked up.
+  assert.deepEqual(calls, ["HP:0006579", "HP:0001251", "HP:0001249", "HP:0002066", "HP:0002206"]);
+});
+
+test("a tight budget goes to the top-scored features first (demo-npc1 Gait ataxia case)", async () => {
+  // 2 observed + 3 feature lookups fit. Before T18o the feature side was
+  // started as one fixed slice and, with the budget spent, the descendant
+  // HP:0002066 Gait ataxia stayed in the list unchecked.
+  const calls: string[] = [];
+  const out = await dropRelatedToPatient(SCORED, options(limitedLookup(ANCESTORS, 5, calls), { limit: 3 }));
+  assert.deepEqual(calls.slice(0, 5), ["HP:0006579", "HP:0001251", "HP:0001249", "HP:0002066", "HP:0002206"]);
+  assert.ok(!ids(out).includes("HP:0002066"), "the descendant of an observed term is dropped");
+  assert.deepEqual(ids(out), ["HP:0001249", "HP:0002206", "HP:0002108"]);
+});
+
+test("an unchecked feature never comes before a checked one", async () => {
+  // Gait ataxia's own lookup fails; lower-scored features are checked.
+  const lookup: AncestorLookup = async (id) => (id === "HP:0002066" ? null : (ANCESTORS[id] ?? []));
+  const out = await dropRelatedToPatient(SCORED, options(lookup));
+  assert.deepEqual(ids(out), ["HP:0001249", "HP:0002206", "HP:0002103", "HP:0001250", "HP:0002066"]);
+});
+
+test("budget spent mid-list: checked features first, then the rest unchecked in score order", async () => {
+  // 2 observed + 2 feature lookups succeed (Intellectual disability kept,
+  // Gait ataxia dropped); every later lookup is refused.
+  const out = await dropRelatedToPatient(SCORED, options(limitedLookup(ANCESTORS, 4)));
+  assert.deepEqual(ids(out), ["HP:0001249", "HP:0002206", "HP:0002108", "HP:0002103", "HP:0001250"]);
+});
+
+test("missing observed ancestors put partly checked features after fully checked ones", async () => {
+  // Every feature checks fine, but one observed lookup failed, so no feature is
+  // fully checked: the order stays score order and nothing is dropped wrongly.
+  const lookup: AncestorLookup = async (id) => (id === "HP:0006579" ? null : (ANCESTORS[id] ?? []));
+  const out = await dropRelatedToPatient(SCORED, options(lookup));
+  // Jaundice (ancestor of the failed observed term) cannot be recognised and stays.
+  assert.deepEqual(ids(out), ["HP:0000952", "HP:0001249", "HP:0002206", "HP:0002103", "HP:0001250"]);
+});
+
+test("more observed terms than maxObservedLookups: features count as partly checked", async () => {
+  const lookup = lookupFrom(ANCESTORS);
+  const partial = await dropRelatedToPatient(SCORED, options(lookup, { maxObservedLookups: 1 }));
+  // HP:0001251 Ataxia is not looked up, but Gait ataxia's own ancestors still
+  // contain it, so it is dropped; nothing unchecked precedes these.
+  assert.ok(!ids(partial).includes("HP:0002066"));
+});
+
+test("same inputs give the same output on every run", async () => {
+  const runs = await Promise.all(
+    [1, 2, 3].map(() => dropRelatedToPatient(SCORED, options(limitedLookup(ANCESTORS, 6)))),
+  );
+  assert.deepEqual(ids(runs[1]), ids(runs[0]));
+  assert.deepEqual(ids(runs[2]), ids(runs[0]));
+});
+
+test("deadline during the feature side: checked ones kept first, rest unchecked", async () => {
+  const ctrl = new AbortController();
+  const lookup: AncestorLookup = async (id) => {
+    if (id === "HP:0002206") {
+      setTimeout(() => ctrl.abort(), 10);
+      return new Promise(() => undefined);
+    }
+    return ANCESTORS[id] ?? [];
+  };
+  const out = await dropRelatedToPatient(SCORED, options(lookup, { deadline: ctrl.signal, limit: 3 }));
+  // Round 1 (3 features): Intellectual disability kept, Gait ataxia dropped,
+  // Pulmonary fibrosis hangs past the deadline and counts as unchecked.
+  assert.deepEqual(ids(out), ["HP:0001249", "HP:0002206", "HP:0002108"]);
+});
+
+test("LookupBudget with 2 calls per lookup fits 12 observed lookups and then 11 of 15 feature lookups", async () => {
+  const meter = new SubrequestMeter();
+  meter.used = 16; // demo-npc1 annotation phase, measured 2026-10-24 (T18o)
+  const base: FallbackDeps = { fetch: async () => new Response("[]") };
+  const budget = new LookupBudget({ total: 24, perLookup: 2, meter, deps: base, deadline: new AbortController().signal });
+  const one = (): Promise<string> => budget.run(async (d) => (await d.fetch("https://example.invalid/a"), "ok"), "skipped");
+  const observed = await Promise.all(Array.from({ length: 12 }, one));
+  assert.ok(observed.every((r) => r === "ok"));
+  const features: string[] = [];
+  for (let round = 0; round < 3; round++) features.push(...(await Promise.all(Array.from({ length: 5 }, one))));
+  assert.equal(features.filter((r) => r === "ok").length, 11);
+  assert.ok(meter.used <= 40);
+});
+
 test("meteredDeps counts fetch and cache calls and refuses past the cap", async () => {
   let fetched = 0;
   const store = new Map<string, Response>();

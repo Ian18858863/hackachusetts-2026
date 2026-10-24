@@ -62,16 +62,33 @@ function untilDeadline<T>(p: Promise<T>, signal: AbortSignal, onAbort: T): Promi
 
 /**
  * Removes questions that are redundant with the reported terms (rules above).
- * `scored` must already be in final order; the order of kept questions is
- * unchanged. If the deadline passes before the patient side is known, the
- * filter is skipped and `scored.slice(0, limit)` is returned. If it passes
- * during the feature side, only the patient-side result is applied.
- * Only the first `maxFeatureChecks` features (after the patient-side step) are
- * checked for being descendants; later ones fill up the list unchecked.
+ * `scored` must already be in score order.
+ *
+ * Patient side first: the ancestors of the observed terms (one shared set).
+ * If the deadline passes before it is known, the filter is skipped and
+ * `scored.slice(0, limit)` is returned.
+ *
+ * Feature side, lazily in score order (T18o): only as many features are looked
+ * up as are still needed to fill `limit`, in parallel per round, so the
+ * subrequest and time budget goes to the features that can be shown. Before
+ * T18o every observed lookup and a fixed first slice of features were started
+ * up front, and the features that ended up shown were often never checked.
+ *
+ * Each kept feature lands in one tier; the output is tier 1, then 2, then 3,
+ * each in score order, cut to `limit`:
+ *   1. checked: its own lookup succeeded and every observed term's ancestors
+ *      are known, so all three rules were applied;
+ *   2. partly checked: its own lookup succeeded but some observed lookups
+ *      did not (only the "ancestor of an observed term" rule may be incomplete);
+ *   3. unchecked: its own lookup failed, was refused by the budget, passed the
+ *      deadline or was beyond `maxFeatureChecks` (kept, contract section 7.5).
+ * So an unchecked feature never comes before a checked one. When every lookup
+ * succeeds the output is in plain score order.
  */
 export async function dropRelatedToPatient(scored: readonly Question[], o: HierarchyFilterOptions): Promise<Question[]> {
   const unfiltered = scored.slice(0, o.limit);
-  const observedIds = [...new Set(o.observed)].slice(0, o.maxObservedLookups);
+  const allObserved = [...new Set(o.observed)];
+  const observedIds = allObserved.slice(0, o.maxObservedLookups);
   const reported = new Set<HpoId>([...o.observed, ...o.excluded]);
 
   const observedAncestors = await untilDeadline(
@@ -81,23 +98,33 @@ export async function dropRelatedToPatient(scored: readonly Question[], o: Hiera
   );
   if (observedAncestors === null) return unfiltered;
 
+  const patientComplete = observedIds.length === allObserved.length && observedAncestors.every((a) => a !== null);
   const aboveObserved = new Set<HpoId>();
   for (const ids of observedAncestors) for (const id of ids ?? []) aboveObserved.add(id);
-  const notAncestors = scored.filter((q) => !aboveObserved.has(q.hpoId));
+  const pending = scored.filter((q) => !aboveObserved.has(q.hpoId));
 
-  const checked = notAncestors.slice(0, o.maxFeatureChecks);
-  const allowed = checked.length > 0 && !o.deadline.aborted;
-  const none: Array<HpoId[] | null> = checked.map(() => null);
-  const featureAncestors = allowed
-    ? await untilDeadline(
-        Promise.all(checked.map((q) => o.lookup(q.hpoId).catch(() => null))),
-        o.deadline,
-        none,
-      )
-    : none;
-
-  const kept = checked.filter((_, i) => !(featureAncestors[i] ?? []).some((id) => reported.has(id)));
-  return [...kept, ...notAncestors.slice(o.maxFeatureChecks)].slice(0, o.limit);
+  const checked: Question[] = [];
+  const partly: Question[] = [];
+  const unchecked: Question[] = [];
+  let next = 0;
+  while (checked.length + partly.length < o.limit && next < pending.length && !o.deadline.aborted) {
+    const room = o.maxFeatureChecks - next;
+    if (room <= 0) break;
+    const batch = pending.slice(next, next + Math.min(o.limit - checked.length - partly.length, room));
+    next += batch.length;
+    // Each lookup meets the deadline on its own, so answers already in are used.
+    const found = await Promise.all(
+      batch.map((q) => untilDeadline(o.lookup(q.hpoId).catch(() => null), o.deadline, null)),
+    );
+    batch.forEach((q, i) => {
+      const ancestors = found[i];
+      if (ancestors === null) unchecked.push(q);
+      else if (ancestors.some((id) => reported.has(id))) return; // descendant of a reported term
+      else (patientComplete ? checked : partly).push(q);
+    });
+  }
+  unchecked.push(...pending.slice(next));
+  return [...checked, ...partly, ...unchecked].slice(0, o.limit);
 }
 
 // ------------------------------------------------------------ subrequests

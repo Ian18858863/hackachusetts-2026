@@ -22,25 +22,28 @@
 //     score order, as before T18d.
 //   - Subrequests: Workers Free allows 50 per invocation, and Cache API
 //     match / put calls count against the same quota as fetch(). Every call
-//     of this function is metered (SubrequestMeter). Worst case per call:
-//       annotation phase (unchanged by T18d), per candidate cold: 1 xref cache
-//         match + 2 annotation sets x (match + fetch + 1 retry + put) + Monarch
-//         xrefs fetch + 1 retry = 11; warm (rank wrote xrefs and annotations): 3.
-//         3 candidates: <= 33 cold, 9 warm. 5 candidates: <= 55 cold (already
-//         over 50 before T18d; not changed here), 15 warm.
-//       hierarchy phase, per lookup: cache match + fetch + 1 retry + put = 4
-//         cold, 1 warm. Up to MAX_OBSERVED_LOOKUPS (12) observed terms, then
-//         MAX_FEATURE_CHECKS (6) features.
+//     of this function is metered (SubrequestMeter). JAX annotation and
+//     ancestor reads use the Cloudflare edge cache (fetch with cf.cacheTtl,
+//     edgeCached below) instead of the Cache API, so each read is one
+//     subrequest cold or warm (T18o; with the Cache API a cold read cost
+//     match + fetch + put, and demo-npc1 spent 30 of 40 calls on annotations,
+//     leaving room for 3 of 12 observed lookups and no feature check).
+//     Worst case per call:
+//       annotation phase, per candidate: 1 xref cache match + 2 annotation
+//         sets x (fetch + 1 retry) + Monarch xrefs fetch + 1 retry = 7;
+//         usually 1 + 2 + 1 = 4 or less. Measured for demo-npc1 (5
+//         candidates): 16.
+//       hierarchy phase, per lookup: fetch + 1 retry = 2, usually 1. Up to
+//         MAX_OBSERVED_LOOKUPS (12) observed terms, then features lazily in
+//         score order (dropRelatedToPatient), at most MAX_FEATURE_CHECKS.
 //     The hierarchy phase gets SUBREQUEST_CAP (40) minus what the annotation
 //     phase used, shared through a LookupBudget: each lookup reserves its
-//     cold worst case (CALLS_PER_LOOKUP = 4) before it starts and gives back
-//     what it did not use (1 on a warm cache). So the invocation never goes
-//     past max(annotation phase, 40), 10 below the limit, and a started lookup
-//     always finishes its cache write. The patient side goes first; feature
-//     lookups get what is left. On a cold cache only part of the 12 observed
-//     lookups fit and the feature side may be skipped; the cached ancestor
-//     lists (7 days) make the next calls complete. A skipped, refused or
-//     failed lookup just leaves that term unchecked.
+//     worst case (CALLS_PER_LOOKUP = 2) before it starts and gives back what
+//     it did not use. So the invocation never goes past max(annotation
+//     phase, 40), 10 below the limit. The patient side goes first; feature
+//     lookups get what is left, spent only on features that can still be
+//     shown. A skipped, refused or failed lookup leaves that term unchecked,
+//     and unchecked features are listed after checked ones.
 // Lookups start only after at least two candidates have annotation data.
 //
 // Annotation data per candidate: the same merged ORPHA + OMIM sets as the rank
@@ -89,10 +92,31 @@ const HIERARCHY_DEADLINE_MS = 4750;
 const MIN_HIERARCHY_MS = 300;
 /** Hierarchy calls stop once this many subrequests were used (Workers Free: 50). */
 const SUBREQUEST_CAP = 40;
-/** Worst-case subrequests of one cold ancestor lookup (match + fetch + retry + put). */
-const CALLS_PER_LOOKUP = 4;
+/** Worst-case subrequests of one ancestor lookup (edge-cached fetch + 1 retry). */
+const CALLS_PER_LOOKUP = 2;
 const MAX_OBSERVED_LOOKUPS = 12;
-const MAX_FEATURE_CHECKS = 6;
+/** Upper bound on feature lookups; the subrequest budget usually stops earlier. */
+const MAX_FEATURE_CHECKS = 12;
+/** Edge cache lifetimes: annotations 24 h (contract 7.4), ancestors 7 days (contract 10). */
+const ANNOTATION_TTL_S = 24 * 60 * 60;
+const ANCESTORS_TTL_S = 7 * 24 * 60 * 60;
+
+/**
+ * Deps for a JAX read that is cached by the Cloudflare edge (fetch with
+ * `cf.cacheTtl`, keyed by URL, i.e. by id) instead of the Cache API (T18o).
+ * A Cache API match counts as a subrequest just like the fetch it saves, and a
+ * cold read costs match + fetch + put, so the edge cache makes every read one
+ * subrequest, cold or warm. Outside Workers the `cf` field is ignored.
+ */
+function edgeCached(deps: FallbackDeps, ttlS: number): FallbackDeps {
+  const inner = deps.fetch;
+  const cf = { cacheTtl: ttlS, cacheEverything: true };
+  return {
+    ...deps,
+    cache: undefined,
+    fetch: (input, init) => inner(input, { ...init, cf } as RequestInit),
+  };
+}
 
 export interface NormalizedQuestionsRequest {
   observed: HpoId[];
@@ -138,7 +162,7 @@ async function annotationIds(
   }
 
   // ORPHA or OMIM: read it first (failures propagate), then look for its partner.
-  const primary = await fetchAnnotation(id, deps);
+  const primary = await fetchAnnotation(id, edgeCached(deps, ANNOTATION_TTL_S));
   const mondo = primary?.mondoId;
   const x = mondo ? await monarchXrefs(mondo, deps) : null;
   if (!x) return { ids: [id], resolved: false, name: null, primary };
@@ -151,7 +175,9 @@ async function loadCandidate(id: DiseaseId, deps: FallbackDeps): Promise<Candida
   const plan = await annotationIds(id, deps);
   const settled = await Promise.allSettled(
     plan.ids.map((sid) =>
-      sid === id && plan.primary !== undefined ? Promise.resolve(plan.primary) : fetchAnnotation(sid, deps),
+      sid === id && plan.primary !== undefined
+        ? Promise.resolve(plan.primary)
+        : fetchAnnotation(sid, edgeCached(deps, ANNOTATION_TTL_S)),
     ),
   );
   const sets: AnnotationSet[] = [];
@@ -272,7 +298,7 @@ async function filterByHierarchy(
     observed: req.observed,
     excluded: req.excluded,
     limit: req.limit,
-    lookup: (id) => budget.run((d) => hpoAncestors(id, d), null),
+    lookup: (id) => budget.run((d) => hpoAncestors(id, edgeCached(d, ANCESTORS_TTL_S)), null),
     maxObservedLookups: MAX_OBSERVED_LOOKUPS,
     maxFeatureChecks: MAX_FEATURE_CHECKS,
     deadline,
