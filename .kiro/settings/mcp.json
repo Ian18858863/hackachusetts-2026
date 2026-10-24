@@ -1,5 +1,12 @@
 {
   "mcpServers": {
+    "biomcp": {
+      "command": "biomcp",
+      "args": [
+        "serve"
+      ],
+      "env": {}
+    },
     "context7": {
       "url": "https://mcp.context7.com/mcp"
     }
