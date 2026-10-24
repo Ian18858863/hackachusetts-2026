@@ -1,0 +1,47 @@
+{
+  "split": "heldout",
+  "count": 10,
+  "sha256": "7e9c915c2b30ea8ac9e50c16f3e1b1a3d7a4baef88757aca01f5251a473a9dec",
+  "inputs": [
+    {
+      "caseId": "HO-01",
+      "note": "I've had burning pain in my arms and legs since I was young. I often get stomach cramps and struggle in both hot and cold weather. I hardly sweat at all. Over the last several years, doctors have told me my blood pressure was high and my kidneys were getting worse. I now need regular treatment to clean my blood, and tests have also shown problems with my urine and heart."
+    },
+    {
+      "caseId": "HO-02",
+      "note": "Soon after my daughter was born, doctors said her blood sugar was very low. A newborn blood test showed unusually high amounts of certain substances, and she needed hospital treatment during her first week. Doctors also said her blood had become too acidic. Later, whenever she caught an infection, she sometimes became barely responsive and needed care in an intensive care unit. By age ten, learning and understanding things were much harder for her than for other children her age."
+    },
+    {
+      "caseId": "HO-03",
+      "note": "My child was slow to learn to move and walk, and the muscles seemed weak even as a toddler. When walking began, the feet were set far apart and the lower back curved more than expected. Walking and climbing stairs kept taking extra effort as the years went on. Around age twelve, a sideways curve in the back became bad enough to need surgery. By the teenage years, balance was worse, falls were happening and there was less energy for walking."
+    },
+    {
+      "caseId": "HO-04",
+      "note": "My legs have grown stiffer and weaker over many years. At first walking only felt awkward, but the problem gradually became so severe that I needed a wheelchair. Sometimes my legs felt numb, and I started walking with my feet far apart to keep my balance. Other people noticed that some of my words were harder to understand. I've also had muscle cramps, changes in my mood and problems controlling when I go to the bathroom."
+    },
+    {
+      "caseId": "HO-05",
+      "note": "Before my daughter was born, scans showed that the upper parts of her legs were much shorter than expected. After she was born, her arms and legs looked short compared with the rest of her body, and the shape of her face looked different. She had trouble breathing during her first two days and needed help. Doctors later found a narrow opening at the base of her skull and a few brief pauses in breathing while she slept. She was small for her age and her muscles seemed a little floppy."
+    },
+    {
+      "caseId": "HO-06",
+      "note": "Since I was a small child, I've broken bones many times, especially in my arms and legs. My bones often ache, and my legs have a curved shape. I'm shorter than most people my age, and the whites of my eyes look unusually blue. My teeth have a brownish color and chip easily. My gums are often swollen and bleed."
+    },
+    {
+      "caseId": "HO-07",
+      "note": "Every few weeks my hands, thighs or feet swell up without a clear injury. Sometimes I get strong stomach pain during an attack. The swelling can last more than a day before it goes away on its own. My attacks became more frequent after I started a stressful job. Once my throat swelled and I had trouble breathing, and ordinary allergy medicine did not help."
+    },
+    {
+      "caseId": "HO-08",
+      "note": "My little boy is 17 months old and still hasn't said any words. He cannot crawl yet and can stand only if someone helps him. His head and body seem much bigger than those of children his age. His forehead is broad and his upper eyelids droop a little. He has trouble staying steady when he stands, and his feet seem to turn outward."
+    },
+    {
+      "caseId": "HO-09",
+      "note": "My daughter fed poorly as a baby, although feeding improved after we switched to a bottle. By seven months she seemed unusually floppy, paid less attention to things around her and her head was growing more slowly. She began having frightening episodes after waking up and would repeatedly bang on the table. She never managed to sit steadily on her own. She has never spoken recognizable words, and her development has worried us for a long time."
+    },
+    {
+      "caseId": "HO-10",
+      "note": "My son started walking on his toes when he was around two. By six he needed braces, and over the following years his legs became increasingly stiff. He often loses his balance, and his walking looks shaky and awkward. Doctors also found a problem with the thickness of his heart muscle and a sideways curve in his back. His knees and hips have become hard to straighten, and he has sometimes struggled with bladder control."
+    }
+  ]
+}

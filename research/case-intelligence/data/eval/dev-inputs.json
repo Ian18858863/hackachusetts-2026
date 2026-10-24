@@ -1,0 +1,35 @@
+{
+  "split": "dev",
+  "count": 7,
+  "sha256": "5fc342f9c2b15ec723672ee8645d6ecdca14efd46e52fc6ca5027867a444e01e",
+  "inputs": [
+    {
+      "caseId": "DEV-01",
+      "note": "For about three years my urine has looked foamy, but I felt fine otherwise. A routine check found protein and blood in my urine, and my kidney blood test was higher than normal. A doctor noticed a very slight shaking in my hands that I had not paid attention to. A scan later showed my liver was scarred, and an eye examination found brownish rings around the edge of my corneas."
+    },
+    {
+      "caseId": "DEV-02",
+      "note": "Our son had his first long seizure with a fever at 13 months, and a second one at 17 months lasted more than an hour. After that he had frequent seizures, with or without fever, and was often admitted to hospital. He has several pale patches on his chest, belly and back. He is far behind other children in using his hands, talking and getting along with people, and he does not interact with us the way other children do."
+    },
+    {
+      "caseId": "DEV-03",
+      "note": "At birth our son was very floppy, both testicles had not come down, and he sucked weakly and gained little weight in the first month. He kept growing poorly as a baby. Around age two he started eating all the time and put on weight quickly. By six he was shorter than nearly all boys his age and carried a lot of body fat. His hands and feet are small, his knees angle inward, and he has some mild trouble with learning."
+    },
+    {
+      "caseId": "DEV-04",
+      "note": "My older brother had a fit when he was three and has struggled to think and count ever since; he never went to school. Over the last two months he has had trouble judging where things are and finding his way, and his personality has changed. He can no longer walk steadily. He sweats a lot, has trouble passing urine and is constipated. His legs are stiff and weak, and his hands shake."
+    },
+    {
+      "caseId": "DEV-05",
+      "note": "Since he was three, our son's urine tests have kept showing sugar and protein, and nobody could explain why. He grew and developed normally and felt well. Later tests also showed extra amino acids in his urine and a low uric acid level in his blood. At twelve, an eye examination with a special lamp found tiny crystals in the clear front part of his eyes."
+    },
+    {
+      "caseId": "DEV-06",
+      "note": "Our daughter sat at nine months and walked at fifteen months, a little later than other children. From about eighteen months she stopped growing as she should, and her joints became stiff. Now, at four, she often complains that her legs hurt. A doctor told us her facial features look coarse. Urine tests showed she loses large amounts of certain sugar chains."
+    },
+    {
+      "caseId": "DEV-07",
+      "note": "Since he was six months old, our baby has not been gaining weight, has been fussy and cranky, and has been constipated. At fifteen months he is small and thin, and his weight, length and head size are all well below the charts. People say his face looks a bit unusual. Blood tests showed far too much calcium, a kidney scan showed calcium deposits, and a heart scan found a mild narrowing just above a heart valve."
+    }
+  ]
+}
