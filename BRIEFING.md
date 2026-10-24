@@ -203,7 +203,7 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T18i Fallback ranking counts only HP shared ancestors (parity with the engine); no caching after an Orphadata failure | Ian | `functions/_lib/fallback/rank.ts`, `functions/api/rank.ts` | DEPLOYED_VERIFIED (`50cfc74`, fix `0f36748`); parity on demo-npc1 and demo-dmd; claimed late; recorded 15:20 ET | — |
 | T18j Report the pinned HPO release in extract and brief | Ian | `functions/api/extract.ts`, `functions/api/brief.ts`, `README.md` | DEPLOYED_VERIFIED (`973ec39`); claimed late; recorded 15:20 ET | — |
 | T18k Serve `/api/rank` from the engine (coordinator decision 15:10 ET); contract v0.1.3 | Ian | `wrangler.toml`, `docs/CONTRACT.md` | DEPLOYED_VERIFIED (`820e7ff`; production `/api/rank` answers `X-RDD-Path: engine`); claimed late; recorded 15:20 ET | — |
-| T18l Re-record the demo-npc1 failure-path recordings | Ian | `functions/_lib/fallback/demoRecorded.ts` | PUSHED (`a6b4286`, `947c0d6`) | — |
+| T18l Re-record the demo-npc1 failure-path recordings | Ian | `functions/_lib/fallback/demoRecorded.ts` | DEPLOYED_VERIFIED (`a6b4286`, `947c0d6`; in deploy `b7e8e8b`) | — |
 | T18m HPO version open question + brief default | Ian | `docs/CONTRACT.md`, `functions/api/brief.ts` | DEPLOYED_VERIFIED (`423c1af`; in deploy `b7e8e8b`) | — |
 | T18n Parity check of the engine `nextQuestions` (R6, `eaf9c0d`) | Ian | none (read-only check) | DONE: FAIL, no commit; next-questions stays on the fallback | — |
 | T18n-2 Parity re-check with R6.1 (`6788d66`) on all five demo cases | Ian | none (read-only check) | DONE: rank SAME on 5 demos; next-questions FAIL (why-line disease names differ from the ranking's names); no commit | — |
