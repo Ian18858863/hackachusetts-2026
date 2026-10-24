@@ -1,0 +1,65 @@
+{
+  "extractor": "dictionary-baseline-v0.1",
+  "split": "heldout",
+  "inputsSha256": "7e9c915c2b30ea8ac9e50c16f3e1b1a3d7a4baef88757aca01f5251a473a9dec",
+  "dictionarySha256": "ab12aecc3c6d4b5e69daabdeecb5183b846ae6de8f35c81c96d74283d375ea78",
+  "lexiconPhrases": 242,
+  "gitSha": "411c8e231ad4beaab5832bd403fcf7a97e8590dc",
+  "generatedAt": "2026-10-24T22:49:15.684Z",
+  "cases": [
+    {
+      "caseId": "HO-01",
+      "extracted": []
+    },
+    {
+      "caseId": "HO-02",
+      "extracted": []
+    },
+    {
+      "caseId": "HO-03",
+      "extracted": []
+    },
+    {
+      "caseId": "HO-04",
+      "extracted": []
+    },
+    {
+      "caseId": "HO-05",
+      "extracted": [
+        {
+          "hpoId": "HP:0001252",
+          "matched": [
+            "floppy"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "HO-06",
+      "extracted": []
+    },
+    {
+      "caseId": "HO-07",
+      "extracted": []
+    },
+    {
+      "caseId": "HO-08",
+      "extracted": []
+    },
+    {
+      "caseId": "HO-09",
+      "extracted": [
+        {
+          "hpoId": "HP:0001252",
+          "matched": [
+            "floppy"
+          ]
+        }
+      ]
+    },
+    {
+      "caseId": "HO-10",
+      "extracted": []
+    }
+  ]
+}

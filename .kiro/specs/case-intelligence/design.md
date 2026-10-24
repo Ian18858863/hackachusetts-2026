@@ -23,8 +23,8 @@ research/case-intelligence/
 
 ## Data flow
 
-1. `fetch-sources` pulls Europe PMC metadata and full-text XML for every PMC id into `.cache/`.
-2. `verify-sources` checks each case's metadata against Europe PMC and checks that every evidence quote occurs in the article text (after whitespace and punctuation normalisation).
+1. `verify-sources` pulls Europe PMC metadata and full text (falling back to NCBI PMC efetch) into `.cache/`, checks each case's metadata, and checks that every evidence quote occurs in the article text after normalisation. Articles that neither service lets us download are reported as manual checks.
+2. `fetch-diseases` stores the Monarch record (name, OMIM and Orphanet xrefs) for every accepted diagnosis id.
 3. `fetch-hpo` collects every HP id from cases and dictionary, calls the JAX API once per id, and writes `hpo-terms.json`.
 4. `validate` runs all integrity and leakage checks against the committed files only (no network), so it is reproducible.
 5. `export-inputs` writes `data/eval/<split>-inputs.json` with `{caseId, note}` only.

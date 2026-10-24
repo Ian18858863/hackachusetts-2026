@@ -1,0 +1,227 @@
+{
+  "name": "baseline-heldout",
+  "split": "heldout",
+  "scoredAt": "2026-10-24T22:49:15.789Z",
+  "scorerGitSha": "411c8e231ad4beaab5832bd403fcf7a97e8590dc",
+  "predictionsGitSha": "411c8e231ad4beaab5832bd403fcf7a97e8590dc",
+  "extractor": "dictionary-baseline-v0.1",
+  "n": 10,
+  "missingPredictions": [],
+  "unknownPredictionIds": [],
+  "extraction": {
+    "goldInNoteTerms": 68,
+    "predictedTerms": 2,
+    "truePositives": 2,
+    "coverage": 0.029,
+    "missedPhenotypeRate": 0.971,
+    "precision": 1,
+    "macroCoverage": 0.027,
+    "predictedNotInGold": 0,
+    "predictedArticleOnly": 0,
+    "invalidHpoIds": 0
+  },
+  "ranking": {
+    "casesWithRanking": 0,
+    "top1Accuracy": null,
+    "top5Recall": null,
+    "note": "No ranking in the predictions; Top-1 and Top-5 were not computed."
+  },
+  "perCase": [
+    {
+      "caseId": "HO-01",
+      "goldInNote": 7,
+      "predicted": 0,
+      "hit": 0,
+      "coverage": 0,
+      "missed": [
+        "HP:0031006",
+        "HP:0002027",
+        "HP:0002046",
+        "HP:6000855",
+        "HP:0000970",
+        "HP:0000822",
+        "HP:0012622"
+      ],
+      "predictedNotInGold": [],
+      "predictedArticleOnly": [],
+      "invalidIds": [],
+      "correctDiagnosisRank": null
+    },
+    {
+      "caseId": "HO-02",
+      "goldInNote": 4,
+      "predicted": 0,
+      "hit": 0,
+      "coverage": 0,
+      "missed": [
+        "HP:0001943",
+        "HP:0001942",
+        "HP:0004372",
+        "HP:0002342"
+      ],
+      "predictedNotInGold": [],
+      "predictedArticleOnly": [],
+      "invalidIds": [],
+      "correctDiagnosisRank": null
+    },
+    {
+      "caseId": "HO-03",
+      "goldInNote": 8,
+      "predicted": 0,
+      "hit": 0,
+      "coverage": 0,
+      "missed": [
+        "HP:0001324",
+        "HP:0001270",
+        "HP:0002136",
+        "HP:0003307",
+        "HP:0003551",
+        "HP:0002650",
+        "HP:0001288",
+        "HP:0002527"
+      ],
+      "predictedNotInGold": [],
+      "predictedArticleOnly": [],
+      "invalidIds": [],
+      "correctDiagnosisRank": null
+    },
+    {
+      "caseId": "HO-04",
+      "goldInNote": 7,
+      "predicted": 0,
+      "hit": 0,
+      "coverage": 0,
+      "missed": [
+        "HP:0001324",
+        "HP:0002061",
+        "HP:0001288",
+        "HP:0002136",
+        "HP:0033748",
+        "HP:0001260",
+        "HP:0003394"
+      ],
+      "predictedNotInGold": [],
+      "predictedArticleOnly": [],
+      "invalidIds": [],
+      "correctDiagnosisRank": null
+    },
+    {
+      "caseId": "HO-05",
+      "goldInNote": 7,
+      "predicted": 1,
+      "hit": 1,
+      "coverage": 0.143,
+      "missed": [
+        "HP:0008905",
+        "HP:0011800",
+        "HP:0002098",
+        "HP:0002677",
+        "HP:0010535",
+        "HP:0004322"
+      ],
+      "predictedNotInGold": [],
+      "predictedArticleOnly": [],
+      "invalidIds": [],
+      "correctDiagnosisRank": null
+    },
+    {
+      "caseId": "HO-06",
+      "goldInNote": 7,
+      "predicted": 0,
+      "hit": 0,
+      "coverage": 0,
+      "missed": [
+        "HP:0002757",
+        "HP:0002653",
+        "HP:0006487",
+        "HP:0004322",
+        "HP:0000592",
+        "HP:0000703",
+        "HP:0000225"
+      ],
+      "predictedNotInGold": [],
+      "predictedArticleOnly": [],
+      "invalidIds": [],
+      "correctDiagnosisRank": null
+    },
+    {
+      "caseId": "HO-07",
+      "goldInNote": 5,
+      "predicted": 0,
+      "hit": 0,
+      "coverage": 0,
+      "missed": [
+        "HP:0100665",
+        "HP:0000969",
+        "HP:0002027",
+        "HP:0002094",
+        "HP:0012027"
+      ],
+      "predictedNotInGold": [],
+      "predictedArticleOnly": [],
+      "invalidIds": [],
+      "correctDiagnosisRank": null
+    },
+    {
+      "caseId": "HO-08",
+      "goldInNote": 7,
+      "predicted": 0,
+      "hit": 0,
+      "coverage": 0,
+      "missed": [
+        "HP:0001344",
+        "HP:0001270",
+        "HP:0000256",
+        "HP:0000098",
+        "HP:0000337",
+        "HP:0000508",
+        "HP:0008081"
+      ],
+      "predictedNotInGold": [],
+      "predictedArticleOnly": [],
+      "invalidIds": [],
+      "correctDiagnosisRank": null
+    },
+    {
+      "caseId": "HO-09",
+      "goldInNote": 8,
+      "predicted": 1,
+      "hit": 1,
+      "coverage": 0.125,
+      "missed": [
+        "HP:0011968",
+        "HP:0000252",
+        "HP:0001250",
+        "HP:0000733",
+        "HP:0001270",
+        "HP:0001344",
+        "HP:0002376"
+      ],
+      "predictedNotInGold": [],
+      "predictedArticleOnly": [],
+      "invalidIds": [],
+      "correctDiagnosisRank": null
+    },
+    {
+      "caseId": "HO-10",
+      "goldInNote": 8,
+      "predicted": 0,
+      "hit": 0,
+      "coverage": 0,
+      "missed": [
+        "HP:0030051",
+        "HP:0002061",
+        "HP:0001288",
+        "HP:0001251",
+        "HP:0001639",
+        "HP:0002650",
+        "HP:0034392",
+        "HP:0000011"
+      ],
+      "predictedNotInGold": [],
+      "predictedArticleOnly": [],
+      "invalidIds": [],
+      "correctDiagnosisRank": null
+    }
+  ]
+}
