@@ -137,7 +137,9 @@ function Hero() {
             />
           </div>
           <figcaption>
-            {t('proofCaption')} {DEMO_LABEL}.
+            {t('proofCaption')}
+            {locale === 'zh' || locale === 'ja' ? '' : ' '}
+            {DEMO_LABEL}.
             {locale !== 'en' && (
               <>
                 {' '}

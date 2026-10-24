@@ -164,7 +164,7 @@ export default defineMessages(
       ownTitle: '我们自己的检验',
       ownResult:
         '在按固定规则选出的 10 个已发表病例中，正确的疾病在 5 例中排第一，在 6 例中进入前三（我们自己的小规模评估）。',
-      ownCaveat: '这些病例来自可能已被纳入 HPO 注释的文献，因此结果可能偏乐观。这不是临床验证。',
+      ownCaveat: '这些病例来自可能已被纳入 HPO 注释的文献，因此结果很可能偏乐观。这不是临床验证。',
       ownRerank: '一项预先登记的、考虑频率的重新排序没有改善结果，因此没有上线。',
       methodLink: '方法与结果',
 
@@ -246,7 +246,7 @@ export default defineMessages(
       ownResult:
         '固定のルールで選んだ公表済みの 10 症例で、正しい疾患は 5 症例で 1 位、6 症例で上位 3 位以内に入りました（私たち自身による小規模な評価）。',
       ownCaveat:
-        'これらの症例は HPO アノテーションの元になっている可能性のある文献に由来するため、結果は楽観的に出ている可能性があります。臨床的な検証ではありません。',
+        'これらの症例は HPO アノテーションの元になっている可能性のある文献に由来するため、結果は楽観的である可能性が高いです。臨床的な検証ではありません。',
       ownRerank: '事前登録した、頻度を考慮する再順位付けは結果を改善しなかったため、採用していません。',
       methodLink: '方法と結果',
 
@@ -289,7 +289,7 @@ export default defineMessages(
       stat2Value: '4,7 años',
       stat2Label: 'tiempo medio hasta el diagnóstico (la mediana es de 0,8 años)',
       stat3Value: '73 %',
-      stat3Label: 'de los pacientes recibió al menos un diagnóstico erróneo',
+      stat3Label: 'de los pacientes recibieron al menos un diagnóstico erróneo',
       surveyNote:
         'Los datos sobre el tiempo hasta el diagnóstico y los diagnósticos erróneos proceden de la encuesta Rare Barometer, realizada en 2022 a 6507 pacientes de 41 países europeos.',
 
@@ -463,7 +463,7 @@ export default defineMessages(
       step1Body: 'Collez un historique des symptômes en mots simples, ou ouvrez le cas de démonstration.',
       step2Title: 'Caractéristiques avec leur phrase source',
       step2Body:
-        'Chaque caractéristique médicale (un terme HPO) figure à côté des mots exacts dont elle provient. Ce que les notes disent absent, comme « I do not get headaches », va dans un groupe Absent. Vous gardez, retirez ou ajoutez des caractéristiques.',
+        'Chaque caractéristique médicale (un terme HPO) figure à côté des mots exacts dont elle provient. Ce que les notes disent absent, comme « I do not get headaches », va dans un groupe Absente. Vous gardez, retirez ou ajoutez des caractéristiques.',
       step3Title: 'Correspondances possibles avec leurs preuves',
       step3Body:
         'Les maladies rares sont classées selon le recoupement des caractéristiques. Chacune indique quelles caractéristiques correspondent, lesquelles non, et à quelle fréquence chacune survient dans cette maladie selon les annotations HPO. Le recoupement est un mot (fort, partiel, faible), jamais un pourcentage.',
