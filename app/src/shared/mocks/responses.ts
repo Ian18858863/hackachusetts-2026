@@ -1,25 +1,35 @@
 /**
  * Deterministic offline mocks for every /api/* endpoint (docs/CONTRACT.md v0.1).
  *
- * Used ONLY by shared/api.ts when an endpoint is unreachable or not built yet
- * (network error, 404, 501, or a non-JSON answer). Every view that shows a
+ * Used ONLY by shared/api.ts in development (import.meta.env.DEV) when an
+ * endpoint is unreachable or not built yet, or anywhere when the URL has
+ * ?mock=1. Production never falls back to these. Every view that shows a
  * mocked payload must display OFFLINE_MOCK_LABEL. Never use these to hide a
  * real 4xx validation error.
  *
  * What is real and what is illustrative:
  * - Demo narratives and prepared extractions: verbatim from contract section 9.
- * - The first candidate for each demo case: disease id, MONDO id, name, genes
- *   and annotation categories were read on 2026-10-24 from the Monarch v3
- *   search API and the JAX HPO annotation API.
- * - Extra HPO terms used for "not reported" features and questions were
- *   confirmed with GET https://ontology.jax.org/api/hp/terms/{id} on 2026-10-24.
- * - ALL frequencies, scores and overlap labels are ILLUSTRATIVE, not real data.
+ * - The first candidate for each demo case: disease id, MONDO id, name, genes,
+ *   annotation categories and every feature frequency were recorded from JAX
+ *   on 2026-10-24 (GET https://ontology.jax.org/api/network/annotation/<id>).
+ *   Frequencies prefer the ORPHA band, else the OMIM "n/m" value mapped to the
+ *   contract section 5 band. A feature annotated without a frequency has
+ *   label null ("frequency not listed"). Features the disease does not
+ *   annotate are not invented: they appear as unmatched.
+ * - Scores and therefore the order are ILLUSTRATIVE; nothing here came from
+ *   Monarch, so no mock candidate lists "monarch-semsim" in its sources.
  * - Comparison candidates are placeholders named "Mock comparison condition",
- *   not real diseases, so no disease fact is invented.
+ *   with MOCK: ids, no genes and no frequencies (frequency null), so no
+ *   disease fact is invented.
  * - Trials: the mock returns no studies; no trial id is invented.
+ * - dataVersions.demoCache holds the recording date, as the contract asks;
+ *   the response-level source stays "demo" (the contract has no "mock"
+ *   value) and the app shows OFFLINE_MOCK_LABEL, which outranks the
+ *   demo-cache label.
  */
 import {
   CONTRACT_VERSION,
+  type ApiError,
   type BriefResponse,
   type Candidate,
   type CaseObject,
@@ -30,7 +40,6 @@ import {
   type ExtractRequest,
   type ExtractResponse,
   type FrequencyInfo,
-  type FrequencyLabel,
   type Gene,
   type HpoId,
   type HpoTerm,
@@ -52,9 +61,23 @@ import { DEMO_CASES, findDemoCase, verifyDemoCase } from './demoCases';
 
 export const MOCK_RECORDED_AT = '2026-10-24T16:05:00.000Z';
 export const MOCK_HPO_VERSION = 'unknown (offline mock)';
+/** Date the JAX values below were recorded (contract: demoCache is a date). */
+export const MOCK_RECORDED_DATE = '2026-10-24';
 
 function mockDataVersions(extra: Partial<DataVersions> = {}): DataVersions {
-  return { hpo: MOCK_HPO_VERSION, demoCache: 'offline mock', fetchedAt: MOCK_RECORDED_AT, ...extra };
+  return { hpo: MOCK_HPO_VERSION, demoCache: MOCK_RECORDED_DATE, fetchedAt: MOCK_RECORDED_AT, ...extra };
+}
+
+/** Thrown by a mock to answer with a contract error; shared/api.ts converts it. */
+export class MockContractError extends Error {
+  readonly status: number;
+  readonly error: ApiError['error'];
+  constructor(status: number, error: ApiError['error']) {
+    super(error.message);
+    this.name = 'MockContractError';
+    this.status = status;
+    this.error = error;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -67,16 +90,34 @@ interface MockDisease {
   name: string;
   links: Candidate['links'];
   genes: Gene[];
+  /** Annotation id each gene came from (TestSuggestion.source). */
+  geneSources: Record<string, string>;
   categories: string[];
+}
+
+/** One annotated feature of a disease; frequency null = no frequency info at all. */
+interface MockFeature {
+  term: TermRef;
+  frequency: FrequencyInfo | null;
 }
 
 interface MockProfile {
   caseId: string;
   disease: MockDisease;
-  /** Verified HPO terms not in the narrative; frequencies are illustrative. */
-  otherFeatures: Array<{ term: TermRef; frequency: FrequencyLabel }>;
+  /**
+   * Features recorded from JAX on 2026-10-24: every narrative term the disease
+   * annotates, plus a few annotated terms the narrative does not mention
+   * (used for "not reported" and the questions).
+   */
+  annotations: MockFeature[];
 }
 
+/** Shorthand for a recorded annotation row. */
+function row(id: HpoId, label: string, frequency: FrequencyInfo): MockFeature {
+  return { term: { id, label }, frequency };
+}
+
+// Recorded from JAX on 2026-10-24 (ontology.jax.org/api/network/annotation/<id>).
 const PROFILES: MockProfile[] = [
   {
     caseId: 'demo-dmd',
@@ -89,13 +130,25 @@ const PROFILES: MockProfile[] = [
         orphanet: 'https://www.orpha.net/en/disease/detail/98896',
         omim: 'https://omim.org/entry/310200',
       },
-      genes: [{ id: 'NCBIGene:1756', symbol: 'DMD' }],
-      categories: ['Musculature', 'Nervous System', 'Cardiovascular', 'Metabolism/Laboratory abnormality'],
+      genes: [
+        { id: 'NCBIGene:1756', symbol: 'DMD' },
+        { id: 'NCBIGene:8425', symbol: 'LTBP4' },
+      ],
+      geneSources: { 'NCBIGene:1756': 'OMIM:310200', 'NCBIGene:8425': 'ORPHA:98896' },
+      categories: [
+        'Cardiovascular', 'Clinical course', 'Connective tissue', 'Inheritance', 'Limbs',
+        'Metabolism/Laboratory abnormality', 'Musculature', 'Nervous System', 'Respiratory System',
+        'Skeletal system',
+      ],
     },
-    otherFeatures: [
-      { term: { id: 'HP:0002515', label: 'Waddling gait' }, frequency: 'Very frequent' },
-      { term: { id: 'HP:0003202', label: 'Skeletal muscle atrophy' }, frequency: 'Very frequent' },
-      { term: { id: 'HP:0001644', label: 'Dilated cardiomyopathy' }, frequency: 'Frequent' },
+    annotations: [
+      row('HP:0001270', 'Motor delay', { label: 'Very frequent', source: 'ORPHA:98896' }),
+      row('HP:0003551', 'Difficulty climbing stairs', { label: 'Obligate', raw: '1/1', source: 'OMIM:310200' }),
+      row('HP:0003391', 'Gowers sign', { label: null, source: 'OMIM:310200' }),
+      row('HP:0003707', 'Calf muscle pseudohypertrophy', { label: null, source: 'OMIM:310200' }),
+      row('HP:0002515', 'Waddling gait', { label: 'Very frequent', source: 'ORPHA:98896' }),
+      row('HP:0003202', 'Skeletal muscle atrophy', { label: 'Very frequent', source: 'ORPHA:98896' }),
+      row('HP:0001644', 'Dilated cardiomyopathy', { label: null, source: 'OMIM:310200' }),
     ],
   },
   {
@@ -110,12 +163,26 @@ const PROFILES: MockProfile[] = [
         omim: 'https://omim.org/entry/154700',
       },
       genes: [{ id: 'NCBIGene:2200', symbol: 'FBN1' }],
-      categories: ['Cardiovascular', 'Eye', 'Skeletal system', 'Skin, Hair, and Nails'],
+      geneSources: { 'NCBIGene:2200': 'OMIM:154700' },
+      categories: [
+        'Cardiovascular', 'Connective tissue', 'Constitutional Symptom', 'Eye', 'Growth', 'Head and neck',
+        'Inheritance', 'Limbs', 'Musculature', 'Nervous System', 'Other', 'Respiratory System',
+        'Skeletal system', 'Skin, Hair, and Nails',
+      ],
     },
-    otherFeatures: [
-      { term: { id: 'HP:0001519', label: 'Disproportionate tall stature' }, frequency: 'Very frequent' },
-      { term: { id: 'HP:0000545', label: 'Myopia' }, frequency: 'Frequent' },
-      { term: { id: 'HP:0001634', label: 'Mitral valve prolapse' }, frequency: 'Frequent' },
+    annotations: [
+      row('HP:0001166', 'Arachnodactyly', { label: 'Very frequent', source: 'ORPHA:558' }),
+      row('HP:0000218', 'High palate', { label: 'Frequent', raw: '34/53', source: 'OMIM:154700' }),
+      row('HP:0001065', 'Striae distensae', { label: 'Very frequent', source: 'ORPHA:558' }),
+      row('HP:0001083', 'Ectopia lentis', { label: 'Frequent', source: 'ORPHA:558' }),
+      row('HP:0000268', 'Dolichocephaly', { label: 'Occasional', source: 'ORPHA:558' }),
+      row('HP:0000278', 'Retrognathia', { label: 'Occasional', source: 'ORPHA:558' }),
+      row('HP:0000490', 'Deeply set eye', { label: 'Frequent', raw: '25/63', source: 'OMIM:154700' }),
+      row('HP:0002107', 'Pneumothorax', { label: 'Occasional', raw: '6/53', source: 'OMIM:154700' }),
+      row('HP:0002650', 'Scoliosis', { label: 'Frequent', source: 'ORPHA:558' }),
+      row('HP:0001519', 'Disproportionate tall stature', { label: 'Very frequent', source: 'ORPHA:558' }),
+      row('HP:0000545', 'Myopia', { label: 'Frequent', source: 'ORPHA:558' }),
+      row('HP:0001634', 'Mitral valve prolapse', { label: 'Frequent', source: 'ORPHA:558' }),
     ],
   },
   {
@@ -128,13 +195,39 @@ const PROFILES: MockProfile[] = [
         monarch: 'https://monarchinitiative.org/MONDO:0007843',
         omim: 'https://omim.org/entry/147920',
       },
-      genes: [{ id: 'NCBIGene:8085', symbol: 'KMT2D' }],
-      categories: ['Head and neck', 'Eye', 'Growth', 'Cardiovascular', 'Limbs'],
+      genes: [
+        { id: 'NCBIGene:7403', symbol: 'KDM6A' },
+        { id: 'NCBIGene:8085', symbol: 'KMT2D' },
+      ],
+      geneSources: { 'NCBIGene:7403': 'OMIM:147920', 'NCBIGene:8085': 'OMIM:147920' },
+      categories: [
+        'Blood and blood-forming tissues', 'Breast', 'Cardiovascular', 'Cellular phenotype', 'Clinical course',
+        'Connective tissue', 'Digestive System', 'Ear', 'Endocrine', 'Eye', 'Genitourinary system', 'Growth',
+        'Head and neck', 'Immunology', 'Inheritance', 'Limbs', 'Metabolism/Laboratory abnormality',
+        'Musculature', 'Neoplasm', 'Nervous System', 'Other', 'Prenatal and Birth', 'Respiratory System',
+        'Skeletal system', 'Skin, Hair, and Nails', 'Voice',
+      ],
     },
-    otherFeatures: [
-      { term: { id: 'HP:0000175', label: 'Cleft palate' }, frequency: 'Frequent' },
-      { term: { id: 'HP:0000369', label: 'Low-set ears' }, frequency: 'Frequent' },
-      { term: { id: 'HP:0001256', label: 'Mild intellectual disability' }, frequency: 'Very frequent' },
+    annotations: [
+      row('HP:0001252', 'Hypotonia', { label: 'Frequent', raw: '22/32', source: 'OMIM:147920' }),
+      row('HP:0001263', 'Global developmental delay', { label: 'Very frequent', raw: '40/42', source: 'OMIM:147920' }),
+      row('HP:0004322', 'Short stature', { label: 'Frequent', raw: '11/20', source: 'OMIM:147920' }),
+      row('HP:0000637', 'Long palpebral fissure', { label: 'Very frequent', raw: '27/31', source: 'OMIM:147920' }),
+      row('HP:0007655', 'Eversion of lateral third of lower eyelids', { label: 'Very frequent', raw: '19/22', source: 'OMIM:147920' }),
+      row('HP:0002553', 'Highly arched eyebrow', { label: 'Frequent', raw: '22/30', source: 'OMIM:147920' }),
+      row('HP:0005338', 'Sparse lateral eyebrow', { label: 'Obligate', raw: '11/11', source: 'OMIM:147920' }),
+      row('HP:0000431', 'Wide nasal bridge', { label: 'Very frequent', raw: '14/17', source: 'OMIM:147920' }),
+      row('HP:0000437', 'Depressed nasal tip', { label: 'Frequent', raw: '38/49', source: 'OMIM:147920' }),
+      row('HP:0000592', 'Blue sclerae', { label: 'Frequent', raw: '7/17', source: 'OMIM:147920' }),
+      row('HP:0000400', 'Macrotia', { label: 'Very frequent', raw: '24/30', source: 'OMIM:147920' }),
+      row('HP:0001212', 'Prominent fingertip pads', { label: 'Frequent', raw: '31/39', source: 'OMIM:147920' }),
+      row('HP:0040019', 'Finger clinodactyly', { label: 'Obligate', raw: '10/10', source: 'OMIM:147920' }),
+      row('HP:0011626', 'Scimitar anomaly', { label: 'Very rare', raw: '1/30', source: 'OMIM:147920' }),
+      row('HP:0001250', 'Seizure', { label: 'Occasional', raw: '4/25', source: 'OMIM:147920' }),
+      row('HP:0000365', 'Hearing impairment', { label: 'Frequent', raw: '22/43', source: 'OMIM:147920' }),
+      row('HP:0000175', 'Cleft palate', { label: 'Frequent', raw: '40/69', source: 'OMIM:147920' }),
+      row('HP:0000369', 'Low-set ears', { label: 'Frequent', raw: '3/6', source: 'OMIM:147920' }),
+      row('HP:0001256', 'Mild intellectual disability', { label: 'Frequent', raw: '5/13', source: 'OMIM:147920' }),
     ],
   },
   {
@@ -148,12 +241,29 @@ const PROFILES: MockProfile[] = [
         omim: 'https://omim.org/entry/122470',
       },
       genes: [{ id: 'NCBIGene:25836', symbol: 'NIPBL' }],
-      categories: ['Growth', 'Limbs', 'Head and neck', 'Skin, Hair, and Nails', 'Genitourinary system'],
+      geneSources: { 'NCBIGene:25836': 'OMIM:122470' },
+      categories: [
+        'Blood and blood-forming tissues', 'Breast', 'Cardiovascular', 'Clinical course', 'Connective tissue',
+        'Digestive System', 'Ear', 'Eye', 'Genitourinary system', 'Growth', 'Head and neck', 'Immunology',
+        'Inheritance', 'Limbs', 'Metabolism/Laboratory abnormality', 'Musculature', 'Nervous System', 'Other',
+        'Skeletal system', 'Skin, Hair, and Nails', 'Voice',
+      ],
     },
-    otherFeatures: [
-      { term: { id: 'HP:0000664', label: 'Synophrys' }, frequency: 'Very frequent' },
-      { term: { id: 'HP:0000347', label: 'Micrognathia' }, frequency: 'Frequent' },
-      { term: { id: 'HP:0002020', label: 'Gastroesophageal reflux' }, frequency: 'Frequent' },
+    annotations: [
+      row('HP:0001511', 'Intrauterine growth retardation', { label: 'Frequent', raw: '39/52', source: 'OMIM:122470' }),
+      row('HP:0008897', 'Postnatal growth retardation', { label: 'Very frequent', raw: '29/30', source: 'OMIM:122470' }),
+      row('HP:0001263', 'Global developmental delay', { label: 'Very frequent', raw: '42/46', source: 'OMIM:122470' }),
+      row('HP:0001249', 'Intellectual disability', { label: 'Very frequent', raw: '34/40', source: 'OMIM:122470' }),
+      row('HP:0001007', 'Hirsutism', { label: 'Frequent', raw: '39/56', source: 'OMIM:122470' }),
+      row('HP:0000028', 'Cryptorchidism', { label: 'Frequent', raw: '15/25', source: 'OMIM:122470' }),
+      row('HP:0001159', 'Syndactyly', { label: 'Frequent', raw: '5/12', source: 'OMIM:122470' }),
+      row('HP:0001156', 'Brachydactyly', { label: 'Occasional', raw: '3/11', source: 'OMIM:122470' }),
+      row('HP:0030148', 'Heart murmur', { label: 'Frequent', raw: '5/11', source: 'OMIM:122470' }),
+      row('HP:0001250', 'Seizure', { label: 'Frequent', raw: '12/37', source: 'OMIM:122470' }),
+      row('HP:0011968', 'Feeding difficulties', { label: 'Frequent', raw: '11/19', source: 'OMIM:122470' }),
+      row('HP:0000664', 'Synophrys', { label: 'Very frequent', raw: '46/49', source: 'OMIM:122470' }),
+      row('HP:0000347', 'Micrognathia', { label: 'Frequent', raw: '27/46', source: 'OMIM:122470' }),
+      row('HP:0002020', 'Gastroesophageal reflux', { label: 'Frequent', raw: '25/40', source: 'OMIM:122470' }),
     ],
   },
 ];
@@ -183,15 +293,40 @@ function overlapLabel(matched: number, observed: number, contradicted: number): 
   return order[level] ?? 'weak';
 }
 
-function freq(label: FrequencyLabel, source: string): FrequencyInfo {
-  return { label, source };
+type Band = NonNullable<FrequencyInfo['label']>;
+
+const BAND_ORDER: Band[] = ['Obligate', 'Very frequent', 'Frequent', 'Occasional', 'Very rare', 'Excluded'];
+
+/** Contract 7.5 step 2 midpoints; annotated without a frequency 0.5, not annotated 0. */
+const MIDPOINT: Record<Band, number> = {
+  Obligate: 1,
+  'Very frequent': 0.9,
+  Frequent: 0.55,
+  Occasional: 0.17,
+  'Very rare': 0.025,
+  Excluded: 0,
+};
+
+function midpoint(f: MockFeature | undefined): number {
+  if (!f || !f.frequency) return 0;
+  return f.frequency.label ? MIDPOINT[f.frequency.label] : 0.5;
+}
+
+/** Obligate, Very frequent or Frequent (contract 7.4 steps 6 and 7). */
+function isUsual(f: MockFeature): f is MockFeature & { frequency: FrequencyInfo } {
+  const label = f.frequency?.label;
+  return label === 'Obligate' || label === 'Very frequent' || label === 'Frequent';
+}
+
+function profileFor(diseaseId: string): MockProfile | undefined {
+  return PROFILES.find((p) => p.disease.diseaseId === diseaseId);
 }
 
 /** All verified terms the mocks know, for /api/terms and label lookups. */
 const KNOWN_TERMS: Map<HpoId, TermRef> = (() => {
   const map = new Map<HpoId, TermRef>();
   for (const c of DEMO_CASES) for (const t of c.extraction) map.set(t.hpoId, { id: t.hpoId, label: t.label });
-  for (const p of PROFILES) for (const f of p.otherFeatures) map.set(f.term.id, f.term);
+  for (const p of PROFILES) for (const f of p.annotations) map.set(f.term.id, f.term);
   return map;
 })();
 
@@ -218,14 +353,20 @@ function closestDemoCase(observed: readonly HpoId[]): { demo: DemoCase; profile:
 
 export function mockExtract(req: ExtractRequest): ExtractResponse {
   const demo = DEMO_CASES.find((c) => c.narrative === req.text);
+  // Non-demo text: answer like a server without the Workers AI binding (contract 7.2 step 3).
+  if (!demo) {
+    throw new MockContractError(503, {
+      code: 'LLM_UNAVAILABLE',
+      message: 'Live extraction is not available here. Try one of the demo cases, or add terms by hand.',
+      retryable: false,
+    });
+  }
   return {
     version: CONTRACT_VERSION,
     source: 'demo',
-    terms: demo ? demo.extraction.map((t) => ({ ...t })) : [],
-    warnings: demo
-      ? []
-      : ['Offline mock: only the bundled demo narratives can be read without the server. Add terms by hand instead.'],
-    model: demo ? 'demo-prepared' : 'offline-mock',
+    terms: demo.extraction.map((t) => ({ ...t })),
+    warnings: [],
+    model: 'demo-prepared',
     dataVersions: mockDataVersions(),
   };
 }
@@ -257,10 +398,10 @@ function buildCandidate(
   disease: MockDisease,
   observed: HpoId[],
   excluded: HpoId[],
-  diseaseFeatures: Array<{ term: TermRef; frequency: FrequencyLabel }>,
+  annotations: MockFeature[],
   options: { score: number; sources: Candidate['sources'] },
 ): Omit<Candidate, 'rank'> {
-  const featureById = new Map(diseaseFeatures.map((f) => [f.term.id, f]));
+  const featureById = new Map(annotations.map((f) => [f.term.id, f]));
   const matched: Evidence[] = [];
   const unmatched: TermRef[] = [];
   for (const id of observed) {
@@ -270,21 +411,24 @@ function buildCandidate(
         patientTerm: termRef(id),
         diseaseTerm: feature.term,
         via: 'exact',
-        frequency: freq(feature.frequency, disease.diseaseId),
+        frequency: feature.frequency,
       });
     } else {
       unmatched.push(termRef(id));
     }
   }
-  const usual = (f: { frequency: FrequencyLabel }) =>
-    f.frequency === 'Obligate' || f.frequency === 'Very frequent' || f.frequency === 'Frequent';
-  const contradicted: DiseaseFeature[] = diseaseFeatures
-    .filter((f) => usual(f) && excluded.includes(f.term.id))
-    .map((f) => ({ term: f.term, frequency: freq(f.frequency, disease.diseaseId) }));
-  const notReported: DiseaseFeature[] = diseaseFeatures
-    .filter((f) => usual(f) && !observed.includes(f.term.id) && !excluded.includes(f.term.id))
-    .slice(0, 8)
-    .map((f) => ({ term: f.term, frequency: freq(f.frequency, disease.diseaseId) }));
+  const byBandThenId = (a: DiseaseFeature, b: DiseaseFeature) =>
+    BAND_ORDER.indexOf(a.frequency.label as Band) - BAND_ORDER.indexOf(b.frequency.label as Band) ||
+    a.term.id.localeCompare(b.term.id);
+  const usual = annotations.filter(isUsual);
+  const contradicted: DiseaseFeature[] = usual
+    .filter((f) => excluded.includes(f.term.id))
+    .map((f) => ({ term: f.term, frequency: f.frequency }));
+  const notReported: DiseaseFeature[] = usual
+    .filter((f) => !observed.includes(f.term.id) && !excluded.includes(f.term.id))
+    .map((f) => ({ term: f.term, frequency: f.frequency }))
+    .sort(byBandThenId)
+    .slice(0, 8);
 
   return {
     diseaseId: disease.diseaseId,
@@ -311,6 +455,7 @@ function placeholderDisease(index: number, caseKey: string): MockDisease {
     name: COMPARISON_NAMES[index] ?? `Mock comparison condition ${letter}`,
     links: { monarch: 'https://monarchinitiative.org/' },
     genes: [],
+    geneSources: {},
     categories: [],
   };
 }
@@ -325,33 +470,28 @@ export function mockRank(req: RankRequest): RankResponse {
   const all: Array<Omit<Candidate, 'rank'>> = [];
 
   if (match) {
-    const prepared = match.demo.extraction.filter((t) => !t.negated);
-    // Illustrative: the source patient's own features, alternating bands.
-    const features = [
-      ...prepared.map((t, i) => ({
-        term: { id: t.hpoId, label: t.label },
-        frequency: (i % 3 === 2 ? 'Frequent' : 'Very frequent') as FrequencyLabel,
-      })),
-      ...match.profile.otherFeatures,
-    ];
+    // Real disease: only the annotation rows recorded from JAX (see PROFILES).
+    // Score is illustrative. Sources: the frequencies really are HPO annotations;
+    // nothing came from Monarch.
     all.push(
-      buildCandidate(match.profile.disease, observed, excluded, features, {
+      buildCandidate(match.profile.disease, observed, excluded, match.profile.annotations, {
         score: 14.2,
-        sources: ['monarch-semsim', 'hpo-annotations'],
+        sources: ['hpo-annotations'],
       }),
     );
   }
 
-  // Placeholder comparison conditions share a shrinking slice of the observed terms.
+  // Fictional comparison conditions share a shrinking slice of the observed
+  // terms, with no frequency (null), so nothing about them reads as a fact.
   for (let i = 0; all.length < limit && i < 4; i++) {
     const share = Math.max(1, Math.floor(observed.length * (0.5 - i * 0.1)));
-    const features = observed
+    const features: MockFeature[] = observed
       .slice(i, i + share)
-      .map((id) => ({ term: termRef(id), frequency: (i % 2 ? 'Occasional' : 'Frequent') as FrequencyLabel }));
+      .map((id) => ({ term: termRef(id), frequency: null }));
     all.push(
       buildCandidate(placeholderDisease(i, caseKey), observed, excluded, features, {
         score: Number((11.6 - i * 1.3).toFixed(1)),
-        sources: ['monarch-semsim'],
+        sources: [],
       }),
     );
   }
@@ -365,46 +505,55 @@ export function mockRank(req: RankRequest): RankResponse {
     version: CONTRACT_VERSION,
     source: 'demo',
     candidates,
-    dataVersions: mockDataVersions({ monarch: 'offline mock' }),
+    dataVersions: mockDataVersions(),
   };
 }
 
 // ---------------------------------------------------------------------------
-// /api/next-questions
+// /api/next-questions (contract 7.5 method over the recorded annotations)
 // ---------------------------------------------------------------------------
+
+function frequencyWords(f: MockFeature | undefined): string | null {
+  if (!f?.frequency) return null;
+  return f.frequency.label ?? 'Listed without a frequency';
+}
 
 export function mockNextQuestions(req: NextQuestionsRequest): NextQuestionsResponse {
   const observed = new Set(req.observed);
   const excluded = new Set(req.excluded ?? []);
   const limit = Math.min(Math.max(req.limit ?? 5, 1), 8);
-  const profile = PROFILES.find((p) => req.candidates.includes(p.disease.diseaseId));
+  const candidateIds = req.candidates;
+  const annotationsOf = (id: string) => new Map((profileFor(id)?.annotations ?? []).map((f) => [f.term.id, f]));
+  const perCandidate = candidateIds.map((id) => ({ id, rows: annotationsOf(id) }));
   const nameOf = (id: string) =>
-    PROFILES.find((p) => p.disease.diseaseId === id)?.disease.name ??
-    (id.startsWith('MOCK:') ? `Mock comparison condition ${id.slice(-1)}` : id);
+    profileFor(id)?.disease.name ?? (id.startsWith('MOCK:') ? `Mock comparison condition ${id.slice(-1)}` : id);
 
-  const questions: Question[] = (profile?.otherFeatures ?? [])
-    .filter((f) => !observed.has(f.term.id) && !excluded.has(f.term.id))
-    .map((f) => {
-      const discriminates = req.candidates.map((diseaseId) => ({
-        diseaseId,
-        frequency: diseaseId === profile?.disease.diseaseId ? freq(f.frequency, diseaseId) : null,
-      }));
-      const others = req.candidates.filter((id) => id !== profile?.disease.diseaseId).map(nameOf);
+  const allIds = [...new Set(perCandidate.flatMap((c) => [...c.rows.keys()]))];
+  const questions: Question[] = allIds
+    .filter((id) => !observed.has(id) && !excluded.has(id))
+    .map((hpoId) => {
+      const cells = perCandidate.map((c) => ({ diseaseId: c.id, row: c.rows.get(hpoId) }));
+      const mids = cells.map((c) => midpoint(c.row));
+      const score = Number((Math.max(...mids) - Math.min(...mids)).toFixed(3));
+      const term = cells.find((c) => c.row)?.row?.term ?? termRef(hpoId);
+      const listed = cells.filter((c) => c.row?.frequency);
+      const notListed = cells.filter((c) => !c.row?.frequency);
       const why = [
-        `${f.frequency} in ${profile?.disease.name ?? ''}`,
-        others.length > 0 ? `not listed for ${others.join(', ')}` : '',
+        ...listed.map((c) => `${frequencyWords(c.row)} in ${nameOf(c.diseaseId)}`),
+        notListed.length > 0 ? `not listed for ${notListed.map((c) => nameOf(c.diseaseId)).join(', ')}` : '',
       ]
         .filter(Boolean)
         .join('; ');
       return {
-        hpoId: f.term.id,
-        label: f.term.label,
-        question: `Has anyone noticed ${f.term.label.toLowerCase()}?`,
-        discriminates,
+        hpoId,
+        label: term.label,
+        question: `Has anyone noticed ${term.label.toLowerCase()}?`,
+        discriminates: cells.map((c) => ({ diseaseId: c.diseaseId, frequency: c.row?.frequency ?? null })),
         why,
-        score: f.frequency === 'Very frequent' ? 0.9 : 0.55,
+        score,
       };
     })
+    .filter((q) => q.score >= 0.35)
     .sort((a, b) => b.score - a.score || a.hpoId.localeCompare(b.hpoId))
     .slice(0, limit);
 
@@ -423,7 +572,7 @@ export function mockTrials(query: TrialsQuery): TrialsResponse {
     query: { condition: query.condition, ids: query.ids, status: 'RECRUITING' },
     total: 0,
     fetchedAt: MOCK_RECORDED_AT,
-    dataVersions: { fetchedAt: MOCK_RECORDED_AT, demoCache: 'offline mock' },
+    dataVersions: { fetchedAt: MOCK_RECORDED_AT, demoCache: MOCK_RECORDED_DATE },
   };
 }
 
@@ -504,13 +653,21 @@ export function mockBrief(c: CaseObject, now: Date = new Date(MOCK_RECORDED_AT))
       candidates,
       questions: c.questions,
       specialists: [], // No mapping table in the app; contract 7.7 says omit when not grounded.
+      // source = the annotation set the gene came from (e.g. OMIM:154700, not ORPHA:558).
+      // Genes whose source the mocks do not know are left out (not traceable).
       testsToAsk: top3.flatMap((cand) =>
-        cand.genes.map((gene) => ({
-          text: `Ask whether genetic testing that includes ${gene.symbol} is appropriate (gene associated with ${cand.name} in HPO annotations)`,
-          gene,
-          diseaseId: cand.diseaseId,
-          source: cand.diseaseId,
-        })),
+        cand.genes.flatMap((gene) => {
+          const source = profileFor(cand.diseaseId)?.disease.geneSources[gene.id];
+          if (!source) return [];
+          return [
+            {
+              text: `Ask whether genetic testing that includes ${gene.symbol} is appropriate (gene associated with ${cand.name} in HPO annotations)`,
+              gene,
+              diseaseId: cand.diseaseId,
+              source,
+            },
+          ];
+        }),
       ),
       disclaimer: DISCLAIMER,
       attributions,

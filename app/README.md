@@ -23,13 +23,23 @@ Useful URLs:
 |---|---|
 | `/app/` | Notes step |
 | `/app/?demo=demo-dmd` | Loads that demo case and opens the Features step (`demo-dmd`, `demo-marfan`, `demo-kabuki`, `demo-cdls`). The landing page links here |
-| `/app/?mock=1` | Forces the offline mocks for every endpoint (UI work without a backend) |
+| `/app/?mock=1` | Forces the offline mocks for every endpoint, in dev and production builds (UI work without a backend) |
 | `/app/#primitives` | Internal component kit, not linked from the UI |
 
 ### Backend in local dev
 
-Without functions running, `/api/*` calls fail and the client answers from the bundled
-offline mocks, and every view shows **Demo data (offline mock)**. To use a local backend:
+In `npm run dev` only, when `/api/*` is unreachable or not built yet (network error, 404,
+501 or a non-JSON answer), the client answers from the bundled offline mocks, and every view
+shows **Demo data (offline mock)**. A production build never does this: the same failures
+become a retryable error with **Try again**. Add `?mock=1` to force the mocks in any build.
+
+The mocks never invent disease facts: the first candidate's frequencies, genes and categories
+were recorded from the JAX HPO annotation API on 2026-10-24, features without a recorded
+frequency show "frequency not listed", and comparison candidates are named
+"Mock comparison condition B…E". For non-demo text the extract mock answers 503
+`LLM_UNAVAILABLE`, like a server without the Workers AI binding.
+
+To use a local backend:
 
 ```bash
 API_PROXY_TARGET=http://localhost:8788 npm run dev

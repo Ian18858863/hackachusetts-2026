@@ -7,12 +7,18 @@
  * - Every call takes an optional AbortSignal (use it to cancel a superseded,
  *   debounced re-rank). An aborted call rejects with code "ABORTED"; callers
  *   normally ignore it (see isAbortError).
- * - Offline-mock fallback: ONLY when an endpoint is unreachable or not built
- *   yet (network error while online, HTTP 404 or 501, or a 2xx that is not
- *   JSON, e.g. a dev-server HTML page). The result then has origin "mock" and
- *   the view must show OFFLINE_MOCK_LABEL. Contract errors (4xx/5xx with the
- *   contract error shape) are thrown as ApiRequestError and never mocked.
- * - Add ?mock=1 to the app URL to force mocks (UI work without a backend).
+ * - Offline-mock fallback: ONLY in development (import.meta.env.DEV) when an
+ *   endpoint is unreachable or not built yet (network error while online,
+ *   HTTP 404 or 501, or a 2xx that is not JSON, e.g. a dev-server HTML page).
+ *   The result then has origin "mock" and the view must show
+ *   OFFLINE_MOCK_LABEL. Contract errors (4xx/5xx with the contract error
+ *   shape) are thrown as ApiRequestError and never mocked.
+ * - Production never falls back to mocks: the same conditions throw a
+ *   retryable ApiRequestError (UNREACHABLE or BAD_RESPONSE), so the view shows
+ *   its error state with "Try again" (Requirement 11.3). Demo fallback in
+ *   production comes from the server (source: "demo", contract 7.4).
+ * - Add ?mock=1 to the app URL to force mocks in any build (UI work and demos
+ *   without a backend).
  */
 import { useSyncExternalStore } from 'react';
 import {
@@ -34,6 +40,7 @@ import {
   type TrialsResponse,
 } from './contract';
 import {
+  MockContractError,
   mockBrief,
   mockExtract,
   mockNextQuestions,
@@ -104,7 +111,7 @@ export interface RequestOptions {
 }
 
 /** Contract error codes plus client-side conditions. */
-export type ClientErrorCode = ErrorCode | 'TIMEOUT' | 'ABORTED' | 'OFFLINE' | 'BAD_RESPONSE';
+export type ClientErrorCode = ErrorCode | 'TIMEOUT' | 'ABORTED' | 'OFFLINE' | 'UNREACHABLE' | 'BAD_RESPONSE';
 
 export class ApiRequestError extends Error {
   readonly code: ClientErrorCode;
@@ -148,6 +155,7 @@ export function toApiRequestError(error: unknown, endpoint: Endpoint | 'health')
 const CLIENT_MESSAGES = {
   TIMEOUT: 'The server did not answer in time. Your notes and terms are kept; try again.',
   OFFLINE: 'You are offline. Your case is saved in this browser; reconnect to continue.',
+  UNREACHABLE: 'The server could not be reached. Your notes and terms are kept; try again.',
   BAD_RESPONSE: 'The server sent an answer the app could not read. Your work is kept; try again.',
   ABORTED: 'The request was cancelled.',
 } as const;
@@ -249,9 +257,27 @@ async function answerWithMock<T>(spec: RequestSpec<T>, signal?: AbortSignal): Pr
   } catch {
     throw clientError('ABORTED', spec.endpoint);
   }
+  let data: T;
+  try {
+    data = spec.mock();
+  } catch (error) {
+    if (error instanceof MockContractError) {
+      throw new ApiRequestError({
+        code: error.error.code,
+        message: error.error.message,
+        retryable: error.error.retryable,
+        status: error.status,
+        endpoint: spec.endpoint,
+      });
+    }
+    throw error;
+  }
   record(spec.endpoint, 'mock');
-  return { data: spec.mock(), origin: 'mock' };
+  return { data, origin: 'mock' };
 }
+
+/** Automatic mock fallback is a development aid only (?mock=1 is handled earlier). */
+const AUTO_MOCK_FALLBACK = import.meta.env.DEV;
 
 async function request<T>(spec: RequestSpec<T>, options: RequestOptions = {}): Promise<ApiResult<T>> {
   const { endpoint } = spec;
@@ -291,15 +317,18 @@ async function request<T>(spec: RequestSpec<T>, options: RequestOptions = {}): P
     stop();
     if (controller.signal.aborted) throw abortReason();
     // Network error while the browser says it is online: endpoint unreachable.
-    return answerWithMock(spec, signal);
+    if (AUTO_MOCK_FALLBACK) return answerWithMock(spec, signal);
+    throw clientError('UNREACHABLE', endpoint);
   }
 
   const isJson = (response.headers.get('content-type') ?? '').includes('application/json');
 
-  // Not built yet (404/501) or a non-API HTML answer: offline mock.
-  if (response.status === 404 || response.status === 501 || (response.ok && !isJson)) {
+  // Not built yet (404/501) or a non-API HTML answer: offline mock in DEV only.
+  const notBuilt = response.status === 404 || response.status === 501;
+  if (notBuilt || (response.ok && !isJson)) {
     stop();
-    return answerWithMock(spec, signal);
+    if (AUTO_MOCK_FALLBACK) return answerWithMock(spec, signal);
+    throw clientError(notBuilt ? 'UNREACHABLE' : 'BAD_RESPONSE', endpoint, response.status);
   }
 
   let body: unknown;
@@ -456,7 +485,8 @@ export function brief(caseObject: CaseObject, options?: RequestOptions): Promise
 export async function health(options: RequestOptions = {}): Promise<HealthResponse> {
   const controller = new AbortController();
   const timer = window.setTimeout(() => controller.abort(), options.timeoutMs ?? HEALTH_TIMEOUT_MS);
-  options.signal?.addEventListener('abort', () => controller.abort(), { once: true });
+  const onAbort = () => controller.abort();
+  options.signal?.addEventListener('abort', onAbort, { once: true });
   try {
     const res = await fetch(API_PATHS.health, {
       headers: { Accept: 'application/json' },
@@ -472,6 +502,7 @@ export async function health(options: RequestOptions = {}): Promise<HealthRespon
     throw controller.signal.aborted ? clientError('TIMEOUT', 'health') : clientError('OFFLINE', 'health');
   } finally {
     window.clearTimeout(timer);
+    options.signal?.removeEventListener('abort', onAbort);
   }
 }
 

@@ -34,6 +34,7 @@ const TITLES: Partial<Record<ApiRequestError['code'], string>> = {
   UPSTREAM_ERROR: 'A data service did not answer',
   RATE_LIMITED: 'Too many requests for a moment',
   OFFLINE: 'You are offline',
+  UNREACHABLE: 'The service could not be reached',
   NO_TERMS_FOUND: 'No features found in this text',
   TEXT_TOO_LONG: 'Text is too long',
   LLM_UNAVAILABLE: 'Reading notes is not available here',

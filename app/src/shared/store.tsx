@@ -183,7 +183,9 @@ function reducer(state: StoreState, action: Action): StoreState {
     }
 
     case 'setNotes': {
-      const notes = action.notes.slice(0, LIMITS.notesMaxChars);
+      // Keep the full text, even over the limit: intake shows "Text is too long"
+      // and blocks submit (Requirement 1.2); api.extract also refuses it.
+      const notes = action.notes;
       // Edited text is no longer the bundled narrative, so it stops being a demo case.
       const demoText = findDemoCase(c.demo?.caseId)?.narrative;
       const demo = c.demo && demoText === notes ? c.demo : null;
@@ -209,7 +211,18 @@ function reducer(state: StoreState, action: Action): StoreState {
       // Manual terms survive a new extraction; the user's own entry wins on a clash.
       const manual = c.terms.filter((t) => t.provenance === 'manual');
       const manualIds = new Set(manual.map((t) => t.hpoId));
-      const terms = [...extracted.filter((t) => !manualIds.has(t.hpoId)), ...manual];
+      // A re-extracted term keeps the status the user last gave the same hpoId
+      // (observed, excluded or removed), so corrections are not lost (Requirement 2.6).
+      const previous = new Map(c.terms.map((t) => [t.hpoId, t] as const));
+      const terms = [
+        ...extracted
+          .filter((t) => !manualIds.has(t.hpoId))
+          .map((t) => {
+            const before = previous.get(t.hpoId);
+            return before ? { ...t, status: before.status } : t;
+          }),
+        ...manual,
+      ];
       return {
         caseObject: touch(c, { terms }),
         meta: {

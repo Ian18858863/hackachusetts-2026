@@ -2,6 +2,8 @@ export { DEMO_CASES, PRIMARY_DEMO_CASE_ID, findDemoCase, verifyDemoCase } from '
 export {
   MOCK_HPO_VERSION,
   MOCK_RECORDED_AT,
+  MOCK_RECORDED_DATE,
+  MockContractError,
   mockBrief,
   mockExtract,
   mockNextQuestions,
