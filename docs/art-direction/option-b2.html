@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Option B2 · Data editorial · Rare Disease Detective art direction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Option B2: Data editorial. White page, serif for headlines only, one
+   dot-matrix graphic as the proof. Static specimen, demo data. */
+:root {
+  --bg: #FFFFFF;
+  --paper: #F7F6F3;
+  --ink: #16181C;
+  --ink-2: #474B53;
+  --ink-3: #62666E;
+  --rule: #E6E4DF;
+  --rule-strong: #16181C;
+  --dot: #474B53;
+  --accent: #1F4F8F;
+  --accent-tint: #F1F4F9;
+  --ring: #8C9099;
+
+  --f-head: "Newsreader", Georgia, "Times New Roman", serif;
+  --f-text: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --t-xs: 0.875rem; --t-sm: 0.9375rem; --t-base: 1.0625rem; --t-md: 1.1875rem;
+  --t-lg: 1.5rem; --t-xl: 2.75rem;
+
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px;
+  --s-7: 48px; --s-8: 64px; --s-9: 96px;
+  --col: 184px;
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 160ms; --dur-proof: 520ms;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 var(--t-base)/1.5 var(--f-text); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p, figure { margin: 0; }
+a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wrap { max-width: 1152px; margin: 0 auto; padding: 0 var(--s-7); }
+
+.specimen { text-align: center; font-size: var(--t-xs); color: var(--ink-3); padding: var(--s-2) var(--s-5); background: var(--paper); }
+.specimen b { color: var(--ink-2); font-weight: 600; }
+
+.top { border-bottom: 1px solid var(--rule); }
+.top-in { display: flex; align-items: center; gap: var(--s-6); height: 64px; }
+.brand { font: 500 1.375rem/1 var(--f-head); text-decoration: none; white-space: nowrap; }
+.steps { display: flex; gap: var(--s-5); font-size: var(--t-sm); color: var(--ink-3); }
+.steps a { text-decoration: none; }
+.steps a[aria-current] { color: var(--ink); font-weight: 600; }
+.top-r { margin-left: auto; display: flex; align-items: center; gap: var(--s-5); font-size: var(--t-sm); }
+.demo { color: var(--ink-3); }
+.show-s, .codes { display: none; }
+.codes { margin-top: var(--s-3); font-size: 0.8125rem; color: var(--ink-3); }
+.btn { white-space: nowrap; font: 600 var(--t-sm)/1 var(--f-text); color: #fff; background: var(--accent); text-decoration: none; padding: 0 18px; min-height: 44px; display: inline-flex; align-items: center; border-radius: 4px; }
+
+.intro { padding: 40px 0 var(--s-5); max-width: 820px; }
+.kicker { font-size: var(--t-sm); color: var(--ink-3); margin-bottom: var(--s-3); }
+.kicker b { color: var(--ink); font-weight: 600; }
+h1 { font: 500 var(--t-xl)/1.1 var(--f-head); letter-spacing: -0.012em; }
+.dek { margin-top: var(--s-3); font-size: var(--t-md); color: var(--ink-2); max-width: 60ch; }
+.safety { margin-top: var(--s-3); font-size: var(--t-base); color: var(--ink); padding-left: var(--s-3); border-left: 2px solid var(--accent); }
+
+/* graphic */
+.fig { display: grid; grid-template-columns: minmax(0, 1fr) 216px; gap: 40px; padding: var(--s-5) 0 var(--s-8); border-top: 2px solid var(--rule-strong); }
+.fig-title { font: 600 var(--t-md)/1.3 var(--f-text); }
+.fig-sub { font-size: var(--t-sm); color: var(--ink-3); margin-top: 2px; }
+
+table { border-collapse: collapse; width: 100%; margin-top: var(--s-5); font-variant-numeric: tabular-nums; table-layout: fixed; }
+col.c-feat { width: auto; }
+col.c-cand { width: var(--col); }
+thead th { font-weight: 400; text-align: center; vertical-align: top; padding: var(--s-4) var(--s-2) var(--s-4); }
+.cand-n { display: block; font-size: var(--t-xs); color: var(--ink-3); }
+.cand-name { display: block; font: 500 1.125rem/1.2 var(--f-head); color: var(--ink); margin-top: 2px; min-height: 2.4em; }
+.cand-ov { display: block; font-size: var(--t-xs); color: var(--ink-2); margin-top: var(--s-2); }
+th.top1 .cand-n, th.top1 .cand-ov { color: var(--accent); }
+th.top1 .cand-name { color: var(--accent); }
+.c1 { background: var(--accent-tint); }
+thead th.c1 { border-radius: 10px 10px 0 0; padding-top: var(--s-4); }
+tfoot td.c1 { border-radius: 0 0 10px 10px; }
+
+tbody tr { border-top: 1px solid var(--rule); cursor: default; }
+tbody tr:last-child { border-bottom: 1px solid var(--rule); }
+tbody th { text-align: left; font-weight: 400; padding: 6px var(--s-4) 6px 0; }
+.f-plain { display: block; font-weight: 600; }
+.f-term { display: block; font-size: var(--t-xs); line-height: 1.35; color: var(--ink-3); }
+tbody td { text-align: center; height: 52px; padding: 0; }
+tbody tr:hover th .f-plain, tbody tr:focus-visible th .f-plain { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
+tbody tr:hover, tbody tr:focus-visible { background: rgba(22, 24, 28, 0.025); }
+tbody tr:focus-visible { outline-offset: -2px; }
+
+.d { display: inline-block; vertical-align: middle; border-radius: 50%; background: var(--dot); }
+.c1 .d { background: var(--accent); }
+.d[data-b="1"] { width: 7px; height: 7px; }
+.d[data-b="2"] { width: 12px; height: 12px; }
+.d[data-b="3"] { width: 17px; height: 17px; }
+.d[data-b="4"] { width: 22px; height: 22px; }
+.d[data-b="0"] { width: 14px; height: 2px; border-radius: 1px; background: var(--ring); }
+.c1 .d[data-b="0"] { background: var(--ring); }
+
+tfoot td { text-align: center; padding: var(--s-4) var(--s-3); font-size: var(--t-xs); color: var(--ink-2); }
+tfoot td a { font-size: 0.8125rem; color: var(--ink-3); }
+tfoot td b { display: block; font: 500 1.375rem/1.1 var(--f-head); color: var(--ink); }
+tfoot td.c1 b { color: var(--accent); }
+tfoot th { text-align: left; font-weight: 400; font-size: var(--t-xs); color: var(--ink-3); padding: var(--s-4) 0; }
+
+/* source line: reserved height, no layout shift */
+.source { margin-top: var(--s-5); min-height: 56px; font-size: var(--t-sm); color: var(--ink-3); }
+.source q { font: 500 var(--t-md)/1.4 var(--f-head); color: var(--ink); quotes: "\201C" "\201D"; }
+.source small { display: block; font-size: var(--t-xs); color: var(--ink-3); }
+
+/* side notes */
+.notes { padding-top: var(--s-2); font-size: var(--t-sm); color: var(--ink-2); }
+.note + .note { margin-top: var(--s-6); padding-top: var(--s-5); border-top: 1px solid var(--rule); }
+.note h2 { font: 600 var(--t-sm)/1.3 var(--f-text); color: var(--ink); margin-bottom: var(--s-2); }
+.legend { display: grid; grid-template-columns: 28px 1fr; row-gap: 10px; align-items: center; margin-top: var(--s-3); }
+.legend .d { justify-self: center; }
+.note .src { margin-top: var(--s-3); font-size: var(--t-xs); color: var(--ink-3); }
+
+.foot { background: var(--paper); padding: var(--s-6) 0 var(--s-7); font-size: var(--t-xs); color: var(--ink-3); }
+.foot p { max-width: 82ch; }
+.foot p + p { margin-top: var(--s-2); }
+
+/* signature motion: dots line up row by row behind each candidate */
+@keyframes pop { from { opacity: 0; transform: scale(0.2); } to { opacity: 1; transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+.d.m { animation: pop 420ms var(--ease) both; animation-delay: calc(200ms + var(--r) * 90ms + var(--c) * 40ms); }
+tfoot td b { animation: fade 400ms var(--ease) both; animation-delay: calc(900ms + var(--c) * 80ms); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+@media (max-width: 1080px) {
+  .steps { display: none; }
+  .fig { grid-template-columns: 1fr; gap: var(--s-6); }
+  .notes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-6); }
+  .note + .note { margin-top: 0; padding-top: 0; border-top: 0; }
+}
+@media (max-width: 640px) {
+  :root { --col: 72px; --t-base: 1rem; }
+  .hide-s, tfoot td a { display: none; }
+  .show-s { display: inline; }
+  .codes { display: block; }
+  .wrap { padding: 0 var(--s-4); }
+  .demo { display: none; }
+  .intro { padding: var(--s-6) 0 var(--s-5); }
+  h1 { font-size: 2.125rem; }
+  .dek { font-size: var(--t-base); }
+  .fig { padding-top: var(--s-4); }
+  table { margin-top: var(--s-5); }
+  thead th { padding: var(--s-3) 2px var(--s-3); }
+  .top-in { gap: var(--s-3); }
+  .brand { font-size: 1.25rem; }
+  .cand-name { font-size: 0.875rem; line-height: 1.2; min-height: 0; white-space: nowrap; }
+  .cand-long { display: none; }
+  .cand-ov { font-size: 0.8125rem; }
+  tbody th { padding: 10px var(--s-2) 10px 0; }
+  .f-plain { font-size: var(--t-sm); }
+  .f-term { font-size: 0.8125rem; line-height: 1.35; }
+  tbody td { height: 60px; }
+  tfoot td { padding: var(--s-3) 2px; }
+  tfoot td b { font-size: 1.125rem; }
+  .notes { grid-template-columns: 1fr; }
+  .note + .note { padding-top: var(--s-5); border-top: 1px solid var(--rule); }
+}
+@media (min-width: 641px) { .cand-short { display: none; } }
+</style>
+</head>
+<body>
+<p class="specimen"><b>Specimen B2 · Data editorial.</b> Static art-direction mock for Ian's review. Demo patient and illustrative frequencies only.</p>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#">Rare Disease Detective</a>
+    <nav class="steps" aria-label="Steps">
+      <a href="#">Notes</a><a href="#">Features</a><a href="#" aria-current="page">Possible matches</a><a href="#">What to check next</a><a href="#">Brief</a>
+    </nav>
+    <div class="top-r">
+      <span class="demo">Demo patient</span>
+      <a class="btn" href="#"><span class="hide-s">Prepare brief</span><span class="show-s">Brief</span></a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <p class="kicker"><b>Leo, age 6</b> · demo patient, not a real person</p>
+    <h1>Possible matches to discuss with a doctor</h1>
+    <p class="dek">Three conditions describe most of what Leo's parent wrote. Duchenne describes every feature, and describes each of them often.</p>
+    <p class="safety">Decision support, not a diagnosis.</p>
+  </section>
+
+  <section class="fig" aria-labelledby="fig-t">
+    <figure>
+      <p class="fig-title" id="fig-t">How often each of Leo's features occurs in each condition</p>
+      <p class="fig-sub">Larger dot, more often. Ranked left to right by phenotype overlap. Frequencies illustrative in this demo.</p>
+
+      <table>
+        <caption class="sr">Leo's 7 features against 3 possible matches, with how often each feature occurs in each condition</caption>
+        <colgroup><col class="c-feat"><col class="c-cand"><col class="c-cand"><col class="c-cand"></colgroup>
+        <thead>
+          <tr>
+            <th scope="col"><span class="sr">Leo's feature</span></th>
+            <th scope="col" class="c1 top1"><span class="cand-n">1</span><span class="cand-name"><span class="cand-long">Duchenne muscular dystrophy</span><span class="cand-short">Duchenne</span></span><span class="cand-ov">Strong overlap</span></th>
+            <th scope="col"><span class="cand-n">2</span><span class="cand-name"><span class="cand-long">Becker muscular dystrophy</span><span class="cand-short">Becker</span></span><span class="cand-ov">Strong overlap</span></th>
+            <th scope="col"><span class="cand-n">3</span><span class="cand-name"><span class="cand-long">Limb-girdle muscular dystrophy R9</span><span class="cand-short">LGMD R9</span></span><span class="cand-ov">Partial overlap</span></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr tabindex="0" data-q="Leo started walking late, at about 18 months." data-s="1" style="--r:0">
+            <th scope="row"><span class="f-plain">Walked late</span><span class="f-term">Delayed ability to walk</span></th>
+            <td class="c1"><i class="d m" data-b="2" style="--c:0"></i><span class="sr">Frequent</span></td><td><i class="d m" data-b="1" style="--c:1"></i><span class="sr">Occasional</span></td><td><i class="d m" data-b="0" style="--c:2"></i><span class="sr">Not recorded</span></td>
+          </tr>
+          <tr tabindex="0" data-q="Since he turned four he falls a lot, sometimes several times a day." data-s="2" style="--r:1">
+            <th scope="row"><span class="f-plain">Falls often</span><span class="f-term">Frequent falls</span></th>
+            <td class="c1"><i class="d m" data-b="3" style="--c:0"></i><span class="sr">Very frequent</span></td><td><i class="d m" data-b="2" style="--c:1"></i><span class="sr">Frequent</span></td><td><i class="d m" data-b="0" style="--c:2"></i><span class="sr">Not recorded</span></td>
+          </tr>
+          <tr tabindex="0" data-q="He can't climb stairs without holding the rail…" data-s="3" style="--r:2">
+            <th scope="row"><span class="f-plain">Weak hips and thighs</span><span class="f-term">Proximal muscle weakness</span></th>
+            <td class="c1"><i class="d m" data-b="3" style="--c:0"></i><span class="sr">Very frequent</span></td><td><i class="d m" data-b="3" style="--c:1"></i><span class="sr">Very frequent</span></td><td><i class="d m" data-b="3" style="--c:2"></i><span class="sr">Very frequent</span></td>
+          </tr>
+          <tr tabindex="0" data-q="…to get up from the floor he pushes on his knees with his hands." data-s="3" style="--r:3">
+            <th scope="row"><span class="f-plain">Uses hands to stand up</span><span class="f-term">Gowers sign</span></th>
+            <td class="c1"><i class="d m" data-b="3" style="--c:0"></i><span class="sr">Very frequent</span></td><td><i class="d m" data-b="2" style="--c:1"></i><span class="sr">Frequent</span></td><td><i class="d m" data-b="2" style="--c:2"></i><span class="sr">Frequent</span></td>
+          </tr>
+          <tr tabindex="0" data-q="His calves look big and feel hard compared with his thighs." data-s="4" style="--r:4">
+            <th scope="row"><span class="f-plain">Large firm calves</span><span class="f-term">Calf muscle pseudohypertrophy</span></th>
+            <td class="c1"><i class="d m" data-b="3" style="--c:0"></i><span class="sr">Very frequent</span></td><td><i class="d m" data-b="3" style="--c:1"></i><span class="sr">Very frequent</span></td><td><i class="d m" data-b="2" style="--c:2"></i><span class="sr">Frequent</span></td>
+          </tr>
+          <tr tabindex="0" data-q="At his last check-up a blood test showed a very high CK." data-s="5" style="--r:5">
+            <th scope="row"><span class="f-plain">High CK on a blood test</span><span class="f-term">Elevated circulating creatine kinase concentration</span></th>
+            <td class="c1"><i class="d m" data-b="4" style="--c:0"></i><span class="sr">Always</span></td><td><i class="d m" data-b="3" style="--c:1"></i><span class="sr">Very frequent</span></td><td><i class="d m" data-b="3" style="--c:2"></i><span class="sr">Very frequent</span></td>
+          </tr>
+          <tr tabindex="0" data-q="He tires quickly at the playground and asks to be carried home." data-s="6" style="--r:6">
+            <th scope="row"><span class="f-plain">Tires quickly</span><span class="f-term">Exercise intolerance</span></th>
+            <td class="c1"><i class="d m" data-b="2" style="--c:0"></i><span class="sr">Frequent</span></td><td><i class="d m" data-b="2" style="--c:1"></i><span class="sr">Frequent</span></td><td><i class="d m" data-b="2" style="--c:2"></i><span class="sr">Frequent</span></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <th scope="row">Features described</th>
+            <td class="c1"><b style="--c:0">7 of 7</b><a href="#">ORPHA:98896</a></td>
+            <td><b style="--c:1">7 of 7</b><a href="#">ORPHA:98895</a></td>
+            <td><b style="--c:2">5 of 7</b><a href="#">ORPHA:34515</a></td>
+          </tr>
+        </tfoot>
+      </table>
+
+      <p class="codes">Orphanet: 1 <a href="#">ORPHA:98896</a> · 2 <a href="#">ORPHA:98895</a> · 3 <a href="#">ORPHA:34515</a></p>
+      <p class="source" id="source" aria-live="polite">Hover or focus a feature to read the sentence it came from.</p>
+    </figure>
+
+    <aside class="notes" aria-label="How to read this graphic">
+      <div class="note">
+        <h2>Reading the dots</h2>
+        <p>How often the feature is reported in people with the condition.</p>
+        <div class="legend">
+          <i class="d" data-b="4"></i><span>Always</span>
+          <i class="d" data-b="3"></i><span>Very frequent</span>
+          <i class="d" data-b="2"></i><span>Frequent</span>
+          <i class="d" data-b="1"></i><span>Occasional</span>
+          <i class="d" data-b="0"></i><span>Not recorded</span>
+        </div>
+        <p class="src">Bands from HPO annotations. Illustrative in this demo.</p>
+      </div>
+      <div class="note">
+        <h2>What separates 1 and 2</h2>
+        <p>Both describe all 7 features. Walking late is frequent in Duchenne but occasional in Becker, so the age at first symptoms is worth asking about.</p>
+      </div>
+      <div class="note">
+        <h2>About the order</h2>
+        <p>Ranked by phenotype overlap from the Monarch Initiative. The order is a similarity, not a probability.</p>
+      </div>
+    </aside>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>This product uses the Human Phenotype Ontology (HPO). Find out more at <a href="https://hpo.jax.org">hpo.jax.org</a>. HPO release: shown live in the app (placeholder in this specimen). Disease names and ORPHAcodes from Orphanet, CC BY 4.0. Ranking via the Monarch Initiative, which is not intended for diagnosis.</p>
+    <p>Demo patient. Leo is not a real person. Frequencies shown are illustrative.</p>
+  </div>
+</footer>
+
+<script>
+  // Show the source sentence for the hovered or focused feature in a reserved line.
+  const src = document.getElementById('source');
+  const idle = src.innerHTML;
+  document.querySelectorAll('tbody tr').forEach(tr => {
+    const show = () => { src.innerHTML = '<small>From the parent\'s notes, sentence ' + tr.dataset.s + '</small><q></q>'; src.querySelector('q').textContent = tr.dataset.q; };
+    const hide = () => { src.innerHTML = idle; };
+    tr.addEventListener('mouseenter', show); tr.addEventListener('focus', show);
+    tr.addEventListener('mouseleave', hide); tr.addEventListener('blur', hide);
+  });
+</script>
+</body>
+</html>

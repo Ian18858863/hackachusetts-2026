@@ -1,0 +1,276 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Option B3 · Precision instrument · Rare Disease Detective art direction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* Option B3: Precision instrument. White, hairline grid, one shadow level,
+   Geist with Geist Mono used sparingly. Static specimen, demo data. */
+:root {
+  --bg: #FAFAFA;
+  --surface: #FFFFFF;
+  --ink: #0A0A0B;
+  --ink-2: #45474D;
+  --ink-3: #6B6E76;
+  --hair: #EAEAEC;
+  --hair-2: #DCDCE0;
+  --off: #D2D4DA;
+  --accent: #4338CA;
+  --accent-soft: #EEEDFB;
+  --on-accent: #FFFFFF;
+
+  --f-text: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace;
+
+  --t-2xs: 0.75rem; --t-xs: 0.8125rem; --t-sm: 0.875rem; --t-base: 1rem; --t-md: 1.125rem;
+  --t-lg: 1.75rem; --t-xl: 2.5rem;
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px;
+  --s-7: 48px; --s-8: 64px; --s-9: 96px;
+  --r-s: 6px; --r-m: 12px;
+  --shadow: 0 0 0 1px rgba(10, 10, 11, 0.06), 0 8px 24px -8px rgba(10, 10, 11, 0.12), 0 2px 4px rgba(10, 10, 11, 0.04);
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 150ms; --dur-proof: 480ms;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 var(--t-base)/1.5 var(--f-text); -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p, ul, ol { margin: 0; padding: 0; }
+ul, ol { list-style: none; }
+a { color: inherit; text-underline-offset: 3px; text-decoration-color: var(--hair-2); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.mono { font-family: var(--f-mono); font-size: 0.92em; letter-spacing: 0; }
+.wrap { max-width: 1152px; margin: 0 auto; padding: 0 var(--s-7); }
+
+.specimen { text-align: center; font-size: var(--t-xs); color: var(--ink-3); padding: var(--s-2) var(--s-5); border-bottom: 1px solid var(--hair); background: var(--surface); }
+.specimen b { color: var(--ink-2); font-weight: 500; }
+
+.top { background: var(--surface); border-bottom: 1px solid var(--hair); }
+.top-in { display: flex; align-items: center; gap: var(--s-6); height: 60px; }
+.brand { display: flex; align-items: center; gap: 10px; font-weight: 600; letter-spacing: -0.01em; text-decoration: none; white-space: nowrap; }
+.brand svg { width: 20px; height: 20px; }
+.steps { display: flex; gap: 2px; font-size: var(--t-sm); color: var(--ink-3); }
+.steps a { text-decoration: none; padding: 6px 10px; border-radius: var(--r-s); }
+.steps a[aria-current] { color: var(--ink); background: #F2F2F4; font-weight: 500; }
+.top-r { margin-left: auto; display: flex; gap: var(--s-3); align-items: center; }
+.demo { font: 500 var(--t-2xs)/1 var(--f-mono); color: var(--ink-2); border: 1px solid var(--hair-2); padding: 6px 8px; border-radius: var(--r-s); }
+.btn { white-space: nowrap; font: 500 var(--t-sm)/1 var(--f-text); color: var(--on-accent); background: var(--ink); text-decoration: none; padding: 0 16px; min-height: 40px; display: inline-flex; align-items: center; border-radius: var(--r-s); }
+.show-s { display: none; }
+
+.intro { padding: 40px 0 var(--s-6); display: flex; justify-content: space-between; align-items: end; gap: var(--s-6); }
+.kicker { font-size: var(--t-sm); color: var(--ink-3); margin-bottom: var(--s-3); }
+.kicker b { color: var(--ink); font-weight: 500; }
+h1 { font: 600 var(--t-xl)/1.1 var(--f-text); letter-spacing: -0.035em; }
+.safety { margin-top: var(--s-3); color: var(--ink-2); font-size: var(--t-md); }
+.safety b { color: var(--ink); font-weight: 500; }
+.meta { font: 400 var(--t-2xs)/1.6 var(--f-mono); color: var(--ink-3); text-align: right; white-space: nowrap; }
+
+.grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--s-5); padding-bottom: var(--s-9); align-items: start; }
+
+/* focal card */
+.card { grid-column: span 7; background: var(--surface); border-radius: var(--r-m); box-shadow: var(--shadow); overflow: hidden; }
+.card-h { padding: var(--s-6) var(--s-6) var(--s-5); }
+.rank { display: inline-flex; align-items: center; gap: var(--s-2); font: 500 var(--t-2xs)/1 var(--f-mono); color: var(--accent); background: var(--accent-soft); padding: 6px 8px; border-radius: var(--r-s); }
+.card-top { display: flex; justify-content: space-between; align-items: center; }
+.card h2 { font: 600 var(--t-lg)/1.15 var(--f-text); letter-spacing: -0.025em; margin-top: var(--s-4); }
+.card .ov { margin-top: var(--s-2); color: var(--ink-2); }
+.card .ov b { color: var(--ink); font-weight: 500; }
+.card .code { font: 400 var(--t-xs)/1 var(--f-mono); color: var(--ink-3); }
+
+.ev-h, .ev { display: grid; grid-template-columns: 28px minmax(0, 1fr) 128px; gap: var(--s-3); align-items: center; padding: 0 var(--s-6); }
+.ev-h { font-size: var(--t-xs); color: var(--ink-3); padding-top: var(--s-3); padding-bottom: var(--s-3); border-top: 1px solid var(--hair); }
+.ev-h span:last-child { text-align: left; }
+.ev { min-height: 56px; border-top: 1px solid var(--hair); cursor: default; transition: background var(--dur-fast) var(--ease); }
+.ev:hover, .ev:focus-visible { background: #F7F7FB; }
+.ev:focus-visible { outline-offset: -2px; border-radius: 0; }
+.ev-i { font: 400 var(--t-xs)/1 var(--f-mono); color: var(--ink-3); }
+.ev-n { font-weight: 500; display: block; }
+.ev-t { font-size: var(--t-xs); color: var(--ink-3); display: block; }
+.freq { display: flex; align-items: center; gap: 10px; font-size: var(--t-sm); color: var(--ink-2); }
+
+/* signal glyph: four rising ticks */
+.sig { display: inline-flex; align-items: flex-end; gap: 2px; height: 14px; flex: none; }
+.sig i { width: 3px; border-radius: 1px; background: var(--off); }
+.sig i:nth-child(1) { height: 5px; } .sig i:nth-child(2) { height: 8px; } .sig i:nth-child(3) { height: 11px; } .sig i:nth-child(4) { height: 14px; }
+.sig[data-b="1"] i:nth-child(-n+1), .sig[data-b="2"] i:nth-child(-n+2), .sig[data-b="3"] i:nth-child(-n+3), .sig[data-b="4"] i { background: var(--ink); }
+.card .sig[data-b] i { --on: var(--accent); }
+.card .sig[data-b="1"] i:nth-child(-n+1), .card .sig[data-b="2"] i:nth-child(-n+2), .card .sig[data-b="3"] i:nth-child(-n+3), .card .sig[data-b="4"] i { background: var(--accent); }
+
+/* source line: reserved height */
+.source { border-top: 1px solid var(--hair); background: #FBFBFC; padding: var(--s-4) var(--s-6); min-height: 76px; font-size: var(--t-sm); color: var(--ink-3); }
+.source small { display: block; font: 400 var(--t-2xs)/1.4 var(--f-mono); color: var(--ink-3); margin-bottom: 2px; }
+.source q { color: var(--ink); quotes: "\201C" "\201D"; }
+
+/* comparison */
+.side { grid-column: span 5; padding: var(--s-2) 0 0 var(--s-4); }
+.side-h { font: 600 var(--t-md)/1.3 var(--f-text); letter-spacing: -0.01em; }
+.side-s { font-size: var(--t-sm); color: var(--ink-3); margin-top: 2px; }
+.cands { margin-top: var(--s-5); border-top: 1px solid var(--hair); }
+.cands li { display: grid; grid-template-columns: 28px minmax(0, 1fr) auto; gap: var(--s-3); padding: var(--s-3) 0; border-bottom: 1px solid var(--hair); align-items: baseline; }
+.cands .n { font: 400 var(--t-xs)/1 var(--f-mono); color: var(--ink-3); }
+.cands li:first-child .n { color: var(--accent); }
+.cands .nm { font-weight: 500; font-size: var(--t-sm); }
+.cands .ovl { font-size: var(--t-xs); color: var(--ink-3); display: block; font-weight: 400; }
+.cands .c { font: 400 var(--t-2xs)/1 var(--f-mono); color: var(--ink-3); }
+
+.mx { margin-top: var(--s-5); width: 100%; border-collapse: collapse; font-size: var(--t-sm); }
+.mx th { font-weight: 400; }
+.mx thead th { font: 400 var(--t-2xs)/1 var(--f-mono); color: var(--ink-3); padding: 0 0 var(--s-3); width: 56px; text-align: center; }
+.mx thead th:first-child { text-align: left; width: auto; }
+.mx thead th.on { color: var(--accent); }
+.mx tbody th { text-align: left; color: var(--ink-2); padding: 9px 0; }
+.mx tbody tr { border-top: 1px solid var(--hair); }
+.mx td { text-align: center; }
+.mx td.on { background: rgba(67, 56, 202, 0.04); }
+.mx .nr { font: 400 var(--t-xs)/1 var(--f-mono); color: var(--ink-3); }
+.mx tfoot td, .mx tfoot th { padding-top: var(--s-3); border-top: 1px solid var(--hair-2); font: 500 var(--t-xs)/1 var(--f-mono); color: var(--ink); }
+.mx tfoot th { font-family: var(--f-text); font-weight: 400; color: var(--ink-3); text-align: left; }
+
+.key { margin-top: var(--s-5); font-size: var(--t-xs); color: var(--ink-3); display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); }
+.key > span { display: inline-flex; align-items: center; gap: 6px; }
+.note { margin-top: var(--s-3); font-size: var(--t-xs); color: var(--ink-3); }
+
+.foot { border-top: 1px solid var(--hair); background: var(--surface); padding: var(--s-6) 0 var(--s-7); font-size: var(--t-xs); color: var(--ink-3); }
+.foot p { max-width: 84ch; }
+.foot p + p { margin-top: var(--s-2); }
+
+/* signature motion: ticks rise row by row, card first, then the matrix */
+@keyframes rise { from { transform: scaleY(0); } to { transform: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+.m i { transform-origin: bottom; animation: rise 360ms var(--ease) both; animation-delay: calc(200ms + var(--r) * 70ms + var(--c, 0) * 30ms); }
+.m i:nth-child(2) { animation-delay: calc(240ms + var(--r) * 70ms + var(--c, 0) * 30ms); }
+.m i:nth-child(3) { animation-delay: calc(280ms + var(--r) * 70ms + var(--c, 0) * 30ms); }
+.m i:nth-child(4) { animation-delay: calc(320ms + var(--r) * 70ms + var(--c, 0) * 30ms); }
+.ev .freq span:last-child { animation: fade 400ms var(--ease) both; animation-delay: calc(360ms + var(--r) * 70ms); }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+@media (max-width: 1080px) {
+  .steps { display: none; }
+  .card, .side { grid-column: span 12; }
+  .side { padding: var(--s-4) 0 0; }
+}
+@media (max-width: 640px) {
+  .wrap { padding: 0 var(--s-4); }
+  .top-in { gap: var(--s-3); }
+  .demo, .hide-s, .meta { display: none; }
+  .show-s { display: inline; }
+  .intro { padding: var(--s-6) 0 var(--s-5); }
+  h1 { font-size: 2rem; letter-spacing: -0.03em; }
+  .safety { font-size: var(--t-base); }
+  .grid { gap: var(--s-5); }
+  .card { margin: 0 calc(var(--s-2) * -1); }
+  .card-h { padding: var(--s-5) var(--s-4) var(--s-4); }
+  .card-top { display: flex; justify-content: space-between; align-items: center; }
+.card h2 { font-size: 1.5rem; }
+  .ev-h, .ev { grid-template-columns: 22px minmax(0, 1fr) 112px; padding: 0 var(--s-4); gap: var(--s-2); }
+  .ev { padding-top: 8px; padding-bottom: 8px; }
+  .freq { font-size: var(--t-xs); gap: 8px; }
+  .source { padding: var(--s-3) var(--s-4); min-height: 88px; }
+  .mx thead th { width: 48px; }
+}
+</style>
+</head>
+<body>
+<p class="specimen"><b>Specimen B3 · Precision instrument.</b> Static art-direction mock for Ian's review. Demo patient and illustrative frequencies only.</p>
+
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="#"><svg viewBox="0 0 20 20" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="5" fill="#0A0A0B"/><path d="M6 13V9M10 13V7M14 13V5" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>Rare Disease Detective</a>
+    <nav class="steps" aria-label="Steps">
+      <a href="#">Notes</a><a href="#">Features</a><a href="#" aria-current="page">Possible matches</a><a href="#">What to check next</a><a href="#">Brief</a>
+    </nav>
+    <div class="top-r">
+      <span class="demo">DEMO PATIENT</span>
+      <a class="btn" href="#"><span class="hide-s">Prepare brief</span><span class="show-s">Brief</span></a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <div>
+      <p class="kicker"><b>Leo, age 6</b> · demo patient, not a real person</p>
+      <h1>Possible matches to discuss with a doctor</h1>
+      <p class="safety"><b>Decision support, not a diagnosis.</b> Only a clinician can confirm a condition.</p>
+    </div>
+  </section>
+
+  <section class="grid" aria-label="Ranked possible matches">
+    <article class="card" aria-labelledby="c1">
+      <div class="card-h">
+        <div class="card-top"><span class="rank">01 · CLOSEST OVERLAP</span><a class="code" href="#">ORPHA:98896</a></div>
+        <h2 id="c1">Duchenne muscular dystrophy</h2>
+        <p class="ov"><b>Strong overlap.</b> All 7 of Leo's features appear in this condition.</p>
+      </div>
+      <p class="ev-h" aria-hidden="true"><span></span><span>Leo's feature</span><span>In Duchenne</span></p>
+      <ul>
+        <li class="ev" tabindex="0" style="--r:0" data-s="1" data-q="Leo started walking late, at about 18 months."><span class="ev-i">01</span><span><span class="ev-n">Walked late</span><span class="ev-t">Delayed ability to walk</span></span><span class="freq"><span class="sig m" data-b="2" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Frequent</span></span></li>
+        <li class="ev" tabindex="0" style="--r:1" data-s="2" data-q="Since he turned four he falls a lot, sometimes several times a day."><span class="ev-i">02</span><span><span class="ev-n">Falls often</span><span class="ev-t">Frequent falls</span></span><span class="freq"><span class="sig m" data-b="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Very frequent</span></span></li>
+        <li class="ev" tabindex="0" style="--r:2" data-s="3" data-q="He can't climb stairs without holding the rail…"><span class="ev-i">03</span><span><span class="ev-n">Weak hips and thighs</span><span class="ev-t">Proximal muscle weakness</span></span><span class="freq"><span class="sig m" data-b="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Very frequent</span></span></li>
+        <li class="ev" tabindex="0" style="--r:3" data-s="3" data-q="…to get up from the floor he pushes on his knees with his hands."><span class="ev-i">04</span><span><span class="ev-n">Uses hands to stand up</span><span class="ev-t">Gowers sign</span></span><span class="freq"><span class="sig m" data-b="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Very frequent</span></span></li>
+        <li class="ev" tabindex="0" style="--r:4" data-s="4" data-q="His calves look big and feel hard compared with his thighs."><span class="ev-i">05</span><span><span class="ev-n">Large firm calves</span><span class="ev-t">Calf muscle pseudohypertrophy</span></span><span class="freq"><span class="sig m" data-b="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Very frequent</span></span></li>
+        <li class="ev" tabindex="0" style="--r:5" data-s="5" data-q="At his last check-up a blood test showed a very high CK."><span class="ev-i">06</span><span><span class="ev-n">High CK on a blood test</span><span class="ev-t">Elevated circulating creatine kinase concentration</span></span><span class="freq"><span class="sig m" data-b="4" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Always</span></span></li>
+        <li class="ev" tabindex="0" style="--r:6" data-s="6" data-q="He tires quickly at the playground and asks to be carried home."><span class="ev-i">07</span><span><span class="ev-n">Tires quickly</span><span class="ev-t">Exercise intolerance</span></span><span class="freq"><span class="sig m" data-b="2" aria-hidden="true"><i></i><i></i><i></i><i></i></span><span>Frequent</span></span></li>
+      </ul>
+      <p class="source" id="source" aria-live="polite"><small>SOURCE</small>Hover or focus a feature to read the sentence it came from.</p>
+    </article>
+
+    <aside class="side" aria-labelledby="cmp">
+      <h2 class="side-h" id="cmp">All three, side by side</h2>
+      <p class="side-s">How often each feature occurs in each condition.</p>
+      <ol class="cands">
+        <li><span class="n">01</span><span class="nm">Duchenne muscular dystrophy<span class="ovl">Strong overlap · 7 of 7</span></span><a class="c" href="#">ORPHA:98896</a></li>
+        <li><span class="n">02</span><span class="nm">Becker muscular dystrophy<span class="ovl">Strong overlap · 7 of 7</span></span><a class="c" href="#">ORPHA:98895</a></li>
+        <li><span class="n">03</span><span class="nm">Limb-girdle muscular dystrophy R9<span class="ovl">Partial overlap · 5 of 7</span></span><a class="c" href="#">ORPHA:34515</a></li>
+      </ol>
+      <table class="mx">
+        <caption class="key-cap" style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)">Frequency band of each feature in each candidate</caption>
+        <thead><tr><th scope="col">Feature</th><th scope="col" class="on">01</th><th scope="col">02</th><th scope="col">03</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Walked late</th><td class="on"><span class="sig m" data-b="2" style="--r:7;--c:0" role="img" aria-label="Frequent"><i></i><i></i><i></i><i></i></span></td><td><span class="sig m" data-b="1" style="--r:7;--c:1" role="img" aria-label="Occasional"><i></i><i></i><i></i><i></i></span></td><td><span class="nr">n/r</span></td></tr>
+          <tr><th scope="row">Falls often</th><td class="on"><span class="sig m" data-b="3" style="--r:8;--c:0" role="img" aria-label="Very frequent"><i></i><i></i><i></i><i></i></span></td><td><span class="sig m" data-b="2" style="--r:8;--c:1" role="img" aria-label="Frequent"><i></i><i></i><i></i><i></i></span></td><td><span class="nr">n/r</span></td></tr>
+          <tr><th scope="row">Weak hips and thighs</th><td class="on"><span class="sig m" data-b="3" style="--r:9;--c:0" role="img" aria-label="Very frequent"><i></i><i></i><i></i><i></i></span></td><td><span class="sig m" data-b="3" style="--r:9;--c:1" role="img" aria-label="Very frequent"><i></i><i></i><i></i><i></i></span></td><td><span class="sig m" data-b="3" style="--r:9;--c:2" role="img" aria-label="Very frequent"><i></i><i></i><i></i><i></i></span></td></tr>
+          <tr><th scope="row">Uses hands to stand up</th><td class="on"><span class="sig m" data-b="3" style="--r:10;--c:0" role="img" aria-label="Very frequent"><i></i><i></i><i></i><i></i></span></td><td><span class="sig m" data-b="2" style="--r:10;--c:1" role="img" aria-label="Frequent"><i></i><i></i><i></i><i></i></span></td><td><span class="sig m" data-b="2" style="--r:10;--c:2" role="img" aria-label="Frequent"><i></i><i></i><i></i><i></i></span></td></tr>
+          <tr><th scope="row">Large firm calves</th><td class="on"><span class="sig m" data-b="3" style="--r:11;--c:0" role="img" aria-label="Very frequent"><i></i><i></i><i></i><i></i></span></td><td><span class="sig m" data-b="3" style="--r:11;--c:1" role="img" aria-label="Very frequent"><i></i><i></i><i></i><i></i></span></td><td><span class="sig m" data-b="2" style="--r:11;--c:2" role="img" aria-label="Frequent"><i></i><i></i><i></i><i></i></span></td></tr>
+          <tr><th scope="row">High CK</th><td class="on"><span class="sig m" data-b="4" style="--r:12;--c:0" role="img" aria-label="Always"><i></i><i></i><i></i><i></i></span></td><td><span class="sig m" data-b="3" style="--r:12;--c:1" role="img" aria-label="Very frequent"><i></i><i></i><i></i><i></i></span></td><td><span class="sig m" data-b="3" style="--r:12;--c:2" role="img" aria-label="Very frequent"><i></i><i></i><i></i><i></i></span></td></tr>
+          <tr><th scope="row">Tires quickly</th><td class="on"><span class="sig m" data-b="2" style="--r:13;--c:0" role="img" aria-label="Frequent"><i></i><i></i><i></i><i></i></span></td><td><span class="sig m" data-b="2" style="--r:13;--c:1" role="img" aria-label="Frequent"><i></i><i></i><i></i><i></i></span></td><td><span class="sig m" data-b="2" style="--r:13;--c:2" role="img" aria-label="Frequent"><i></i><i></i><i></i><i></i></span></td></tr>
+        </tbody>
+        <tfoot><tr><th scope="row">Described</th><td>7/7</td><td>7/7</td><td>5/7</td></tr></tfoot>
+      </table>
+      <p class="key" aria-label="Key">
+        <span><span class="sig" data-b="1" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Occasional</span>
+        <span><span class="sig" data-b="2" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Frequent</span>
+        <span><span class="sig" data-b="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Very frequent</span>
+        <span><span class="sig" data-b="4" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Always</span>
+        <span><span class="mono">n/r</span> Not recorded</span>
+      </p>
+      <p class="note">HPO frequency bands, illustrative in this demo. Order is a similarity from the Monarch Initiative, not a probability.</p>
+    </aside>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>This product uses the Human Phenotype Ontology (HPO). Find out more at <a href="https://hpo.jax.org">hpo.jax.org</a>. HPO release: shown live in the app (placeholder in this specimen). Disease names and ORPHAcodes from Orphanet, CC BY 4.0. Ranking via the Monarch Initiative, which is not intended for diagnosis.</p>
+    <p>Demo patient. Leo is not a real person. Frequencies shown are illustrative.</p>
+  </div>
+</footer>
+
+<script>
+  // Show the source sentence for the hovered or focused feature in a reserved line.
+  const src = document.getElementById('source');
+  const idle = src.innerHTML;
+  document.querySelectorAll('.ev').forEach(li => {
+    const show = () => { src.innerHTML = '<small>SOURCE · PARENT\'S NOTES, SENTENCE ' + li.dataset.s + '</small><q></q>'; src.querySelector('q').textContent = li.dataset.q; };
+    const hide = () => { src.innerHTML = idle; };
+    li.addEventListener('mouseenter', show); li.addEventListener('focus', show);
+    li.addEventListener('mouseleave', hide); li.addEventListener('blur', hide);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,261 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Option B1 · Quiet clinical · Rare Disease Detective art direction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500;600&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* Option B1: Quiet clinical. White, generous space, one calm blue accent.
+   Static specimen for art direction. Demo patient, illustrative frequencies. */
+:root {
+  --bg: #FFFFFF;
+  --surface: #F5F6F8;
+  --surface-2: #EEF0F3;
+  --ink: #111318;
+  --ink-2: #464B55;
+  --ink-3: #636975;
+  --hair: #E8EAEE;
+  --dot-off: #D3D7DE;
+  --accent: #2F5FD0;
+  --accent-ink: #2450B8;
+  --accent-soft: #EAF0FC;
+  --on-accent: #FFFFFF;
+
+  --f-display: "Inter Tight", "Inter", system-ui, -apple-system, sans-serif;
+  --f-text: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+
+  --t-xs: 0.8125rem; --t-sm: 0.9375rem; --t-base: 1rem; --t-md: 1.125rem;
+  --t-lg: 1.5rem; --t-xl: 2.5rem; --t-2xl: 3.25rem;
+
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px;
+  --s-7: 48px; --s-8: 64px; --s-9: 96px;
+
+  --r-s: 10px; --r-m: 16px; --r-l: 28px; --r-pill: 999px;
+  --shadow: 0 12px 32px -12px rgba(17, 19, 24, 0.18), 0 2px 6px rgba(17, 19, 24, 0.06);
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 160ms; --dur-base: 220ms; --dur-proof: 560ms;
+  --z-pop: 10;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 var(--t-base)/1.5 var(--f-text);
+  -webkit-font-smoothing: antialiased; font-feature-settings: "cv11", "ss01"; }
+h1, h2, h3, p, ul { margin: 0; padding: 0; }
+ul { list-style: none; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 6px; }
+.wrap { max-width: 1152px; margin: 0 auto; padding: 0 var(--s-7); }
+
+.specimen { text-align: center; font-size: var(--t-xs); color: var(--ink-3); padding: var(--s-2) var(--s-5); background: var(--surface); }
+.specimen b { color: var(--ink-2); font-weight: 500; }
+
+.top-in { display: flex; align-items: center; gap: var(--s-6); height: 72px; }
+.brand { white-space: nowrap; font: 600 var(--t-md)/1 var(--f-display); letter-spacing: -0.02em; text-decoration: none; display: flex; align-items: center; gap: 10px; }
+.brand-mark { width: 22px; height: 22px; border-radius: 7px; background: var(--ink); position: relative; }
+.brand-mark::after { content: ""; position: absolute; inset: 6px; border-radius: 50%; border: 2px solid #fff; }
+.steps { display: flex; gap: var(--s-5); font-size: var(--t-sm); color: var(--ink-3); margin-left: var(--s-5); }
+.steps a { text-decoration: none; padding: 6px 0; }
+.steps a[aria-current] { color: var(--ink); font-weight: 500; }
+.top-r { margin-left: auto; display: flex; align-items: center; gap: var(--s-4); }
+.demo { font-size: var(--t-xs); color: var(--ink-2); background: var(--surface); padding: 6px 12px; border-radius: var(--r-pill); }
+.show-s { display: none; }
+.btn { white-space: nowrap; font: 500 var(--t-sm)/1 var(--f-text); text-decoration: none; color: var(--on-accent); background: var(--ink); padding: 13px 20px; border-radius: var(--r-pill); min-height: 44px; display: inline-flex; align-items: center; }
+
+.intro { padding: var(--s-7) 0 var(--s-6); }
+.eyebrow { font-size: var(--t-sm); color: var(--ink-3); margin-bottom: var(--s-4); }
+.eyebrow b { color: var(--ink); font-weight: 500; }
+h1 { font: 600 clamp(2rem, 3.4vw, 3rem)/1.08 var(--f-display); letter-spacing: -0.026em; }
+.safety { margin-top: var(--s-4); font-size: var(--t-md); color: var(--ink-2); max-width: 62ch; }
+.safety b { color: var(--ink); font-weight: 500; }
+
+.results { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: var(--s-7); align-items: start; padding-bottom: var(--s-9); }
+
+/* the focal candidate */
+.lead { background: var(--surface); border-radius: var(--r-l); padding: 40px 40px var(--s-6); }
+.lead-rank { font-size: var(--t-sm); color: var(--accent-ink); font-weight: 500; display: flex; align-items: center; gap: var(--s-2); }
+.lead-rank .n { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: inline-grid; place-items: center; font-size: 13px; font-weight: 600; }
+.lead h2 { font: 600 var(--t-xl)/1.08 var(--f-display); letter-spacing: -0.024em; margin-top: var(--s-3); }
+.lead .ov { margin-top: var(--s-3); color: var(--ink-2); font-size: var(--t-md); }
+.lead .ov b { color: var(--ink); font-weight: 500; }
+
+.ev-head { display: flex; justify-content: space-between; font-size: var(--t-xs); color: var(--ink-3); margin: var(--s-5) 0 var(--s-1); padding: 0 var(--s-4); }
+.evidence li { position: relative; }
+.ev { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--s-4); padding: 9px var(--s-4); border-radius: var(--r-s);
+  cursor: default; transition: background var(--dur-fast) var(--ease); }
+.ev:hover, .ev:focus-visible { background: var(--bg); }
+.ev-name { font-weight: 500; }
+.ev-term { display: block; font-size: var(--t-xs); color: var(--ink-3); }
+.freq { display: flex; align-items: center; gap: var(--s-3); font-size: var(--t-sm); color: var(--ink-2); min-width: 150px; justify-content: flex-end; }
+
+/* frequency glyph: four dots, filled from left */
+.g { display: inline-flex; gap: 3px; }
+.g i { width: 6px; height: 6px; border-radius: 50%; background: var(--dot-off); }
+.g[data-b="1"] i:nth-child(-n+1), .g[data-b="2"] i:nth-child(-n+2),
+.g[data-b="3"] i:nth-child(-n+3), .g[data-b="4"] i { background: var(--accent); }
+
+/* source sentence popover, reserved off-flow so nothing shifts */
+.pop { position: absolute; z-index: var(--z-pop); left: var(--s-4); right: var(--s-4); bottom: calc(100% - 4px); background: var(--bg); border-radius: var(--r-m); box-shadow: var(--shadow);
+  padding: var(--s-3) var(--s-4); font-size: var(--t-sm); color: var(--ink-2); opacity: 0; transform: translateY(4px); pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease), transform var(--dur-base) var(--ease); }
+.pop small { display: block; font-size: var(--t-xs); color: var(--ink-3); margin-bottom: 2px; }
+.pop q { color: var(--ink); quotes: "\201C" "\201D"; }
+.evidence li:hover .pop, .evidence li:focus-within .pop { opacity: 1; transform: none; }
+
+.lead-foot { margin-top: var(--s-5); padding: 0 var(--s-4); display: flex; justify-content: space-between; gap: var(--s-4); font-size: var(--t-xs); color: var(--ink-3); flex-wrap: wrap; }
+.lead-foot a { color: var(--ink-2); }
+
+/* the quieter candidates */
+.others { padding-top: var(--s-5); }
+.others-h { font-size: var(--t-sm); color: var(--ink-3); margin-bottom: var(--s-5); }
+.alt { padding: var(--s-5) 0; }
+.alt + .alt { border-top: 1px solid var(--hair); }
+.alt-top { display: flex; gap: var(--s-3); align-items: baseline; }
+.alt-n { font: 500 var(--t-md)/1 var(--f-display); color: var(--ink-3); width: 20px; flex: none; }
+.alt h3 { font: 600 1.25rem/1.25 var(--f-display); letter-spacing: -0.015em; }
+.alt p { margin: var(--s-2) 0 0 32px; color: var(--ink-2); font-size: var(--t-sm); }
+.alt p b { color: var(--ink); font-weight: 500; }
+.strip { margin: var(--s-4) 0 0 32px; display: flex; gap: var(--s-2); }
+.strip span { width: 28px; display: grid; justify-items: center; gap: 6px; font-size: 11px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.strip .d { width: 14px; height: 14px; border-radius: 50%; background: var(--ink-2); }
+.strip .d[data-b="1"] { transform: scale(0.45); }
+.strip .d[data-b="2"] { transform: scale(0.65); }
+.strip .d[data-b="3"] { transform: scale(0.85); }
+.strip .d[data-b="0"] { background: none; box-shadow: inset 0 0 0 1.5px var(--ink-3); transform: scale(0.55); }
+.alt .code { display: inline-block; margin: var(--s-3) 0 0 32px; font-size: var(--t-xs); color: var(--ink-3); }
+
+.key { margin-top: var(--s-5); padding: var(--s-4) var(--s-5); background: var(--surface); border-radius: var(--r-m); font-size: var(--t-xs); color: var(--ink-2); }
+.key-row { display: flex; flex-wrap: wrap; gap: var(--s-2) var(--s-4); margin-top: var(--s-2); }
+.key-row span { display: inline-flex; align-items: center; gap: 6px; }
+
+.foot { background: var(--surface); padding: var(--s-7) 0; font-size: var(--t-xs); color: var(--ink-3); }
+.foot p { max-width: 80ch; }
+.foot p + p { margin-top: var(--s-2); }
+
+/* signature motion: evidence lines up behind each candidate */
+@keyframes rise { from { opacity: 0; transform: translateX(-10px); } to { opacity: 1; transform: none; } }
+@keyframes dot { from { opacity: 0; scale: 0.2; } to { opacity: 1; scale: 1; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+.ev { animation: rise var(--dur-proof) var(--ease) both; animation-delay: calc(240ms + var(--i) * 70ms); }
+.ev .g i { animation: dot 320ms var(--ease) both; animation-delay: calc(420ms + var(--i) * 70ms); }
+.strip span { animation: fade 420ms var(--ease) both; animation-delay: calc(700ms + var(--i) * 60ms); }
+.lead h2, .lead .ov { animation: fade 480ms var(--ease) both; animation-delay: 80ms; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+@media (max-width: 1080px) { .steps { display: none; } }
+@media (max-width: 860px) {
+  .wrap { padding: 0 var(--s-5); }
+  .results { grid-template-columns: 1fr; gap: var(--s-5); }
+  .others { padding-top: 0; }
+  .others-h { margin-bottom: 0; }
+}
+@media (max-width: 560px) {
+  .wrap { padding: 0 var(--s-4); }
+  .top-in { height: 64px; gap: var(--s-3); }
+  .demo { display: none; }
+  .hide-s { display: none; }
+  .show-s { display: inline; }
+  .btn { padding: 13px 18px; }
+  .specimen { font-size: 12px; }
+  .intro { padding: var(--s-6) 0 var(--s-5); }
+  h1 { font-size: 2.125rem; letter-spacing: -0.022em; }
+  .safety { font-size: var(--t-base); }
+  .lead { padding: var(--s-5) var(--s-2) var(--s-4); border-radius: 22px; margin: 0 calc(var(--s-2) * -1); }
+  .lead-rank, .lead h2, .lead .ov { padding: 0 var(--s-3); }
+  .lead h2 { font-size: 1.875rem; }
+  .lead .ov { font-size: var(--t-base); }
+  .ev-head { padding: 0 var(--s-3); margin-top: var(--s-5); }
+  .ev { padding: 10px var(--s-3); gap: var(--s-3); }
+  .freq { min-width: 0; gap: var(--s-2); font-size: var(--t-xs); }
+  .lead-foot { padding: 0 var(--s-3); }
+  .alt p, .strip, .alt .code { margin-left: 32px; }
+  .strip { gap: 4px; }
+}
+</style>
+</head>
+<body>
+<p class="specimen"><b>Specimen B1 · Quiet clinical.</b> Static art-direction mock for Ian's review. Demo patient and illustrative frequencies only.</p>
+
+<header>
+  <div class="wrap top-in">
+    <a class="brand" href="#"><span class="brand-mark" aria-hidden="true"></span>Rare Disease Detective</a>
+    <nav class="steps" aria-label="Steps">
+      <a href="#">Notes</a><a href="#">Features</a><a href="#" aria-current="page">Possible matches</a><a href="#">What to check next</a><a href="#">Brief</a>
+    </nav>
+    <div class="top-r">
+      <span class="demo">Demo patient</span>
+      <a class="btn" href="#"><span class="hide-s">Prepare brief</span><span class="show-s">Brief</span></a>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="intro">
+    <p class="eyebrow"><b>Leo, age 6</b> · demo patient, not a real person</p>
+    <h1>Possible matches to discuss with a doctor</h1>
+    <p class="safety"><b>Decision support, not a diagnosis.</b> Ranked by how closely Leo's 7 features overlap with each condition.</p>
+  </section>
+
+  <section class="results" aria-label="Ranked possible matches">
+    <article class="lead" aria-labelledby="c1">
+      <p class="lead-rank"><span class="n" aria-hidden="true">1</span>Closest overlap</p>
+      <h2 id="c1">Duchenne muscular dystrophy</h2>
+      <p class="ov"><b>Strong overlap.</b> All 7 of Leo's features appear in this condition.</p>
+
+      <p class="ev-head" aria-hidden="true"><span>Leo's features</span><span>How often in Duchenne</span></p>
+      <ul class="evidence">
+        <li><div class="ev" tabindex="0" style="--i:0"><span><span class="ev-name">Walked late</span><span class="ev-term">Delayed ability to walk</span></span><span class="freq"><span class="g" data-b="2" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Frequent</span></div>
+          <p class="pop" role="note"><small>From the parent's notes, sentence 1</small><q>Leo started walking late, at about 18 months.</q></p></li>
+        <li><div class="ev" tabindex="0" style="--i:1"><span><span class="ev-name">Falls often</span><span class="ev-term">Frequent falls</span></span><span class="freq"><span class="g" data-b="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Very frequent</span></div>
+          <p class="pop" role="note"><small>From the parent's notes, sentence 2</small><q>Since he turned four he falls a lot, sometimes several times a day.</q></p></li>
+        <li><div class="ev" tabindex="0" style="--i:2"><span><span class="ev-name">Weak hips and thighs</span><span class="ev-term">Proximal muscle weakness</span></span><span class="freq"><span class="g" data-b="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Very frequent</span></div>
+          <p class="pop" role="note"><small>From the parent's notes, sentence 3</small><q>He can't climb stairs without holding the rail…</q></p></li>
+        <li><div class="ev" tabindex="0" style="--i:3"><span><span class="ev-name">Uses hands to stand up</span><span class="ev-term">Gowers sign</span></span><span class="freq"><span class="g" data-b="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Very frequent</span></div>
+          <p class="pop" role="note"><small>From the parent's notes, sentence 3</small><q>…to get up from the floor he pushes on his knees with his hands.</q></p></li>
+        <li><div class="ev" tabindex="0" style="--i:4"><span><span class="ev-name">Large firm calves</span><span class="ev-term">Calf muscle pseudohypertrophy</span></span><span class="freq"><span class="g" data-b="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Very frequent</span></div>
+          <p class="pop" role="note"><small>From the parent's notes, sentence 4</small><q>His calves look big and feel hard compared with his thighs.</q></p></li>
+        <li><div class="ev" tabindex="0" style="--i:5"><span><span class="ev-name">High CK on a blood test</span><span class="ev-term">Elevated circulating creatine kinase concentration</span></span><span class="freq"><span class="g" data-b="4" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Always</span></div>
+          <p class="pop" role="note"><small>From the parent's notes, sentence 5</small><q>At his last check-up a blood test showed a very high CK.</q></p></li>
+        <li><div class="ev" tabindex="0" style="--i:6"><span><span class="ev-name">Tires quickly</span><span class="ev-term">Exercise intolerance</span></span><span class="freq"><span class="g" data-b="2" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Frequent</span></div>
+          <p class="pop" role="note"><small>From the parent's notes, sentence 6</small><q>He tires quickly at the playground and asks to be carried home.</q></p></li>
+      </ul>
+      <p class="lead-foot"><span>Hover or focus a feature to see the sentence it came from.</span><a href="#">ORPHA:98896</a></p>
+    </article>
+
+    <aside class="others" aria-label="Other possible matches">
+      <p class="others-h">Also worth discussing</p>
+      <article class="alt">
+        <div class="alt-top"><span class="alt-n">2</span><h3>Becker muscular dystrophy</h3></div>
+        <p><b>Strong overlap.</b> All 7 described. Walking late is less common than in Duchenne.</p>
+        <div class="strip" aria-label="Frequency of Leo's 7 features in Becker: occasional, frequent, very frequent, frequent, very frequent, very frequent, frequent">
+          <span style="--i:0"><i class="d" data-b="1"></i>1</span><span style="--i:1"><i class="d" data-b="2"></i>2</span><span style="--i:2"><i class="d" data-b="3"></i>3</span><span style="--i:3"><i class="d" data-b="2"></i>4</span><span style="--i:4"><i class="d" data-b="3"></i>5</span><span style="--i:5"><i class="d" data-b="3"></i>6</span><span style="--i:6"><i class="d" data-b="2"></i>7</span>
+        </div>
+        <a class="code" href="#">ORPHA:98895</a>
+      </article>
+      <article class="alt">
+        <div class="alt-top"><span class="alt-n">3</span><h3>Limb-girdle muscular dystrophy R9</h3></div>
+        <p><b>Partial overlap.</b> 5 of 7 described. Walking late and frequent falls are not recorded.</p>
+        <div class="strip" aria-label="Frequency of Leo's 7 features in limb-girdle R9: not recorded, not recorded, very frequent, frequent, frequent, very frequent, frequent">
+          <span style="--i:7"><i class="d" data-b="0"></i>1</span><span style="--i:8"><i class="d" data-b="0"></i>2</span><span style="--i:9"><i class="d" data-b="3"></i>3</span><span style="--i:10"><i class="d" data-b="2"></i>4</span><span style="--i:11"><i class="d" data-b="2"></i>5</span><span style="--i:12"><i class="d" data-b="3"></i>6</span><span style="--i:13"><i class="d" data-b="2"></i>7</span>
+        </div>
+        <a class="code" href="#">ORPHA:34515</a>
+      </article>
+      <div class="key">
+        Numbers follow Leo's features in order. Dot size shows how often each occurs in the condition (HPO frequency, illustrative in this demo). Order is by phenotype overlap, not a probability.
+      </div>
+    </aside>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>This product uses the Human Phenotype Ontology (HPO). Find out more at <a href="https://hpo.jax.org">hpo.jax.org</a>. HPO release: shown live in the app (placeholder in this specimen). Disease names and ORPHAcodes from Orphanet, CC BY 4.0. Ranking via the Monarch Initiative, which is not intended for diagnosis.</p>
+    <p>Demo patient. Leo is not a real person. Frequencies shown are illustrative.</p>
+  </div>
+</footer>
+</body>
+</html>
