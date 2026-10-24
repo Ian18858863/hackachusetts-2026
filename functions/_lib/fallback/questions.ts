@@ -53,7 +53,7 @@
 // The question is a fixed template around the HPO label; `discriminates` and
 // `why` come only from the annotation data.
 
-import { HPO_VERSION } from "../../../engine/hpo";
+import { HPO_VERSION } from "../../../engine/index";
 import type {
   DataVersions,
   DiseaseId,

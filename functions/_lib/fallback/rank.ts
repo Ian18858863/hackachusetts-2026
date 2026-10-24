@@ -21,7 +21,7 @@
 // a placeholder. The engine path takes over automatically (engineFirst) and
 // this layer is to be deleted once it does.
 
-import { overlapLabel } from "../../../engine/index";
+import { HPO_VERSION, overlapLabel } from "../../../engine/index";
 import type {
   Candidate,
   CandidateSource,
@@ -33,7 +33,6 @@ import type {
   RankResponse,
   TermRef,
 } from "../../../engine/index";
-import { HPO_VERSION } from "../../../engine/hpo";
 import { BAND_ORDER, FREQUENT_BANDS, fetchAnnotation, mergeAnnotations } from "./annotations";
 import type { AnnotationSet, MergedAnnotations } from "./annotations";
 import { getJson, TIMEOUTS_MS } from "./http";

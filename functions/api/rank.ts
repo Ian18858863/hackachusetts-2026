@@ -6,16 +6,17 @@
 //      result and the cache key do not depend on input order.
 //   2. Workers Cache API, key rank:v0.1:<path mode>:<engine status>|<observed>|<excluded>|<limit>,
 //      24 h. Path mode and engine status are in the key so engine and fallback
-//      results never mix. Degraded responses (an annotation call failed) are
-//      not cached (R11.4).
+//      results never mix. Degraded responses (an annotation or Orphadata call
+//      lost data) are not cached and are sent with Cache-Control: no-store
+//      (R11.4; X-RDD-Enrichment: complete | incomplete for QA).
 //   3. RDD_ENGINE_PATH / RDD_ENGINE_PATH_RANK (see _lib/fallback/engineFirst.ts):
 //      "fallback" (default) runs functions/_lib/fallback/rank.ts directly;
-//      "engine" runs rankCandidates first and falls back while it is a
-//      placeholder (X-RDD-Path: engine | fallback).
+//      "engine" runs rankCandidatesWithReport (enrichment.complete decides
+//      caching) and falls back only on NotImplementedError (X-RDD-Path).
 //   4. Monarch failed or timed out -> the recorded demo ranking for this exact
 //      term set if there is one (source "demo"), else 502/504 retryable.
 
-import { ENGINE_STATUS, demoRankKey, getDemoRanking, rankCandidates } from "../../engine/index";
+import { ENGINE_STATUS, demoRankKey, getDemoRanking, rankCandidatesWithReport } from "../../engine/index";
 import type { RankResponse } from "../../engine/index";
 import { engineFirst, enginePathMode, PATH_HEADER } from "../_lib/fallback/engineFirst";
 import { getFallbackDemoRanking } from "../_lib/fallback/demoRecorded";
@@ -92,8 +93,12 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
 
   const result = await engineFirst(
     mode,
-    // The engine owns its own degradation rules; its live responses are cached as is.
-    async () => ({ body: await rankCandidates({ ...req }, deps), complete: true }),
+    // The engine reports whether any annotation or Orphadata call lost data
+    // (enrichment.complete). Incomplete evidence is served as is, never cached.
+    async () => {
+      const { response, enrichment } = await rankCandidatesWithReport({ ...req }, deps);
+      return { body: response, complete: enrichment.complete };
+    },
     () => fallbackRank(req, deps),
   );
 
@@ -113,6 +118,13 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
   }
 
   const out: RankResponse = { ...result.value.body, version: CONTRACT_VERSION };
-  if (out.source === "live" && result.value.complete) cachePutJson(deps, key, { path: result.path, body: out } satisfies CachedRank, RANK_TTL_S);
-  return json(out, 200, { [PATH_HEADER]: result.path, "X-RDD-Cache": "miss" });
+  const complete = result.value.complete;
+  if (out.source === "live" && complete) cachePutJson(deps, key, { path: result.path, body: out } satisfies CachedRank, RANK_TTL_S);
+  // json() always sends Cache-Control: no-store, so an incomplete response is
+  // cached nowhere. X-RDD-Enrichment is for QA only, not part of the contract.
+  return json(out, 200, {
+    [PATH_HEADER]: result.path,
+    "X-RDD-Cache": "miss",
+    "X-RDD-Enrichment": complete ? "complete" : "incomplete",
+  });
 }
