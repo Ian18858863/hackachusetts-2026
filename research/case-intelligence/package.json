@@ -1,0 +1,20 @@
+{
+  "name": "rdd-case-intelligence",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Offline case corpus, HPO verification and evaluation harness for Rare Disease Detective (T38). Not used by the app.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "test": "node --test test/",
+    "validate": "node scripts/validate.mjs",
+    "fetch:sources": "node scripts/fetch-sources.mjs",
+    "verify:sources": "node scripts/verify-sources.mjs",
+    "fetch:hpo": "node scripts/fetch-hpo.mjs",
+    "export:inputs": "node scripts/export-inputs.mjs",
+    "baseline": "node scripts/run-baseline.mjs",
+    "evaluate": "node scripts/evaluate.mjs"
+  }
+}
