@@ -291,6 +291,27 @@
   font-variant-numeric: tabular-nums;
 }
 
+/*
+ * Touch screens: the source links are 18 px high text. An invisible box
+ * centred on each link gives a 44 × 44 px hit area (R12.5) without moving
+ * any text. Screen only, so desktop and print look the same.
+ */
+@media screen and (pointer: coarse) {
+  .sourceLink {
+    position: relative;
+  }
+
+  .sourceLink::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: max(100%, var(--tap-min));
+    height: max(100%, var(--tap-min));
+    transform: translate(-50%, -50%);
+  }
+}
+
 .evidence {
   font-size: var(--text-sm);
   line-height: var(--leading-snug);

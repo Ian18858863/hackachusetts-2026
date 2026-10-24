@@ -250,7 +250,7 @@ function CandidateEntry({
             {links.map((l) => (
               <span key={l.text}>
                 {' · '}
-                <a href={l.href} target="_blank" rel="noopener noreferrer">
+                <a href={l.href} target="_blank" rel="noopener noreferrer" className={styles.sourceLink}>
                   {l.text}
                   <span className="sr-only"> (opens in a new tab)</span>
                 </a>

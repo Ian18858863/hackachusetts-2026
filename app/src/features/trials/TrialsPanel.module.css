@@ -170,6 +170,28 @@
   border-radius: var(--radius-xs);
 }
 
+/*
+ * Touch screens: the title link becomes a block (same line boxes, so the text
+ * does not move) and an invisible box gives it at least 44 px of height
+ * (R12.5). Screen only, so desktop and print look the same.
+ */
+@media screen and (pointer: coarse) {
+  .studyLink {
+    position: relative;
+    display: block;
+  }
+
+  .studyLink::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 0;
+    width: 100%;
+    height: max(100%, var(--tap-min));
+    transform: translateY(-50%);
+  }
+}
+
 .studyLink:hover {
   color: var(--color-accent-text);
   text-decoration: underline;
