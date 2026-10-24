@@ -1,0 +1,8 @@
+# Never ignore .kiro/ — judges require it at the repo root.
+node_modules/
+dist/
+build/
+.env
+.env.*
+.DS_Store
+*.log
