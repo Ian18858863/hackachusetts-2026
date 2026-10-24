@@ -1,0 +1,27 @@
+.word {
+  display: inline-block;
+  white-space: nowrap;
+}
+
+.char {
+  display: inline-block;
+  animation: reveal var(--dur-reveal) var(--ease-out) both;
+  animation-delay: calc(var(--delay, 0ms) + var(--i, 0) * var(--stagger-char));
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .char {
+    animation: none;
+  }
+}

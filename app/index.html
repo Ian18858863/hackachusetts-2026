@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="description" content="Hackachusetts 2026 team project. This app is being built today." />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>Project name TBD · Hackachusetts 2026</title>
+    <script>
+      // Resolve the theme before first paint so there is no light/dark flash.
+      // Keep the storage key in sync with src/lib/theme.ts.
+      (function () {
+        try {
+          var stored = localStorage.getItem('app-theme');
+          var dark =
+            stored === 'dark' ||
+            (stored !== 'light' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          document.documentElement.dataset.theme = dark ? 'dark' : 'light';
+        } catch (e) {
+          document.documentElement.dataset.theme = 'light';
+        }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <noscript>This app needs JavaScript to run.</noscript>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

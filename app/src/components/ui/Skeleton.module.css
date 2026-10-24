@@ -1,0 +1,54 @@
+.group {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.block {
+  display: block;
+  max-width: 100%;
+  background-color: var(--color-skeleton);
+  background-image: linear-gradient(
+    100deg,
+    transparent 20%,
+    var(--color-skeleton-shine) 50%,
+    transparent 80%
+  );
+  background-size: 220% 100%;
+  background-repeat: no-repeat;
+  animation: shimmer 1600ms var(--ease-in-out) infinite;
+}
+
+.text {
+  display: grid;
+  gap: 0.55em;
+}
+
+.sm {
+  border-radius: var(--radius-xs);
+}
+.md {
+  border-radius: var(--radius-md);
+}
+.lg {
+  border-radius: var(--radius-lg);
+}
+.pill {
+  border-radius: var(--radius-pill);
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 160% 0;
+  }
+  to {
+    background-position: -60% 0;
+  }
+}
+
+/* Static blocks: the shape alone tells the user content is on its way. */
+@media (prefers-reduced-motion: reduce) {
+  .block {
+    animation: none;
+    background-image: none;
+  }
+}

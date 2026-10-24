@@ -1,0 +1,118 @@
+.button {
+  --btn-bg: var(--color-accent);
+  --btn-fg: var(--color-accent-contrast);
+  --btn-border: transparent;
+  --btn-fill: var(--color-fill-primary);
+
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  overflow: hidden;
+  border: 1px solid var(--btn-border);
+  border-radius: var(--radius-md);
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-family: var(--font-text);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-normal);
+  white-space: nowrap;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    transform var(--dur-fast) var(--ease-out),
+    border-color var(--dur-base) var(--ease-standard),
+    box-shadow var(--dur-fast) var(--ease-standard);
+}
+
+.button:active:not(:disabled):not([data-loading]) {
+  transform: scale(0.98);
+}
+
+/* Fill that grows from the pointer's entry point (set in Button.tsx). */
+.fill {
+  position: absolute;
+  z-index: -1;
+  left: var(--fill-x, 50%);
+  top: var(--fill-y, 50%);
+  width: var(--fill-size, 0px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--btn-fill);
+  transform: translate(-50%, -50%) scale(0);
+  transition: transform var(--dur-slow) var(--ease-out);
+  pointer-events: none;
+}
+
+.button[data-hover]:not(:disabled):not([data-loading]) .fill {
+  transform: translate(-50%, -50%) scale(1);
+}
+
+/* Keyboard users get the same filled state as a hover. */
+.button:focus-visible:not(:disabled) .fill {
+  left: 50%;
+  top: 50%;
+  width: 250%;
+  transform: translate(-50%, -50%) scale(1);
+}
+
+.content {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.label {
+  display: inline-block;
+}
+
+/* ---- Sizes ------------------------------------------------------------ */
+.md {
+  min-height: var(--control-height-md);
+  padding-inline: var(--space-5);
+  font-size: var(--text-sm);
+}
+
+.sm {
+  min-height: var(--control-height-sm);
+  padding-inline: var(--space-3);
+  font-size: var(--text-sm);
+  border-radius: var(--radius-sm);
+}
+
+@media (pointer: coarse) {
+  .sm {
+    min-height: var(--tap-min);
+  }
+}
+
+/* ---- Variants --------------------------------------------------------- */
+.primary {
+  box-shadow: var(--shadow-sm);
+}
+
+.secondary {
+  --btn-bg: var(--color-surface);
+  --btn-fg: var(--color-text);
+  --btn-border: var(--color-border-strong);
+  --btn-fill: var(--color-fill-secondary);
+}
+
+.ghost {
+  --btn-bg: transparent;
+  --btn-fg: var(--color-accent-text);
+  --btn-fill: var(--color-fill-ghost);
+}
+
+/* ---- States ----------------------------------------------------------- */
+.button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+  box-shadow: none;
+}
+
+.button[data-loading] {
+  cursor: progress;
+}

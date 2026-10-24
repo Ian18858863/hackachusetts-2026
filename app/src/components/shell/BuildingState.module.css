@@ -1,0 +1,112 @@
+.wrap {
+  container-type: inline-size;
+  width: 100%;
+  max-width: 46rem;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-5);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--color-accent-text);
+  animation: fade var(--dur-slow) var(--ease-out) both;
+}
+
+.eyebrowDot {
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* One line at every width: the size follows the column, not the viewport. */
+.title {
+  font-size: min(var(--text-display), 9.4cqi);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-tight);
+  letter-spacing: var(--tracking-display);
+  white-space: nowrap;
+  color: var(--color-text);
+}
+
+.lede {
+  max-width: 38rem;
+  margin-top: var(--space-5);
+  font-size: var(--text-lg);
+  line-height: var(--leading-normal);
+  color: var(--color-text-muted);
+  animation: fade var(--dur-reveal) var(--ease-out) 420ms both;
+}
+
+.progress {
+  display: grid;
+  max-width: 30rem;
+  margin-top: var(--space-10);
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--color-border);
+  animation: fade var(--dur-reveal) var(--ease-out) 600ms both;
+}
+
+.step {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: var(--space-3);
+  min-height: var(--tap-min);
+  padding-block: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--text-sm);
+}
+
+.marker {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 50%;
+  border: 1.5px solid var(--color-border-strong);
+}
+
+.step[data-tone='done'] .marker {
+  border-color: var(--color-success);
+  background: var(--color-success);
+}
+
+.step[data-tone='active'] .marker {
+  border-color: var(--color-accent);
+  background: radial-gradient(circle, var(--color-accent) 0 40%, transparent 45%);
+}
+
+.stepLabel {
+  color: var(--color-text);
+}
+
+.stepStatus {
+  color: var(--color-text-muted);
+}
+
+.step[data-tone='next'] .stepLabel,
+.step[data-tone='next'] .stepStatus {
+  color: var(--color-text-subtle);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .eyebrow,
+  .lede,
+  .progress {
+    animation: none;
+  }
+}
