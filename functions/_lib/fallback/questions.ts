@@ -12,13 +12,36 @@
 //   Occasional 0.17, Very rare 0.025, Excluded 0; listed without a frequency
 //   0.5; not listed 0).
 // Features already observed or excluded are skipped; score >= 0.35 is kept.
-// Features that are an HPO ancestor or descendant of an observed or excluded
-// term are skipped too (T18d): asking "jaundice?" after "prolonged neonatal
-// jaundice" is redundant. Ancestors come from hpoAncestors.ts (JAX, cached 7
-// days). The patient side is looked up for at most MAX_PATIENT_LOOKUPS terms,
-// in parallel with the annotations; the descendant check covers only the top
-// MAX_FEATURE_CHECKS features by score. A failed lookup only means that term
-// is not checked, so the result falls back to the behaviour without hierarchy.
+// Features redundant with a reported term (an ancestor or descendant of an
+// observed term, or a descendant of an excluded term) are skipped too (T18d;
+// rules and trade-offs in hierarchy.ts). Ancestors come from hpoAncestors.ts
+// (JAX, cached 7 days). The hierarchy step is bounded twice:
+//   - Time: it must finish inside the 5 s budget of contract section 7.5,
+//     counted from the start of this function (HIERARCHY_DEADLINE_MS). Past
+//     the deadline the filter is skipped and the questions are returned in
+//     score order, as before T18d.
+//   - Subrequests: Workers Free allows 50 per invocation, and Cache API
+//     match / put calls count against the same quota as fetch(). Every call
+//     of this function is metered (SubrequestMeter). Worst case per call:
+//       annotation phase (unchanged by T18d), per candidate cold: 1 xref cache
+//         match + 2 annotation sets x (match + fetch + 1 retry + put) + Monarch
+//         xrefs fetch + 1 retry = 11; warm (rank wrote xrefs and annotations): 3.
+//         3 candidates: <= 33 cold, 9 warm. 5 candidates: <= 55 cold (already
+//         over 50 before T18d; not changed here), 15 warm.
+//       hierarchy phase, per lookup: cache match + fetch + 1 retry + put = 4
+//         cold, 1 warm. Up to MAX_OBSERVED_LOOKUPS (12) observed terms, then
+//         MAX_FEATURE_CHECKS (6) features.
+//     The hierarchy phase gets SUBREQUEST_CAP (40) minus what the annotation
+//     phase used, shared through a LookupBudget: each lookup reserves its
+//     cold worst case (CALLS_PER_LOOKUP = 4) before it starts and gives back
+//     what it did not use (1 on a warm cache). So the invocation never goes
+//     past max(annotation phase, 40), 10 below the limit, and a started lookup
+//     always finishes its cache write. The patient side goes first; feature
+//     lookups get what is left. On a cold cache only part of the 12 observed
+//     lookups fit and the feature side may be skipped; the cached ancestor
+//     lists (7 days) make the next calls complete. A skipped, refused or
+//     failed lookup just leaves that term unchecked.
+// Lookups start only after at least two candidates have annotation data.
 //
 // Annotation data per candidate: the same merged ORPHA + OMIM sets as the rank
 // fallback (xrefs.ts resolves the partner id). MONDO ids are never sent to JAX.
@@ -42,7 +65,9 @@ import type {
 } from "../../../engine/index";
 import { fetchAnnotation, hasAnnotationId, mergeAnnotations } from "./annotations";
 import type { AnnotationSet, MergedAnnotations } from "./annotations";
+import { TIMEOUTS_MS } from "./http";
 import type { FallbackDeps } from "./http";
+import { dropRelatedToPatient, LookupBudget, meteredDeps, SubrequestMeter } from "./hierarchy";
 import { hpoAncestors } from "./hpoAncestors";
 import { cachedXrefs, monarchXrefs } from "./xrefs";
 import type { DiseaseXrefs } from "./xrefs";
@@ -58,10 +83,16 @@ const MIDPOINT: Readonly<Record<FrequencyLabel, number>> = {
 const LISTED_WITHOUT_FREQUENCY = 0.5;
 const NOT_LISTED = 0;
 const MIN_SCORE = 0.35;
-/** Cap on ancestor lookups for observed + excluded terms (Workers subrequest budget). */
-const MAX_PATIENT_LOOKUPS = 20;
-/** Cap on ancestor lookups for candidate features, taken in score order. */
-const MAX_FEATURE_CHECKS = 15;
+/** Time budget for the whole call (contract 7.5) minus a margin for the response. */
+const HIERARCHY_DEADLINE_MS = 4750;
+/** Hierarchy lookups are not started with less time than this left. */
+const MIN_HIERARCHY_MS = 300;
+/** Hierarchy calls stop once this many subrequests were used (Workers Free: 50). */
+const SUBREQUEST_CAP = 40;
+/** Worst-case subrequests of one cold ancestor lookup (match + fetch + retry + put). */
+const CALLS_PER_LOOKUP = 4;
+const MAX_OBSERVED_LOOKUPS = 12;
+const MAX_FEATURE_CHECKS = 6;
 
 export interface NormalizedQuestionsRequest {
   observed: HpoId[];
@@ -166,12 +197,10 @@ export async function fallbackNextQuestions(
   deps: FallbackDeps,
 ): Promise<NextQuestionsResponse> {
   const now = deps.now ?? (() => new Date());
-  const patientTerms = [...new Set([...req.observed, ...req.excluded])];
-  // Started before the annotations are awaited so both run in parallel; never rejects.
-  const patientAncestors = Promise.all(
-    patientTerms.slice(0, MAX_PATIENT_LOOKUPS).map((id) => hpoAncestors(id, deps)),
-  );
-  const data = await Promise.all(req.candidates.map((id) => loadCandidate(id, deps)));
+  const startedAt = Date.now();
+  const meter = new SubrequestMeter();
+  const counted = meteredDeps(deps, meter);
+  const data = await Promise.all(req.candidates.map((id) => loadCandidate(id, counted)));
   const fetchedAt = now().toISOString();
   const dataVersions: DataVersions = { hpo: HPO_VERSION, fetchedAt };
 
@@ -218,29 +247,34 @@ export async function fallbackNextQuestions(
   }
   scored.sort((a, b) => b.score - a.score || (a.hpoId < b.hpoId ? -1 : a.hpoId > b.hpoId ? 1 : 0));
 
-  const questions = await dropRelatedToPatient(scored, skip, await patientAncestors, req.limit, deps);
+  const questions = await filterByHierarchy(scored, req, deps, meter, startedAt);
   return { version: "0.1", source: "live", questions, dataVersions };
 }
 
-/**
- * Removes questions whose feature is an HPO ancestor of a patient term (from
- * `patientAncestors`) or has a patient term among its own ancestors (checked
- * for the first MAX_FEATURE_CHECKS remaining questions). Order is kept; a
- * failed lookup (null) keeps the question.
- */
-async function dropRelatedToPatient(
+async function filterByHierarchy(
   scored: Question[],
-  patientTerms: ReadonlySet<HpoId>,
-  patientAncestors: ReadonlyArray<HpoId[] | null>,
-  limit: number,
+  req: NormalizedQuestionsRequest,
   deps: FallbackDeps,
+  meter: SubrequestMeter,
+  startedAt: number,
 ): Promise<Question[]> {
-  const aboveAPatientTerm = new Set<HpoId>();
-  for (const ids of patientAncestors) for (const id of ids ?? []) aboveAPatientTerm.add(id);
-  const notAncestors = scored.filter((q) => !aboveAPatientTerm.has(q.hpoId));
-
-  const checked = notAncestors.slice(0, MAX_FEATURE_CHECKS);
-  const featureAncestors = await Promise.all(checked.map((q) => hpoAncestors(q.hpoId, deps)));
-  const kept = checked.filter((_, i) => !(featureAncestors[i] ?? []).some((id) => patientTerms.has(id)));
-  return [...kept, ...notAncestors.slice(MAX_FEATURE_CHECKS)].slice(0, limit);
+  const leftMs = HIERARCHY_DEADLINE_MS - (Date.now() - startedAt);
+  if (leftMs < MIN_HIERARCHY_MS || meter.used >= SUBREQUEST_CAP) return scored.slice(0, req.limit);
+  const deadline = AbortSignal.timeout(leftMs);
+  const budget = new LookupBudget({
+    total: SUBREQUEST_CAP - meter.used,
+    perLookup: CALLS_PER_LOOKUP,
+    meter,
+    deps: { ...deps, timeoutsMs: { ...deps.timeoutsMs, hpoTerm: Math.min(TIMEOUTS_MS.hpoTerm, leftMs) } },
+    deadline,
+  });
+  return dropRelatedToPatient(scored, {
+    observed: req.observed,
+    excluded: req.excluded,
+    limit: req.limit,
+    lookup: (id) => budget.run((d) => hpoAncestors(id, d), null),
+    maxObservedLookups: MAX_OBSERVED_LOOKUPS,
+    maxFeatureChecks: MAX_FEATURE_CHECKS,
+    deadline,
+  });
 }
