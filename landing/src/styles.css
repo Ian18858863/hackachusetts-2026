@@ -1,35 +1,37 @@
 /*
  * Landing page styles, v2 (T35; docs/ART_DIRECTION.md "v2").
- * One dark, calm theme: near-black page, warm off-white text, four grey steps.
+ * One light theme (T35b): the app's warm paper page and ink text.
  * Two semantic accents only, shared with the app: --accent for the primary
  * action, --attention for needs-attention (unused here). Red only for errors.
  * Type: Noto Serif (and Noto Serif SC/JP/KR per language) at weight 500 for
  * every heading and number; Inter 400/600 for everything else.
  *
- * Contrast on --bg #0a0a09 (WCAG 2.2, computed): --ink #eeebe4 16.6:1,
- * --ink-2 #bcb8af 10.0:1, --ink-3 #8f8b83 5.8:1, --accent #a9bcf5 10.6:1,
- * --accent-ink #0b1430 on --accent 9.7:1, --ink-3 on --surface #161614 5.3:1.
+ * Contrast: see the :root block below (computed, WCAG 2.2).
  *
  * Names match the app's token names (--ink, --hair, --surface ...) so shared
  * components such as ui/Dropdown render correctly on this sheet.
  */
 :root {
-  --bg: #0a0a09;
-  --bg-1: #10100f;
-  --surface: #161614;
-  --surface-2: #1e1e1b;
-  --ink: #eeebe4;
-  --ink-2: #bcb8af;
-  --ink-3: #8f8b83;
-  --hair: rgba(238, 235, 228, 0.1);
-  --hair-2: rgba(238, 235, 228, 0.16);
-  --mark-none: #75726b; /* control borders: 4.1:1 on --bg */
+  /* T35b: warm paper light theme, the same values as app/src/styles/tokens.css.
+     Contrast on --bg #fbfaf7: --ink 17.7:1, --ink-2 9.1:1, --ink-3 6.3:1,
+     white on --accent #2348b0 8.0:1, --mark-none control borders 4.1:1. */
+  --bg: #fbfaf7;
+  --bg-1: #f2f0ea;
+  --surface: #f2f0ea;
+  --surface-2: #ebe8e0;
+  --ink: #141412;
+  --ink-2: #47463f;
+  --ink-3: #5f5d55;
+  --hair: #e4e1d8;
+  --hair-2: #d6d2c7;
+  --mark-none: #7d7a70;
   --color-border-strong: var(--mark-none);
-  --accent: #a9bcf5;
-  --accent-ink: #0b1430;
-  --attention: #e6c27c;
-  --focus: #a9bcf5;
-  --on-dark: #0a0a09;
+  --accent: #2348b0;
+  --accent-ink: #ffffff;
+  --accent-deep: #1a3a94;
+  --attention: #7a5200;
+  --focus: #2348b0;
+  --on-dark: #ffffff;
 
   --f-display: 'Noto Serif', var(--f-cjk-serif), Georgia, serif;
   --f-text: 'Inter', system-ui, -apple-system, 'Segoe UI', var(--f-cjk-sans), sans-serif;
@@ -53,7 +55,7 @@
   --s-7: 48px; --s-8: 64px; --s-9: 96px; --s-10: 128px;
   --section: clamp(96px, 13vw, 200px);
   --r-s: 10px; --r-m: 16px; --r-l: 22px; --r-xl: 30px; --r-pill: 999px;
-  --shadow-pop: 0 24px 48px -16px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(238, 235, 228, 0.04);
+  --shadow-pop: 0 18px 40px -18px rgba(20, 20, 18, 0.22), 0 2px 6px rgba(20, 20, 18, 0.05);
   --z-pop: 10; --z-overlay: 200;
   --tap-min: 44px;
 
@@ -65,7 +67,7 @@
   --content: 1328px;
   --gutter: clamp(16px, 4vw, 56px);
   --topbar-h: 68px;
-  color-scheme: dark;
+  color-scheme: light;
 }
 
 /* ---- reset and base ------------------------------------------------------- */
@@ -100,7 +102,7 @@ ul, ol { padding: 0; list-style: none; }
 img { display: block; max-width: 100%; height: auto; }
 a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
 :focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
-::selection { background: rgba(169, 188, 245, 0.3); }
+::selection { background: #ebeffa; }
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0;
@@ -144,7 +146,7 @@ a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; 
 .btn:hover::before, .btn:focus-visible::before { transform: translate(-50%, -50%) scale(1); }
 .btn:hover, .btn:focus-visible { color: var(--btn-ink-fg); }
 .btn:active { transform: scale(0.97); }
-.btn-primary { --btn-bg: var(--accent); --btn-fg: var(--accent-ink); --btn-ink: var(--ink); --btn-ink-fg: var(--bg); }
+.btn-primary { --btn-bg: var(--accent); --btn-fg: var(--accent-ink); --btn-ink: var(--accent-deep); --btn-ink-fg: #ffffff; }
 .btn-ghost {
   --btn-bg: transparent; --btn-fg: var(--ink);
   box-shadow: inset 0 0 0 1px var(--hair-2);
@@ -163,7 +165,7 @@ a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; 
 /* ---- header ---------------------------------------------------------------- */
 .top {
   position: sticky; top: 0; z-index: var(--z-pop);
-  background: rgba(10, 10, 9, 0.82);
+  background: rgba(251, 250, 247, 0.86);
   -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px);
   border-bottom: 1px solid var(--hair);
 }
@@ -246,7 +248,7 @@ a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; 
   background: var(--surface);
   box-shadow: inset 0 0 0 1px var(--hair);
 }
-.proof img { width: min(100%, 657px); border-radius: var(--r-l); box-shadow: 0 30px 60px -30px rgba(0, 0, 0, 0.8); }
+.proof img { width: min(100%, 657px); border-radius: var(--r-l); box-shadow: 0 30px 60px -30px rgba(20, 20, 18, 0.35); }
 .proof figcaption { margin-top: var(--s-4); max-width: 82ch; font-size: var(--t-xs); color: var(--ink-3); }
 
 /* how it works: numbered steps, the panel beside them */
