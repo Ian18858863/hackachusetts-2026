@@ -16,8 +16,14 @@
   --mark: #454A54;  --mark-off: #CDD2DA;  --mark-none: #7A808A;
   --accent: #2B55C0;  --accent-soft: #EEF2FB;  --on-dark: #FFFFFF;  --focus: #2B55C0;
 
-  --f-display: "Newsreader Variable", "Newsreader", Georgia, "Times New Roman", serif;          /* 400, 500 */
-  --f-text: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif; /* 400, 600 */
+  --f-display: "Newsreader Variable", "Newsreader", Georgia, "Times New Roman", var(--f-cjk-serif), serif; /* 400, 500 */
+  --f-text: "Source Sans 3", system-ui, -apple-system, "Segoe UI", var(--f-cjk-sans), sans-serif;      /* 400, 600 */
+  /* CJK fallbacks (T28e, as app/src/styles/tokens.css): system fonts only, after the Latin
+     faces, so Latin text keeps the stacks above; the :lang() rules at the end of this file
+     put each language's own fonts first within this slot. */
+  --f-cjk-sans: "PingFang SC", "Hiragino Sans", "Apple SD Gothic Neo", "Noto Sans CJK SC", "Microsoft YaHei",
+    "Yu Gothic", "Malgun Gothic";
+  --f-cjk-serif: "Songti SC", "Hiragino Mincho ProN", "Noto Serif CJK SC", var(--f-cjk-sans);
   --t-xs: 0.875rem;  --t-sm: 0.9375rem;  --t-base: 1.0625rem;  --t-md: 1.1875rem;
   --t-lg: 1.5rem;  --t-xl: 2.125rem;  --t-2xl: 2.75rem;
   --lh-text: 1.5;  --lh-head: 1.1;
@@ -117,7 +123,18 @@ a:hover { text-decoration-thickness: 2px; }
   transition: color var(--dur-fast) var(--ease);
 }
 .sections a:hover { color: var(--ink); }
-.btn-top { margin-left: auto; }
+.top-actions { display: flex; align-items: center; gap: var(--s-3); margin-left: auto; }
+
+/* language switcher (T28e): a quiet pill, custom-styled so it never falls back to the OS look */
+.lang {
+  appearance: none; -webkit-appearance: none;
+  min-height: 44px; padding: 0 34px 0 14px; border: 1px solid var(--hair); border-radius: var(--r-pill);
+  background: var(--bg) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6'%3E%3Cpath d='M1 1l4 4 4-4' fill='none' stroke='%23454A54' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 14px center;
+  color: var(--ink-2); font: 400 var(--t-sm)/1 var(--f-text); cursor: pointer;
+  transition: border-color var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease);
+}
+.lang:hover { border-color: var(--mark-off); color: var(--ink); }
+.terms-note { color: var(--ink-3); }
 
 /* ---- hero ------------------------------------------------------------------ */
 .hero { padding: var(--s-8) 0 var(--s-9); }
@@ -249,6 +266,12 @@ a:hover { text-decoration-thickness: 2px; }
   .btn { padding: 0 18px; }
   .wide { display: none; }
   .narrow { display: inline; }
+  /* the switcher joins the section links on the second header row */
+  .top-actions { display: contents; }
+  .btn-top { margin-left: auto; }
+  .sections { flex: 1 1 auto; flex-basis: auto; }
+  .sections { min-width: 0; }
+  .lang { order: 4; margin-left: auto; padding: 0 26px 0 10px; background-position: right 10px center; }
   .hero { padding: var(--s-6) 0 var(--s-8); }
   .hero h1 { font-size: var(--t-xl); line-height: 1.12; }
   .lede, .safety { font-size: var(--t-base); }
@@ -260,4 +283,32 @@ a:hover { text-decoration-thickness: 2px; }
   .own { margin-top: var(--s-7); }
   .panel .own-result { font-size: 1.3125rem; }
   .closing-in .btn { width: 100%; }
+}
+
+/* ------------------------------------------------------------------------
+   CJK typography (T28e, as app/src/styles/tokens.css in T28a). Latin faces
+   stay first, so English is unchanged; each language orders its own system
+   fonts in the CJK slot. Headings drop the negative Latin tracking, which
+   crowds CJK glyphs.
+   ------------------------------------------------------------------------ */
+:root:lang(zh) {
+  --f-cjk-sans: "PingFang SC", "Hiragino Sans GB", "Noto Sans CJK SC", "Microsoft YaHei";
+  --f-cjk-serif: "Songti SC", "Noto Serif CJK SC", "Source Han Serif SC", var(--f-cjk-sans);
+}
+
+:root:lang(ja) {
+  --f-cjk-sans: "Hiragino Sans", "Hiragino Kaku Gothic ProN", "Noto Sans CJK JP", "Yu Gothic";
+  --f-cjk-serif: "Hiragino Mincho ProN", "Noto Serif CJK JP", "Yu Mincho", var(--f-cjk-sans);
+}
+
+:root:lang(ko) {
+  --f-cjk-sans: "Apple SD Gothic Neo", "Noto Sans CJK KR", "Malgun Gothic";
+  --f-cjk-serif: "AppleMyungjo", "Noto Serif CJK KR", var(--f-cjk-sans);
+  word-break: keep-all;
+}
+
+:lang(zh) :is(h1, h2, h3, h4, .stat-value),
+:lang(ja) :is(h1, h2, h3, h4, .stat-value),
+:lang(ko) :is(h1, h2, h3, h4, .stat-value) {
+  letter-spacing: normal;
 }

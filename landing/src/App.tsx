@@ -1,31 +1,68 @@
+import { useEffect, type ChangeEvent } from 'react';
 import {
   BENCHMARK_URL,
   CLINICAL_TRIALS_ATTRIBUTION,
-  DEMO_HREF,
   DEMO_LABEL,
-  DISCLAIMER,
   HPO_VERSION,
   MONARCH_ATTRIBUTION,
   ORPHANET_ATTRIBUTION,
-  OWN_EVALUATION,
   PHENOPACKET_STORE_ATTRIBUTION,
   PRODUCT_NAME,
   README_URL,
   REPO_URL,
-  STATS,
-  STEPS,
-  STUDIES,
-  SURVEY_NOTE,
+  STAT_CITES,
+  STUDY_CITES,
+  demoHref,
 } from './content';
+import { LOCALES, LOCALE_META, parseLocale, useLocale, useT } from './i18n';
+import commonMessages from './i18n/messages/common.ts';
+import landingMessages from './i18n/messages/landing.ts';
 
-const SECTIONS = [
-  { id: 'problem', label: 'Problem' },
-  { id: 'how', label: 'How it works' },
-  { id: 'evidence', label: 'Evidence' },
-  { id: 'sources', label: 'Sources' },
-] as const;
+function useLandingT() {
+  return useT(landingMessages);
+}
+
+function useDemoHref(): string {
+  return demoHref(useLocale().locale);
+}
+
+/** Document title and meta description follow the language (English values equal index.html). */
+function useDocumentMeta() {
+  const t = useLandingT();
+  const { locale } = useLocale();
+  useEffect(() => {
+    document.title = t('metaTitle');
+    document.querySelector('meta[name="description"]')?.setAttribute('content', t('metaDescription'));
+  }, [t, locale]);
+}
+
+function LanguageSelect() {
+  const { locale, setLocale } = useLocale();
+  const tc = useT(commonMessages);
+  const onChange = (e: ChangeEvent<HTMLSelectElement>) => {
+    const next = parseLocale(e.target.value);
+    if (next) setLocale(next);
+  };
+  return (
+    <select className="lang" value={locale} onChange={onChange} aria-label={tc('languageLabel')}>
+      {LOCALES.map((l) => (
+        <option key={l} value={l} lang={LOCALE_META[l].htmlLang}>
+          {LOCALE_META[l].nativeName}
+        </option>
+      ))}
+    </select>
+  );
+}
 
 function Header() {
+  const t = useLandingT();
+  const href = useDemoHref();
+  const sections = [
+    { id: 'problem', label: t('navProblem') },
+    { id: 'how', label: t('navHow') },
+    { id: 'evidence', label: t('navEvidence') },
+    { id: 'sources', label: t('navSources') },
+  ];
   return (
     <header className="top">
       <div className="wrap top-in">
@@ -33,51 +70,59 @@ function Header() {
           <span className="brand-mark" aria-hidden="true" />
           <span className="brand-name">{PRODUCT_NAME}</span>
         </a>
-        <nav className="sections" aria-label="Sections">
+        <nav className="sections" aria-label={t('navLabel')}>
           <ul>
-            {SECTIONS.map((s) => (
+            {sections.map((s) => (
               <li key={s.id}>
                 <a href={`#${s.id}`}>{s.label}</a>
               </li>
             ))}
           </ul>
         </nav>
-        <a className="btn btn-top" href={DEMO_HREF} aria-label="Open the demo">
-          <span className="wide" aria-hidden="true">
-            Open the demo
-          </span>
-          <span className="narrow" aria-hidden="true">
-            Demo
-          </span>
-        </a>
+        <div className="top-actions">
+          <LanguageSelect />
+          <a className="btn btn-top" href={href} aria-label={t('openDemo')}>
+            <span className="wide" aria-hidden="true">
+              {t('openDemo')}
+            </span>
+            <span className="narrow" aria-hidden="true">
+              {t('openDemoShort')}
+            </span>
+          </a>
+        </div>
       </div>
     </header>
   );
 }
 
 function Hero() {
+  const t = useLandingT();
+  const tc = useT(commonMessages);
+  const { locale } = useLocale();
+  const href = useDemoHref();
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="wrap hero-in">
         <div className="hero-copy">
           <p className="kicker">
-            <b>For families and clinicians</b> · rare disease decision support
+            <b>{t('kickerLead')}</b>
+            {t('kickerRest')}
           </p>
-          <h1 id="hero-title">A specialist-ready brief in minutes, not a diagnosis in years.</h1>
-          <p className="lede">Turn years of scattered notes into a specialist-ready brief in minutes.</p>
+          <h1 id="hero-title">{t('heroTitle')}</h1>
+          <p className="lede">{t('heroLede')}</p>
           <p className="safety">
-            <b>Decision support, not a diagnosis.</b> Possible matches to discuss with a doctor, each with
-            the evidence behind it.
+            <b>{tc('disclaimerLead')}</b>
+            {t('heroSafetyRest')}
           </p>
           <div className="actions">
-            <a className="btn btn-lg" href={DEMO_HREF}>
-              Try the demo case
+            <a className="btn btn-lg" href={href}>
+              {t('tryDemo')}
             </a>
             <a className="link-quiet" href="#how">
-              How it works
+              {t('howLink')}
             </a>
           </div>
-          <p className="demo-note">Opens a synthetic demo case with no sign-up. Not a real patient.</p>
+          <p className="demo-note">{t('demoNote')}</p>
         </div>
 
         <figure className="proof">
@@ -86,14 +131,19 @@ function Hero() {
               src="/proof-matches-demo-npc1.webp"
               width={657}
               height={600}
-              alt="Screenshot of the app's Possible matches step for a demo case, not a real patient. Rank 1 of 5 possible matches is Niemann-Pick disease, type C1, with strong overlap: 6 of 12 present features described, plus 6 through broader terms. Each feature is listed in plain words with its HPO term and how often it occurs in the condition, for example Frequency not listed."
+              alt={t('proofAlt')}
               decoding="async"
               fetchPriority="high"
             />
           </div>
           <figcaption>
-            The live app on the demo case, rank 1 of 5 possible matches, captured on 2026-10-24.{' '}
-            {DEMO_LABEL}.
+            {t('proofCaption')} {DEMO_LABEL}.
+            {locale !== 'en' && (
+              <>
+                {' '}
+                <span className="terms-note">{tc('medicalTermsNote')}</span>
+              </>
+            )}
           </figcaption>
         </figure>
       </div>
@@ -101,67 +151,75 @@ function Hero() {
   );
 }
 
+const STAT_KEYS = [
+  ['stat1Value', 'stat1Label'],
+  ['stat2Value', 'stat2Label'],
+  ['stat3Value', 'stat3Label'],
+] as const;
+
 function Problem() {
+  const t = useLandingT();
   return (
     <section className="band" id="problem" aria-labelledby="problem-title">
       <div className="wrap">
-        <h2 id="problem-title">Rare diseases take years to name</h2>
-        <p className="dek">
-          Families and non-specialist clinicians hold the clues in plain words. Rare-disease tools expect
-          ontology terms.
-        </p>
+        <h2 id="problem-title">{t('problemTitle')}</h2>
+        <p className="dek">{t('problemDek')}</p>
         <ul className="stats">
-          {STATS.map((s) => (
-            <li className="stat" key={s.value}>
-              <p className="stat-value">{s.value}</p>
-              <p className="stat-label">{s.label}</p>
-              <p className="cite">
-                <a href={s.href}>{s.source}</a>
-              </p>
-            </li>
-          ))}
+          {STAT_KEYS.map(([valueKey, labelKey], i) => {
+            const cite = STAT_CITES[i]!;
+            return (
+              <li className="stat" key={valueKey}>
+                <p className="stat-value">{t(valueKey)}</p>
+                <p className="stat-label">{t(labelKey)}</p>
+                <p className="cite">
+                  <a href={cite.href} lang="en">
+                    {cite.source}
+                  </a>
+                </p>
+              </li>
+            );
+          })}
         </ul>
-        <p className="note">{SURVEY_NOTE}</p>
+        <p className="note">{t('surveyNote')}</p>
       </div>
     </section>
   );
 }
 
+const STEP_KEYS = [
+  ['step1Title', 'step1Body'],
+  ['step2Title', 'step2Body'],
+  ['step3Title', 'step3Body'],
+  ['step4Title', 'step4Body'],
+  ['step5Title', 'step5Body'],
+] as const;
+
 function HowItWorks() {
+  const t = useLandingT();
   return (
     <section className="band" id="how" aria-labelledby="how-title">
       <div className="wrap">
-        <h2 id="how-title">How it works</h2>
-        <p className="dek">Five steps from a parent’s notes to something a specialist can check.</p>
+        <h2 id="how-title">{t('howTitle')}</h2>
+        <p className="dek">{t('howDek')}</p>
         <div className="how">
           <ol className="steps">
-            {STEPS.map((s, i) => (
-              <li className="step" key={s.title}>
+            {STEP_KEYS.map(([titleKey, bodyKey], i) => (
+              <li className="step" key={titleKey}>
                 <span className="step-n" aria-hidden="true">
                   {i + 1}
                 </span>
                 <div>
-                  <h3>{s.title}</h3>
-                  <p>{s.body}</p>
+                  <h3>{t(titleKey)}</h3>
+                  <p>{t(bodyKey)}</p>
                 </div>
               </li>
             ))}
           </ol>
           <div className="panel">
-            <h3>The ontology ranks; the LLM only translates</h3>
-            <p>
-              A language model proposes phrases from the notes. A feature is kept only if its phrase appears
-              word for word in the notes and the Human Phenotype Ontology confirms the term.
-            </p>
-            <p>
-              The ranking comes from the Monarch Initiative’s semantic similarity service. Disease names come
-              from Monarch, HPO annotations and Orphadata; frequencies and genes come from HPO annotations.
-              None of them come from the model.
-            </p>
-            <p className="panel-foot">
-              Your notes are sent to the server only to extract features, using Cloudflare Workers AI. The app
-              does not store them on a server or write them to logs; your case is kept in your browser.
-            </p>
+            <h3>{t('panelTitle')}</h3>
+            <p>{t('panelGrounding')}</p>
+            <p>{t('panelSources')}</p>
+            <p className="panel-foot">{t('panelPrivacy')}</p>
           </div>
         </div>
       </div>
@@ -169,33 +227,40 @@ function HowItWorks() {
   );
 }
 
+const STUDY_KEYS = [
+  ['study1Claim', 'study1Detail'],
+  ['study2Claim', 'study2Detail'],
+] as const;
+
 function Evidence() {
+  const t = useLandingT();
   return (
     <section className="band" id="evidence" aria-labelledby="evidence-title">
       <div className="wrap">
-        <h2 id="evidence-title">Why the ontology does the ranking</h2>
-        <p className="dek">Published work points to the same split of roles that this tool uses.</p>
+        <h2 id="evidence-title">{t('evidenceTitle')}</h2>
+        <p className="dek">{t('evidenceDek')}</p>
         <ul className="studies">
-          {STUDIES.map((s) => (
-            <li className="study" key={s.href}>
-              <h3>{s.claim}</h3>
-              <p>{s.detail}</p>
-              <p className="cite">
-                <a href={s.href}>{s.source}</a>
-              </p>
-            </li>
-          ))}
+          {STUDY_KEYS.map(([claimKey, detailKey], i) => {
+            const cite = STUDY_CITES[i]!;
+            return (
+              <li className="study" key={cite.href}>
+                <h3>{t(claimKey)}</h3>
+                <p>{t(detailKey)}</p>
+                <p className="cite">
+                  <a href={cite.href} lang="en">
+                    {cite.source}
+                  </a>
+                </p>
+              </li>
+            );
+          })}
         </ul>
         <div className="panel own">
-          <h3>Our own check</h3>
-          <p className="own-result">{OWN_EVALUATION}</p>
+          <h3>{t('ownTitle')}</h3>
+          <p className="own-result">{t('ownResult')}</p>
+          <p>{t('ownCaveat')}</p>
           <p>
-            The cases come from publications that may already feed the HPO annotations, so the result is
-            likely optimistic. It is not a clinical validation.
-          </p>
-          <p>
-            A pre-registered frequency-aware re-rank did not improve the result, so it was not shipped.{' '}
-            <a href={BENCHMARK_URL}>Method and results</a>
+            {t('ownRerank')} <a href={BENCHMARK_URL}>{t('methodLink')}</a>
           </p>
         </div>
       </div>
@@ -204,15 +269,17 @@ function Evidence() {
 }
 
 function Closing() {
+  const t = useLandingT();
+  const href = useDemoHref();
   return (
     <section className="closing" aria-labelledby="closing-title">
       <div className="wrap closing-in">
         <div>
-          <h2 id="closing-title">See it on the demo case</h2>
-          <p className="dek">A 54-year-old with worsening memory and unsteady walking. Synthetic, not a real patient.</p>
+          <h2 id="closing-title">{t('closingTitle')}</h2>
+          <p className="dek">{t('closingDek')}</p>
         </div>
-        <a className="btn btn-lg" href={DEMO_HREF}>
-          Try the demo case
+        <a className="btn btn-lg" href={href}>
+          {t('tryDemo')}
         </a>
       </div>
     </section>
@@ -220,14 +287,18 @@ function Closing() {
 }
 
 function Footer() {
+  const t = useLandingT();
+  const tc = useT(commonMessages);
+  const href = useDemoHref();
   return (
     <footer className="foot" id="sources" aria-labelledby="sources-title">
       <div className="wrap">
-        <p className="foot-safety">{DISCLAIMER}</p>
+        <p className="foot-safety">{tc('disclaimer')}</p>
         <h2 className="foot-h" id="sources-title">
-          Sources and credits
+          {t('sourcesTitle')}
         </h2>
-        <ul className="foot-list">
+        {/* Contract section 13 licence and attribution lines: English in every language. */}
+        <ul className="foot-list" lang="en">
           <li>
             This product uses the Human Phenotype Ontology (version {HPO_VERSION}). Find out more at{' '}
             <a href="https://hpo.jax.org">https://hpo.jax.org</a>
@@ -240,8 +311,8 @@ function Footer() {
           </li>
         </ul>
         <p className="foot-meta">
-          <b>Built at Sundai</b> · Hackachusetts 2026 · <a href={REPO_URL}>Source on GitHub</a> ·{' '}
-          <a href={README_URL}>README</a> · <a href={DEMO_HREF}>Open the demo</a>
+          <b lang="en">Built at Sundai</b> · Hackachusetts 2026 · <a href={REPO_URL}>{t('sourceOnGithub')}</a> ·{' '}
+          <a href={README_URL}>README</a> · <a href={href}>{t('openDemo')}</a>
         </p>
       </div>
     </footer>
@@ -249,10 +320,12 @@ function Footer() {
 }
 
 export function App() {
+  const t = useLandingT();
+  useDocumentMeta();
   return (
     <>
       <a className="skip" href="#main">
-        Skip to content
+        {t('skip')}
       </a>
       <div id="top" />
       <Header />

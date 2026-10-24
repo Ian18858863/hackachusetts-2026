@@ -8,12 +8,15 @@ import '@fontsource/source-sans-3/400.css';
 import '@fontsource/source-sans-3/600.css';
 import './styles.css';
 import { App } from './App';
+import { I18nProvider } from './i18n';
 
 const root = document.getElementById('root');
 if (!root) throw new Error('Missing #root element in index.html');
 
 createRoot(root).render(
   <StrictMode>
-    <App />
+    <I18nProvider>
+      <App />
+    </I18nProvider>
   </StrictMode>,
 );

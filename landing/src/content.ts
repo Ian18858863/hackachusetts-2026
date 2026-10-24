@@ -7,6 +7,11 @@ export const PRODUCT_NAME = 'Rare Disease Detective';
 /** Every call to action opens the app with the primary demo case preloaded (CONTRACT 0.1.1, R10.6). */
 export const DEMO_HREF = '/app/?demo=demo-npc1';
 
+/** DEMO_HREF in English; other languages add &lang=<code> so the app opens in the same language. */
+export function demoHref(locale: string): string {
+  return locale === 'en' ? DEMO_HREF : `${DEMO_HREF}&lang=${encodeURIComponent(locale)}`;
+}
+
 export const REPO_URL = 'https://github.com/Ian18858863/hackachusetts-2026';
 export const README_URL = `${REPO_URL}#readme`;
 export const BENCHMARK_URL = `${REPO_URL}/blob/main/docs/research/ranking-benchmark.md`;
@@ -33,85 +38,31 @@ export const DEMO_LABEL = `Demo case (synthetic narrative from phenopacket-store
 export const PHENOPACKET_STORE_ATTRIBUTION = 'phenopacket-store, BSD-3-Clause.';
 
 // ---- Problem (health-visions.md, "The problem in numbers") --------------------
-export interface Stat {
-  value: string;
-  label: string;
+// The numbers and their captions are translated in i18n/messages/landing.ts
+// (stat1Value ... stat3Label, surveyNote); source titles and links stay here, in English.
+export interface Cite {
   source: string;
   href: string;
 }
 
-const WAKAP = {
+const WAKAP: Cite = {
   source: 'Nguengang Wakap et al., Eur J Hum Genet 2020',
   href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6974615/',
 };
-const FAYE = {
+const FAYE: Cite = {
   source: 'Faye et al., Eur J Hum Genet 2024',
   href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11369105/',
 };
 
-export const STATS: Stat[] = [
-  { value: '263–446 million', label: 'people worldwide live with a rare disease', ...WAKAP },
-  { value: '4.7 years', label: 'mean time to diagnosis (the median is 0.8 years)', ...FAYE },
-  { value: '73%', label: 'of patients were misdiagnosed at least once', ...FAYE },
-];
-
-export const SURVEY_NOTE =
-  'Time to diagnosis and misdiagnosis come from the Rare Barometer survey of 6,507 patients in 41 European countries, run in 2022.';
-
-// ---- How it works (README "What it does", CONTRACT section 1) -----------------
-export interface Step {
-  title: string;
-  body: string;
-}
-
-export const STEPS: Step[] = [
-  {
-    title: 'Notes',
-    body: 'Paste a symptom history in plain words, or open the demo case.',
-  },
-  {
-    title: 'Features with their source sentence',
-    body: 'Each medical feature (an HPO term) sits next to the exact words it came from. Things the notes say are absent, such as “I do not get headaches”, go into a Not present group. You keep, remove or add features.',
-  },
-  {
-    title: 'Possible matches with evidence',
-    body: 'Rare conditions ranked by how well the features overlap. Each shows which features match, which do not, and how often each occurs in that condition according to HPO annotations. Overlap is a word (strong, partial, weak), never a percentage.',
-  },
-  {
-    title: 'What to check next',
-    body: 'The features that best separate the top matches, written as plain questions for the appointment.',
-  },
-  {
-    title: 'Brief, phenopacket and trials',
-    body: 'A one-page brief to print or save as PDF, a GA4GH Phenopacket file with the features and no diagnosis inside, and recruiting studies from ClinicalTrials.gov.',
-  },
-];
+/** Cites for stat1, stat2 and stat3, in order. */
+export const STAT_CITES: Cite[] = [WAKAP, FAYE, FAYE];
 
 // ---- Evidence (health-visions.md "Design argument from the evidence") ---------
-export interface Study {
-  claim: string;
-  detail: string;
-  source: string;
-  href: string;
-}
+// Claims and details are in i18n/messages/landing.ts (study1Claim ... study2Detail).
+// The own-evaluation sentence (ownResult) is the README "Honest evaluation" sentence, verbatim in English.
 
-export const STUDIES: Study[] = [
-  {
-    claim: 'A language model and an ontology tool together beat either alone',
-    detail:
-      'In 424 patients of the Undiagnosed Diseases Network, GPT-4o with the Exomiser ranking tool reached 30% differential accuracy, against 22.4% for GPT-4o and 13.9% for Exomiser on their own.',
-    source: 'Stud Health Technol Inform 2025',
-    href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13075642/',
-  },
-  {
-    claim: 'An agent with ontology tools and traceable evidence leads the field',
-    detail:
-      'DeepRare, an LLM agent that calls more than 40 tools and shows its reasoning, ranked the right disease first in 57% of cases on average across HPO-based benchmarks.',
-    source: 'Zhao et al., Nature 2026',
-    href: 'https://www.nature.com/articles/s41586-025-10097-9',
-  },
+/** Cites for study1 and study2, in order. */
+export const STUDY_CITES: Cite[] = [
+  { source: 'Stud Health Technol Inform 2025', href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC13075642/' },
+  { source: 'Zhao et al., Nature 2026', href: 'https://www.nature.com/articles/s41586-025-10097-9' },
 ];
-
-/** README "Honest evaluation", verbatim. */
-export const OWN_EVALUATION =
-  'On 10 published cases selected by a fixed rule, the correct condition ranked first in 5 and in the top 3 in 6 (our own small evaluation).';
