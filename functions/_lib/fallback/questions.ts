@@ -29,21 +29,25 @@
 //     match + fetch + put, and demo-npc1 spent 30 of 40 calls on annotations,
 //     leaving room for 3 of 12 observed lookups and no feature check).
 //     Worst case per call:
-//       annotation phase, per candidate: 1 xref cache match + 2 annotation
-//         sets x (fetch + 1 retry) + Monarch xrefs fetch + 1 retry = 7;
-//         usually 1 + 2 + 1 = 4 or less. An ORPHA / OMIM id without a JAX
-//         set also reads the Monarch mappings and, for ORPHA, Orphadata for
-//         its name (+2 usually, +4 worst case). Measured for demo-npc1 (5
-//         candidates, ORPHA:480556 without a JAX set): see T18o log.
+//       annotation phase, required calls per candidate: 1 xref cache match
+//         + up to 2 JAX annotation reads x 2 (edgeCached caps a read at 2
+//         calls) = 5, so <= 25 for 5 candidates. Optional calls (Monarch
+//         xrefs, Monarch mappings, Orphadata names; 2 each worst case) share
+//         OPTIONAL_CALLS (12) through a LookupBudget; a skipped one only
+//         loses an xref or a name. Worst case <= 25 + 12 = 37.
+//         Measured for demo-npc1 on 2026-10-24 (5 candidates, cold, all
+//         answers healthy): 20 = 5 xref cache matches + 8 JAX annotation
+//         reads + 5 Monarch xrefs + 1 Monarch mappings + 1 Orphadata.
 //       hierarchy phase, per lookup: fetch + 1 retry = 2, usually 1. Up to
 //         MAX_OBSERVED_LOOKUPS (12) observed terms, then features lazily in
 //         score order (dropRelatedToPatient), at most MAX_FEATURE_CHECKS.
+//         Measured for demo-npc1: 17 (12 observed + 5 features), 37 in total.
 //     The hierarchy phase gets SUBREQUEST_CAP (40) minus what the annotation
 //     phase used, shared through a LookupBudget: each lookup reserves its
 //     worst case (CALLS_PER_LOOKUP = 2) before it starts and gives back what
-//     it did not use. So the invocation never goes past max(annotation
-//     phase, 40), 10 below the limit. The patient side goes first; feature
-//     lookups get what is left, spent only on features that can still be
+//     it did not use. The annotation phase is at most 37, so the whole
+//     invocation never goes past 40, 10 below the limit. The patient side
+//     goes first; feature lookups get what is left, spent only on features that can still be
 //     shown. A skipped, refused or failed lookup leaves that term unchecked,
 //     and unchecked features are listed after checked ones.
 // Lookups start only after at least two candidates have annotation data.
@@ -72,7 +76,7 @@ import { fetchAnnotation, hasAnnotationId, mergeAnnotations } from "./annotation
 import type { AnnotationSet, MergedAnnotations } from "./annotations";
 import { getJson, TIMEOUTS_MS } from "./http";
 import type { FallbackDeps } from "./http";
-import { dropRelatedToPatient, LookupBudget, meteredDeps, SubrequestMeter } from "./hierarchy";
+import { dropRelatedToPatient, edgeCached, LookupBudget, meteredDeps, SubrequestMeter } from "./hierarchy";
 import { hpoAncestors } from "./hpoAncestors";
 import { cachedXrefs, monarchXrefs } from "./xrefs";
 import type { DiseaseXrefs } from "./xrefs";
@@ -94,8 +98,18 @@ const HIERARCHY_DEADLINE_MS = 4750;
 const MIN_HIERARCHY_MS = 300;
 /** Hierarchy calls stop once this many subrequests were used (Workers Free: 50). */
 const SUBREQUEST_CAP = 40;
-/** Worst-case subrequests of one ancestor lookup (edge-cached fetch + 1 retry). */
+/**
+ * Worst-case subrequests of one ancestor lookup or one optional call: 2
+ * (edgeCached in hierarchy.ts caps a JAX read at 2 calls; getJson makes at most 2).
+ */
 const CALLS_PER_LOOKUP = 2;
+/**
+ * Subrequests shared by the optional annotation-phase calls (Monarch xrefs,
+ * Monarch mappings, Orphadata names). Required calls cost at most
+ * 5 per candidate (xref cache match 1 + 2 JAX annotation reads x 2), so the
+ * annotation phase is at most 5 x 5 + 12 = 37 for 5 candidates.
+ */
+const OPTIONAL_CALLS = 12;
 const MAX_OBSERVED_LOOKUPS = 12;
 /** Upper bound on feature lookups; the subrequest budget usually stops earlier. */
 const MAX_FEATURE_CHECKS = 12;
@@ -103,37 +117,6 @@ const MAX_FEATURE_CHECKS = 12;
 const ANNOTATION_TTL_S = 24 * 60 * 60;
 const ANCESTORS_TTL_S = 7 * 24 * 60 * 60;
 
-/**
- * Deps for a JAX read that is cached by the Cloudflare edge (fetch with
- * `cf.cacheTtlByStatus`, keyed by URL, i.e. by id) instead of the Cache API
- * (T18o). A Cache API match counts as a subrequest just like the fetch it
- * saves, and a cold read costs match + fetch + put, so the edge cache makes
- * every read one subrequest, cold or warm. Only 2xx answers are cached for
- * `ttlS`; 404, 5xx and every other status are not cached (TTL 0). A 2xx body
- * that is not valid JSON or fails `usable` (the shape the parser needs) is
- * never used: the read is repeated once with
- * `cache: "no-store"` (it counts as the lookup's retry), so a bad body the
- * edge may have stored is bypassed rather than served. Outside Workers the
- * `cf` field is ignored.
- */
-function edgeCached(deps: FallbackDeps, ttlS: number, usable: (body: unknown) => boolean): FallbackDeps {
-  const inner = deps.fetch;
-  const cf = { cacheTtlByStatus: { "200-299": ttlS, "300-599": 0 } };
-  const fetch: FallbackDeps["fetch"] = async (input, init) => {
-    const res = await inner(input, { ...init, cf } as RequestInit);
-    if (!res.ok) return res;
-    const text = await res.text();
-    let ok = false;
-    try {
-      ok = usable(JSON.parse(text));
-    } catch {
-      ok = false;
-    }
-    if (!ok) return inner(input, { ...init, cache: "no-store" });
-    return new Response(text, { status: res.status, headers: res.headers });
-  };
-  return { ...deps, cache: undefined, fetch };
-}
 
 /** JAX annotation body: an object with a `disease` record (annotations.ts parses the rest). */
 function isAnnotationBody(body: unknown): boolean {
@@ -152,7 +135,7 @@ const LOOKUP_TIMEOUT_MS = 2000;
 async function mondoFromMappings(id: DiseaseId, deps: FallbackDeps): Promise<string | null> {
   const entity = id.startsWith("ORPHA:") ? `Orphanet:${id.slice(6)}` : id;
   try {
-    const body = (await getJson("monarchSemsim", `${MONARCH_MAPPINGS}${encodeURIComponent(entity)}&limit=20`, deps, {
+    const body = (await getJson("monarchSemsim", `${MONARCH_MAPPINGS}${encodeURIComponent(entity)}&predicate_id=skos%3AexactMatch&limit=500`, deps, {
       timeoutMs: LOOKUP_TIMEOUT_MS,
       notFound: "error",
     })) as { items?: Array<{ subject_id?: unknown; predicate_id?: unknown; object_id?: unknown }> } | null;
@@ -190,9 +173,11 @@ async function displayName(
   id: DiseaseId,
   primary: AnnotationSet | null,
   x: DiseaseXrefs | null,
-  deps: FallbackDeps,
+  optional: Optional,
 ): Promise<string | null> {
-  if (id.startsWith("ORPHA:")) return primary?.name ?? (await orphadataName(id, deps)) ?? x?.name ?? null;
+  if (id.startsWith("ORPHA:")) {
+    return primary?.name ?? (await optional((d) => orphadataName(id, d), null)) ?? x?.name ?? null;
+  }
   return x?.name ?? primary?.name ?? null;
 }
 
@@ -224,10 +209,19 @@ function lowerFirst(label: string): string {
   return label.charAt(0).toLowerCase() + label.slice(1);
 }
 
+/**
+ * Runs an optional annotation-phase call (Monarch xrefs, Monarch mappings,
+ * Orphadata name) inside the optional subrequest budget, or returns `onSkip`.
+ * A skipped call only loses an xref (the candidate then says "annotations
+ * only") or a display name (the JAX name is used); it never adds data.
+ */
+type Optional = <T>(fn: (deps: FallbackDeps) => Promise<T>, onSkip: T) => Promise<T>;
+
 /** Annotation ids to read for a candidate, and whether the list is known to be complete. */
 async function annotationIds(
   id: DiseaseId,
   deps: FallbackDeps,
+  optional: Optional,
 ): Promise<{ ids: DiseaseId[]; resolved: boolean; name: string | null; primary?: AnnotationSet | null }> {
   const fromRank: DiseaseXrefs | undefined = await cachedXrefs(id, deps);
   const idsOf = (x: DiseaseXrefs): DiseaseId[] => [x.orpha, x.omim].filter((v): v is DiseaseId => v !== null);
@@ -235,24 +229,24 @@ async function annotationIds(
 
   if (!hasAnnotationId(id)) {
     // MONDO candidate: only Monarch can say which ORPHA / OMIM ids it has.
-    const x = await monarchXrefs(id, deps);
+    const x = await optional((d) => monarchXrefs(id, d), null);
     return x ? { ids: idsOf(x), resolved: true, name: x.name } : { ids: [], resolved: false, name: null };
   }
 
   // ORPHA or OMIM: read it first (failures propagate), then look for its partner.
   const primary = await fetchAnnotation(id, edgeCached(deps, ANNOTATION_TTL_S, isAnnotationBody));
   // No JAX set for this id (404): find its MONDO id, and so its partner, via Monarch.
-  const mondo = primary?.mondoId ?? (primary === null ? await mondoFromMappings(id, deps) : null);
-  const x = mondo ? await monarchXrefs(mondo, deps) : null;
-  const name = await displayName(id, primary, x, deps);
+  const mondo = primary?.mondoId ?? (primary === null ? await optional((d) => mondoFromMappings(id, d), null) : null);
+  const x = mondo ? await optional((d) => monarchXrefs(mondo, d), null) : null;
+  const name = await displayName(id, primary, x, optional);
   if (!x) return { ids: [id], resolved: false, name, primary };
   const ids = idsOf(x);
   if (!ids.includes(id)) ids.unshift(id);
   return { ids, resolved: true, name, primary };
 }
 
-async function loadCandidate(id: DiseaseId, deps: FallbackDeps): Promise<CandidateData> {
-  const plan = await annotationIds(id, deps);
+async function loadCandidate(id: DiseaseId, deps: FallbackDeps, optional: Optional): Promise<CandidateData> {
+  const plan = await annotationIds(id, deps, optional);
   const settled = await Promise.allSettled(
     plan.ids.map((sid) =>
       sid === id && plan.primary !== undefined
@@ -306,7 +300,15 @@ export async function fallbackNextQuestions(
   const startedAt = Date.now();
   const meter = new SubrequestMeter();
   const counted = meteredDeps(deps, meter);
-  const data = await Promise.all(req.candidates.map((id) => loadCandidate(id, counted)));
+  const optionalBudget = new LookupBudget({
+    total: OPTIONAL_CALLS,
+    perLookup: CALLS_PER_LOOKUP,
+    meter,
+    deps,
+    deadline: new AbortController().signal,
+  });
+  const optional: Optional = (fn, onSkip) => optionalBudget.run(fn, onSkip);
+  const data = await Promise.all(req.candidates.map((id) => loadCandidate(id, counted, optional)));
   const fetchedAt = now().toISOString();
   const dataVersions: DataVersions = { hpo: HPO_VERSION, fetchedAt };
 

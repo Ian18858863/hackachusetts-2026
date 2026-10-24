@@ -236,3 +236,50 @@ export class LookupBudget {
     }
   }
 }
+
+// ------------------------------------------------------------ edge-cached reads
+
+/**
+ * Deps for ONE JAX read (create one per read) that is cached by the Cloudflare
+ * edge (fetch with `cf.cacheTtlByStatus`, keyed by URL, i.e. by id) instead of
+ * the Cache API (T18o). A Cache API match counts as a subrequest just like the
+ * fetch it saves, and a cold read costs match + fetch + put, so the edge cache
+ * makes every read one subrequest, cold or warm. Only 2xx answers are cached
+ * for `ttlS`; 404, 5xx and every other status are not cached (TTL 0).
+ * A 2xx body that is not valid JSON or fails `usable` (the shape the parser
+ * needs) is never used: if this read has a call left it is repeated once with
+ * `cache: "no-store"`, else (or if that body is bad too) the read answers a
+ * synthetic 502 so getJson fails it. Whatever getJson does (one retry on 5xx
+ * or a network error), one read never makes more than READ_MAX_CALLS (2)
+ * upstream calls; a third attempt gets a synthetic 503 without a call.
+ * Outside Workers the `cf` field is ignored.
+ */
+export const READ_MAX_CALLS = 2;
+export function edgeCached(deps: FallbackDeps, ttlS: number, usable: (body: unknown) => boolean): FallbackDeps {
+  const inner = deps.fetch;
+  const cf = { cacheTtlByStatus: { "200-299": ttlS, "300-599": 0 } };
+  let calls = 0;
+  const good = async (res: Response): Promise<Response | null> => {
+    const text = await res.text();
+    try {
+      if (usable(JSON.parse(text))) return new Response(text, { status: res.status, headers: res.headers });
+    } catch {
+      // not JSON
+    }
+    return null;
+  };
+  const fetch: FallbackDeps["fetch"] = async (input, init) => {
+    if (calls >= READ_MAX_CALLS) return new Response(null, { status: 503 });
+    calls++;
+    const res = await inner(input, { ...init, cf } as RequestInit);
+    if (!res.ok) return res;
+    const first = await good(res);
+    if (first) return first;
+    if (calls >= READ_MAX_CALLS) return new Response(null, { status: 502 });
+    calls++;
+    const again = await inner(input, { ...init, cache: "no-store" });
+    if (!again.ok) return again;
+    return (await good(again)) ?? new Response(null, { status: 502 });
+  };
+  return { ...deps, cache: undefined, fetch };
+}

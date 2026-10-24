@@ -7,7 +7,7 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import type { Question } from "../../../engine/index";
-import { dropRelatedToPatient, LookupBudget, meteredDeps, SubrequestMeter, type AncestorLookup } from "./hierarchy.ts";
+import { dropRelatedToPatient, edgeCached, LookupBudget, meteredDeps, READ_MAX_CALLS, SubrequestMeter, type AncestorLookup } from "./hierarchy.ts";
 import type { FallbackDeps } from "./http";
 
 function q(hpoId: string, label: string, score: number): Question {
@@ -292,4 +292,98 @@ test("LookupBudget: a lookup cannot use more than its reservation", async () => 
   }, "skipped");
   assert.equal(out, "skipped");
   assert.equal(meter.used, 4);
+});
+
+// ------------------------------------------- worst-case subrequests (T18o review)
+
+/** Upstream that answers 5xx, then 2xx with bad bodies, forever; counts calls. */
+function hostile(): { fetch: FallbackDeps["fetch"]; calls: () => number } {
+  let n = 0;
+  const bodies = [() => new Response("oops", { status: 503 }), () => new Response("not json"), () => new Response('{"wrong":1}')];
+  return {
+    fetch: async () => bodies[n++ % bodies.length](),
+    calls: () => n,
+  };
+}
+
+/** Same attempt pattern as getJson: one retry on 5xx, one parse. Throws on failure. */
+async function getJsonLike(deps: FallbackDeps): Promise<unknown> {
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const res = await deps.fetch("https://example.invalid/r");
+    if (res.status >= 500 && attempt === 0) continue;
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return res.json();
+  }
+  throw new Error("failed");
+}
+
+test("edgeCached: one read never makes more than READ_MAX_CALLS calls and never returns a bad body", async () => {
+  for (let start = 0; start < 3; start++) {
+    const up = hostile();
+    for (let i = 0; i < start; i++) await up.fetch("https://example.invalid/skip");
+    const before = up.calls();
+    const read = edgeCached({ fetch: up.fetch }, 60, Array.isArray);
+    await assert.rejects(getJsonLike(read));
+    for (let i = 0; i < 3; i++) assert.ok((await read.fetch("https://example.invalid/r")).status >= 500);
+    assert.ok(up.calls() - before <= READ_MAX_CALLS, `start ${start}: ${up.calls() - before} calls`);
+  }
+});
+
+test("edgeCached: a bad cached body is re-read once with no-store and then used", async () => {
+  const inits: Array<RequestInit | undefined> = [];
+  let n = 0;
+  const read = edgeCached(
+    {
+      fetch: async (_u, init) => {
+        inits.push(init);
+        return n++ === 0 ? new Response("not json") : new Response('["HP:0000001"]');
+      },
+    },
+    60,
+    Array.isArray,
+  );
+  assert.deepEqual(await getJsonLike(read), ["HP:0000001"]);
+  assert.equal(inits.length, 2);
+  assert.equal(inits[1]?.cache, "no-store");
+  assert.deepEqual((inits[0] as { cf?: unknown }).cf, { cacheTtlByStatus: { "200-299": 60, "300-599": 0 } });
+});
+
+test("worst case: hierarchy lookups on a hostile upstream never take the invocation past 40", async () => {
+  for (const annotationUsed of [0, 16, 25, 37]) {
+    const meter = new SubrequestMeter();
+    meter.used = annotationUsed;
+    const up = hostile();
+    const budget = new LookupBudget({
+      total: Math.max(0, 40 - annotationUsed),
+      perLookup: 2,
+      meter,
+      deps: { fetch: up.fetch },
+      deadline: new AbortController().signal,
+    });
+    const lookup: AncestorLookup = (id) =>
+      budget.run(async (d) => (await getJsonLike(edgeCached(d, 60, Array.isArray))) as string[], null);
+    const obs = Array.from({ length: 12 }, (_, i) => `HP:${String(1250 + i).padStart(7, "0")}`);
+    const out = await dropRelatedToPatient(SCORED, options(lookup, { observed: obs, maxFeatureChecks: 12 }));
+    assert.equal(out.length, 5);
+    assert.ok(meter.used <= 40, `annotation ${annotationUsed}: total ${meter.used}`);
+    assert.equal(meter.used - annotationUsed, up.calls());
+  }
+});
+
+test("worst case: annotation phase with 5 candidates on a hostile upstream stays within 25 + 12 = 37", async () => {
+  // Model of fallbackNextQuestions' annotation phase: per candidate 1 xref
+  // cache match and 2 JAX reads (required, metered, edgeCached), plus 3
+  // optional calls (Monarch xrefs, mappings, Orphadata) through a 12-call budget.
+  const meter = new SubrequestMeter();
+  const up = hostile();
+  const store = { match: async () => undefined, put: async () => undefined, delete: async () => false } as unknown as Cache;
+  const counted = meteredDeps({ fetch: up.fetch, cache: store }, meter);
+  const optional = new LookupBudget({ total: 12, perLookup: 2, meter, deps: { fetch: up.fetch }, deadline: new AbortController().signal });
+  const one = async (): Promise<void> => {
+    await counted.cache?.match(new Request("https://example.invalid/xref"));
+    for (const _set of [0, 1]) await getJsonLike(edgeCached(counted, 60, Array.isArray)).catch(() => null);
+    for (const _call of [0, 1, 2]) await optional.run((d) => getJsonLike(d), null);
+  };
+  await Promise.all(Array.from({ length: 5 }, one));
+  assert.ok(meter.used <= 37, `annotation phase used ${meter.used}`);
 });
