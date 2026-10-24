@@ -237,6 +237,14 @@ function FeatureTable({ caption, rows }: { caption: string; rows: BriefFeature[]
  */
 const DETAILED_CANDIDATES = 3;
 
+/** Whole-sentence key for the match count, so plural and word order stay per language. */
+function countKey(exact: number, broader: number, total: number) {
+  const one = total === 1;
+  if (exact === total) return one ? 'countAllOne' : 'countAllMany';
+  if (broader > 0) return one ? 'countBroaderOne' : 'countBroaderMany';
+  return one ? 'countOne' : 'countMany';
+}
+
 function CandidateEntry({
   candidate: c,
   detailed,
@@ -248,6 +256,9 @@ function CandidateEntry({
 }) {
   const t = useT(briefMessages);
   const observedTotal = c.matched.length + c.unmatched.length;
+  // Counted like Step 3 (contract 7.4 step 8): exact matches in the headline, broader-term matches separately.
+  const exact = c.matched.filter((m) => m.via === 'exact').length;
+  const broader = c.matched.length - exact;
   // Placeholder candidates in the offline mock link nowhere useful.
   const links = c.diseaseId.startsWith('MOCK:') ? [] : [
     c.links.orphanet ? { href: c.links.orphanet, text: 'Orphanet' } : null,
@@ -280,7 +291,7 @@ function CandidateEntry({
         </p>
         <p className={styles.evidence}>
           <span className={styles.evidenceLabel}>
-            {t(observedTotal === 1 ? 'matchesOne' : 'matchesMany', { matched: c.matched.length, total: observedTotal })}
+            {t(countKey(exact, broader, observedTotal), { exact, broader, total: observedTotal })}
             {detailed && c.matched.length > 0 ? t('listColon') : ''}
           </span>{' '}
           {!detailed
@@ -293,7 +304,9 @@ function CandidateEntry({
                     <>
                       <span className={`${styles.muted} ${styles.via}`}>
                         {' '}
-                        {t('via', { ancestor: m.ancestor?.label ?? t('broaderTerm'), term: m.diseaseTerm.label })}
+                        {m.ancestor
+                          ? t('viaNamed', { ancestor: m.ancestor.label, term: m.diseaseTerm.label })
+                          : t('viaUnnamed', { term: m.diseaseTerm.label })}
                       </span>
                       <span className={styles.viaMark} aria-hidden="true">
                         †

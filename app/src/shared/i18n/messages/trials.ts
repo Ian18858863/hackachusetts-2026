@@ -38,6 +38,8 @@ export default defineMessages(
     studyId: 'Study ID',
     notListed: 'Not listed',
     phaseNotListed: 'Phase not listed',
+    phaseNumbers: 'Phase {list}',
+    phaseJoin: ' and ',
     andMore: '{list} and {count} more',
   },
   {
@@ -72,6 +74,8 @@ export default defineMessages(
       studyId: '试验编号',
       notListed: '未列出',
       phaseNotListed: '未列出阶段',
+      phaseNumbers: '第 {list} 期',
+      phaseJoin: '/',
       andMore: '{list} 等，另有 {count} 项',
     },
     ja: {
@@ -106,6 +110,8 @@ export default defineMessages(
       studyId: '試験 ID',
       notListed: '記載なし',
       phaseNotListed: '相の記載なし',
+      phaseNumbers: '第 {list} 相',
+      phaseJoin: '/',
       andMore: '{list} ほか {count} 件',
     },
     es: {
@@ -141,6 +147,8 @@ export default defineMessages(
       studyId: 'ID del ensayo',
       notListed: 'No indicado',
       phaseNotListed: 'Fase no indicada',
+      phaseNumbers: 'Fase {list}',
+      phaseJoin: ' y ',
       andMore: '{list} y {count} más',
     },
     ko: {
@@ -175,6 +183,8 @@ export default defineMessages(
       studyId: '임상시험 ID',
       notListed: '정보 없음',
       phaseNotListed: '단계 정보 없음',
+      phaseNumbers: '{list}상',
+      phaseJoin: '/',
       andMore: '{list} 외 {count}개',
     },
     fr: {
@@ -210,6 +220,8 @@ export default defineMessages(
       studyId: 'ID de l’essai',
       notListed: 'Non indiqué',
       phaseNotListed: 'Phase non indiquée',
+      phaseNumbers: 'Phase {list}',
+      phaseJoin: ' et ',
       andMore: '{list} et {count} de plus',
     },
   },

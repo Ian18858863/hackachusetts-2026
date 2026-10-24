@@ -21,7 +21,7 @@ const PHASE_NAMES: Record<string, string> = {
 export function formatPhases(phases: readonly string[], t: TrialsT): string {
   if (phases.length === 0) return t('phaseNotListed');
   const numbered = phases.map((p) => /^PHASE(\d)$/.exec(p)?.[1]);
-  if (phases.length > 1 && numbered.every(Boolean)) return `Phase ${numbered.join(' and ')}`;
+  if (phases.length > 1 && numbered.every(Boolean)) return t('phaseNumbers', { list: numbered.join(t('phaseJoin')) });
   return phases.map((p) => PHASE_NAMES[p] ?? p).join(', ');
 }
 
