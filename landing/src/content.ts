@@ -42,11 +42,11 @@ export interface Stat {
 
 const WAKAP = {
   source: 'Nguengang Wakap et al., Eur J Hum Genet 2020',
-  href: 'https://doi.org/10.1038/s41431-019-0508-0',
+  href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC6974615/',
 };
 const FAYE = {
   source: 'Faye et al., Eur J Hum Genet 2024',
-  href: 'https://doi.org/10.1038/s41431-024-01604-z',
+  href: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC11369105/',
 };
 
 export const STATS: Stat[] = [

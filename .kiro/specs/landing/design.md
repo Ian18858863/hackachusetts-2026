@@ -40,7 +40,7 @@
 
 - Facts come only from the sources listed in `requirements.md`. Numbers sit next to their citation.
 - The safety line and credits are the contract section 13 strings, kept in `content.ts`.
-- The HPO version in the footer is a single constant (`HPO_VERSION` in `content.ts`). It is set to 2026-09-01, the latest HPO GitHub release (checked 2026-10-24). The engine on `main` still reports `"unknown"` (contract open question 6), so the two must be brought in step before release.
+- The HPO version in the footer is a single constant (`HPO_VERSION` in `content.ts`). It is set to 2026-09-01, the release the engine pins (`engine/hpo.ts` `HPO_VERSION` since `f6a3ebe`).
 
 ## Motion
 

@@ -154,10 +154,14 @@ function HowItWorks() {
               word for word in the notes and the Human Phenotype Ontology confirms the term.
             </p>
             <p>
-              The ranking comes from the Monarch Initiative’s semantic similarity service. Disease names,
-              frequencies and genes come from HPO annotations, never from the model.
+              The ranking comes from the Monarch Initiative’s semantic similarity service. Disease names come
+              from Monarch, HPO annotations and Orphadata; frequencies and genes come from HPO annotations.
+              None of them come from the model.
             </p>
-            <p className="panel-foot">Notes stay in your browser; the server does not store them.</p>
+            <p className="panel-foot">
+              Your notes are sent to the server only to extract features, using Cloudflare Workers AI. The app
+              does not store them on a server or write them to logs; your case is kept in your browser.
+            </p>
           </div>
         </div>
       </div>

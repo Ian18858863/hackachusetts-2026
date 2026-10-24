@@ -29,14 +29,14 @@ The landing page at `/` sells the idea in one screen and sends a judge into the 
 
 **User story:** As a judge, I want sourced numbers for the problem, so that I can trust its size.
 
-3.1 THE PAGE SHALL state 263–446 million people with a rare disease, citing Nguengang Wakap et al., Eur J Hum Genet 2020, linked by DOI.
-3.2 THE PAGE SHALL state a mean time to diagnosis of 4.7 years with the median of 0.8 years, and 73% misdiagnosed at least once, citing Faye et al., Eur J Hum Genet 2024, linked by DOI, and SHALL say the survey covered 6,507 patients in 41 European countries in 2022 (Rare Barometer).
+3.1 THE PAGE SHALL state 263–446 million people with a rare disease, citing Nguengang Wakap et al., Eur J Hum Genet 2020, linked to the PubMed Central page checked in `docs/research/health-visions.md`.
+3.2 THE PAGE SHALL state a mean time to diagnosis of 4.7 years with the median of 0.8 years, and 73% misdiagnosed at least once, citing Faye et al., Eur J Hum Genet 2024, linked to the PubMed Central page checked in `docs/research/health-visions.md`, and SHALL say the survey covered 6,507 patients in 41 European countries in 2022 (Rare Barometer).
 
 ## Requirement 4: How it works
 
 4.1 THE PAGE SHALL list the five steps: notes; HPO features with their source sentence, including a Not present group; possible matches with evidence; what to check next; brief, phenopacket and recruiting trials.
 4.2 THE PAGE SHALL say "The ontology ranks; the LLM only translates" and explain that terms are kept only when the phrase is in the notes and HPO confirms the term.
-4.3 WHERE the page mentions privacy THE PAGE SHALL say only "Notes stay in your browser; the server does not store them." (contract section 2, main spec R1.5) and no broader privacy claim.
+4.3 WHERE the page mentions privacy THE PAGE SHALL say only "Your notes are sent to the server only to extract features, using Cloudflare Workers AI. The app does not store them on a server or write them to logs; your case is kept in your browser." (contract sections 2 and 7.2, main spec R1.5) and no other privacy claim.
 
 ## Requirement 5: Evidence and honesty
 
