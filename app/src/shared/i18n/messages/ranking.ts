@@ -104,6 +104,8 @@ export default defineMessages(
     scoreSmall: 'features described',
     featuresDescribed: 'Features described',
     howOftenIn: 'How often in {name}',
+    freqNotListedKey:
+      'A ring means frequency not listed: the HPO annotations for this condition list the matched feature without a frequency, or do not list it.',
     evidenceFor: 'Evidence for {name}',
     leadHint: 'Hover, focus or tap a feature to read the sentence it came from.',
     compareSideBySide: 'Compare side by side',
@@ -113,6 +115,8 @@ export default defineMessages(
     othersKey:
       'Numbers follow the features in order. A larger dot means the feature occurs more often in the condition, a ring that it matched without a listed frequency, and a dash that it did not match. The order is phenotype overlap, not a probability.',
     stripLabel: 'How often the {n} present features occur in {name}: {list}',
+    stripKey:
+      'One dot per present feature, numbered as in the notes. A larger dot means the feature occurs more often in that condition.',
     listSep: ', ',
     altDescribed: ' {exact} of {n} described.',
     altDescribedBroader: ' {exact} of {n} described, plus {broader} through broader terms.',
@@ -243,6 +247,8 @@ export default defineMessages(
       scoreSmall: '个特征相符',
       featuresDescribed: '已描述的特征',
       howOftenIn: '在 {name} 中的出现频率',
+      freqNotListedKey:
+        '圆环表示未列出频率：此病症的 HPO 注释列出了所匹配的特征但未给出频率，或未列出该特征。',
       evidenceFor: '{name} 的依据',
       leadHint: '将指针悬停在特征上、聚焦或轻触它，即可查看它所来自的句子。',
       compareSideBySide: '并排比较',
@@ -252,6 +258,8 @@ export default defineMessages(
       othersKey:
         '数字按特征顺序编号。圆点越大，表示该特征在此病症中越常见；圆环表示已匹配但未列出频率；短横表示未匹配。排序依据的是表型重合度，并非概率。',
       stripLabel: '{n} 个已出现的特征在 {name} 中的出现频率：{list}',
+      stripKey:
+        '每个圆点代表一个已出现的特征，编号与症状描述中的一致。圆点越大，表示该特征在此病症中越常见。',
       listSep: '、',
       altDescribed: '{n} 个中有 {exact} 个相符。',
       altDescribedBroader: '{n} 个中有 {exact} 个相符，另有 {broader} 个通过更宽泛的术语匹配。',
@@ -384,6 +392,8 @@ export default defineMessages(
       scoreSmall: '件の特徴が一致',
       featuresDescribed: '記録された特徴',
       howOftenIn: '{name} での頻度',
+      freqNotListedKey:
+        '輪は頻度の記載なしを示します。この疾患の HPO アノテーションでは、一致した特徴が頻度なしで記載されているか、記載されていません。',
       evidenceFor: '{name} の根拠',
       leadHint: '特徴にポインタを合わせるか、フォーカスまたはタップすると、元の文が表示されます。',
       compareSideBySide: '並べて比較',
@@ -393,6 +403,8 @@ export default defineMessages(
       othersKey:
         '数字は特徴の順番です。点が大きいほど、その疾患でその特徴がよく見られることを示します。輪は頻度の記載なしで一致したこと、ダッシュは一致しなかったことを示します。順位は表現型の重なりであり、確率ではありません。',
       stripLabel: '「あり」の特徴 {n} 件の {name} での頻度：{list}',
+      stripKey:
+        '点は「あり」の特徴 1 件ずつで、番号はメモの番号と同じです。点が大きいほど、その特徴はその疾患でよく見られます。',
       listSep: '、',
       altDescribed: '{n} 件中 {exact} 件が一致。',
       altDescribedBroader: '{n} 件中 {exact} 件が一致、ほかに {broader} 件がより広い用語で一致。',
@@ -525,6 +537,8 @@ export default defineMessages(
       scoreSmall: 'rasgos descritos',
       featuresDescribed: 'Rasgos descritos',
       howOftenIn: 'Frecuencia en {name}',
+      freqNotListedKey:
+        'Un anillo indica frecuencia no indicada: las anotaciones HPO de esta afección incluyen el rasgo coincidente sin frecuencia, o no lo incluyen.',
       evidenceFor: 'Evidencia para {name}',
       leadHint: 'Pase el puntero, enfoque o toque un rasgo para leer la frase de la que procede.',
       compareSideBySide: 'Comparar lado a lado',
@@ -534,6 +548,8 @@ export default defineMessages(
       othersKey:
         'Los números siguen el orden de los rasgos. Un punto más grande significa que el rasgo aparece con más frecuencia en la afección; un anillo, que coincidió sin una frecuencia indicada; y un guion, que no coincidió. El orden refleja el solapamiento de fenotipos, no una probabilidad.',
       stripLabel: 'Frecuencia de los rasgos presentes ({n}) en {name}: {list}',
+      stripKey:
+        'Un punto por rasgo presente, numerado como en las notas. Cuanto más grande es el punto, más frecuente es el rasgo en esa afección.',
       listSep: ', ',
       altDescribed: ' {exact} de {n} descritos.',
       altDescribedBroader: ' {exact} de {n} descritos, más {broader} a través de términos más amplios.',
@@ -663,6 +679,8 @@ export default defineMessages(
       scoreSmall: '개 특징 일치',
       featuresDescribed: '기록된 특징',
       howOftenIn: '{name}에서의 빈도',
+      freqNotListedKey:
+        '고리는 빈도 기재 없음을 뜻합니다. 이 질환의 HPO 주석에 일치한 특징이 빈도 없이 올라 있거나, 아예 올라 있지 않습니다.',
       evidenceFor: '{name}의 근거',
       leadHint: '특징에 포인터를 올리거나, 포커스하거나, 탭하면 원래 문장을 볼 수 있습니다.',
       compareSideBySide: '나란히 비교',
@@ -672,6 +690,8 @@ export default defineMessages(
       othersKey:
         '숫자는 특징 순서입니다. 점이 클수록 그 질환에서 해당 특징이 더 자주 나타납니다. 고리는 빈도 기재 없이 일치했음을, 대시는 일치하지 않았음을 뜻합니다. 순서는 표현형 겹침이며 확률이 아닙니다.',
       stripLabel: '있음 특징 {n}개가 {name}에서 나타나는 빈도: {list}',
+      stripKey:
+        '점 하나가 있음 특징 하나이며, 번호는 메모의 번호와 같습니다. 점이 클수록 그 특징이 그 질환에서 더 자주 나타납니다.',
       listSep: ', ',
       altDescribed: ' {n}개 중 {exact}개 일치.',
       altDescribedBroader: ' {n}개 중 {exact}개 일치, 더 넓은 용어로 {broader}개 추가 일치.',
@@ -806,6 +826,8 @@ export default defineMessages(
       scoreSmall: 'caractéristiques décrites',
       featuresDescribed: 'Caractéristiques décrites',
       howOftenIn: 'Fréquence dans {name}',
+      freqNotListedKey:
+        'Un anneau signifie fréquence non indiquée : les annotations HPO de cette affection mentionnent la caractéristique correspondante sans fréquence, ou ne la mentionnent pas.',
       evidenceFor: 'Éléments pour {name}',
       leadHint: 'Survolez, sélectionnez ou touchez une caractéristique pour lire la phrase dont elle provient.',
       compareSideBySide: 'Comparer côte à côte',
@@ -815,6 +837,8 @@ export default defineMessages(
       othersKey:
         'Les numéros suivent l’ordre des caractéristiques. Un point plus grand signifie que la caractéristique est plus fréquente dans l’affection, un anneau qu’elle correspond sans fréquence indiquée, et un tiret qu’elle ne correspond pas. L’ordre reflète le recoupement des phénotypes, pas une probabilité.',
       stripLabel: 'Fréquence des caractéristiques présentes ({n}) dans {name} : {list}',
+      stripKey:
+        'Un point par caractéristique présente, numéroté comme dans les notes. Plus le point est grand, plus la caractéristique est fréquente dans cette affection.',
       listSep: ', ',
       altDescribed: ' {exact} sur {n} décrites.',
       altDescribedBroader: ' {exact} sur {n} décrites, plus {broader} par des termes plus larges.',

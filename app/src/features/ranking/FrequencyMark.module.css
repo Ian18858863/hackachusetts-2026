@@ -46,12 +46,32 @@
   background: var(--mark-none);
 }
 
+/* "Frequency not listed" in patient rows: one small ring, 4.0:1 on white. */
+.ring {
+  display: inline-block;
+  flex: none;
+  width: calc(var(--s-2) - 1px); /* 7px, as the matrix ring */
+  height: calc(var(--s-2) - 1px);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--mark-none);
+}
+
 .word {
   white-space: nowrap;
 }
 
 .mark[data-kind='unknown'] .word,
-.mark[data-kind='none'] .word {
+.mark[data-kind='none'] /* "Frequency not listed" in patient rows: one small ring, 4.0:1 on white. */
+.ring {
+  display: inline-block;
+  flex: none;
+  width: calc(var(--s-2) - 1px); /* 7px, as the matrix ring */
+  height: calc(var(--s-2) - 1px);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--mark-none);
+}
+
+.word {
   color: var(--ink-3);
 }
 

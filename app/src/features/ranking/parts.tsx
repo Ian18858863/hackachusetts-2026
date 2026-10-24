@@ -129,6 +129,7 @@ export function PatientRows({
                 <FrequencyMark
                   frequency={row.evidence.frequency}
                   noneWord={t('freqNotListed')}
+                  quietUnknown
                   tone={tone}
                   animate={entering}
                   delay={enterOffset + i}

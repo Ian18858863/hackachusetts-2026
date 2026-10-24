@@ -6,7 +6,7 @@
 
 .page {
   display: grid;
-  gap: var(--s-5);
+  gap: var(--s-4);
   min-width: 0;
 }
 
@@ -57,7 +57,7 @@
 
 .lead {
   min-width: 0;
-  padding: var(--space-10) var(--space-10) var(--s-6);
+  padding: var(--s-6) var(--space-10) var(--s-6);
   border-radius: var(--r-l);
   background: var(--surface);
 }
@@ -98,7 +98,7 @@
 }
 
 .leadName {
-  margin-top: var(--s-3);
+  margin-top: var(--s-2);
   font-family: var(--f-display);
   font-size: var(--t-xl);
   font-weight: var(--weight-medium);
@@ -157,6 +157,22 @@
   padding: 0 var(--s-4);
   font-size: var(--t-xs);
   color: var(--ink-3);
+}
+
+/* One quiet line under the column header: what the "not listed" ring means. */
+.evKey {
+  display: flex;
+  align-items: baseline;
+  gap: var(--s-2);
+  margin: 0 0 var(--s-2);
+  padding: 0 var(--s-4);
+  font-size: var(--t-xs);
+  line-height: 1.4;
+  color: var(--ink-3);
+}
+
+.evKey > span:first-child {
+  transform: translateY(-1px);
 }
 
 /* ---- Evidence rows ------------------------------------------------------ */
@@ -458,6 +474,15 @@
   font-size: var(--t-sm);
   font-weight: var(--weight-regular);
   letter-spacing: 0;
+  color: var(--ink-3);
+}
+
+/* What the dot strip under each side candidate encodes, before the list. */
+.stripKey {
+  max-width: var(--measure);
+  margin-bottom: var(--s-1);
+  font-size: var(--t-xs);
+  line-height: 1.4;
   color: var(--ink-3);
 }
 
@@ -1148,6 +1173,10 @@
 
   .evHead {
     margin-top: var(--s-5);
+    padding: 0 var(--s-3);
+  }
+
+  .evKey {
     padding: 0 var(--s-3);
   }
 

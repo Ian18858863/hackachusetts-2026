@@ -56,6 +56,7 @@ export function OtherCandidates({
       <h2 id="others-title" className={styles.othersTitle}>
         {t('othersTitle')}
       </h2>
+      {entries.length > 0 && <p className={styles.stripKey}>{t('stripKey')}</p>}
       {entries.length === 0 ? (
         <p className={styles.othersNone}>{t('othersNone')}</p>
       ) : (

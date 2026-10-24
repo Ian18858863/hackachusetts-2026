@@ -2,6 +2,7 @@ import type { MouseEvent } from 'react';
 import type { Candidate } from '../../shared/contract';
 import { useT } from '../../shared/i18n';
 import ranking from '../../shared/i18n/messages/ranking';
+import { NotListedRing } from './FrequencyMark';
 import { broaderText, matchCounts, patientRows, type FeatureIndex } from './evidence';
 import { OVERLAP_KEY, pick } from './format';
 import {
@@ -54,6 +55,7 @@ export function LeadCandidate({
         ? t(pick(n, 'leadSomeBroaderOne', 'leadSomeBroaderOther'), { exact, n, broader })
         : t(pick(n, 'leadSomeOne', 'leadSomeOther'), { exact, n });
   const contradicted = c.contradicted.length;
+  const anyNotListed = rows.some((r) => r.evidence && !r.evidence.frequency?.label);
 
   return (
     <article
@@ -92,6 +94,12 @@ export function LeadCandidate({
         <span>{t('featuresDescribed')}</span>
         <span>{t('howOftenIn', { name: c.name })}</span>
       </p>
+      {anyNotListed && (
+        <p className={styles.evKey}>
+          <NotListedRing />
+          <span>{t('freqNotListedKey')}</span>
+        </p>
+      )}
       <ul className={styles.evidence} data-testid={`candidate-evidence-${c.rank}`} aria-label={t('evidenceFor', { name: c.name })}>
         <PatientRows rows={rows} tone="accent" idPrefix="lead" enter={enter} {...link} />
       </ul>
