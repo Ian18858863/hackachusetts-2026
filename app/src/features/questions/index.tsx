@@ -8,7 +8,7 @@
  * not present (provenance manual) and the ranking updates after a short pause
  * (useAutoRank), then the questions refresh.
  */
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Candidate, DiseaseId, HpoId, Question, TermStatus } from '../../shared/contract';
 import { useCase, useCaseActions } from '../../shared/store';
 import {
@@ -45,6 +45,18 @@ function QuestionsBody() {
   const auto = useAutoRank();
   const sync = useQuestionsSync();
   const [answers, setAnswers] = useState<Record<HpoId, Answer>>({});
+  // After an answer the ranking and then the questions refresh, and the answered
+  // question usually leaves the list. If focus went with it, put it on the list.
+  const listRef = useRef<HTMLOListElement>(null);
+  const lastAnswered = useRef<HpoId | null>(null);
+  const questionIds = caseObject.questions.map((q) => q.hpoId).join(',');
+  useEffect(() => {
+    const id = lastAnswered.current;
+    if (!id || questionIds.split(',').includes(id)) return;
+    lastAnswered.current = null;
+    const active = document.activeElement;
+    if (!active || active === document.body) listRef.current?.focus();
+  }, [questionIds]);
 
   const ranking = caseObject.lastRanking;
   const candidates = useMemo(() => {
@@ -59,6 +71,7 @@ function QuestionsBody() {
   }, [caseObject.terms]);
 
   const answer = (q: Question, status: 'observed' | 'excluded') => {
+    lastAnswered.current = q.hpoId;
     setAnswers((a) => ({ ...a, [q.hpoId]: { status, previous: statusOf.get(q.hpoId) ?? null } }));
     addManualTerm({ id: q.hpoId, label: q.label }, status);
     announce(
@@ -190,7 +203,13 @@ function QuestionsBody() {
         )}
       </div>
 
-      <ol className={styles.list} aria-busy={refreshing || undefined}>
+      <ol
+        ref={listRef}
+        className={styles.list}
+        aria-busy={refreshing || undefined}
+        aria-label="Questions to check next"
+        tabIndex={-1}
+      >
         {questions.map((q, index) => (
           <QuestionItem
             key={q.hpoId}
@@ -235,9 +254,41 @@ function QuestionItem({
 }) {
   const titleId = `question-${q.hpoId.replace(':', '-')}`;
   const answered = status === 'observed' || status === 'excluded';
+  // The answer buttons are replaced on click, so move focus to what replaces them
+  // (Undo, else the question item; Yes after an undo). The live region announces.
+  const itemRef = useRef<HTMLLIElement>(null);
+  const undoRef = useRef<HTMLButtonElement>(null);
+  const yesRef = useRef<HTMLButtonElement>(null);
+  const pendingFocus = useRef<'undo' | 'yes' | null>(null);
+  useEffect(() => {
+    const target = pendingFocus.current;
+    if (!target) return;
+    if (target === 'undo' && answered) {
+      pendingFocus.current = null;
+      (undoRef.current ?? itemRef.current)?.focus();
+    } else if (target === 'yes' && !answered) {
+      pendingFocus.current = null;
+      (yesRef.current ?? itemRef.current)?.focus();
+    }
+  }, [answered, canUndo]);
+  const answerWith = (s: 'observed' | 'excluded') => {
+    pendingFocus.current = 'undo';
+    onAnswer(s);
+  };
+  const undo = () => {
+    pendingFocus.current = 'yes';
+    onUndo();
+  };
 
   return (
-    <li className={styles.item} data-answered={answered || undefined} data-testid={`question-${q.hpoId}`}>
+    <li
+      ref={itemRef}
+      tabIndex={-1}
+      aria-labelledby={titleId}
+      className={styles.item}
+      data-answered={answered || undefined}
+      data-testid={`question-${q.hpoId}`}
+    >
       <span className={styles.number} aria-hidden="true">
         {index + 1}
       </span>
@@ -261,17 +312,22 @@ function QuestionItem({
                 {status === 'observed' ? 'Recorded as present' : 'Recorded as not present'}
               </span>
               {canUndo && (
-                <Button variant="ghost" size="sm" onClick={onUndo}>
+                <Button ref={undoRef} variant="ghost" size="sm" onClick={undo}>
                   Undo
                 </Button>
               )}
             </>
           ) : (
             <>
-              <Button variant="secondary" onClick={() => onAnswer('observed')} data-testid={`answer-yes-${q.hpoId}`}>
+              <Button
+                ref={yesRef}
+                variant="secondary"
+                onClick={() => answerWith('observed')}
+                data-testid={`answer-yes-${q.hpoId}`}
+              >
                 Yes
               </Button>
-              <Button variant="secondary" onClick={() => onAnswer('excluded')} data-testid={`answer-no-${q.hpoId}`}>
+              <Button variant="secondary" onClick={() => answerWith('excluded')} data-testid={`answer-no-${q.hpoId}`}>
                 No
               </Button>
               <span className={styles.answerHint}>Yes adds it as present, No as not present</span>

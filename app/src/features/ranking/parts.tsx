@@ -149,6 +149,7 @@ export function EvidenceGroups({
   idPrefix,
   enter,
   enterOffset,
+  headingLevel = 3,
   ...link
 }: {
   candidate: Candidate;
@@ -157,7 +158,10 @@ export function EvidenceGroups({
   idPrefix: string;
   enter: EnterRows;
   enterOffset: number;
+  /** One level below the candidate's name: 3 under the lead's h2, 4 under a side entry's h3. */
+  headingLevel?: 3 | 4;
 } & LinkProps) {
+  const Heading = headingLevel === 4 ? 'h4' : 'h3';
   let slot = enterOffset;
   const rows = (items: DiseaseFeature[], prefix: 'c' | 'n', note?: string) =>
     items.map((f) => {
@@ -185,16 +189,16 @@ export function EvidenceGroups({
     <>
       {c.contradicted.length > 0 && (
         <div className={styles.group}>
-          <h4 className={styles.groupTitle}>
+          <Heading className={styles.groupTitle}>
             <NotPresentGlyph />
             Marked not present, but usually present here
-          </h4>
+          </Heading>
           <ul className={styles.evidence}>{rows(c.contradicted, 'c', 'you marked this as not present')}</ul>
         </div>
       )}
       {c.notReported.length > 0 && (
         <div className={styles.group}>
-          <h4 className={styles.groupTitle}>Usually present here, not described</h4>
+          <Heading className={styles.groupTitle}>Usually present here, not described</Heading>
           <ul className={styles.evidence}>{rows(c.notReported, 'n')}</ul>
         </div>
       )}

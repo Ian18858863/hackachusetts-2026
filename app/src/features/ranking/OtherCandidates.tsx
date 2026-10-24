@@ -49,7 +49,7 @@ export function OtherCandidates({
   useFlip(listRef, response);
 
   return (
-    <aside className={styles.others} aria-labelledby="others-title">
+    <section className={styles.others} aria-labelledby="others-title">
       <h2 id="others-title" className={styles.othersTitle}>
         Also worth discussing
       </h2>
@@ -76,7 +76,7 @@ export function OtherCandidates({
         ring that it matched without a listed frequency, and a dash that it did not match. The order is phenotype
         overlap, not a probability.
       </p>
-    </aside>
+    </section>
   );
 }
 
@@ -159,6 +159,7 @@ function OtherCandidate({
           idPrefix={`alt${c.rank}`}
           enter={open ? enter : null}
           enterOffset={rows.length}
+          headingLevel={4}
           {...link}
         />
         <div className={styles.altFoot}>

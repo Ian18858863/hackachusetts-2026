@@ -158,7 +158,7 @@ export function CompareMatrix({
           </div>
         </figure>
 
-        <aside className={styles.notes} aria-label="How to read the comparison">
+        <section className={styles.notes} aria-label="How to read the comparison">
           <div className={styles.legendNote}>
             <h3>Reading the dots</h3>
             <p>How often the feature is reported in people with the condition, from HPO annotations.</p>
@@ -177,7 +177,7 @@ export function CompareMatrix({
               ))}
             </dl>
           </div>
-        </aside>
+        </section>
       </div>
     </section>
   );

@@ -1009,6 +1009,31 @@
   margin: 0;
 }
 
+/* ---- Next step ------------------------------------------------------------ */
+
+.next {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--s-3) var(--s-5);
+  padding-top: var(--s-4);
+  border-top: var(--border-hair) solid var(--color-border-soft);
+}
+
+.nextHint {
+  flex: 1 1 18rem;
+  min-width: 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+@media (max-width: 600px) {
+  .nextCta {
+    width: 100%;
+  }
+}
+
 /* ---- Skeleton (final layout size) --------------------------------------- */
 
 .skeletonLead {

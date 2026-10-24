@@ -101,6 +101,7 @@ export function RankingStep() {
             {...link}
           />
           <RankingSources ranking={ranking} />
+          <NextStep onNext={() => goToStep('questions')} />
         </>
       ) : auto.phase === 'error' && auto.error ? (
         <ApiErrorState
@@ -324,6 +325,23 @@ function RankingSources({ ranking }: { ranking: CaseRanking }) {
         </div>
       </dl>
     </section>
+  );
+}
+
+/** In-content route to the next step, styled like "See possible matches" on the features step. */
+function NextStep({ onNext }: { onNext(): void }) {
+  return (
+    <div className={styles.next}>
+      <p className={styles.nextHint}>Next: questions about features that best tell these possible matches apart.</p>
+      <Button
+        className={styles.nextCta}
+        onClick={onNext}
+        data-testid="go-questions"
+        iconEnd={<Icon name="arrowRight" size={16} />}
+      >
+        What to check next
+      </Button>
+    </div>
   );
 }
 
