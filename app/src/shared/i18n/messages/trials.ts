@@ -10,7 +10,7 @@ export default defineMessages(
     heading: 'Recruiting studies',
     ledeWithCandidate: 'Studies looking for participants now. Ask the doctor whether any could be relevant.',
     ledeNoCandidate: 'Studies looking for participants now, for a possible match.',
-    notRecommendation: 'Listing a study is not a recommendation. Ask the clinician whether any applies.',
+    notRecommendation: 'Listing a study is not a recommendation.',
     beforeMatchTitle: 'Studies appear after matching',
     beforeMatchDescription:
       'Once there are possible matches, this shows up to five recruiting studies from ClinicalTrials.gov for one of them.',
@@ -48,7 +48,7 @@ export default defineMessages(
       heading: '正在招募的临床试验',
       ledeWithCandidate: '目前正在招募参与者的临床试验。请询问医生其中是否有相关的试验。',
       ledeNoCandidate: '为某个可能匹配列出目前正在招募参与者的临床试验。',
-      notRecommendation: '列出某项临床试验并不代表推荐。请向临床医生询问是否有适用的试验。',
+      notRecommendation: '列出某项临床试验并不代表推荐。',
       beforeMatchTitle: '匹配完成后显示临床试验',
       beforeMatchDescription: '有了可能匹配后，这里会为其中一个显示最多五项来自 ClinicalTrials.gov 的正在招募的临床试验。',
       chooserLegend: '显示以下疾病的临床试验',
@@ -84,7 +84,7 @@ export default defineMessages(
       heading: '募集中の臨床試験',
       ledeWithCandidate: '現在参加者を募集している臨床試験です。関係しそうなものがあるか医師に尋ねてください。',
       ledeNoCandidate: '一致候補について、現在参加者を募集している臨床試験です。',
-      notRecommendation: '臨床試験が表示されていても、おすすめという意味ではありません。当てはまるものがあるかは臨床医に確認してください。',
+      notRecommendation: '臨床試験が表示されていても、推奨という意味ではありません。',
       beforeMatchTitle: '照合後に臨床試験が表示されます',
       beforeMatchDescription:
         '一致候補が出ると、そのうち 1 つについて ClinicalTrials.gov の募集中の臨床試験を最大 5 件表示します。',
@@ -122,7 +122,7 @@ export default defineMessages(
       ledeWithCandidate:
         'Ensayos clínicos que buscan participantes ahora. Pregunte al médico si alguno podría ser relevante.',
       ledeNoCandidate: 'Ensayos clínicos que buscan participantes ahora, para una posible coincidencia.',
-      notRecommendation: 'Que un ensayo clínico aparezca en la lista no es una recomendación. Pregunte al profesional clínico si alguno es aplicable.',
+      notRecommendation: 'Que un ensayo clínico aparezca en la lista no es una recomendación.',
       beforeMatchTitle: 'Los ensayos aparecen después de comparar',
       beforeMatchDescription:
         'Cuando haya posibles coincidencias, aquí se mostrarán hasta cinco ensayos clínicos con reclutamiento abierto de ClinicalTrials.gov para una de ellas.',
@@ -159,7 +159,7 @@ export default defineMessages(
       heading: '모집 중인 임상시험',
       ledeWithCandidate: '지금 참여자를 모집하는 임상시험입니다. 관련이 있을 만한 것이 있는지 의사에게 물어보세요.',
       ledeNoCandidate: '가능한 일치에 대해 지금 참여자를 모집하는 임상시험입니다.',
-      notRecommendation: '임상시험이 목록에 있다고 해서 추천하는 것은 아닙니다. 해당되는 것이 있는지 임상의에게 물어보세요.',
+      notRecommendation: '임상시험이 목록에 있다고 해서 추천하는 것은 아닙니다.',
       beforeMatchTitle: '일치 결과가 나오면 임상시험이 표시됩니다',
       beforeMatchDescription:
         '가능한 일치가 나오면 그중 하나에 대해 ClinicalTrials.gov의 모집 중인 임상시험을 최대 5개 보여 줍니다.',
@@ -197,7 +197,7 @@ export default defineMessages(
       ledeWithCandidate:
         'Essais cliniques qui cherchent des participants en ce moment. Demandez au médecin si l’un d’eux pourrait être pertinent.',
       ledeNoCandidate: 'Essais cliniques qui cherchent des participants en ce moment, pour une correspondance possible.',
-      notRecommendation: 'La présence d’un essai clinique dans la liste n’est pas une recommandation. Demandez au clinicien si l’un d’eux s’applique.',
+      notRecommendation: 'La présence d’un essai clinique dans la liste n’est pas une recommandation.',
       beforeMatchTitle: 'Les essais apparaissent après la comparaison',
       beforeMatchDescription:
         'Dès qu’il y a des correspondances possibles, cette zone affiche jusqu’à cinq essais cliniques qui recrutent, issus de ClinicalTrials.gov, pour l’une d’elles.',

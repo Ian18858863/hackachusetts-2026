@@ -47,7 +47,7 @@ export default defineMessages(
     versionDemoCache: 'Demo cache',
     sourceMonarch: 'Monarch semantic similarity',
     sourceHpo: 'HPO disease annotations',
-    scopeNote: 'The ranking uses phenotype overlap only; it does not use age, sex, ancestry or test results.',
+    scopeNote: 'The ranking uses only the features listed here; it does not use age, sex, ancestry or genetic test results.',
     nextHint: 'Next: questions about features that best tell these possible matches apart.',
     nextCta: 'What to check next',
 
@@ -187,7 +187,7 @@ export default defineMessages(
       versionDemoCache: '演示缓存',
       sourceMonarch: 'Monarch 语义相似度',
       sourceHpo: 'HPO 疾病注释',
-      scopeNote: '排序只依据表型的重合程度，不使用年龄、性别、祖源或检查结果。',
+      scopeNote: '排序只使用这里列出的特征，不使用年龄、性别、祖源或基因检测结果。',
       nextHint: '下一步：最能区分这些可能匹配的特征相关问题。',
       nextCta: '接下来确认什么',
 
@@ -326,7 +326,7 @@ export default defineMessages(
       versionDemoCache: 'デモ用キャッシュ',
       sourceMonarch: 'Monarch 意味的類似度',
       sourceHpo: 'HPO 疾患アノテーション',
-      scopeNote: '順位付けは表現型の重なりだけに基づきます。年齢、性別、祖先、検査結果は使いません。',
+      scopeNote: '順位付けにはここに挙げた特徴だけを使います。年齢、性別、祖先の出身地域、遺伝学的検査の結果は使いません。',
       nextHint: '次へ：これらの一致候補を最もよく見分けられる特徴についての質問です。',
       nextCta: '次に確認すること',
 
@@ -467,7 +467,7 @@ export default defineMessages(
       versionDemoCache: 'Caché de demostración',
       sourceMonarch: 'Similitud semántica de Monarch',
       sourceHpo: 'Anotaciones de enfermedades de HPO',
-      scopeNote: 'La clasificación solo usa la coincidencia de fenotipos; no usa la edad, el sexo, la ascendencia ni los resultados de pruebas.',
+      scopeNote: 'La clasificación solo usa los rasgos que aparecen aquí; no usa la edad, el sexo, la ascendencia ni los resultados de pruebas genéticas.',
       nextHint: 'Siguiente: preguntas sobre los rasgos que mejor distinguen estas posibles coincidencias.',
       nextCta: 'Qué comprobar después',
 
@@ -607,7 +607,7 @@ export default defineMessages(
       versionDemoCache: '데모 캐시',
       sourceMonarch: 'Monarch 의미 유사도',
       sourceHpo: 'HPO 질환 주석',
-      scopeNote: '순위는 표현형이 겹치는 정도만 사용하며 나이, 성별, 조상, 검사 결과는 사용하지 않습니다.',
+      scopeNote: '순위는 여기에 나열된 특징만 사용하며 나이, 성별, 혈통, 유전자 검사 결과는 사용하지 않습니다.',
       nextHint: '다음: 이 가능한 일치들을 가장 잘 구별하는 특징에 대한 질문입니다.',
       nextCta: '다음에 확인할 것',
 
@@ -748,7 +748,7 @@ export default defineMessages(
       versionDemoCache: 'Cache de démonstration',
       sourceMonarch: 'Similarité sémantique Monarch',
       sourceHpo: 'Annotations de maladies HPO',
-      scopeNote: 'Le classement repose uniquement sur le recoupement des phénotypes ; il n’utilise ni l’âge, ni le sexe, ni l’ascendance, ni les résultats d’examens.',
+      scopeNote: 'Le classement utilise uniquement les caractéristiques listées ici ; il n’utilise ni l’âge, ni le sexe, ni l’ascendance, ni les résultats de tests génétiques.',
       nextHint: 'Ensuite : des questions sur les caractéristiques qui distinguent le mieux ces correspondances possibles.',
       nextCta: 'À vérifier ensuite',
 
