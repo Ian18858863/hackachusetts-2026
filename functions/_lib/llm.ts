@@ -86,9 +86,13 @@ export interface ProposeResult {
   /**
    * True when the model was still writing at the deadline (T39): the
    * proposals are the complete features received before it. The caller
-   * must tell the user that some features may be missing.
+   * must tell the user that some features may be missing. Also true when a
+   * finished answer was not valid JSON as a whole (for example cut by the
+   * output-token cap) and only its complete feature objects were kept.
    */
   partial: boolean;
+  /** Why `partial` is true: the 15 s deadline, or a finished but cut answer. */
+  partialReason?: "deadline" | "truncated";
 }
 
 export type LlmErrorCode =
@@ -215,22 +219,7 @@ export async function proposeTerms(
     const detail = err instanceof Error ? err.message.split("\n")[0].slice(0, 200) : "unknown error";
     throw new LlmError("upstream", `Model call failed: ${detail}`, model, llmMs);
   }
-  const llmMs = Date.now() - started;
-
-  const content = extractContent(output);
-  if (content === null) {
-    throw new LlmError("bad_output", "Model returned no text content.", model, llmMs);
-  }
-  const items = parseItems(content);
-  if (items === null) {
-    throw new LlmError("bad_output", "Model output contained no JSON feature list.", model, llmMs);
-  }
-
-  const { proposals, stats } = validateProposals(items, text, maxProposals);
-  const result: ProposeResult = { proposals, model, llmMs, stats, outputChars: content.length, partial: false };
-  const tokens = usageTokens(output);
-  if (tokens !== undefined) result.outputTokens = tokens;
-  return result;
+  return finishProposals(output, model, text, maxProposals, Date.now() - started);
 }
 
 // ---------------------------------------------------------------------------
@@ -274,7 +263,7 @@ async function proposeStreaming(
 
   if (!(stream instanceof ReadableStream)) {
     // The binding answered without streaming: parse it like the plain call.
-    return finishProposals(stream, model, text, maxProposals, Date.now() - started, false);
+    return finishProposals(stream, model, text, maxProposals, Date.now() - started);
   }
 
   const reader = (stream as ReadableStream<Uint8Array>).getReader();
@@ -313,37 +302,63 @@ async function proposeStreaming(
   if (!timedOut) {
     const out: Record<string, unknown> = { response: content };
     if (sse.outputTokens !== undefined) out.usage = { completion_tokens: sse.outputTokens };
-    return finishProposals(out, model, text, maxProposals, llmMs, false);
+    return finishProposals(out, model, text, maxProposals, llmMs);
   }
   const items = parsePartialItems(content);
   if (items.length === 0) {
     throw new LlmError("timeout", `Model call exceeded ${timeoutMs} ms.`, model, llmMs);
   }
   const { proposals, stats } = validateProposals(items, text, maxProposals);
-  return { proposals, model, llmMs, stats, outputChars: content.length, partial: true };
+  return { proposals, model, llmMs, stats, outputChars: content.length, partial: true, partialReason: "deadline" };
 }
 
+/**
+ * Parse a finished model answer. When the answer is not valid JSON as a whole
+ * (for example it hit the output-token cap mid-object), the complete feature
+ * objects at its start are kept with `partial: true`; with none, it is
+ * `bad_output` as before.
+ */
 function finishProposals(
   output: unknown,
   model: string,
   text: string,
   maxProposals: number,
   llmMs: number,
-  partial: boolean,
 ): ProposeResult {
   const content = extractContent(output);
   if (content === null) {
     throw new LlmError("bad_output", "Model returned no text content.", model, llmMs);
   }
-  const items = parseItems(content);
-  if (items === null) {
-    throw new LlmError("bad_output", "Model output contained no JSON feature list.", model, llmMs);
+  let items = parseItems(content);
+  let partial = false;
+  // A cut answer can still contain a balanced inner array (for example a
+  // feature's `alternatives`), which parseItems would take as the list. Prefer
+  // the complete top-level feature objects when they are more.
+  const complete = parsePartialItems(content);
+  if (items === null || complete.length > items.filter(isRecord).length) {
+    if (complete.length === 0) {
+      throw new LlmError("bad_output", "Model output contained no JSON feature list.", model, llmMs);
+    }
+    items = complete;
+    partial = true;
   }
   const { proposals, stats } = validateProposals(items, text, maxProposals);
   const result: ProposeResult = { proposals, model, llmMs, stats, outputChars: content.length, partial };
+  if (partial) result.partialReason = "truncated";
   const tokens = usageTokens(output);
   if (tokens !== undefined) result.outputTokens = tokens;
   return result;
+}
+
+/**
+ * Contract error for an extraction where no proposal could be grounded. When
+ * the answer was cut at the deadline the empty result says nothing about the
+ * notes, so it is a retryable timeout; otherwise it is NO_TERMS_FOUND (T39).
+ */
+export function noGroundedTermsCode(result: Pick<ProposeResult, "partial" | "partialReason">):
+  | "UPSTREAM_TIMEOUT"
+  | "NO_TERMS_FOUND" {
+  return result.partial && result.partialReason === "deadline" ? "UPSTREAM_TIMEOUT" : "NO_TERMS_FOUND";
 }
 
 /**

@@ -16,7 +16,10 @@
 //      15 s, the complete features received so far are grounded as usual and
 //      the response carries a warning that some features may be missing.
 //      Only when no complete feature arrived is it 504 UPSTREAM_TIMEOUT.
-//   4. Zero grounded terms -> 422 NO_TERMS_FOUND.
+//   4. Zero grounded terms -> 422 NO_TERMS_FOUND, or 504 UPSTREAM_TIMEOUT when
+//      the answer was cut at the deadline (nothing about the notes is known).
+//      A finished answer that is not valid JSON as a whole (output-token cap)
+//      keeps its complete features with the same partial warning.
 // Only the live path is rate-limited per client IP (functions/_lib/rateLimit.ts,
 // T18p): 429 RATE_LIMITED with Retry-After. The demo path is never limited.
 // If the AI binding is missing or the LLM / HPO call fails and the text is a
@@ -36,7 +39,7 @@ import {
   secondaryLookupCap,
 } from "../_lib/grounding";
 import type { SecondaryStats } from "../_lib/grounding";
-import { LlmError, MAX_TEXT_CHARS, proposeTerms } from "../_lib/llm";
+import { LlmError, MAX_TEXT_CHARS, noGroundedTermsCode, proposeTerms } from "../_lib/llm";
 import type { LlmEnv, ProposeResult } from "../_lib/llm";
 import { checkAndCount, clientIp, extractWindows, rateLimitMessage } from "../_lib/rateLimit";
 import {
@@ -261,6 +264,12 @@ async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promi
   );
 
   if (grounded.terms.length === 0) {
+    if (noGroundedTermsCode(proposed) === "UPSTREAM_TIMEOUT") {
+      // Cut at the deadline: the empty result says nothing about the notes.
+      const demo = findDemoByNarrative(text);
+      if (demo) return demoResponse(demo, [FALLBACK_WARNING]);
+      return apiError("UPSTREAM_TIMEOUT", LLM_TIMEOUT_MESSAGE);
+    }
     return apiError(
       "NO_TERMS_FOUND",
       "No features in the text could be matched to HPO terms. Your notes are kept; add more detail or add terms by hand.",
@@ -293,6 +302,9 @@ const PARTIAL_WARNING =
 const FALLBACK_WARNING =
   "Live extraction was not available, so the prepared extraction for this demo case is shown";
 
+const LLM_TIMEOUT_MESSAGE =
+  "The extraction service did not answer within 15 seconds. Your notes are kept; try again, or add terms by hand.";
+
 /** Map an LLM failure to the contract error, falling back to a demo narrative's prepared extraction. */
 function llmFailure(err: unknown, text: string): Response {
   if (!(err instanceof LlmError)) {
@@ -318,10 +330,7 @@ function llmFailure(err: unknown, text: string): Response {
   if (demo) return demoResponse(demo, [FALLBACK_WARNING]);
 
   if (err.code === "timeout") {
-    return apiError(
-      "UPSTREAM_TIMEOUT",
-      "The extraction service did not answer within 15 seconds. Your notes are kept; try again, or add terms by hand.",
-    );
+    return apiError("UPSTREAM_TIMEOUT", LLM_TIMEOUT_MESSAGE);
   }
   // "upstream" or "bad_output"
   return apiError(

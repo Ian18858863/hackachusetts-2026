@@ -4,7 +4,7 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { LlmError, SseText, buildRequest, parsePartialItems, proposeTerms } from "./llm.ts";
+import { LlmError, SseText, buildRequest, noGroundedTermsCode, parsePartialItems, proposeTerms } from "./llm.ts";
 
 const TEXT = "My son is 8. He keeps falling, his calves look very big, and he struggles to climb stairs.";
 const F1 = { phrase: "keeps falling", label: "Frequent falls", alternatives: [], negated: false, confidence: "high" };
@@ -111,4 +111,45 @@ test("an event carrying both response and an OpenAI delta adds the token once", 
   s.push(`data: ${JSON.stringify({ response: "ab", choices: [{ delta: { content: "ab" } }] })}\n\n`);
   s.push(`data: ${JSON.stringify({ choices: [{ delta: { content: "c" } }] })}\n\n`);
   assert.equal(s.text, "abc");
+});
+
+test("a deadline-cut answer with nothing grounded is a retryable timeout, not NO_TERMS_FOUND", async () => {
+  const head = `{"features":[${JSON.stringify(F1)},{"phrase":"strug`;
+  const r = await proposeTerms(TEXT, { AI: aiReturning(streamOf(sse([head], false), true)) }, { timeoutMs: 150 });
+  assert.equal(r.partial, true);
+  assert.equal(r.partialReason, "deadline");
+  assert.equal(noGroundedTermsCode(r), "UPSTREAM_TIMEOUT");
+  assert.equal(noGroundedTermsCode({ partial: false }), "NO_TERMS_FOUND");
+  assert.equal(noGroundedTermsCode({ partial: true, partialReason: "truncated" }), "NO_TERMS_FOUND");
+});
+
+test("a finished stream cut by the output cap keeps its complete features with partial true", async () => {
+  const capped = `{"features":[${JSON.stringify(F1)},${JSON.stringify(F2)},{"phrase":"struggles to cl`;
+  const r = await proposeTerms(TEXT, { AI: aiReturning(streamOf(sse([capped]), false)) });
+  assert.equal(r.partial, true);
+  assert.equal(r.partialReason, "truncated");
+  assert.deepEqual(r.proposals.map((p) => p.phrase), ["keeps falling", "his calves look very big"]);
+});
+
+test("a finished plain answer cut by the output cap is also kept as partial", async () => {
+  const ai = { async run() { return { response: `{"features":[${JSON.stringify(F3)},{"phrase":"kee` }; } };
+  const r = await proposeTerms(TEXT, { AI: ai });
+  assert.equal(r.partial, true);
+  assert.equal(r.partialReason, "truncated");
+  assert.deepEqual(r.proposals.map((p) => p.label), ["Difficulty climbing stairs"]);
+});
+
+test("a finished answer with no complete feature is still bad_output", async () => {
+  await assert.rejects(
+    proposeTerms(TEXT, { AI: aiReturning(streamOf(sse(['{"features":[{"phr']), false)) }),
+    (err: unknown) => err instanceof LlmError && err.code === "bad_output",
+  );
+});
+
+test("a complete answer wrapped in chatter is not marked partial", async () => {
+  const ai = { async run() { return { response: `Here you go: {"features":[${JSON.stringify(F1)},${JSON.stringify(F2)}]} Done.` }; } };
+  const r = await proposeTerms(TEXT, { AI: ai });
+  assert.equal(r.partial, false);
+  assert.equal(r.partialReason, undefined);
+  assert.equal(r.proposals.length, 2);
 });
