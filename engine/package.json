@@ -1,0 +1,26 @@
+{
+  "name": "rdd-engine",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Rare Disease Detective domain engine: pure TypeScript for Cloudflare Workers, network only through an injected fetch.",
+  "type": "module",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "engines": {
+    "node": ">=18.18"
+  },
+  "scripts": {
+    "typecheck": "tsc -p tsconfig.json --noEmit && tsc -p test/tsconfig.json --noEmit",
+    "test": "vitest run",
+    "check:workers": "esbuild index.ts --bundle --platform=neutral --format=esm --outfile=node_modules/.cache/rdd-workers-check/engine.mjs --log-level=warning",
+    "check": "npm run typecheck && npm run check:workers && npm test"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2",
+    "fast-check": "4.10.2",
+    "typescript": "7.0.2",
+    "vite": "6.4.5",
+    "vitest": "3.2.7"
+  }
+}

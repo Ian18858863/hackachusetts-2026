@@ -1,0 +1,25 @@
+{
+  // Workers-only environment: ES2022 + WebWorker globals (fetch, Response,
+  // Cache, AbortSignal). No DOM and no Node types, so any Node built-in import
+  // fails the typecheck. Flags mirror app/tsconfig.app.json so the app and the
+  // functions can import these files under their own strict settings.
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "WebWorker"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "moduleDetection": "force",
+    "types": [],
+    "verbatimModuleSyntax": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "exactOptionalPropertyTypes": true
+  },
+  "include": ["*.ts", "data/**/*.ts", "demo/**/*.ts"]
+}
