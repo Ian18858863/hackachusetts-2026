@@ -6,9 +6,12 @@
 //      result and the cache key do not depend on input order.
 //   2. Workers Cache API, key rank:v0.1:<path mode>:<engine status>|<observed>|<excluded>|<limit>,
 //      24 h. Path mode and engine status are in the key so engine and fallback
-//      results never mix. Degraded responses (an annotation or Orphadata call
-//      lost data) are not cached and are sent with Cache-Control: no-store
-//      (R11.4; X-RDD-Enrichment: complete | incomplete for QA).
+//      results never mix. Degraded responses are not cached and are sent with
+//      Cache-Control: no-store (R11.4; X-RDD-Enrichment: complete | incomplete
+//      for QA). Degraded means an annotation call or an Orphadata lookup
+//      failed (error, timeout or no budget left); an answer with no data is
+//      not a failure. Both paths report it: the engine as enrichment.complete,
+//      the fallback as complete.
 //   3. RDD_ENGINE_PATH / RDD_ENGINE_PATH_RANK (see _lib/fallback/engineFirst.ts):
 //      "fallback" (default) runs functions/_lib/fallback/rank.ts directly;
 //      "engine" runs rankCandidatesWithReport (enrichment.complete decides

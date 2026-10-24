@@ -7,8 +7,9 @@
 //   3. Order by Monarch score desc, then diseaseId asc; keep the top `limit`.
 //   4. Per candidate, JAX annotations for the ORPHA and the OMIM id in
 //      parallel (3 s each), plus an Orphadata name check (2 s). A failed
-//      annotation call only drops "hpo-annotations"; Orphadata failures are
-//      ignored.
+//      annotation call only drops "hpo-annotations"; a failed Orphadata
+//      lookup only drops the Orphanet name. Either failure marks the result
+//      incomplete, so /api/rank does not cache it.
 //   5. Evidence from Monarch object_best_matches; frequencies, notReported,
 //      contradicted, genes and categories from the annotations; overlap from
 //      the engine's overlapLabel.
@@ -163,17 +164,28 @@ interface OrphaName {
   date: string | null;
 }
 
-async function orphadataName(orpha: DiseaseId, deps: FallbackDeps): Promise<OrphaName | null> {
+/**
+ * Orphanet preferred name for an ORPHA id. Non-blocking (contract 7.4 step
+ * 10): the ranking never fails because of it. `failed` is true when the
+ * lookup itself failed (error, timeout, or no time left in the rank budget),
+ * so the response lost the Orphanet name and data version and must not be
+ * cached. An answer without a name (HTTP 404 or no "Preferred term") is not a
+ * failure: there is simply nothing to add.
+ */
+async function orphadataName(
+  orpha: DiseaseId,
+  deps: FallbackDeps,
+): Promise<{ value: OrphaName | null; failed: boolean }> {
   try {
     const code = orpha.split(":")[1] ?? "";
     const body = await getJson("orphadata", `${ORPHADATA}${encodeURIComponent(code)}?lang=en`, deps);
     const results = ((body as { data?: { results?: unknown } } | null)?.data?.results ?? {}) as Record<string, unknown>;
     const name = str(results["Preferred term"]).trim();
-    if (!name) return null;
+    if (!name) return { value: null, failed: false };
     const date = /^\d{4}-\d{2}-\d{2}/.exec(str(results.Date))?.[0] ?? null;
-    return { name, date };
+    return { value: { name, date }, failed: false };
   } catch {
-    return null; // non-blocking (contract 7.4)
+    return { value: null, failed: true };
   }
 }
 
@@ -340,7 +352,7 @@ function budgetedDeps(deps: FallbackDeps, leftMs: number): FallbackDeps {
 
 export interface FallbackRankResult {
   body: RankResponse;
-  /** False when an annotation call failed: do not cache this response (R11.4). */
+  /** False when an annotation or Orphadata lookup failed: do not cache this response (R11.4). */
   complete: boolean;
 }
 
@@ -375,11 +387,13 @@ export async function fallbackRank(req: NormalizedRankRequest, deps: FallbackDep
   const labels = patientLabels(rows);
   const [annotations, orphaNames] = await Promise.all([
     Promise.all(top.map((row) => candidateAnnotations(row, after))),
-    Promise.all(top.map((row) => (row.orpha ? orphadataName(row.orpha, after) : Promise.resolve(null)))),
+    Promise.all(
+      top.map((row) => (row.orpha ? orphadataName(row.orpha, after) : Promise.resolve({ value: null, failed: false }))),
+    ),
   ]);
 
   const candidates = top.map((row, i) =>
-    buildCandidate(row, i + 1, req, labels, annotations[i]?.merged ?? null, orphaNames[i] ?? null),
+    buildCandidate(row, i + 1, req, labels, annotations[i]?.merged ?? null, orphaNames[i]?.value ?? null),
   );
   // Let /api/next-questions read the same ORPHA + OMIM sets and names.
   candidates.forEach((c, i) => {
@@ -388,11 +402,11 @@ export async function fallbackRank(req: NormalizedRankRequest, deps: FallbackDep
   });
 
   const dataVersions: DataVersions = { hpo: HPO_VERSION, monarch: "v3 API", fetchedAt };
-  const orphaDate = orphaNames.find((o) => o?.date)?.date;
+  const orphaDate = orphaNames.find((o) => o.value?.date)?.value?.date;
   if (orphaDate) dataVersions.orphanet = orphaDate;
 
   return {
     body: { version: "0.1", source: "live", candidates, dataVersions },
-    complete: annotations.every((a) => !a.failed),
+    complete: annotations.every((a) => !a.failed) && orphaNames.every((o) => !o.failed),
   };
 }
