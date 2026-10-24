@@ -52,7 +52,7 @@ Start with 3.1; the feature folders then run in parallel against contract exampl
 - [x] 3.5 `app/src/features/questions/`: questions with "why" lines, yes/no answers that add terms and re-rank. _R5.1–R5.5_
 - [x] 3.6 `app/src/features/trials/`: studies per candidate, empty state with ClinicalTrials.gov link, credit line. _R7.1–R7.3, R8.2_ _`eb86f02`, touch targets `e8d762f`_
 - [x] 3.7 `app/src/features/brief/`: brief view with print stylesheet (one page), demo marking, phenopacket download. _R6.1–R6.6, R9.1_ _`eb86f02`, touch targets `e8d762f`_
-- [ ] 3.8 Accessibility and responsive pass: keyboard happy path, focus ring, contrast check with a tool, 1440×900 / 1000×600 / 375×812, reduced motion. _R12.1–R12.6_ _partial: pass done in `48d1e8f` (`docs/QA.md`), fixes in `dd88428`, `caec025`, `e8d762f`; contrast "incomplete" nodes not re-checked with a second tool (S4)_
+- [ ] 3.8 Accessibility and responsive pass: keyboard happy path, focus ring, contrast check with a tool, 1440×900 / 1000×600 / 375×812, reduced motion. _R12.1–R12.6_ _partial: pass done in `48d1e8f` (`docs/QA.md`), fixes in `dd88428`, `caec025`, `e8d762f`; open: contrast "incomplete" nodes not re-checked with a second tool (S4); T14b review findings 1 and 2 (QA re-measurement of the 44 px hit areas, adjacent-line overlap); nav and footer links under 44 px (T14b finding 5, R12.5)_
 
 ## Lane 4: landing — Peter (`landing/**`, T04)
 

@@ -1,6 +1,6 @@
 # Team Briefing — Hackachusetts 2026 (read this first)
 
-Last updated: 2026-10-24. **v4.7 — latest deploy `cf07006` (in the 14:40s ET) with the full demo-npc1 flow verified live; T16 and T18f deployed and verified; T15b, T10d, T11h, T13e, T18d, T18e recorded as pushed; T18c recorded as deployed and verified; late claims T18c–T18f, T13e, T09d, T10e, T11i recorded honestly. Recorded 2026-10-24 ~14:50 ET by Ian's Kiro.** **v4 was approved by all three humans (Ian, Peter, Jerry) in the team chat at ~11:35 ET.** This version preserves the original event rules, topic research, and submission requirements, and adopts the faster 3-person coordination workflow.
+Last updated: 2026-10-24. **v4.8 — latest deploy `6c89a84` (Cloudflare deployment `e05358cc`, 15:17 ET): `/api/rank` runs on the engine (T18k), landing page live (T04); next-questions, trials and brief on the fallback. Recorded 2026-10-24 ~15:40 ET by Ian's Kiro (T11m).** Earlier: v4.7, deploy `cf07006` with the full demo-npc1 flow verified live, recorded ~14:50 ET. **v4 was approved by all three humans (Ian, Peter, Jerry) in the team chat at ~11:35 ET.** This version preserves the original event rules, topic research, and submission requirements, and adopts the faster 3-person coordination workflow.
 
 This is the single source of shared **decisions and current task claims**. The companion [`docs/PROTOCOL.md`](docs/PROTOCOL.md) (Assistant × Kiro Agent Collaboration Protocol v4) is the operational handbook for human teammates, their AI Assistants, and Kiro coding Agents.
 
@@ -29,7 +29,7 @@ This is the single source of shared **decisions and current task claims**. The c
 | Our venue | UMass Boston |
 | Team | Ian (`Ian18858863`, repo admin), Qirong Wang (`qirongwangpeter`), Jerry (`lolershark`) |
 | Repo | https://github.com/Ian18858863/hackachusetts-2026 (private now; must be **public** at submission) |
-| Live demo | https://hackachusetts-2026.pages.dev (app at `/app/`; skeleton first deployed 12:02 ET from main `53263d4`; functions first live in `3c99583` at 13:46 ET: `/api/extract` (Workers AI), `/api/terms`, `/api/rank`, `/api/next-questions`, `/api/trials`, `/api/brief`; latest deploy `e8d762f` (live smoke 14 passed, 0 failed)) |
+| Live demo | https://hackachusetts-2026.pages.dev (app at `/app/`; skeleton first deployed 12:02 ET from main `53263d4`; functions first live in `3c99583` at 13:46 ET: `/api/extract` (Workers AI), `/api/terms`, `/api/rank`, `/api/next-questions`, `/api/trials`, `/api/brief`; latest deploy `6c89a84` (Cloudflare deployment `e05358cc`, 15:17 ET; `/api/rank` on the engine; live smoke 14 passed, 0 failed)) |
 | Build window | 11:30 → 18:00. Submission window 18:00–20:00. **Hard deadline 20:00. Our target: submitted by 19:00.** |
 | Judging | Remote, 20:00–23:00. About 50 finalists notified at midnight. Finals Sunday 10/25, 11:00–14:00 at WHOOP HQ |
 | Prizes per track | 1st $3,500 · 2nd $1,000 · 3rd $500. Bonus: Best Use of Kiro (1-year Kiro Pro Max). Top 50 finalists get WHOOP straps |
@@ -152,7 +152,7 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T02 Unified visual steering + honest remediation of 10:55 draft | Ian | `.kiro/steering/design.md` only; log correction handled via separately claimed T10 | PUSHED (`38291acacb9d7895e17c7ecf088e4eafbd937c3d`) | 12:00 |
 | T02b Re-author team steering | Ian | `.kiro/steering/team.md` only | PUSHED (`cac4d5aad6a8c072a99f7397dfca1cd47acdcc8a`) | 12:10 |
 | T03 Deployment path + full-app smoke checks | Ian | `wrangler.toml` at repo root, `scripts/build-site.sh`, `functions/api/health.ts`, Cloudflare Pages project; deployment secrets outside repo; claim extended to `.gitignore` for `.dev.vars` and `.wrangler/` | DEPLOYED_VERIFIED (pushed `53263d4fe019fd1265f82df97e8a30f5cab0151a`; live https://hackachusetts-2026.pages.dev verified 12:03 ET) | 12:30 |
-| T04 Landing page | Ian (Peter's assistant handed T04 to Ian's Kiro at ~14:50 ET; Peter's Kiro v1/v2 is used as input) | `landing/**`, `.kiro/specs/landing/**`, `.kiro/steering/release-check.md` (demo id fix) | DEPLOYED_VERIFIED (`a28e4f5` Peter's v2 import, `08941fe`, fix `6c89a84`; live in Cloudflare deployment `e05358cc`, ~15:16 ET) | 15:45 |
+| T04 Landing page | Ian (Peter's assistant handed T04 to Ian's Kiro at ~14:50 ET; Peter's Kiro v1/v2 is used as input) | `landing/**`, `.kiro/specs/landing/**`, `.kiro/steering/release-check.md` (demo id fix) | DEPLOYED_VERIFIED (`6c89a84`; commits `a28e4f5` Peter's v2 import, `08941fe`, fix `6c89a84`; deployment `e05358cc`). HTTP checks by Kiro at deploy; browser check by Ian's assistant at 15:18 ET in the built-in browser: one h1, every /app link is /app/?demo=demo-npc1, §13 disclaimer, footer HPO 2026-09-01, no horizontal scroll at 375 px, CTA opens the demo case and matches #1 Niemann-Pick C1 | 15:45 |
 | T05 Pitch narrative + under-3-minute video storyboard | Peter | Presentation/copy assets; never claim a feature works without a real demo | OPEN | TBD |
 | T06 README + Kiro write-up | Ian (Peter released T06 in the team chat ~14:35 ET) | `README.md`, `docs/KIRO_WRITEUP.md`; Kiro write-up from **real usage log**, not made-up entries | PUSHED (`6fcbcdb`, fix `2c641c0`); refreshed in T11m | 15:20 |
 | T07 Domain module + approved public datasets | Jerry | `engine/**`, `.kiro/specs/engine/**` (repo-root TypeScript domain engine; runs on Cloudflare Workers, fetch only, no fs; called from `functions/api/*`) | CLAIMED (Jerry) | TBD (Jerry) |
@@ -173,9 +173,9 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T11g Claim T13c–T16, record pushed Kiro coverage tasks | Ian | `BRIEFING.md` | PUSHED (`079e559`) | 12:55 |
 | T11h Board refresh: functions live, demo-npc1, late claims | Ian | `BRIEFING.md` | PUSHED (`4d80302`) | 13:55 |
 | T11i Board refresh after T16–T18f deploys | Ian | `BRIEFING.md` | PUSHED (`86d41c9`); claimed late; recorded 14:50 ET | 14:55 |
-| T11j Claim T24 smoke script and T25 QA pass | Ian | `BRIEFING.md` | CLAIMED (Ian) | 14:35 |
-| T11k Record T06 hand-over from Peter to Ian | Ian | `BRIEFING.md` | CLAIMED (Ian) | TBD |
-| T11l Record T04 hand-over to Ian, T18g switch, QA fixes | Ian | `BRIEFING.md` | CLAIMED (Ian) | 15:00 |
+| T11j Claim T24 smoke script and T25 QA pass | Ian | `BRIEFING.md` | PUSHED (`6188c11`) | 14:35 |
+| T11k Record T06 hand-over from Peter to Ian | Ian | `BRIEFING.md` | PUSHED (`fabb222`) | TBD |
+| T11l Record T04 hand-over to Ian, T18g switch, QA fixes | Ian | `BRIEFING.md` | PUSHED (`237e86d`) | 15:00 |
 | T11m Records after the engine rank switch: usage log, reviews, board, README, write-up, spec ticks | Ian | `docs/KIRO_USAGE.md`, `docs/reviews/**` (new files), `BRIEFING.md` (section 6 rows), `README.md`, `docs/KIRO_WRITEUP.md`, `.kiro/specs/rare-disease-detective/tasks.md` | CLAIMED (Ian) | 15:45 |
 | T12 Art direction note | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`8460be2`); Ian picked the white direction (Option B) at ~12:20 ET but judged both options not good enough; refinement continues as T12b | 12:25 |
 | T12b Refined white art direction variants | Ian; Ian picks | `docs/art-direction/**` | PUSHED (`9208298`); Ian picking B1/B2/B3 | 12:45 |
@@ -201,6 +201,15 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T18i Fallback ranking counts only HP shared ancestors (parity with the engine); no caching after an Orphadata failure | Ian | `functions/_lib/fallback/rank.ts`, `functions/api/rank.ts` | DEPLOYED_VERIFIED (`50cfc74`, fix `0f36748`); parity on demo-npc1 and demo-dmd; claimed late; recorded 15:20 ET | — |
 | T18j Report the pinned HPO release in extract and brief | Ian | `functions/api/extract.ts`, `functions/api/brief.ts`, `README.md` | DEPLOYED_VERIFIED (`973ec39`); claimed late; recorded 15:20 ET | — |
 | T18k Serve `/api/rank` from the engine (coordinator decision 15:10 ET); contract v0.1.3 | Ian | `wrangler.toml`, `docs/CONTRACT.md` | DEPLOYED_VERIFIED (`820e7ff`; production `/api/rank` answers `X-RDD-Path: engine`); claimed late; recorded 15:20 ET | — |
+| T18l Re-record the demo-npc1 failure-path recordings | Ian | `functions/_lib/fallback/demoRecorded.ts` | REVIEWED (branch `ian/t18l-rerecord`) | TBD |
+| T18m HPO version open question + brief default | Ian | `docs/CONTRACT.md`, `functions/api/brief.ts` | CLAIMED (Ian) | TBD |
+| T28s i18n spec (requested by Ian via the coordinator, 15:36 ET) | Ian | `.kiro/specs/i18n/**` | CLAIMED (Ian) | 16:45 |
+| T28a i18n core + shell | Ian | `app/src/shared/i18n/**`, `app/src/main.tsx`, `app/src/App.tsx`, `app/src/components/shell/**`, `app/src/shared/{steps,text}.ts`, `app/src/shared/ui/**`, `app/src/styles/tokens.css`, `app/package.json` | CLAIMED (Ian) | 16:45 |
+| T28b i18n intake + review strings | Ian | `app/src/features/{intake,review}/**`, `messages/{intake,review}.ts` | CLAIMED (Ian) | 16:45 |
+| T28c i18n matches + questions | Ian | `app/src/features/{ranking,questions}/**`, `messages/{ranking,questions}.ts` | CLAIMED (Ian) | 16:45 |
+| T28d i18n brief + trials + UI states + API messages | Ian | `app/src/features/{brief,trials}/**`, `app/src/components/ui/**`, `app/src/shared/{api.ts,store.tsx}`, `messages/{brief,trials,api}.ts` | CLAIMED (Ian) | 16:45 |
+| T28e Landing i18n | Ian | `landing/**` | CLAIMED (Ian) | 16:45 |
+| T28f T28 integration, QA and deploy | Ian | T28a–T28e paths (integration only) | CLAIMED (Ian) | 16:45 |
 | T19 Kiro CLI custom agents and safe agent hooks | Ian | `.kiro/agents/**`, `.kiro/hooks/**` | PUSHED (`dd8a0791ef5fcfdcd3621a83df6ec8a42ed675ab`) | 12:25 |
 | T20 Kiro MCP for development | Ian | `.kiro/settings/mcp.json`, `.kiro/agents/rdd-builder.json`, `docs/research/biomcp-checks.md` (Context7 remote MCP server; real doc lookups logged) | PUSHED (`b3dce59`, `d35a18e` biomcp, `0dca96f` reviewer fixes) | 13:00 |
 | T21 Kiro IDE 1.x hooks and steering | Ian | `.kiro/hooks/**`, `.kiro/steering/medical-data.md`, `.kiro/steering/release-check.md` | PUSHED (`6c6ce91`, `68ec5cb`) | 13:05 |
