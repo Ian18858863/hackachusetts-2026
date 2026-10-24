@@ -1,6 +1,6 @@
 # Interface contract: Rare Disease Detective
 
-> **v0.1.3 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.** v0.1.1, v0.1.2 and v0.1.3 are non-breaking (v0.1.1: new primary demo case; v0.1.2: timeouts, overlap counting, next-questions filter, trial relevance and temporary demo fallbacks, as implemented in Ian's functions fallback; v0.1.3: broader-term matches count only through an HP: shared ancestor, and `/api/rank` is served by the engine); see the changelog in section 14.
+> **v0.1.3 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.** v0.1.1, v0.1.2 and v0.1.3 are non-breaking (v0.1.1: new primary demo case; v0.1.2: timeouts, overlap counting, next-questions filter, trial relevance and temporary demo fallbacks, as implemented in Ian's functions fallback; v0.1.3: broader-term matches count only through an HP: shared ancestor, `/api/rank` is served by the engine, and `dataVersions.hpo` is the pinned HPO_VERSION); see the changelog in section 14.
 > Contract version string in every response: `"0.1"`. Single file editor: Ian's Kiro (T09).
 > Kiro spec that implements this contract: [`.kiro/specs/rare-disease-detective/`](../.kiro/specs/rare-disease-detective/requirements.md).
 > This file is the source of truth for request and response shapes. If the spec and this file disagree, this file wins and the spec gets fixed.
@@ -130,7 +130,7 @@ export type MondoId = string;      // "MONDO:0007947"
 export type IsoDateTime = string;  // "2026-10-24T16:05:00.000Z"
 
 export interface DataVersions {
-  hpo?: string;            // HPO release, e.g. "2025-11-24"; "unknown" if the API does not expose it (open question 6)
+  hpo?: string;            // HPO release label; the engine reports its pinned constant HPO_VERSION, e.g. "2026-09-01" (open question 6)
   monarch?: string;        // Monarch API/KG version if exposed, else "v3 API"
   orphanet?: string;       // Orphadata record date, e.g. "2026-06-23"
   clinicalTrials?: string; // ClinicalTrials.gov data date if exposed
@@ -928,6 +928,7 @@ Changelog:
 - 0.1.3 (2026-10-24, draft; Ian's Kiro for Ian, acked by Jerry's assistant via the coordinator):
   - `[CONTRACT CHANGE] §7.4 step 5 a broader-term match counts only if the shared ancestor (Monarch match_subsumer) is an HP: term; a non-HP shared ancestor (e.g. UPHENO) does not count and that patient term goes to unmatched (as in engine/rank.ts; the fallback was aligned in T18i); breaking no`.
   - `[CONTRACT CHANGE] §7.4 engine also exports rankCandidatesWithReport (enrichment.complete); /api/rank does not cache a response with incomplete enrichment (T18h); /api/rank is served by the engine since T18k (RDD_ENGINE_PATH_RANK = "engine"); breaking no`.
+  - `[CONTRACT CHANGE] §5/§15 open question 6 resolved: dataVersions.hpo is the pinned constant HPO_VERSION in engine/hpo.ts ("2026-09-01"), never "unknown"; /api/brief defaults hpo to it when the ranking's dataVersions has none (T18m); the pin is a label, not checked against the release the JAX API serves; breaking no`.
 
 ## 15. Open questions
 
@@ -936,7 +937,7 @@ Changelog:
 3. **PubCaseFinder** (Jerry + Ian). Draft: off in v0.1; maybe a secondary badge later. ~11 MB / ~10 s per call.
 4. **Specialist mapping table** (Jerry). Rows, wording, and whether "Clinical geneticist" is always suggested.
 5. **Demo cache size** (Jerry). Draft: five cases, under 400 KB.
-6. **HPO version source** (Jerry). The JAX API version field is unverified; fallback is a pinned constant checked at build time, or `"unknown"` with `fetchedAt`.
+6. **HPO version source: RESOLVED for v0.1.3 by a pinned constant.** Every `dataVersions.hpo` the engine and functions report is `HPO_VERSION` in `engine/hpo.ts` (currently `"2026-09-01"`); `"unknown"` is no longer used, and `/api/brief` falls back to the same constant when the ranking's `dataVersions` has no `hpo`. The pin is a label only: it is not checked against the release the JAX API actually serves (at build time or at runtime), so the two can drift until someone updates the constant.
 7. **Ancestor-aware contradictions** (Jerry). v0.1 matches excluded ids exactly.
 8. **Overlap thresholds: RESOLVED for v0.1.2** (pending Jerry's confirmation). Thresholds 0.6 / 0.3 and one step down per contradiction stay; coverage counts exact matches 1 and ancestor matches 0.5, floored (section 7.4 step 8).
 9. **`GET /api/terms`** (Ian). Proposed here so manual add works without the app calling HPO directly.

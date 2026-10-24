@@ -191,8 +191,10 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
 
   const generatedAt = new Date().toISOString();
   const rankedVersions = c.lastRanking?.response.dataVersions;
-  // Without ranking versions, report the HPO release the engine pins (engine/hpo.ts).
-  const dataVersions: DataVersions = rankedVersions ? { ...rankedVersions } : { hpo: HPO_VERSION, fetchedAt: generatedAt };
+  // When the ranking versions are missing or have no hpo, report the HPO release the engine pins (engine/hpo.ts).
+  const dataVersions: DataVersions = rankedVersions
+    ? { ...rankedVersions, hpo: rankedVersions.hpo ?? HPO_VERSION }
+    : { hpo: HPO_VERSION, fetchedAt: generatedAt };
   const opts = { generatedAt, dataVersions };
 
   const result = await engineFirst(
