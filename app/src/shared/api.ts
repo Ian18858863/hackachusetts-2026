@@ -72,7 +72,7 @@ export const API_PATHS: Record<Endpoint | 'health', string> = {
 export const SERVER_BUDGET_MS: Record<Endpoint, number> = {
   extract: 20_000,
   terms: 2_000,
-  // T36c: PubCaseFinder may take up to 12 s plus evidence; client timeout 20 s.
+  // T36c: the server answers within its 17 s deadline; 18 s + the 2 s margin = 20 s client timeout.
   rank: 18_000,
   nextQuestions: 5_000,
   trials: 6_000,

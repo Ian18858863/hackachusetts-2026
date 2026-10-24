@@ -32,16 +32,26 @@
 //      nothing; ASCII because header values must be), cached only 10 min
 //      under "pcfmon:", and the PCF call keeps running in the background so
 //      its list is cached for the next request.
+//      One deadline (RANK_TIMING.deadlineMs, 17 s from request start) bounds
+//      everything under the switch: the 12 s PCF wait, PCF evidence after a
+//      late list (calls end 1.5 s before the deadline, then the Monarch
+//      answer is used, X-RDD-Path "pcf-late->engine"), and the Monarch path
+//      (engine Monarch timeout 13 s, rank budget 16 s, every call aborted
+//      0.3 s before the deadline; no answer by the deadline -> 504 or the
+//      recorded demo ranking). One counter (budget.ts) keeps all fetches and
+//      Cache API calls of the request at 46 or fewer.
 //   7. dataVersions.rankingSource (T36c, additive): "pubcasefinder" or
 //      "monarch", whichever ordered the list. The footer and the brief credit
 //      it. Older cached bodies have no field (read as Monarch).
 
-import { ENGINE_STATUS, demoRankKey, getDemoRanking, rankCandidatesWithReport } from "../../engine/index";
+import { ENGINE_STATUS, UpstreamTimeout, demoRankKey, getDemoRanking, rankCandidatesWithReport } from "../../engine/index";
 import type { DataVersions, RankResponse } from "../../engine/index";
 import { engineFirst, enginePathMode, PATH_HEADER } from "../_lib/fallback/engineFirst";
 import { getFallbackDemoRanking } from "../_lib/fallback/demoRecorded";
 import { cacheGetJson, cacheKey, cachePutJson } from "../_lib/fallback/http";
 import type { FallbackDeps } from "../_lib/fallback/http";
+import { after, countedCache, countedFetch, deadlineFetch, REQUEST_SUBREQUEST_CAP } from "../_lib/fallback/budget";
+import type { RequestBudget } from "../_lib/fallback/budget";
 import { pcfEnabled, pcfRank } from "../_lib/fallback/pcf";
 import { fallbackRank } from "../_lib/fallback/rank";
 import type { NormalizedRankRequest, RankedCandidate } from "../_lib/fallback/rank";
@@ -67,8 +77,31 @@ const RANK_TTL_S = 24 * 60 * 60;
 const KEPT = "Your terms are kept";
 const ENGINE_MONARCH_TIMEOUT_MS = 20000;
 const ENGINE_RANK_BUDGET_MS = 25000;
-/** T36c: longest wait for PubCaseFinder's list before the Monarch answer is used. */
-const PCF_WAIT_MS = 12000;
+/**
+ * T36c timing under the pcf switch, all from request start. Mutable only so
+ * the unit test can scale it down (rankDeadline.test.ts); production never
+ * changes it.
+ *   deadlineMs: the handler answers by then (app client timeout is 20 s).
+ *   pcfWaitMs: longest wait for PubCaseFinder's list.
+ *   evidenceReserveMs: PCF evidence calls end this long before the deadline,
+ *     leaving time to fall back to the Monarch answer.
+ */
+export const RANK_TIMING = { deadlineMs: 17000, pcfWaitMs: 12000, evidenceReserveMs: 1500 };
+/** Engine Monarch semsim timeout under the switch: deadline minus this (17 s -> 13 s). */
+const PCF_MONARCH_TIMEOUT_RESERVE_MS = 4000;
+/** Engine rank budget under the switch: deadline minus this (17 s -> 16 s). */
+const PCF_ENGINE_BUDGET_RESERVE_MS = 1000;
+/** Monarch-path fetches are aborted this long before the deadline. */
+const FETCH_END_MARGIN_MS = 300;
+/**
+ * Subrequests the Monarch path may use under the switch (of the shared 46).
+ * Enough for semsim plus ORPHA and OMIM annotations and Orphadata at limit 5;
+ * beyond it the Monarch answer's evidence degrades (not cached), and the rest
+ * stays for PubCaseFinder's evidence.
+ */
+const MONARCH_SHARE = 16;
+/** Extra wait for PCF evidence past its deadline before using the Monarch answer. */
+const EVIDENCE_GRACE_MS = 200;
 /** T36c: a Monarch answer given under the pcf switch is cached this long (s), so a PCF list can replace it. */
 const PCF_MONARCH_TTL_S = 10 * 60;
 
@@ -115,8 +148,18 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
   const key = cacheKey("rank", usePcf ? `pcf:${ids}` : ids);
   const monKey = cacheKey("rank", `pcfmon:${ids}`);
 
-  const deps: FallbackDeps = { fetch: globalThis.fetch.bind(globalThis), waitUntil: (p) => context.waitUntil(p) };
-  const cache = defaultCache();
+  // T36c: under the pcf switch the whole request has one deadline from its
+  // start and one subrequest counter (fetches and Cache API calls of both
+  // paths and of this handler). With the switch off nothing changes.
+  const t0 = Date.now();
+  const deadline = t0 + RANK_TIMING.deadlineMs;
+  const budget: RequestBudget = { used: 0, cap: REQUEST_SUBREQUEST_CAP };
+  const rawFetch = globalThis.fetch.bind(globalThis);
+  const deps: FallbackDeps = {
+    fetch: usePcf ? countedFetch(rawFetch, budget) : rawFetch,
+    waitUntil: (p) => context.waitUntil(p),
+  };
+  const cache = usePcf ? countedCache(defaultCache(), budget) : defaultCache();
   if (cache) deps.cache = cache;
 
   const cached = await cacheGetJson<CachedRank>(cache, key);
@@ -133,24 +176,48 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
     });
   }
 
-  // T36c: PubCaseFinder and the Monarch path start together. PCF orders the
-  // list only if its mappable list arrives within PCF_WAIT_MS; otherwise the
-  // Monarch answer is used and the PCF call keeps running in the background
-  // (waitUntil) so a later request finds its list in the cache.
+  // T36c: PubCaseFinder and the Monarch path start together.
+  //   - PCF orders the list only if its mappable list arrives within
+  //     pcfWaitMs AND its evidence is built by the evidence deadline
+  //     (deadline - EVIDENCE_RESERVE_MS); evidence calls are aborted then.
+  //   - Otherwise the Monarch answer is used. Its calls are aborted at the
+  //     deadline, and the engine gets a Monarch timeout and a rank budget
+  //     that end before it. If it still has no answer at the deadline, the
+  //     request ends with 504 (or the recorded demo ranking).
+  //   - The PCF list call may finish in the background (waitUntil) so a
+  //     later request finds its list in the cache.
+  const left = () => deadline - Date.now();
+  // Under the switch the Monarch path gets no Cache API (fewer subrequests),
+  // and once PubCaseFinder's list is in hand it may make no new calls, so the
+  // rest of the shared budget goes to PubCaseFinder's evidence. Its answer is
+  // then needed only if that evidence fails.
+  let monarchOpen = true;
   let monarchUsed = 0;
-  const monarchDeps: FallbackDeps = {
-    ...deps,
-    fetch: (input, init) => {
-      monarchUsed++;
-      return deps.fetch(input, init);
-    },
+  const gated: FallbackDeps["fetch"] = (input, init) => {
+    if (!monarchOpen || monarchUsed >= MONARCH_SHARE) {
+      return Promise.reject(new TypeError("subrequest budget reserved for PubCaseFinder evidence"));
+    }
+    monarchUsed++;
+    return deps.fetch(input, init);
   };
-  const monarchP = monarchPath(mode, req, monarchDeps);
+  const monarchDeps: FallbackDeps = { fetch: deadlineFetch(gated, () => deadline - FETCH_END_MARGIN_MS) };
+  if (deps.waitUntil) monarchDeps.waitUntil = deps.waitUntil;
+  const monarchP = monarchPath(mode, req, monarchDeps, {
+    monarchTimeoutMs: Math.max(1000, RANK_TIMING.deadlineMs - PCF_MONARCH_TIMEOUT_RESERVE_MS),
+    rankBudgetMs: Math.max(1000, RANK_TIMING.deadlineMs - PCF_ENGINE_BUDGET_RESERVE_MS),
+  });
   let listArrived!: () => void;
   const listP = new Promise<"list">((resolve) => {
     listArrived = () => resolve("list");
   });
-  const pcfP = pcfRank(req, deps, { onList: () => listArrived(), external: () => monarchUsed + 2 });
+  const evidenceDeadline = deadline - RANK_TIMING.evidenceReserveMs;
+  const pcfP = pcfRank(req, deps, {
+    onList: () => {
+      monarchOpen = false;
+      listArrived();
+    },
+    evidenceDeadline,
+  });
   const pcfSettled = pcfP.then(
     (value) => ({ ok: true as const, value }),
     (error: unknown) => ({ ok: false as const, error }),
@@ -161,18 +228,31 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
     }
     return r;
   });
+  context.waitUntil(pcfCacheWrite.then(() => undefined));
 
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const wait = new Promise<"timeout">((resolve) => {
-    timer = setTimeout(() => resolve("timeout"), PCF_WAIT_MS);
-  });
-  const first = await Promise.race([listP, pcfSettled.then(() => "settled" as const), wait]);
-  if (timer !== undefined) clearTimeout(timer);
+  const wait = after(Math.min(RANK_TIMING.pcfWaitMs, left()), "timeout" as const);
+  const first = await Promise.race([listP, pcfSettled.then(() => "settled" as const), wait.promise]);
+  wait.cancel();
 
   let prefix = "pcf->";
   if (first !== "timeout") {
-    const r = await pcfCacheWrite;
-    if (r.ok) {
+    // Evidence after the list is bounded too: a little after its own deadline we stop waiting.
+    const evWait = after(evidenceDeadline + EVIDENCE_GRACE_MS - Date.now(), "late" as const);
+    const r = await Promise.race([pcfSettled, evWait.promise]);
+    evWait.cancel();
+    // Evidence cut off by the deadline (incomplete at the deadline): prefer a
+    // complete Monarch answer if one is ready. Evidence that is incomplete for
+    // other reasons (a failed call, the subrequest cap) keeps PCF's order,
+    // marked evidenceComplete false, as on the Monarch path.
+    if (r !== "late" && r.ok && !r.value.complete && Date.now() >= evidenceDeadline) {
+      const ready = await Promise.race([monarchP, after(0, "pending" as const).promise]);
+      if (ready !== "pending" && ready.ok && ready.value.complete) {
+        return monarchResponse(ready, req, "pcf-late->", (out, complete) => {
+          if (out.source === "live" && complete) cachePutJson(deps, monKey, { path: "pcf-late->" + ready.path, body: out } satisfies CachedRank, PCF_MONARCH_TTL_S);
+        });
+      }
+    }
+    if (r !== "late" && r.ok) {
       // Let the Monarch path finish in the background; its answer is not used.
       context.waitUntil(monarchP.then(() => undefined, () => undefined));
       const out: RankResponse = { ...r.value.body, version: CONTRACT_VERSION };
@@ -182,13 +262,17 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
         "X-RDD-Enrichment": r.value.complete ? "complete" : "incomplete",
       });
     }
-    logError("rank.pcf", r.error, "monarch-fallback");
+    if (r === "late") prefix = "pcf-late->";
+    else logError("rank.pcf", r.error, "monarch-fallback");
   } else {
     prefix = "pcf-timeout->";
-    context.waitUntil(pcfCacheWrite.then(() => undefined));
   }
 
-  const result = await monarchP;
+  const mWait = after(left(), "deadline" as const);
+  const raced = await Promise.race([monarchP, mWait.promise]);
+  mWait.cancel();
+  const result: MonarchResult =
+    raced === "deadline" ? { ok: false, path: mode, error: new UpstreamTimeout("monarchSemsim") } : raced;
   return monarchResponse(result, req, prefix, (out, complete) => {
     // A Monarch answer under the pcf switch is cached briefly so a PCF list can replace it.
     if (out.source === "live" && complete) cachePutJson(deps, monKey, { path: prefix + result.path, body: out } satisfies CachedRank, PCF_MONARCH_TTL_S);
@@ -197,7 +281,15 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
 
 type MonarchResult = Awaited<ReturnType<typeof monarchPath>>;
 
-function monarchPath(mode: ReturnType<typeof enginePathMode>, req: NormalizedRankRequest, deps: FallbackDeps) {
+function monarchPath(
+  mode: ReturnType<typeof enginePathMode>,
+  req: NormalizedRankRequest,
+  deps: FallbackDeps,
+  limits: { monarchTimeoutMs: number; rankBudgetMs: number } = {
+    monarchTimeoutMs: ENGINE_MONARCH_TIMEOUT_MS,
+    rankBudgetMs: ENGINE_RANK_BUDGET_MS,
+  },
+) {
   return engineFirst(
     mode,
     // The engine reports whether any annotation or Orphadata call lost data
@@ -208,8 +300,8 @@ function monarchPath(mode: ReturnType<typeof enginePathMode>, req: NormalizedRan
       // limit while awaiting I/O, so the longer wait only costs latency.
       const engineDeps: FallbackDeps = {
         ...deps,
-        timeoutsMs: { ...deps.timeoutsMs, monarchSemsim: ENGINE_MONARCH_TIMEOUT_MS },
-        rankBudgetMs: ENGINE_RANK_BUDGET_MS,
+        timeoutsMs: { ...deps.timeoutsMs, monarchSemsim: limits.monarchTimeoutMs },
+        rankBudgetMs: limits.rankBudgetMs,
       };
       const { response, enrichment } = await rankCandidatesWithReport({ ...req }, engineDeps);
       // Additive field (T32a): evidenceComplete per candidate, from the

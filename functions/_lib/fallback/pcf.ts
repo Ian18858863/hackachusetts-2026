@@ -128,30 +128,40 @@ interface PcfList {
 interface Budget {
   fetches: number;
   cacheOps: number;
-  /** Subrequests the rest of the invocation has used (T36c: the parallel Monarch path). */
-  external: () => number;
+  /**
+   * T36c: absolute time (ms) by which evidence calls must end. Applies only
+   * after the list is in hand, so the list call itself may finish in the
+   * background and fill its cache.
+   */
+  evidenceDeadline?: number;
+  listDone: boolean;
 }
 
-/** T36c: PCF and the Monarch path run in the same invocation; together they stay under the 50-subrequest limit. */
-const INVOCATION_CAP = 48;
-
-function totalUsed(budget: Budget): number {
-  return budget.fetches + budget.cacheOps + budget.external();
-}
-
+// The whole-request subrequest cap (budget.ts, shared with the Monarch path
+// and the handler's cache calls) is enforced by the fetch and cache the
+// handler passes in; FETCH_CAP and CACHE_OP_CAP are this module's own share.
 function meteredFetch(deps: FallbackDeps, budget: Budget): FallbackDeps["fetch"] {
   const inner = deps.fetch;
   return (input, init) => {
-    if (budget.fetches >= FETCH_CAP || totalUsed(budget) >= INVOCATION_CAP) {
-      return Promise.reject(new TypeError("subrequest budget spent"));
+    if (budget.fetches >= FETCH_CAP) return Promise.reject(new TypeError("subrequest budget spent"));
+    let next = init;
+    if (budget.listDone && budget.evidenceDeadline !== undefined) {
+      const left = budget.evidenceDeadline - Date.now();
+      if (left <= 0) {
+        const e = new Error("evidence deadline passed");
+        e.name = "TimeoutError";
+        return Promise.reject(e);
+      }
+      const bound = AbortSignal.timeout(left);
+      next = { ...init, signal: init?.signal ? AbortSignal.any([init.signal, bound]) : bound };
     }
     budget.fetches++;
-    return inner(input, init);
+    return inner(input, next);
   };
 }
 
 function takeCacheOp(budget: Budget): boolean {
-  if (budget.cacheOps >= CACHE_OP_CAP || totalUsed(budget) >= INVOCATION_CAP) return false;
+  if (budget.cacheOps >= CACHE_OP_CAP) return false;
   budget.cacheOps++;
   return true;
 }
@@ -412,16 +422,18 @@ export interface PcfRankResult extends FallbackRankResult {
 export interface PcfRankOptions {
   /** Called once the mappable PCF list is in hand (cache hit or live), before evidence is built. */
   onList?: () => void;
-  /** Subrequests used elsewhere in this invocation (T36c parallel Monarch path). */
-  external?: () => number;
+  /** T36c: absolute time (ms) by which evidence calls after the list must end. */
+  evidenceDeadline?: number;
   /** Timeout of the PCF list call itself; default PCF_TIMEOUT_MS. */
   listTimeoutMs?: number;
 }
 
 export async function pcfRank(req: NormalizedRankRequest, deps: FallbackDeps, opts: PcfRankOptions = {}): Promise<PcfRankResult> {
-  const budget: Budget = { fetches: 0, cacheOps: 0, external: opts.external ?? (() => 0) };
+  const budget: Budget = { fetches: 0, cacheOps: 0, listDone: false };
+  if (opts.evidenceDeadline !== undefined) budget.evidenceDeadline = opts.evidenceDeadline;
   const now = deps.now ?? (() => new Date());
   const list = await pcfList(req, deps, budget, opts.listTimeoutMs ?? PCF_TIMEOUT_MS);
+  budget.listDone = true;
   opts.onList?.();
 
   // Resolve rows in order, one batch of `limit`, plus one more batch if merging left gaps.
