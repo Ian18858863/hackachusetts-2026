@@ -1,6 +1,6 @@
 # Team Briefing — Hackachusetts 2026 (read this first)
 
-Last updated: 2026-10-24. **v4.3 — LLM provider decision, contract v0.1 draft and new Ian task claims recorded 2026-10-24 ~12:25 ET by Ian's Kiro.** **v4 was approved by all three humans (Ian, Peter, Jerry) in the team chat at ~11:35 ET.** This version preserves the original event rules, topic research, and submission requirements, and adopts the faster 3-person coordination workflow.
+Last updated: 2026-10-24. **v4.4 — Kiro coverage claims (T20–T22, T10c, T09b), T17 deploy and rdd-reviewer first-pass rule recorded 2026-10-24 ~12:35 ET by Ian's Kiro.** **v4 was approved by all three humans (Ian, Peter, Jerry) in the team chat at ~11:35 ET.** This version preserves the original event rules, topic research, and submission requirements, and adopts the faster 3-person coordination workflow.
 
 This is the single source of shared **decisions and current task claims**. The companion [`docs/PROTOCOL.md`](docs/PROTOCOL.md) (Assistant × Kiro Agent Collaboration Protocol v4) is the operational handbook for human teammates, their AI Assistants, and Kiro coding Agents.
 
@@ -158,16 +158,24 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T07 Domain module + approved public datasets | Jerry | `engine/**`, `.kiro/specs/engine/**` (repo-root TypeScript domain engine; runs on Cloudflare Workers, fetch only, no fs; called from `functions/api/*`) | CLAIMED (Jerry) | TBD (Jerry) |
 | T08 Module tests / property-based test use | Jerry | `engine/test/**` (property-based tests with fast-check); record true Kiro usage | CLAIMED (Jerry) | TBD (Jerry) |
 | T09 API contract, mock response examples | Ian + relevant owners approve; **Ian is sole file editor**; Jerry approves the engine interface fields | `docs/CONTRACT.md`, `.kiro/specs/rare-disease-detective/**` | REVIEWING (contract v0.1 draft and spec pushed `f77cc31658296dfe0cbc956c9b180ba7b5262f6e`; pending APPROVE by Jerry and Ian) | 12:25 (v0.1 draft) |
+| T09b Spec progress ticks | Ian | `.kiro/specs/rare-disease-detective/tasks.md` (Ian's Kiro ticks tasks as they ship) | CLAIMED (Ian) | Rolling |
 | T10 Kiro usage record aggregation + correct early inaccurate entry | Ian/Kiro is sole file editor; all members supply **actual** usage evidence | `docs/KIRO_USAGE.md` | PUSHED (`e4d0c8e83cb41664f0f4cd86902ac4c0a507a03b`); T10b pushed as `ff02d63ca96510976851e6cae8ed78761d88a5dc` | 11:50 |
+| T10c Kiro usage log and AI-development strategy | Ian | `docs/KIRO_USAGE.md`, `docs/reviews/**` (verbatim rdd-reviewer outputs) | CLAIMED (Ian) | 13:20 |
 | T11 Team board updates | Ian, or named one-time delegate | `BRIEFING.md`, `docs/PROTOCOL.md` | DONE (`fa0180f`); rolling board updates continue as T11c | 11:45 |
 | T11c Topic decision record + board refresh | Ian | `BRIEFING.md` | PUSHED (`b1804930bc9388dc2a01b0b12405522c053bde1e`) | 12:05 |
 | T11d Topic approval, teammate claims and first deploy on the board | Ian | `BRIEFING.md` | PUSHED (`69fe53d04188ff6f993e9a42475febce2ad13d69`) | 12:15 |
-| T11e LLM decision, contract draft and new Ian tasks on the board | Ian | `BRIEFING.md` | IN_PROGRESS (Ian) | 12:25 |
+| T11e LLM decision, contract draft and new Ian tasks on the board | Ian | `BRIEFING.md` | PUSHED (`c46c832`) | 12:25 |
+| T11f Kiro coverage claims on the board | Ian | `BRIEFING.md` | IN_PROGRESS (Ian) | 12:40 |
 | T12 Art direction note | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`8460be2`); Ian picked the white direction (Option B) at ~12:20 ET but judged both options not good enough; refinement continues as T12b | 12:25 |
-| T12b Refined white art direction variants | Ian; Ian picks | `docs/art-direction/**` | IN_PROGRESS (Ian) | 12:45 |
+| T12b Refined white art direction variants | Ian; Ian picks | `docs/art-direction/**` | PUSHED (`9208298`); Ian picking B1/B2/B3 | 12:45 |
 | T13a App foundation: shared contract types, API client, mocks, case store, flow shell | Ian | `app/**` (feature folders are created as stubs and handed to T14–T16) | IN_PROGRESS (Ian) | 13:10 |
-| T17 Workers AI LLM proposal layer + model bake-off | Ian | `functions/_lib/**` and the `[ai]` binding in `wrangler.toml` (T03 claim extended). `functions/api/extract.ts` follows once Jerry's engine skeleton is on main | IN_PROGRESS (Ian) | 12:50 |
+| T17 Workers AI LLM proposal layer + model bake-off | Ian | `functions/_lib/**` and the `[ai]` binding in `wrangler.toml` (T03 claim extended). `functions/api/extract.ts` follows once Jerry's engine skeleton is on main | DEPLOYED_VERIFIED (`cd1a1a47af9ccd7993909fc76ce718e8ad3a6eaf`, live 12:30 ET; `/api/extract` not yet routed) | 12:50 |
 | T19 Kiro CLI custom agents and safe agent hooks | Ian | `.kiro/agents/**`, `.kiro/hooks/**` | PUSHED (`dd8a0791ef5fcfdcd3621a83df6ec8a42ed675ab`) | 12:25 |
+| T20 Kiro MCP for development | Ian | `.kiro/settings/mcp.json`, `.kiro/agents/rdd-builder.json` (Context7 remote MCP server; real doc lookups logged) | CLAIMED (Ian) | 13:00 |
+| T21 Kiro IDE 1.x hooks and steering | Ian | `.kiro/hooks/**`, `.kiro/steering/medical-data.md`, `.kiro/steering/release-check.md` | CLAIMED (Ian) | 13:05 |
+| T22 Kiro project power `rdd-medical-data` | Ian | `.kiro/powers/rdd-medical-data/**` | CLAIMED (Ian) | 13:10 |
+
+From 12:35 ET every Ian task diff gets a first-pass review by the read-only Kiro agent rdd-reviewer before the assistant's review.
 
 **What a claim must include in group chat:** task ID, human owner, exact paths (or an explicit pending-path blocker), ETA, interface dependencies, and current Git main SHA. A teammate can take over an abandoned task **only after the original owner releases it in chat**; update this board. Do not let an Agent quietly self-claim overlapping files.
 
