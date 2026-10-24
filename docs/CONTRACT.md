@@ -1,6 +1,6 @@
 # Interface contract: Rare Disease Detective
 
-> **v0.1.4 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.** v0.1.1 to v0.1.4 are non-breaking (v0.1.1: new primary demo case; v0.1.2: timeouts, overlap counting, next-questions filter, trial relevance and temporary demo fallbacks, as implemented in Ian's functions fallback; v0.1.3: broader-term matches count only through an HP: shared ancestor, `/api/rank` is served by the engine, and `dataVersions.hpo` is the pinned HPO_VERSION; v0.1.4: fallback question ordering under a partial hierarchy check, and demo recordings for demo-npc1, demo-marfan and demo-cdls); see the changelog in section 14.
+> **v0.1.5 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.** v0.1.1 to v0.1.5 are non-breaking (v0.1.1: new primary demo case; v0.1.2: timeouts, overlap counting, next-questions filter, trial relevance and temporary demo fallbacks, as implemented in Ian's functions fallback; v0.1.3: broader-term matches count only through an HP: shared ancestor, `/api/rank` is served by the engine, and `dataVersions.hpo` is the pinned HPO_VERSION; v0.1.4: fallback question ordering under a partial hierarchy check, and demo recordings for demo-npc1, demo-marfan and demo-cdls; v0.1.5: safety text and attribution in the app's family mode); see the changelog in section 14.
 > Contract version string in every response: `"0.1"`. Single file editor: Ian's Kiro (T09).
 > Kiro spec that implements this contract: [`.kiro/specs/rare-disease-detective/`](../.kiro/specs/rare-disease-detective/requirements.md).
 > This file is the source of truth for request and response shapes. If the spec and this file disagree, this file wins and the spec gets fixed.
@@ -912,6 +912,10 @@ Use these strings verbatim (engine constants in `engine/text.ts`, Jerry; the app
 
 - No OMIM API; OMIM appears only as ids and outbound links.
 - The disclaimer is body size, calm and permanent (design steering section 7).
+- Family mode (v0.1.5, T30a): the app's family mode ("For families", `?audience=family`) never shows disease names, rankings or trials. There the safety text is `Decision support, not a diagnosis.` verbatim, followed by `This view prepares your notes for a clinician. It does not suggest conditions.` The second half of the full sentence ("These are possible matches to discuss with a doctor.") would be false where no matches are shown. The Monarch ranking line is not shown in family mode, because no Monarch result appears there. Clinician mode (the default) keeps the full disclaimer above, verbatim, on every result screen and in the brief.
+- Known limits of family mode (v0.1.5, accepted):
+  - For a synthetic demo case, the phenopacket made by `/api/brief` has `id` `rdd-<demo caseId>-<timestamp>` and `subject.id` `DEMO-synthetic-<demo caseId>` (section 7.7), so both contain the demo id. Non-demo cases get `rdd-case-<timestamp>` and `rdd-subject-1` (`engine/brief.ts`). A family-mode export may replace `id` and `subject.id` with a neutral value (T30a).
+  - The landing's family call to action opens a URL that contains `?demo=demo-npc1`. The app removes `?demo` from the address bar after the case has loaded.
 
 ## 14. Change process
 
@@ -939,6 +943,8 @@ Changelog:
 - 0.1.4 (2026-10-24, draft; Ian's Kiro for Ian):
   - `[CONTRACT CHANGE] §7.5 Ian's temporary next-questions fallback checks features lazily in score order within the budget (≤ 40 subrequests incl. Cache API, 5 s); output keeps score order among fully checked features and never places a feature whose hierarchy check was skipped or partial ahead of a checked one (checked → partly checked → unchecked); JAX reads use the Cloudflare edge cache for 2xx only (T18o); breaking no`.
   - `[CONTRACT CHANGE] §9/§10 Ian's temporary fallback recordings cover demo-npc1 (rank, next-questions for the 5 candidates the app sends, trials) and demo-marfan and demo-cdls (rank only); used only when an upstream fails and the request matches exactly; served with source "demo"; the engine's recordings (engine/demo/recorded/) are tried first (T18l, T18q); breaking no`.
+- 0.1.5 (2026-10-24, draft; Ian's Kiro for Ian; approved by the coordinator on Ian's authority, 16:35 ET):
+  - `[CONTRACT CHANGE] §13 family mode only (T30a): in the app's family mode (?audience=family), which shows no disease names, rankings or trials, the safety text is "Decision support, not a diagnosis." followed by "This view prepares your notes for a clinician. It does not suggest conditions."; the Monarch ranking attribution is not shown there; clinician mode (default) keeps the full §13 sentence verbatim on every result screen and the brief; known limits recorded (demo phenopacket id and subject.id contain the demo id; the family CTA URL contains ?demo=demo-npc1, removed from the address bar after loading); breaking no`.
 
 ## 15. Open questions
 
