@@ -12,6 +12,10 @@
 //      min(12, 50 - subrequests already used - 4) extra HPO searches, inside
 //      the same 4 s deadline. Terms found through an alternative label carry
 //      a warning.
+//   3c. The model's answer is streamed (T39). If it is still writing after
+//      15 s, the complete features received so far are grounded as usual and
+//      the response carries a warning that some features may be missing.
+//      Only when no complete feature arrived is it 504 UPSTREAM_TIMEOUT.
 //   4. Zero grounded terms -> 422 NO_TERMS_FOUND.
 // Only the live path is rate-limited per client IP (functions/_lib/rateLimit.ts,
 // T18p): 429 RATE_LIMITED with Retry-After. The demo path is never limited.
@@ -55,7 +59,11 @@ type Env = LlmEnv & { RDD_EXTRACT_LIMIT_PER_MIN?: string };
 
 /** Model id reported for the prepared demo extraction (contract 7.2 example). */
 const DEMO_MODEL = "demo-prepared";
-/** LLM budget from contract section 10. */
+/**
+ * LLM budget from contract section 10. With streaming this is the point at
+ * which the answer so far is used (T39), so llm 15 s + grounding 4 s stays
+ * inside the 20 s total of contract section 7.2.
+ */
 const LLM_TIMEOUT_MS = 15_000;
 /** Overall grounding budget from contract section 7.2 (all HPO lookups and searches). */
 const GROUNDING_DEADLINE_MS = 4_000;
@@ -240,6 +248,8 @@ async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promi
   // Counts and timings only; never the text.
   console.log(
     `[rdd] extract live model=${proposed.model} llmMs=${proposed.llmMs} groundMs=${groundMs} ` +
+      `outChars=${proposed.outputChars} outTokens=${proposed.outputTokens ?? "?"} ` +
+      `alts=${proposed.proposals.reduce((n, p) => n + (p.alternatives?.length ?? 0), 0)} partial=${proposed.partial} ` +
       `proposals=${proposed.proposals.length} terms=${grounded.terms.length} warnings=${grounded.warnings.length}` +
       ` subrequestsUsed~${used} lookupCap=${lookupCap}` +
       (secondary
@@ -258,6 +268,7 @@ async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promi
   }
 
   const warnings = [...grounded.warnings];
+  if (proposed.partial) warnings.unshift(PARTIAL_WARNING);
   const notInText = proposed.stats.droppedNotInText;
   if (notInText > 0) {
     warnings.push(
@@ -275,6 +286,9 @@ async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promi
   };
   return json(out, 200, { "Server-Timing": `llm;dur=${proposed.llmMs}, ground;dur=${groundMs}` });
 }
+
+const PARTIAL_WARNING =
+  "The extraction service was slow, so only the features it found in the first 15 seconds are shown. Some features may be missing; add them by hand or try again";
 
 const FALLBACK_WARNING =
   "Live extraction was not available, so the prepared extraction for this demo case is shown";

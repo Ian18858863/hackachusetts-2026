@@ -21,7 +21,7 @@ export interface TermProposal {
   /** Suggested HPO label; must still be grounded by the engine. */
   label: string;
   /**
-   * Up to 3 other HPO-style labels that could also fit, most likely first
+   * Up to 2 other HPO-style labels that could also fit, most likely first
    * (T37). Not sent to the engine's matching; used only by
    * functions/_lib/grounding.ts when the main label is not confirmed.
    */
@@ -79,6 +79,16 @@ export interface ProposeResult {
   /** Wall-clock time of the model call in ms. */
   llmMs: number;
   stats: ProposeStats;
+  /** Characters of model output text (count only, for logs). */
+  outputChars: number;
+  /** Output tokens reported by Workers AI, when it reports usage. */
+  outputTokens?: number;
+  /**
+   * True when the model was still writing at the deadline (T39): the
+   * proposals are the complete features received before it. The caller
+   * must tell the user that some features may be missing.
+   */
+  partial: boolean;
 }
 
 export type LlmErrorCode =
@@ -118,11 +128,15 @@ export const DEFAULT_MAX_PROPOSALS = 40;
 /** Notes longer than this are rejected; the caller should validate first. */
 export const MAX_TEXT_CHARS = 8_000;
 
-const MAX_OUTPUT_TOKENS = 4_096;
+/**
+ * Output cap. Real notes need 150-400 tokens (T39, 12 notes on 2026-10-24);
+ * 40 proposals with 2 alternatives each fit in about 2,000.
+ */
+const MAX_OUTPUT_TOKENS = 2_048;
 const MAX_PHRASE_CHARS = 200;
 const MAX_LABEL_CHARS = 120;
 const HPO_ID_RE = /^HP:\d{7}$/;
-const MAX_ALTERNATIVES = 3;
+const MAX_ALTERNATIVES = 2;
 /** Anything that looks like an ontology id ("HP:0001250", "OMIM:310200"); never accepted as a label. */
 const ID_LIKE_RE = /\b[A-Za-z]+[:_]\d{3,}\b/;
 
@@ -139,7 +153,7 @@ List each feature separately, even if two appear in one sentence.
 For each feature give:
 - "phrase": the words from the notes that describe it, copied EXACTLY character for character (same spelling, case and punctuation). Copy a short span, usually 2 to 10 words. Never paraphrase, translate, correct or join separate pieces of text.
 - "label": the closest HPO term name in English, using the standard HPO wording (for example "Short stature", "Hearing impairment", "Ptosis"). Use the most specific term the words support, and name the body part when the notes name one (for example "falls a lot" is "Frequent falls", not a general gait term). When the description matches a named clinical sign, use the sign's HPO name.
-- "alternatives": up to 3 other HPO term names in English that could also fit the phrase, most likely first (for example, for "very long, thin fingers" with label "Arachnodactyly": ["Long fingers", "Slender finger"]). Each alternative must name the SAME feature in other HPO wording (a synonym, or a more specific term); never a broader, related or different feature. Use [] if there are none. Only feature names; never ids, diseases or syndromes.
+- "alternatives": up to 2 other HPO term names in English that could also fit the phrase, most likely first (for example, for "his calves look very big" with label "Calf muscle hypertrophy": ["Calf muscle pseudohypertrophy"]). Each alternative must name the SAME feature in other HPO wording (a synonym, or a more specific term); never a broader, related or different feature. Use [] when the label is an exact HPO term name and no other wording fits. Only feature names; never ids, diseases or syndromes.
 - "negated": true if the notes say the patient does NOT have the feature (for example "no fever", "hearing is normal" means no hearing impairment); otherwise false.
 - "confidence": "high", "medium" or "low" for how well the label fits the phrase.
 
@@ -147,7 +161,7 @@ Rules:
 - Only patient features. Do NOT name diseases, syndromes, diagnoses, genes, or treatments, and do not guess what condition the patient has.
 - Ignore features of other people (relatives, siblings) unless they are clearly the patient.
 - Ignore age, names and sex on their own.
-- Output strict JSON only, no markdown, no comments, no text before or after, in exactly this shape:
+- Output compact strict JSON only (no spaces or line breaks between items), no markdown, no comments, no text before or after, in exactly this shape:
 {"features":[{"phrase":"...","label":"...","alternatives":["..."],"negated":false,"confidence":"high"}]}
 If there are no features, output {"features":[]}.`;
 
@@ -185,6 +199,9 @@ export async function proposeTerms(
   }
 
   const started = Date.now();
+  if (supportsStreaming(model)) {
+    return proposeStreaming(ai, model, text, timeoutMs, maxProposals, started);
+  }
   let output: unknown;
   try {
     output = await withTimeout(ai.run(model, buildRequest(model, text)), timeoutMs);
@@ -210,7 +227,193 @@ export async function proposeTerms(
   }
 
   const { proposals, stats } = validateProposals(items, text, maxProposals);
-  return { proposals, model, llmMs, stats };
+  const result: ProposeResult = { proposals, model, llmMs, stats, outputChars: content.length, partial: false };
+  const tokens = usageTokens(output);
+  if (tokens !== undefined) result.outputTokens = tokens;
+  return result;
+}
+
+// ---------------------------------------------------------------------------
+// Streaming with a deadline (T39)
+// ---------------------------------------------------------------------------
+
+/**
+ * Chat-format models stream on Workers AI (server-sent events). The OpenAI
+ * Responses shape (gpt-oss) keeps the plain call.
+ */
+function supportsStreaming(model: string): boolean {
+  return !model.toLowerCase().includes("/gpt-oss-");
+}
+
+/**
+ * Stream the model output until it ends or `timeoutMs` has passed since
+ * `started`. On the deadline the stream is cancelled and the complete feature
+ * objects received so far are kept (`partial: true`); nothing is completed or
+ * guessed. With no complete feature by then, it is a timeout as before.
+ */
+async function proposeStreaming(
+  ai: AiBinding,
+  model: string,
+  text: string,
+  timeoutMs: number,
+  maxProposals: number,
+  started: number,
+): Promise<ProposeResult> {
+  const deadlineAt = started + timeoutMs;
+  let stream: unknown;
+  try {
+    stream = await withTimeout(ai.run(model, { ...buildRequest(model, text), stream: true }), timeoutMs);
+  } catch (err) {
+    const llmMs = Date.now() - started;
+    if (err instanceof TimeoutError) {
+      throw new LlmError("timeout", `Model call exceeded ${timeoutMs} ms.`, model, llmMs);
+    }
+    const detail = err instanceof Error ? err.message.split("\n")[0].slice(0, 200) : "unknown error";
+    throw new LlmError("upstream", `Model call failed: ${detail}`, model, llmMs);
+  }
+
+  if (!(stream instanceof ReadableStream)) {
+    // The binding answered without streaming: parse it like the plain call.
+    return finishProposals(stream, model, text, maxProposals, Date.now() - started, false);
+  }
+
+  const reader = (stream as ReadableStream<Uint8Array>).getReader();
+  const decoder = new TextDecoder();
+  const sse = new SseText();
+  let timedOut = false;
+  try {
+    for (;;) {
+      const left = deadlineAt - Date.now();
+      if (left <= 0) {
+        timedOut = true;
+        break;
+      }
+      let chunk: ReadableStreamReadResult<Uint8Array>;
+      try {
+        chunk = await withTimeout(reader.read(), left);
+      } catch (err) {
+        if (err instanceof TimeoutError) {
+          timedOut = true;
+          break;
+        }
+        const detail = err instanceof Error ? err.message.split("\n")[0].slice(0, 200) : "unknown error";
+        throw new LlmError("upstream", `Model stream failed: ${detail}`, model, Date.now() - started);
+      }
+      if (chunk.done) break;
+      if (sse.push(decoder.decode(chunk.value, { stream: true }))) break;
+    }
+  } finally {
+    if (timedOut) reader.cancel().catch(() => {});
+    else reader.releaseLock();
+  }
+  if (!timedOut) sse.push(decoder.decode());
+  const llmMs = Date.now() - started;
+  const content = sse.text;
+
+  if (!timedOut) {
+    const out: Record<string, unknown> = { response: content };
+    if (sse.outputTokens !== undefined) out.usage = { completion_tokens: sse.outputTokens };
+    return finishProposals(out, model, text, maxProposals, llmMs, false);
+  }
+  const items = parsePartialItems(content);
+  if (items.length === 0) {
+    throw new LlmError("timeout", `Model call exceeded ${timeoutMs} ms.`, model, llmMs);
+  }
+  const { proposals, stats } = validateProposals(items, text, maxProposals);
+  return { proposals, model, llmMs, stats, outputChars: content.length, partial: true };
+}
+
+function finishProposals(
+  output: unknown,
+  model: string,
+  text: string,
+  maxProposals: number,
+  llmMs: number,
+  partial: boolean,
+): ProposeResult {
+  const content = extractContent(output);
+  if (content === null) {
+    throw new LlmError("bad_output", "Model returned no text content.", model, llmMs);
+  }
+  const items = parseItems(content);
+  if (items === null) {
+    throw new LlmError("bad_output", "Model output contained no JSON feature list.", model, llmMs);
+  }
+  const { proposals, stats } = validateProposals(items, text, maxProposals);
+  const result: ProposeResult = { proposals, model, llmMs, stats, outputChars: content.length, partial };
+  const tokens = usageTokens(output);
+  if (tokens !== undefined) result.outputTokens = tokens;
+  return result;
+}
+
+/**
+ * Accumulates the text of a Workers AI server-sent-event stream. Handles the
+ * `{"response": "..."}` events of Workers AI chat models and OpenAI-style
+ * `{"choices":[{"delta":{"content": "..."}}]}` events. Exported for tests.
+ */
+export class SseText {
+  text = "";
+  outputTokens?: number;
+  private buffer = "";
+
+  /** Feed decoded bytes; returns true once `data: [DONE]` was seen. */
+  push(chunk: string): boolean {
+    this.buffer += chunk;
+    let done = false;
+    let nl: number;
+    while ((nl = this.buffer.indexOf("\n")) !== -1) {
+      const line = this.buffer.slice(0, nl).trim();
+      this.buffer = this.buffer.slice(nl + 1);
+      if (!line.startsWith("data:")) continue;
+      const data = line.slice(5).trim();
+      if (data === "[DONE]") {
+        done = true;
+        continue;
+      }
+      const event = tryParse(data);
+      if (!isRecord(event)) continue;
+      // Workers AI chat models may send the same token both as `response`
+      // and as an OpenAI-style delta in one event, or leave one of them
+      // empty; take the non-empty one, once.
+      const response = typeof event.response === "string" ? event.response : "";
+      let delta = "";
+      if (Array.isArray(event.choices)) {
+        for (const c of event.choices) {
+          if (isRecord(c) && isRecord(c.delta) && typeof c.delta.content === "string") delta += c.delta.content;
+        }
+      }
+      this.text += response.length >= delta.length ? response : delta;
+      const tokens = usageTokens(event);
+      if (tokens !== undefined) this.outputTokens = tokens;
+    }
+    return done;
+  }
+}
+
+/**
+ * Complete feature objects at the start of a cut-off model answer such as
+ * `{"features":[{...},{...},{"phrase":"half`. Only objects that parse in full
+ * are returned; the unfinished tail is dropped. Exported for tests.
+ */
+export function parsePartialItems(content: string): unknown[] {
+  const stripped = content.replace(/<think>[\s\S]*?<\/think>/gi, "").replace(/```(?:json)?/gi, "").trim();
+  const full = itemsFrom(tryParse(stripped));
+  if (full) return full;
+  const key = stripped.search(/"(?:features|proposals|terms|items)"\s*:\s*\[/);
+  let i = key === -1 ? stripped.indexOf("[") : stripped.indexOf("[", key);
+  if (i === -1) return [];
+  const items: unknown[] = [];
+  for (i = i + 1; i < stripped.length; i++) {
+    const ch = stripped[i];
+    if (ch === "]") break;
+    if (ch !== "{") continue;
+    const end = findBalancedEnd(stripped, i);
+    if (end === -1) break;
+    const value = tryParse(stripped.slice(i, end + 1));
+    if (isRecord(value)) items.push(value);
+    i = end;
+  }
+  return items;
 }
 
 // ---------------------------------------------------------------------------
@@ -493,7 +696,7 @@ function cleanLabel(raw: string): string {
   return s;
 }
 
-/** Up to 3 cleaned alternative labels, without the main label or repeats; anything else ignored. */
+/** Up to 2 cleaned alternative labels, without the main label or repeats; anything else ignored. */
 function cleanAlternatives(raw: unknown, label: string): string[] {
   if (!Array.isArray(raw)) return [];
   const out: string[] = [];
@@ -525,6 +728,14 @@ function toConfidence(v: unknown): Confidence {
 // ---------------------------------------------------------------------------
 // Small utilities
 // ---------------------------------------------------------------------------
+
+/** Output token count from a Workers AI `usage` object, if present. */
+function usageTokens(output: unknown): number | undefined {
+  if (!isRecord(output) || !isRecord(output.usage)) return undefined;
+  const u = output.usage;
+  const n = u.completion_tokens ?? u.output_tokens;
+  return typeof n === "number" && Number.isFinite(n) ? n : undefined;
+}
 
 class TimeoutError extends Error {}
 
