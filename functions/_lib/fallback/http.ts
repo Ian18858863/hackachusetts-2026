@@ -11,12 +11,22 @@
 import { UpstreamError, UpstreamTimeout } from "../../../engine/index";
 import type { EngineDeps, UpstreamName } from "../../../engine/index";
 
-/** Default per-upstream timeouts in ms (contract section 10). */
+/**
+ * Default per-upstream timeouts in ms (contract section 10).
+ *
+ * monarchSemsim is 10 s, not the 8 s in contract section 10: on 2026-10-24
+ * Monarch semsim took 5.6-8 s locally and 4.9-7.1 s cold in production for the
+ * demo-npc1 term set, so 8 s produced 504s (T18e). The /api/rank total budget
+ * of 12 s (contract section 7.4) still holds: fallbackRank caps the follow-up
+ * annotation and Orphadata calls at the time left in that budget
+ * (RANK_BUDGET_MS in rank.ts). The Monarch entity lookup in xrefs.ts keeps its
+ * own 2 s timeout.
+ */
 export const TIMEOUTS_MS: Readonly<Record<UpstreamName, number>> = {
   hpoSearch: 2000,
   hpoTerm: 2000,
   hpoAnnotation: 3000,
-  monarchSemsim: 8000,
+  monarchSemsim: 10000,
   orphadata: 2000,
   pubCaseFinder: 6000,
   clinicalTrials: 6000,

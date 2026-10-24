@@ -13,6 +13,7 @@
 import { ENGINE_STATUS, getDemoTrials, searchTrials } from "../../engine/index";
 import type { TrialsResponse } from "../../engine/index";
 import { engineFirst, PATH_HEADER } from "../_lib/fallback/engineFirst";
+import { getFallbackDemoTrials } from "../_lib/fallback/demoRecorded";
 import { cacheGetJson, cacheKey, cachePutJson } from "../_lib/fallback/http";
 import type { FallbackDeps } from "../_lib/fallback/http";
 import { fallbackSearchTrials } from "../_lib/fallback/trials";
@@ -85,7 +86,8 @@ async function handleGet(context: PagesContext<Record<string, unknown>>): Promis
 
   if (!result.ok) {
     if (isUpstreamFailure(result.error)) {
-      const demo = getDemoTrials(condition);
+      // Engine demo cache first; the T18e recorded demo-npc1 entry only while the engine has none.
+      const demo = getDemoTrials(condition) ?? getFallbackDemoTrials(condition, ids);
       if (demo) {
         logError("trials", result.error, "demo-fallback");
         return json(asDemoPayload(demo), 200, { [PATH_HEADER]: result.path });

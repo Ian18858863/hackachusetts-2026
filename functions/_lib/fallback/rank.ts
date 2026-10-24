@@ -36,7 +36,7 @@ import type {
 import { HPO_VERSION } from "../../../engine/hpo";
 import { BAND_ORDER, FREQUENT_BANDS, fetchAnnotation, mergeAnnotations } from "./annotations";
 import type { AnnotationSet, MergedAnnotations } from "./annotations";
-import { getJson } from "./http";
+import { getJson, TIMEOUTS_MS } from "./http";
 import type { FallbackDeps } from "./http";
 import { pickXrefs, rememberXrefs } from "./xrefs";
 
@@ -313,6 +313,22 @@ async function candidateAnnotations(
   return { merged: sets.length > 0 ? mergeAnnotations(sets) : null, failed };
 }
 
+/**
+ * Total /api/rank budget (contract section 7.4: 12 s). Monarch may use up to
+ * 10 s (TIMEOUTS_MS in http.ts); the annotation (3 s) and Orphadata (2 s)
+ * calls that follow keep their own timeouts but never run past this budget.
+ * When the budget is spent they fail fast, which only drops their data
+ * (contract 7.4, "One HPO annotation call fails").
+ */
+const RANK_BUDGET_MS = 12000;
+
+function budgetedDeps(deps: FallbackDeps, leftMs: number): FallbackDeps {
+  const left = Math.max(0, leftMs);
+  const cap = (name: "hpoAnnotation" | "orphadata"): number =>
+    Math.min(deps.timeoutsMs?.[name] ?? TIMEOUTS_MS[name], left);
+  return { ...deps, timeoutsMs: { ...deps.timeoutsMs, hpoAnnotation: cap("hpoAnnotation"), orphadata: cap("orphadata") } };
+}
+
 export interface FallbackRankResult {
   body: RankResponse;
   /** False when an annotation call failed: do not cache this response (R11.4). */
@@ -326,9 +342,11 @@ export interface FallbackRankResult {
  */
 export async function fallbackRank(req: NormalizedRankRequest, deps: FallbackDeps): Promise<FallbackRankResult> {
   const now = deps.now ?? (() => new Date());
+  const startedAt = Date.now();
   const url = `${MONARCH_SEMSIM}${req.observed.join(",")}/Human%20Diseases?limit=${req.limit + 5}`;
   // A 404 from a search endpoint is a failure, never "no candidates".
   const body = await getJson("monarchSemsim", url, deps, { notFound: "error" });
+  const after = budgetedDeps(deps, RANK_BUDGET_MS - (Date.now() - startedAt));
   const rows = parseMonarch(body);
   const fetchedAt = now().toISOString();
 
@@ -347,8 +365,8 @@ export async function fallbackRank(req: NormalizedRankRequest, deps: FallbackDep
 
   const labels = patientLabels(rows);
   const [annotations, orphaNames] = await Promise.all([
-    Promise.all(top.map((row) => candidateAnnotations(row, deps))),
-    Promise.all(top.map((row) => (row.orpha ? orphadataName(row.orpha, deps) : Promise.resolve(null)))),
+    Promise.all(top.map((row) => candidateAnnotations(row, after))),
+    Promise.all(top.map((row) => (row.orpha ? orphadataName(row.orpha, after) : Promise.resolve(null)))),
   ]);
 
   const candidates = top.map((row, i) =>

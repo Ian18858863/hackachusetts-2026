@@ -16,6 +16,7 @@
 import { ENGINE_STATUS, demoRankKey, getDemoRanking, rankCandidates } from "../../engine/index";
 import type { RankResponse } from "../../engine/index";
 import { engineFirst, PATH_HEADER } from "../_lib/fallback/engineFirst";
+import { getFallbackDemoRanking } from "../_lib/fallback/demoRecorded";
 import { cacheGetJson, cacheKey, cachePutJson } from "../_lib/fallback/http";
 import type { FallbackDeps } from "../_lib/fallback/http";
 import { fallbackRank } from "../_lib/fallback/rank";
@@ -94,7 +95,10 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
 
   if (!result.ok) {
     if (isUpstreamFailure(result.error)) {
-      const demo = getDemoRanking(demoRankKey(req.observed, req.excluded, req.limit));
+      // Engine demo cache first; the T18e recorded demo-npc1 entry only while the engine has none.
+      const demo =
+        getDemoRanking(demoRankKey(req.observed, req.excluded, req.limit)) ??
+        getFallbackDemoRanking(demoRankKey(req.observed, req.excluded, req.limit));
       if (demo) {
         logError("rank", result.error, "demo-fallback");
         return json(asDemoPayload(demo), 200, { [PATH_HEADER]: result.path });

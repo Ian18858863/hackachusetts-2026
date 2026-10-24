@@ -13,6 +13,7 @@
 import { demoRankKey, getDemoQuestions, nextQuestions } from "../../engine/index";
 import type { NextQuestionsResponse } from "../../engine/index";
 import { engineFirst, PATH_HEADER } from "../_lib/fallback/engineFirst";
+import { getFallbackDemoQuestions } from "../_lib/fallback/demoRecorded";
 import type { FallbackDeps } from "../_lib/fallback/http";
 import { fallbackNextQuestions } from "../_lib/fallback/questions";
 import { diseaseIdList, hpoIdList, intInRange, overlapId } from "../_lib/fallback/validate";
@@ -88,7 +89,10 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
 
   if (!result.ok) {
     if (isUpstreamFailure(result.error)) {
-      const demo = getDemoQuestions(demoRankKey(req.observed, req.excluded, req.candidates.length));
+      // Engine demo cache first; the T18e recorded demo-npc1 entry only while the engine has none.
+      const demo =
+        getDemoQuestions(demoRankKey(req.observed, req.excluded, req.candidates.length)) ??
+        getFallbackDemoQuestions(req.observed, req.excluded, req.candidates);
       if (demo) {
         logError("next-questions", result.error, "demo-fallback");
         return json(asDemoPayload(demo), 200, { [PATH_HEADER]: result.path });
