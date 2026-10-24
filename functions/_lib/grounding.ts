@@ -21,13 +21,21 @@
 // comes from the HPO API, negation is the proposal's flag, one term per id.
 // Recovered terms use the contract's existing fields only: grounding
 // "label-search", confidence lowered one step for the main label (contract
-// 7.2) and two steps for an alternative label (weaker evidence).
+// 7.2) and two steps for an alternative label (weaker evidence). A term found
+// through an alternative label is never added silently: it gets a warning
+// in the response's warnings list (contract 7.2, R2.2/R2.8).
+//
+// Subrequest budget: the Workers free plan allows 50 subrequests per
+// invocation. secondaryLookupCap() turns what the request already used into
+// the cap for this step; estimateEngineSubrequests() gives a conservative
+// count for the engine's groundTerms.
 //
 // The engine's matching helpers are re-implemented here rather than imported
 // so this file has no extension-less imports and runs under `node --test`.
 // Keep plainWords / singularWord in step with engine/hpo.ts.
 //
-// Privacy: queries are model labels, never the note text. Nothing is logged.
+// Privacy: queries are model labels, never the note text. Nothing is logged
+// here; the caller logs counts only.
 
 export type Confidence = "high" | "medium" | "low";
 
@@ -73,6 +81,10 @@ export interface SecondaryStats {
   lookups: number;
   /** Label tries skipped because the lookup cap or the deadline was reached. */
   skippedByBudget: number;
+  /** JAX search calls that failed (network, timeout, non-2xx, bad JSON). */
+  failedLookups: number;
+  /** Recovered terms that came from an alternative label (each has a warning). */
+  viaAlternative: number;
 }
 
 export interface SecondaryResult {
@@ -82,6 +94,10 @@ export interface SecondaryResult {
 }
 
 export const DEFAULT_MAX_LOOKUPS = 12;
+/** Workers free plan: subrequests per invocation (Cache API calls count too). */
+export const SUBREQUEST_LIMIT = 50;
+/** Head room kept free below SUBREQUEST_LIMIT for retries and estimate error. */
+export const SUBREQUEST_SAFETY_MARGIN = 4;
 const JAX_SEARCH = "https://ontology.jax.org/api/hp/search";
 const SEARCH_LIMIT = 20;
 const MAX_ALTERNATIVES = 3;
@@ -167,8 +183,56 @@ interface SearchRow {
   synonyms: string[];
 }
 
+/**
+ * The engine's drop warning for an unconfirmed proposal. Copied from
+ * engine/ground.ts groundTerms ("Dropped '<phrase>': no matching HPO term
+ * confirmed"); recovery keys on this exact text, and grounding.test.ts locks it.
+ */
+export function engineDropWarning(phrase: string): string {
+  return `Dropped '${show(phrase)}': no matching HPO term confirmed`;
+}
+
+/** Warning added when a term was found only through an alternative label. */
+export function alternativeWarning(quote: string, hpoName: string, alternative: string): string {
+  return `Matched '${show(quote)}' to ${hpoName} through the alternative label '${show(alternative)}'; please check it.`;
+}
+
+/**
+ * Cap on secondary lookups given the subrequests already used:
+ * min(maxLookups, SUBREQUEST_LIMIT - used - SUBREQUEST_SAFETY_MARGIN), never below 0.
+ */
+export function secondaryLookupCap(used: number, maxLookups: number = DEFAULT_MAX_LOOKUPS): number {
+  const left = SUBREQUEST_LIMIT - Math.max(0, Math.ceil(used)) - SUBREQUEST_SAFETY_MARGIN;
+  return Math.max(0, Math.min(Math.floor(maxLookups), left));
+}
+
+/**
+ * Conservative count of the subrequests engine/ground.ts groundTerms makes for
+ * these proposals: one term lookup per distinct supplied id plus every
+ * distinct search query (engine/hpo.ts searchVariants: the trimmed label, its
+ * plain words, its singular words; memoised per query). Counts as if every
+ * variant were searched, although the engine stops at the first hit. The
+ * engine's single retry on 5xx is not counted (the safety margin covers it).
+ */
+export function estimateEngineSubrequests(
+  proposals: ReadonlyArray<{ phrase?: unknown; label?: unknown; hpoId?: unknown }>,
+): number {
+  const ids = new Set<string>();
+  const queries = new Set<string>();
+  for (const p of proposals) {
+    if (typeof p?.phrase !== "string" || p.phrase.trim() === "") continue;
+    if (typeof p.hpoId === "string" && p.hpoId.trim() !== "") ids.add(p.hpoId.trim().toUpperCase());
+    if (typeof p.label !== "string" || p.label.trim() === "") continue;
+    const words = plainWords(p.label);
+    for (const q of [p.label.trim(), words.join(" "), words.map(singularWord).join(" ")]) {
+      if (q.length >= 2) queries.add(q);
+    }
+  }
+  return ids.size + queries.size;
+}
+
 /** One JAX search; any failure means "no rows" (this step never fails the request). */
-async function searchJax(q: string, opts: SecondaryOptions): Promise<SearchRow[]> {
+async function searchJax(q: string, opts: SecondaryOptions): Promise<{ rows: SearchRow[]; failed: boolean }> {
   const doFetch = opts.fetch;
   const url = `${JAX_SEARCH}?q=${encodeURIComponent(q)}&limit=${SEARCH_LIMIT}`;
   try {
@@ -176,9 +240,9 @@ async function searchJax(q: string, opts: SecondaryOptions): Promise<SearchRow[]
       headers: { accept: "application/json" },
       signal: AbortSignal.timeout(opts.perCallTimeoutMs ?? 2000),
     });
-    if (!res.ok) return [];
+    if (!res.ok) return { rows: [], failed: true };
     const body = (await res.json()) as { terms?: unknown };
-    if (!Array.isArray(body?.terms)) return [];
+    if (!Array.isArray(body?.terms)) return { rows: [], failed: true };
     const rows: SearchRow[] = [];
     for (const r of body.terms) {
       if (typeof r !== "object" || r === null) continue;
@@ -190,25 +254,25 @@ async function searchJax(q: string, opts: SecondaryOptions): Promise<SearchRow[]
         : [];
       rows.push({ id: v.id, name: v.name, synonyms });
     }
-    return rows;
+    return { rows, failed: false };
   } catch {
-    return [];
+    return { rows: [], failed: true };
   }
 }
 
 /** Labels to try for one proposal: main label, then alternatives; deduplicated, ASCII only (JAX answers 400 otherwise). */
-function labelsToTry(p: SecondaryProposal): string[] {
-  const out: string[] = [];
+function labelsToTry(p: SecondaryProposal): Array<{ label: string; alternative: boolean }> {
+  const out: Array<{ label: string; alternative: boolean }> = [];
   const seen = new Set<string>();
   const alts = Array.isArray(p.alternatives) ? p.alternatives.slice(0, MAX_ALTERNATIVES) : [];
-  for (const raw of [p.label, ...alts]) {
-    if (typeof raw !== "string") continue;
+  [p.label, ...alts].forEach((raw, i) => {
+    if (typeof raw !== "string") return;
     const label = raw.replace(/\s+/g, " ").trim();
     const key = labelKey(label);
-    if (label.length < 2 || key === "" || seen.has(key) || !/^[\x20-\x7e]+$/.test(label)) continue;
+    if (label.length < 2 || key === "" || seen.has(key) || !/^[\x20-\x7e]+$/.test(label)) return;
     seen.add(key);
-    out.push(label);
-  }
+    out.push({ label, alternative: i > 0 });
+  });
   return out;
 }
 
@@ -231,15 +295,22 @@ export async function recoverUngrounded(
 ): Promise<SecondaryResult> {
   const now = opts.now ?? Date.now;
   const maxLookups = Math.max(0, Math.floor(opts.maxLookups ?? DEFAULT_MAX_LOOKUPS));
-  const stats: SecondaryStats = { retried: 0, recovered: 0, lookups: 0, skippedByBudget: 0 };
+  const stats: SecondaryStats = {
+    retried: 0,
+    recovered: 0,
+    lookups: 0,
+    skippedByBudget: 0,
+    failedLookups: 0,
+    viaAlternative: 0,
+  };
   const warnings = [...primary.warnings];
   const terms = [...primary.terms];
   const keptIds = new Set(terms.map((t) => t.hpoId));
   const taken = new Set(terms.map((t) => t.start));
 
   // Proposals the engine dropped as unconfirmed, matched by its warning text.
-  const dropWarning = (phrase: string) => `Dropped '${show(phrase)}': no matching HPO term confirmed`;
-  const pending: Array<{ p: SecondaryProposal; labels: string[] }> = [];
+  const dropWarning = engineDropWarning;
+  const pending: Array<{ p: SecondaryProposal; labels: Array<{ label: string; alternative: boolean }> }> = [];
   const pendingWarnings = new Map<string, number>();
   for (const w of warnings) pendingWarnings.set(w, (pendingWarnings.get(w) ?? 0) + 1);
   for (const p of proposals) {
@@ -253,14 +324,19 @@ export async function recoverUngrounded(
   stats.retried = pending.length;
 
   const searches = new Map<string, Promise<SearchRow[]>>();
+  const search = (q: string): Promise<SearchRow[]> =>
+    searchJax(q, opts).then((r) => {
+      if (r.failed) stats.failedLookups++;
+      return r.rows;
+    });
   const done = new Set<number>();
   const maxRounds = 1 + MAX_ALTERNATIVES;
 
   for (let round = 0; round < maxRounds; round++) {
-    const batch: Array<{ idx: number; label: string; rows: Promise<SearchRow[]> }> = [];
+    const batch: Array<{ idx: number; label: string; alternative: boolean; rows: Promise<SearchRow[]> }> = [];
     pending.forEach((item, idx) => {
       if (done.has(idx) || round >= item.labels.length) return;
-      const label = item.labels[round];
+      const { label, alternative } = item.labels[round];
       const q = label;
       let rows = searches.get(q);
       if (!rows) {
@@ -269,10 +345,10 @@ export async function recoverUngrounded(
           return;
         }
         stats.lookups++;
-        rows = searchJax(q, opts);
+        rows = search(q);
         searches.set(q, rows);
       }
-      batch.push({ idx, label, rows });
+      batch.push({ idx, label, alternative, rows });
     });
     if (batch.length === 0) continue;
 
@@ -294,7 +370,7 @@ export async function recoverUngrounded(
         return;
       }
       const base: Confidence = p.confidence === "high" || p.confidence === "medium" ? p.confidence : "low";
-      const confidence = round === 0 ? LOWER[base] : LOWER[LOWER[base]];
+      const confidence = b.alternative ? LOWER[LOWER[base]] : LOWER[base];
       taken.add(span.start);
       keptIds.add(hit.id);
       terms.push({
@@ -309,6 +385,10 @@ export async function recoverUngrounded(
       });
       stats.recovered++;
       removeOnce(warnings, original);
+      if (b.alternative) {
+        stats.viaAlternative++;
+        warnings.push(alternativeWarning(text.slice(span.start, span.end), hit.name, b.label));
+      }
     });
   }
 

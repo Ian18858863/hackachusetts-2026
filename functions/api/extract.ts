@@ -9,7 +9,9 @@
 //   3b. Proposals the engine could not confirm are retried by
 //      functions/_lib/grounding.ts (T37): the model's main label, then its
 //      alternative labels, against HPO names and synonyms; at most
-//      SECONDARY_MAX_LOOKUPS extra HPO searches, inside the same 4 s deadline.
+//      min(12, 50 - subrequests already used - 4) extra HPO searches, inside
+//      the same 4 s deadline. Terms found through an alternative label carry
+//      a warning.
 //   4. Zero grounded terms -> 422 NO_TERMS_FOUND.
 // Only the live path is rate-limited per client IP (functions/_lib/rateLimit.ts,
 // T18p): 429 RATE_LIMITED with Retry-After. The demo path is never limited.
@@ -23,7 +25,12 @@
 import { HPO_VERSION, getDemoCase, groundTerms, listDemoCases } from "../../engine/index";
 import type { DataVersions, DemoCase, EngineDeps, ExtractedTerm } from "../../engine/index";
 import { getFallbackDemoCase } from "../_lib/fallback/demoCases";
-import { DEFAULT_MAX_LOOKUPS, recoverUngrounded } from "../_lib/grounding";
+import {
+  DEFAULT_MAX_LOOKUPS,
+  estimateEngineSubrequests,
+  recoverUngrounded,
+  secondaryLookupCap,
+} from "../_lib/grounding";
 import type { SecondaryStats } from "../_lib/grounding";
 import { LlmError, MAX_TEXT_CHARS, proposeTerms } from "../_lib/llm";
 import type { LlmEnv, ProposeResult } from "../_lib/llm";
@@ -53,11 +60,14 @@ const LLM_TIMEOUT_MS = 15_000;
 /** Overall grounding budget from contract section 7.2 (all HPO lookups and searches). */
 const GROUNDING_DEADLINE_MS = 4_000;
 /**
- * Cap on extra JAX searches made by the secondary grounding (T37). The live
- * path's subrequests are 1 Workers AI call, the engine's lookups and these;
- * the Workers free plan allows 50 per invocation.
+ * Upper cap on extra JAX searches made by the secondary grounding (T37). The
+ * real cap is lower when the request already used subrequests: the Workers AI
+ * call, the rate limiter's Cache API reads and writes, and the engine's HPO
+ * lookups (secondaryLookupCap in functions/_lib/grounding.ts).
  */
 const SECONDARY_MAX_LOOKUPS = DEFAULT_MAX_LOOKUPS; // 12
+/** Subrequests of the Workers AI call (counted conservatively as one). */
+const AI_SUBREQUESTS = 1;
 /** Below this much time left in the grounding deadline the secondary step is skipped. */
 const SECONDARY_MIN_MS = 300;
 /**
@@ -147,7 +157,11 @@ async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promi
 
   // Per-IP limit on live LLM calls only (approximate, fails open).
   // Counter writes go to waitUntil so they add no latency.
-  const decision = await checkAndCount(defaultCache(), clientIp(request), extractWindows(env), Date.now(), waitUntil);
+  const rateCache = defaultCache();
+  const rateWindows = extractWindows(env);
+  // One Cache API read and one write per window when the cache exists.
+  const rateLimitSubrequests = rateCache ? 2 * rateWindows.length : 0;
+  const decision = await checkAndCount(rateCache, clientIp(request), rateWindows, Date.now(), waitUntil);
   if (decision.limited) {
     return apiError("RATE_LIMITED", rateLimitMessage(decision.retryAfterSec), {
       "Retry-After": String(decision.retryAfterSec),
@@ -195,13 +209,20 @@ async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promi
   // Never fails the request: any error keeps the engine result as it is.
   const deadlineAt = groundStarted + GROUNDING_DEADLINE_MS;
   let secondary: SecondaryStats | null = null;
-  if (deadlineAt - Date.now() >= SECONDARY_MIN_MS) {
+  const used = AI_SUBREQUESTS + rateLimitSubrequests + estimateEngineSubrequests(proposed.proposals);
+  const lookupCap = secondaryLookupCap(used, SECONDARY_MAX_LOOKUPS);
+  let secondarySkip: "deadline" | "subrequests" | "error" | null = null;
+  if (lookupCap === 0) {
+    secondarySkip = "subrequests";
+  } else if (deadlineAt - Date.now() < SECONDARY_MIN_MS) {
+    secondarySkip = "deadline";
+  } else {
     try {
       const fetchFn = globalThis.fetch.bind(globalThis);
       const recovered = await withDeadline(
         recoverUngrounded(text, proposed.proposals, grounded, {
           fetch: fetchFn,
-          maxLookups: SECONDARY_MAX_LOOKUPS,
+          maxLookups: lookupCap,
           deadlineAt,
           perCallTimeoutMs: Math.min(2_000, Math.max(1, deadlineAt - Date.now())),
         }),
@@ -210,6 +231,7 @@ async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promi
       grounded = { ...grounded, terms: recovered.terms, warnings: recovered.warnings };
       secondary = recovered.stats;
     } catch (err) {
+      secondarySkip = "error";
       logError("extract.ground2", err);
     }
   }
@@ -219,9 +241,13 @@ async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promi
   console.log(
     `[rdd] extract live model=${proposed.model} llmMs=${proposed.llmMs} groundMs=${groundMs} ` +
       `proposals=${proposed.proposals.length} terms=${grounded.terms.length} warnings=${grounded.warnings.length}` +
+      ` subrequestsUsed~${used} lookupCap=${lookupCap}` +
       (secondary
-        ? ` retried=${secondary.retried} recovered=${secondary.recovered} lookups=${secondary.lookups}/${SECONDARY_MAX_LOOKUPS} skipped=${secondary.skippedByBudget}`
-        : " secondary=skipped"),
+        ? ` retried=${secondary.retried} recovered=${secondary.recovered} viaAlt=${secondary.viaAlternative} ` +
+          `lookups=${secondary.lookups}/${lookupCap} failed=${secondary.failedLookups} ` +
+          `skippedBudget=${secondary.skippedByBudget}` +
+          (lookupCap < SECONDARY_MAX_LOOKUPS ? " capCutBy=subrequests" : "")
+        : ` secondary=skipped reason=${secondarySkip ?? "none"}`),
   );
 
   if (grounded.terms.length === 0) {

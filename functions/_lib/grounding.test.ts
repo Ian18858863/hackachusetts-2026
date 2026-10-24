@@ -4,7 +4,15 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { namesTerm, recoverUngrounded, type GroundedTerm, type SecondaryProposal } from "./grounding.ts";
+import {
+  engineDropWarning,
+  estimateEngineSubrequests,
+  namesTerm,
+  recoverUngrounded,
+  secondaryLookupCap,
+  type GroundedTerm,
+  type SecondaryProposal,
+} from "./grounding.ts";
 
 // Shapes as returned by GET https://ontology.jax.org/api/hp/search (2026-10-24).
 const ROWS: Record<string, Array<{ id: string; name: string; synonyms: string[] }>> = {
@@ -64,8 +72,12 @@ test("synonym hit on an alternative label is accepted with the HPO primary name 
   assert.equal(t.quote, CALVES.phrase);
   assert.equal(t.grounding, "label-search");
   assert.equal(t.confidence, "low"); // alternative label: two steps down from high
-  assert.deepEqual(r.warnings, []);
+  assert.deepEqual(r.warnings, [
+    "Matched 'His calves look very big' to Calf muscle pseudohypertrophy through the alternative label " +
+      "'Pseudohypertrophy of the calves'; please check it.",
+  ]);
   assert.equal(r.stats.recovered, 1);
+  assert.equal(r.stats.viaAlternative, 1);
 });
 
 test("word-set equality is accepted ('Hypertrophy of the calf muscles' = 'Calf muscle hypertrophy')", async () => {
@@ -73,6 +85,8 @@ test("word-set equality is accepted ('Hypertrophy of the calf muscles' = 'Calf m
   const r = await recoverUngrounded(TEXT, [p], { terms: [], warnings: [dropped(p.phrase)] }, opts([]));
   assert.equal(r.terms[0]?.hpoId, "HP:0008981");
   assert.equal(r.terms[0]?.confidence, "medium"); // main label: one step down
+  assert.deepEqual(r.warnings, []); // main-label hit: the drop warning goes, no new warning
+  assert.equal(r.stats.viaAlternative, 0);
 });
 
 test("a label that only resembles a term is rejected (no fuzzy match, no top-result guess)", async () => {
@@ -130,4 +144,52 @@ test("the lookup cap is respected", async () => {
   const r = await recoverUngrounded(TEXT, [p], { terms: [], warnings: [dropped(p.phrase)] }, opts(calls, { maxLookups: 2 }));
   assert.equal(calls.length, 2);
   assert.equal(r.stats.skippedByBudget, 2);
+});
+
+test("engine drop warning text is locked (recovery keys on it)", () => {
+  // Exact string from engine/ground.ts groundTerms:
+  //   warnings.push(`Dropped '${show(phrase)}': no matching HPO term confirmed`);
+  // engine/ground.ts cannot be imported under node --test (extension-less imports),
+  // so the text is copied here. If the engine changes it, update both.
+  assert.equal(engineDropWarning("He is tired"), "Dropped 'He is tired': no matching HPO term confirmed");
+  const long = "x".repeat(70);
+  assert.equal(engineDropWarning(long), `Dropped '${"x".repeat(57)}...': no matching HPO term confirmed`);
+});
+
+test("secondary lookup cap = min(12, 50 - used - 4), never below 0", () => {
+  assert.equal(secondaryLookupCap(5), 12);
+  assert.equal(secondaryLookupCap(34), 12);
+  assert.equal(secondaryLookupCap(35), 11);
+  assert.equal(secondaryLookupCap(40), 6);
+  assert.equal(secondaryLookupCap(46), 0);
+  assert.equal(secondaryLookupCap(80), 0);
+});
+
+test("engine subrequest estimate counts distinct ids and distinct search variants", () => {
+  const n = estimateEngineSubrequests([
+    { phrase: "a", label: "Seizures", hpoId: "HP:0001250" }, // id + "Seizures", "seizures", "seizure"
+    { phrase: "b", label: "Seizures", hpoId: "HP:0001250" }, // all memoised
+    { phrase: "c", label: "Fatigue" }, // "Fatigue", "fatigue"
+    { phrase: "", label: "Ignored", hpoId: "HP:0000001" }, // engine drops phrase-less proposals
+  ]);
+  assert.equal(n, 1 + 3 + 2);
+});
+
+test("a cap of 0 makes no lookups; failed fetches are counted apart from budget skips", async () => {
+  const none: string[] = [];
+  const r0 = await recoverUngrounded(TEXT, [CALVES], { terms: [], warnings: [dropped(CALVES.phrase)] }, opts(none, { maxLookups: 0 }));
+  assert.equal(none.length, 0);
+  assert.equal(r0.stats.skippedByBudget, 2); // main label and one alternative
+  assert.equal(r0.stats.failedLookups, 0);
+
+  const failing = async (): Promise<Response> => new Response("err", { status: 503 });
+  const p = { ...CALVES, alternatives: [] };
+  const r1 = await recoverUngrounded(TEXT, [p], { terms: [], warnings: [dropped(p.phrase)] }, {
+    fetch: failing,
+    deadlineAt: Date.now() + 10_000,
+  });
+  assert.equal(r1.stats.lookups, 1);
+  assert.equal(r1.stats.failedLookups, 1);
+  assert.equal(r1.stats.skippedByBudget, 0);
+  assert.deepEqual(r1.warnings, [dropped(p.phrase)]);
 });
