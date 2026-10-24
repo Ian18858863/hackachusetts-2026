@@ -3,8 +3,8 @@
  * One light theme (T35b): the app's warm paper page and ink text.
  * Two semantic accents only, shared with the app: --accent for the primary
  * action, --attention for needs-attention (unused here). Red only for errors.
- * Type: Noto Serif (and Noto Serif SC/JP/KR per language) at weight 500 for
- * every heading and number; Inter 400/600 for everything else.
+ * Type: Geist at weight 500 for
+ * every heading and number, 400/600 for everything else.
  *
  * Contrast: see the :root block below (computed, WCAG 2.2).
  *
@@ -33,11 +33,10 @@
   --focus: #2348b0;
   --on-dark: #ffffff;
 
-  --f-display: 'Noto Serif', var(--f-cjk-serif), Georgia, serif;
-  --f-text: 'Inter', system-ui, -apple-system, 'Segoe UI', var(--f-cjk-sans), sans-serif;
-  --f-cjk-sans: 'PingFang SC', 'Hiragino Sans', 'Apple SD Gothic Neo', 'Noto Sans CJK SC', 'Microsoft YaHei',
+  --f-display: 'Geist', var(--f-cjk-sans), system-ui, sans-serif;
+  --f-text: 'Geist', var(--f-cjk-sans), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-cjk-sans: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans', 'Apple SD Gothic Neo', 'Noto Sans CJK SC', 'Microsoft YaHei',
     'Yu Gothic', 'Malgun Gothic';
-  --f-cjk-serif: 'Noto Serif SC', 'Songti SC', 'Noto Serif CJK SC';
 
   --t-xs: 0.8125rem;
   --t-sm: 0.875rem;
@@ -49,7 +48,7 @@
   --t-stat: clamp(2.75rem, min(5.4vw, 9vh), 5.25rem);
   --lh-text: 1.65;
   --lh-head: 1.04;
-  --track-display: -0.032em;
+  --track-display: -0.02em;
 
   --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px;
   --s-7: 48px; --s-8: 64px; --s-9: 96px; --s-10: 128px;
@@ -221,7 +220,7 @@ a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; 
 .stat-value {
   font: 500 var(--stat-size, var(--t-stat))/1.12 var(--f-display);
   overflow: hidden;
-  font-variant-numeric: lining-nums tabular-nums; letter-spacing: -0.03em; white-space: nowrap;
+  font-variant-numeric: lining-nums tabular-nums; letter-spacing: -0.025em; white-space: nowrap;
 }
 .stat-label { margin-top: var(--s-3); font-size: var(--t-base); color: var(--ink-2); }
 .cite { margin-top: var(--s-2); font-size: var(--t-xs); color: var(--ink-3); }
@@ -356,23 +355,21 @@ a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; 
 }
 
 /* ------------------------------------------------------------------------
-   CJK: each language's own serif first; no negative Latin tracking.
+   CJK: each language's own Noto Sans first; no negative Latin tracking.
    ------------------------------------------------------------------------ */
 :root:lang(zh) {
-  --f-cjk-sans: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei';
-  --f-cjk-serif: 'Noto Serif SC', 'Songti SC', 'Noto Serif CJK SC';
+  --f-cjk-sans: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei';
 }
 :root:lang(ja) {
-  --f-cjk-sans: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', 'Yu Gothic';
-  --f-cjk-serif: 'Noto Serif JP', 'Hiragino Mincho ProN', 'Noto Serif CJK JP';
+  --f-cjk-sans: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', 'Yu Gothic';
 }
 :root:lang(ko) {
-  --f-cjk-sans: 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Malgun Gothic';
-  --f-cjk-serif: 'Noto Serif KR', 'AppleMyungjo', 'Noto Serif CJK KR';
+  --f-cjk-sans: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Malgun Gothic';
   word-break: keep-all;
 }
 :root:lang(zh), :root:lang(ja), :root:lang(ko) {
-  --f-text: 'Inter', var(--f-cjk-sans), system-ui, sans-serif;
+  --f-text: 'Geist', var(--f-cjk-sans), system-ui, sans-serif;
+  --f-display: 'Geist', var(--f-cjk-sans), system-ui, sans-serif;
   --track-display: 0;
 }
 :lang(zh) :is(h1, h2, h3, .stat-value),

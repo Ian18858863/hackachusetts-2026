@@ -45,16 +45,14 @@
   --on-dark: #ffffff;
   --focus: #2348b0;
 
-  /* One display serif for headings and numbers in every language (Noto Serif
-     + Noto Serif SC/JP/KR, OFL-1.1, weight 500 only, unicode-range subsets so
-     a page downloads only the glyph slices it shows). One sans for the UI
-     (Inter 400 and 600) with system CJK sans per language. Self-hosted via
-     @fontsource, imported in src/main.tsx. */
-  --f-display: 'Noto Serif', var(--f-cjk-serif), Georgia, serif;
-  --f-text: 'Inter', system-ui, -apple-system, 'Segoe UI', var(--f-cjk-sans), sans-serif;
-  --f-cjk-sans: 'PingFang SC', 'Hiragino Sans', 'Apple SD Gothic Neo', 'Noto Sans CJK SC', 'Microsoft YaHei',
+  /* One sans for headings, body and numbers (Ian's option A, 18:46 ET): Geist
+     400/500/600 (OFL-1.1). Han, kana and hangul fall through to Noto Sans
+     SC/JP/KR 400/500, unicode-range slices loaded per language (shared/fonts.ts).
+     Self-hosted via @fontsource. */
+  --f-display: 'Geist', var(--f-cjk-sans), system-ui, sans-serif;
+  --f-text: 'Geist', var(--f-cjk-sans), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-cjk-sans: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans', 'Apple SD Gothic Neo', 'Noto Sans CJK SC', 'Microsoft YaHei',
     'Yu Gothic', 'Malgun Gothic';
-  --f-cjk-serif: 'Noto Serif SC', 'Songti SC', 'Noto Serif CJK SC';
   --t-xs: 0.8125rem; /* 13 */
   --t-sm: 0.875rem; /* 14 */
   --t-base: 1rem; /* 16 */
@@ -64,7 +62,7 @@
   --t-2xl: clamp(2.125rem, 3.6vw, 3.25rem); /* 34-52: page title */
   --lh-text: 1.6;
   --lh-head: 1.08;
-  --track-display: -0.028em;
+  --track-display: -0.02em;
 
   --s-1: 4px;
   --s-2: 8px;
@@ -190,7 +188,7 @@
   --leading-reading: 1.6;
 
   --tracking-display: var(--track-display);
-  --tracking-tight: -0.018em;
+  --tracking-tight: -0.015em;
   --tracking-normal: 0;
   --tracking-caps: 0.04em;
 
@@ -327,18 +325,15 @@
    the negative Latin tracking, which crowds CJK glyphs.
    ------------------------------------------------------------------------ */
 :root:lang(zh) {
-  --f-cjk-sans: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei';
-  --f-cjk-serif: 'Noto Serif SC', 'Songti SC', 'Noto Serif CJK SC';
+  --f-cjk-sans: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei';
 }
 
 :root:lang(ja) {
-  --f-cjk-sans: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', 'Yu Gothic';
-  --f-cjk-serif: 'Noto Serif JP', 'Hiragino Mincho ProN', 'Noto Serif CJK JP';
+  --f-cjk-sans: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', 'Yu Gothic';
 }
 
 :root:lang(ko) {
-  --f-cjk-sans: 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Malgun Gothic';
-  --f-cjk-serif: 'Noto Serif KR', 'AppleMyungjo', 'Noto Serif CJK KR';
+  --f-cjk-sans: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Malgun Gothic';
   word-break: keep-all;
 }
 
@@ -347,13 +342,11 @@
 :root:lang(zh),
 :root:lang(ja),
 :root:lang(ko) {
-  --f-text: 'Inter', var(--f-cjk-sans), system-ui, sans-serif;
+  --f-text: 'Geist', var(--f-cjk-sans), system-ui, sans-serif;
+  --f-display: 'Geist', var(--f-cjk-sans), system-ui, sans-serif;
   --tracking-display: 0;
   --track-display: 0;
   --tracking-tight: normal;
-  /* T34 used the system CJK sans for CJK headings because only Songti/Mincho
-     fallbacks existed; v2 (T35) ships Noto Serif SC/JP/KR 500, so headings stay
-     in one serif family in every language. */
 }
 
 :lang(zh) :is(h1, h2, h3, h4),
