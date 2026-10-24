@@ -8,7 +8,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "test": "node --test test/",
+    "test": "node --test",
     "validate": "node scripts/validate.mjs",
     "verify:sources": "node scripts/verify-sources.mjs",
     "fetch:diseases": "node scripts/fetch-diseases.mjs",
