@@ -1,6 +1,6 @@
 # Interface contract: Rare Disease Detective
 
-> **v0.1.2 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.** v0.1.1 and v0.1.2 are additive (v0.1.1: new primary demo case; v0.1.2: timeouts, overlap counting, next-questions filter, trial relevance and temporary demo fallbacks, as implemented in Ian's functions fallback); see the changelog in section 14.
+> **v0.1.3 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.** v0.1.1, v0.1.2 and v0.1.3 are non-breaking (v0.1.1: new primary demo case; v0.1.2: timeouts, overlap counting, next-questions filter, trial relevance and temporary demo fallbacks, as implemented in Ian's functions fallback; v0.1.3: broader-term matches count only through an HP: shared ancestor, and `/api/rank` is served by the engine); see the changelog in section 14.
 > Contract version string in every response: `"0.1"`. Single file editor: Ian's Kiro (T09).
 > Kiro spec that implements this contract: [`.kiro/specs/rare-disease-detective/`](../.kiro/specs/rare-disease-detective/requirements.md).
 > This file is the source of truth for request and response shapes. If the spec and this file disagree, this file wins and the spec gets fixed.
@@ -446,7 +446,7 @@ Budget 12 s: Monarch semsim 10 s (measured ~4.6 s on 2026-10-24, then 4.9–8 s 
 2. Call Monarch `GET /v3/api/semsim/search/{observed joined by ,}/Human%20Diseases?limit={limit + 5}`. Monarch does not use excluded terms.
 3. For each result, take `subject.id` as `mondoId`. Choose `diseaseId`: `Orphanet:`/`ORPHA:` xref normalised to `ORPHA:<n>` if present, else `OMIM:` xref, else the MONDO id. Results with the same `diseaseId` are merged (keep the higher score).
 4. For each of the top `limit` results, fetch HPO annotations for both the ORPHA and the OMIM id when both exist. Verified on 2026-10-24: `ORPHA:558` gives frequency bands (`"Very frequent"`, `"Frequent"`, `"Occasional"`) and an empty `genes` list; `OMIM:154700` gives `"n/m"` fractions or `""` and `genes: [{ "id": "NCBIGene:2200", "name": "FBN1" }]`. Frequencies prefer the ORPHA band, else the normalised OMIM value. Genes are the union. Categories are the union of category keys.
-5. Build `matched` from Monarch `object_best_matches` (patient term → disease term). `via` is `"exact"` when `match_source == match_target`, else `"ancestor"` with `match_subsumer`. A match counts only if the subsumer is not `HP:0000118` (Phenotypic abnormality) and not a direct child of it (organ-system level). Those patient terms go to `unmatched`.
+5. Build `matched` from Monarch `object_best_matches` (patient term → disease term). `via` is `"exact"` when `match_source == match_target`, else `"ancestor"` with `match_subsumer`. A match counts only if the subsumer is not `HP:0000118` (Phenotypic abnormality) and not a direct child of it (organ-system level). A broader-term match also counts only if the subsumer is an HP: term (v0.1.3); a non-HP shared ancestor (e.g. a `UPHENO:` term) does not count. Those patient terms go to `unmatched`.
 6. `notReported`: disease features with frequency Obligate, Very frequent or Frequent whose id is not a matched `diseaseTerm`, not observed and not excluded. Sorted by frequency band then id; max 8.
 7. `contradicted`: patient-excluded ids that appear in the disease annotations with frequency Obligate, Very frequent or Frequent (exact id match in v0.1; ancestor-aware matching is open question 7).
 8. `overlap = overlapLabel(weightedMatched, observed.length, contradicted.length)`:
@@ -516,6 +516,8 @@ The `score` value and the `HP:0004942` ancestor are illustrative. `overlap` is `
 | Orphadata or PubCaseFinder fails | Ignored; response still 200 |
 
 Cache: Workers Cache API, key `rank:v0.1:<sorted observed>|<sorted excluded>|<limit>`, TTL 24 h. Annotation responses cached per disease id for 24 h.
+
+Enrichment report (v0.1.3, additive): besides `rankCandidates`, the engine exports `rankCandidatesWithReport(req, deps)`, which returns the same `RankResponse` plus an enrichment report whose `enrichment.complete` is `false` when an annotation or Orphadata call failed. `/api/rank` does not cache a response with incomplete enrichment (T18h). The report is not part of the response body.
 
 ### 7.5 POST /api/next-questions
 
@@ -923,6 +925,9 @@ Changelog:
   - `[CONTRACT CHANGE] §7.6 trials keep only studies whose conditions contain all distinctive words of the condition name; fewer than 3 left → one broader search without the subtype suffix; total = upstream totalCount of the query used; query.condition echoes the request; breaking no`.
   - `[CONTRACT CHANGE] §9/§10 temporary demo-npc1 fallback copies in Ian's functions (prepared extraction; recorded rank/questions/trials only on upstream failure with an exact key match); engine demo cache takes precedence; deleted once engine/demo has demo-npc1; breaking no`.
   - `[CONTRACT CHANGE] §15 open question 8 resolved for v0.1.2, pending Jerry's confirmation; breaking no`.
+- 0.1.3 (2026-10-24, draft; Ian's Kiro for Ian, acked by Jerry's assistant via the coordinator):
+  - `[CONTRACT CHANGE] §7.4 step 5 a broader-term match counts only if the shared ancestor (Monarch match_subsumer) is an HP: term; a non-HP shared ancestor (e.g. UPHENO) does not count and that patient term goes to unmatched (as in engine/rank.ts; the fallback was aligned in T18i); breaking no`.
+  - `[CONTRACT CHANGE] §7.4 engine also exports rankCandidatesWithReport (enrichment.complete); /api/rank does not cache a response with incomplete enrichment (T18h); /api/rank is served by the engine since T18k (RDD_ENGINE_PATH_RANK = "engine"); breaking no`.
 
 ## 15. Open questions
 

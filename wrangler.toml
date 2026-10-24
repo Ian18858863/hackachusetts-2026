@@ -11,3 +11,12 @@ compatibility_date = "2026-07-29"
 # registered on that account.
 [ai]
 binding = "AI"
+
+# Engine path per endpoint (functions/_lib/fallback/engineFirst.ts).
+# Since T18k, /api/rank runs on Jerry's engine (rankCandidatesWithReport, from
+# T18h) after the T18i parity check against the fallback on demo-npc1 and
+# demo-dmd. next-questions, trials and brief stay on the fallback (unset =
+# fallback) until their engine versions are verified the same way.
+# Roll back: set RDD_ENGINE_PATH_RANK = "fallback" (or remove it), then redeploy.
+[vars]
+RDD_ENGINE_PATH_RANK = "engine"
