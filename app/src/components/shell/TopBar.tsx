@@ -27,7 +27,7 @@ export function TopBar({ current }: { current: StepId | null }) {
           <div className={styles.end}>
             {caseObject.demo && <span className={styles.chip}>Demo case</span>}
             {showBrief && (
-              <ButtonLink href={stepHref('brief')} aria-label="Prepare brief">
+              <ButtonLink href={stepHref('brief')} aria-label="Prepare brief" data-testid="prepare-brief">
                 <span className={styles.wide} aria-hidden="true">
                   Prepare brief
                 </span>

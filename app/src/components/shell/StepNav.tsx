@@ -38,6 +38,8 @@ export function StepNav({ current, className }: { current: StepId | null; classN
                 className={styles.link}
                 href={stepHref(step.id)}
                 data-state={state}
+                // Stable ids for the scripted demo video. Never rename.
+                data-testid={`step-nav-${step.id}`}
                 aria-current={state === 'current' ? 'step' : undefined}
               >
                 {/* data-text reserves the semibold width, so the row never shifts. */}
