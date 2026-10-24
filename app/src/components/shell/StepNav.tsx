@@ -52,6 +52,10 @@ export function StepNav({ current, className }: { current: StepId | null; classN
                 data-testid={`step-nav-${step.id}`}
                 aria-current={state === 'current' ? 'step' : undefined}
               >
+                {/* Progress rail (T35b): numbered dot, filled when current, a check when done. */}
+                <span className={styles.dot} aria-hidden="true">
+                  {state === 'before' ? <span className={styles.check} /> : i + 1}
+                </span>
                 {/* data-text reserves the semibold width, so the row never shifts. */}
                 <span className={styles.label} data-text={label}>
                   {label}

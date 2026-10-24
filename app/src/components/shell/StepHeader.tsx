@@ -47,7 +47,8 @@ export function StepHeader({ step }: { step: StepId }) {
 
   return (
     <header className={styles.header}>
-      <p className={styles.kicker}>{t('stepOf', { n: index + 1, total: steps.length })}</p>
+      {/* The progress rail in the top bar shows the step visually (T35b); the count stays for screen readers. */}
+      <p className="sr-only">{t('stepOf', { n: index + 1, total: steps.length })}</p>
       <h1 ref={titleRef} className={styles.title}>
         {title}
       </h1>
