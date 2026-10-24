@@ -1,3 +1,4 @@
+import { useAudience } from '../audience';
 import { useLocale, useT } from '../i18n';
 import common from '../i18n/messages/common';
 import shell from '../i18n/messages/shell';
@@ -19,11 +20,13 @@ export function AppFooter() {
   const { locale } = useLocale();
   const tc = useT(common);
   const ts = useT(shell);
+  const { isFamily } = useAudience();
   const candidates = caseObject.lastRanking?.response.candidates ?? [];
   const hpoVersion = meta.hpoVersion ?? 'not loaded yet';
 
   const credits: string[] = [];
-  if (candidates.some((c) => c.sources.includes('monarch-semsim'))) credits.push(ATTRIBUTION.monarch);
+  // Family mode shows no ranking, so no Monarch ranking credit (T30a).
+  if (!isFamily && candidates.some((c) => c.sources.includes('monarch-semsim'))) credits.push(ATTRIBUTION.monarch);
   if (candidates.some((c) => c.sources.includes('orphadata') || c.diseaseId.startsWith('ORPHA:'))) {
     credits.push(ATTRIBUTION.orphanet);
   }

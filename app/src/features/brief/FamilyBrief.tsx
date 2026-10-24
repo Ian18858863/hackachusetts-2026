@@ -32,7 +32,8 @@ import doc from './BriefDocument.module.css';
 import styles from './BriefStep.module.css';
 import family from './FamilyBrief.module.css';
 import { formatDateTime, isoDay } from './format';
-import { downloadJson, phenopacketFileName } from './download';
+import { downloadJson } from './download';
+import { familyFileName, familyPrintTitle, neutralPhenopacket } from './familyNames';
 import { useBrief } from './useBrief';
 
 /** The sentence of the notes that holds the quote, or the quote itself. */
@@ -125,7 +126,8 @@ function FamilyBriefReady({ data, state }: { data: BriefResponse; state: ReturnT
   const tb = useT(briefMessages);
   const previewId = useId();
   const [saved, setSaved] = useState<string | null>(null);
-  const fileName = phenopacketFileName(data.phenopacket);
+  // Never the demo case id (it names a disease): neutral file name and phenopacket ids.
+  const fileName = familyFileName(data.brief.generatedAt);
   const locked = state.stale;
 
   useEffect(() => {
@@ -137,18 +139,18 @@ function FamilyBriefReady({ data, state }: { data: BriefResponse; state: ReturnT
 
   const print = useCallback(() => {
     const previous = document.title;
-    const who = caseObject.demo ? caseObject.demo.caseId : tb('printTitleCase');
-    document.title = t('printTitle', { who, day: isoDay(data.brief.generatedAt) }).trim();
+    // Neutral title: the case id of a demo case names a disease.
+    document.title = familyPrintTitle(t('briefTitle'), isoDay(data.brief.generatedAt));
     const restore = () => {
       document.title = previous;
       window.removeEventListener('afterprint', restore);
     };
     window.addEventListener('afterprint', restore);
     window.print();
-  }, [caseObject.demo, data.brief.generatedAt, t, tb]);
+  }, [data.brief.generatedAt, t]);
 
   const exportPhenopacket = useCallback(() => {
-    downloadJson(fileName, data.phenopacket);
+    downloadJson(fileName, neutralPhenopacket(data.phenopacket, data.brief.generatedAt));
     setSaved(fileName);
     announce(tb('announceSaved', { file: fileName }));
   }, [announce, data.phenopacket, fileName, tb]);
@@ -261,6 +263,7 @@ function FamilyDocument({
             </p>
           </div>
         )}
+        {/* Contract section 13 v0.1.5 (family mode only): the lead sentence verbatim, then the family banner. */}
         <p className={doc.disclaimer}>
           <Icon name="info" size={16} />
           <span>

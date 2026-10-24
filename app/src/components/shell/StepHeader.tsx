@@ -72,7 +72,8 @@ export function StepHeader({ step }: { step: StepId }) {
       <h1 className={styles.title}>{title}</h1>
       <p className={styles.lede}>
         {isFamily ? (
-          // Family mode shows no matches, so only the first sentence of the safety line applies, on every step.
+          // Contract section 13 v0.1.5 (family mode only): "Decision support, not a diagnosis." verbatim;
+          // the banner above says the view does not suggest conditions. Clinician mode keeps the full sentence.
           <>
             <strong className={styles.familyLead}>{tc('disclaimerLead')}</strong>
             {gap}
