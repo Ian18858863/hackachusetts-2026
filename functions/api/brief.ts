@@ -11,7 +11,7 @@
 //      `diseases`, no `interpretations`, so it never states a diagnosis.
 // Pure, no network, not cached. The notes text is never logged.
 
-import { buildBrief, toPhenopacket } from "../../engine/index";
+import { HPO_VERSION, buildBrief, toPhenopacket } from "../../engine/index";
 import type { Brief, CaseObject, DataVersions, Phenopacket } from "../../engine/index";
 import { fallbackBuildBrief } from "../_lib/fallback/brief";
 import { engineFirst, enginePathMode, PATH_HEADER } from "../_lib/fallback/engineFirst";
@@ -191,7 +191,8 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
 
   const generatedAt = new Date().toISOString();
   const rankedVersions = c.lastRanking?.response.dataVersions;
-  const dataVersions: DataVersions = rankedVersions ? { ...rankedVersions } : { hpo: "unknown", fetchedAt: generatedAt };
+  // Without ranking versions, report the HPO release the engine pins (engine/hpo.ts).
+  const dataVersions: DataVersions = rankedVersions ? { ...rankedVersions } : { hpo: HPO_VERSION, fetchedAt: generatedAt };
   const opts = { generatedAt, dataVersions };
 
   const result = await engineFirst(
@@ -204,7 +205,7 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
     return withHeader(engineErrorResponse(result.error, "Your case is kept"), PATH_HEADER, result.path);
   }
 
-  const phenopacket = toPhenopacket(c, { created: generatedAt, hpoVersion: dataVersions.hpo ?? "unknown" });
+  const phenopacket = toPhenopacket(c, { created: generatedAt, hpoVersion: dataVersions.hpo ?? HPO_VERSION });
   const out: BriefResponseBody = {
     version: CONTRACT_VERSION,
     source: c.demo ? "demo" : "live",

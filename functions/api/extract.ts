@@ -14,7 +14,7 @@
 // Privacy: the notes text is never logged, cached or echoed in errors. Logs
 // carry only error class names, codes, counts and timings.
 
-import { getDemoCase, groundTerms, listDemoCases } from "../../engine/index";
+import { HPO_VERSION, getDemoCase, groundTerms, listDemoCases } from "../../engine/index";
 import type { DataVersions, DemoCase, EngineDeps, ExtractedTerm } from "../../engine/index";
 import { getFallbackDemoCase } from "../_lib/fallback/demoCases";
 import { LlmError, MAX_TEXT_CHARS, proposeTerms } from "../_lib/llm";
@@ -43,12 +43,11 @@ const LLM_TIMEOUT_MS = 15_000;
 /** Overall grounding budget from contract section 7.2 (all HPO lookups and searches). */
 const GROUNDING_DEADLINE_MS = 4_000;
 /**
- * HPO release for the prepared demo extraction. The engine does not export its
- * HPO_VERSION constant from engine/index.ts yet, and the JAX API does not expose
- * a release (contract open question 6), so "unknown" is used, matching the
- * engine's live value. Replace with the engine export once it exists.
+ * HPO release for the prepared demo extraction: the release the engine pins
+ * (HPO_VERSION in engine/hpo.ts), so the demo path, the live path and the
+ * brief report the same label.
  */
-const DEMO_HPO_VERSION = "unknown";
+const DEMO_HPO_VERSION = HPO_VERSION;
 
 /** Raised locally when groundTerms exceeds GROUNDING_DEADLINE_MS. */
 class GroundingDeadline extends Error {

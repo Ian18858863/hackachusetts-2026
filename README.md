@@ -116,7 +116,7 @@ Peter (`qirongwangpeter`) owns the landing page (`landing/`, in progress, not ye
 
 ## Data sources and attribution
 
-- **Human Phenotype Ontology** (https://hpo.jax.org), through the JAX ontology API: term search, term lookup and disease annotations. The app footer and the brief show "This product uses the Human Phenotype Ontology (version <hpo>). Find out more at https://hpo.jax.org". HPO release: see the app footer. The JAX API does not expose a release number, so the app currently reports it as "unknown" (contract open question 6).
+- **Human Phenotype Ontology** (https://hpo.jax.org), through the JAX ontology API: term search, term lookup and disease annotations. The app footer and the brief show "This product uses the Human Phenotype Ontology (version <hpo>). Find out more at https://hpo.jax.org". HPO release: see the app footer. HPO release 2026-09-01, the release the engine pins (engine/hpo.ts).
 - **Monarch Initiative** semantic similarity service (monarchinitiative.org) for ranking. Monarch tools are not for diagnosis or medical decisions.
 - **Orphanet** data, CC BY 4.0 (orpha.net, orphadata.com), through Orphanet-sourced HPO annotations.
 - **ClinicalTrials.gov**, U.S. National Library of Medicine, for recruiting studies.
