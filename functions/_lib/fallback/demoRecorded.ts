@@ -3,10 +3,13 @@
 // One real /api/rank response for the exact demo-npc1 term set of
 // docs/CONTRACT.md section 9.1 (12 observed ids, excluded HP:0002315, limit 5),
 // the matching /api/next-questions response for its top 3 candidates, and the
-// /api/trials response for its top candidate's condition. Recorded by Ian's
-// Kiro on 2026-10-24 from this repo's own functions (wrangler pages dev, main
-// 72925b0 plus the T18e timeout change, X-RDD-Path: fallback) against the live
-// upstreams. Each payload keeps its original `dataVersions` and `fetchedAt`.
+// /api/trials response for its top candidate's condition. Re-recorded by Ian's
+// Kiro (T18l) at 2026-10-24T19:20Z UTC from production
+// https://hackachusetts-2026.pages.dev (commit 6c89a84; /api/rank answered with
+// X-RDD-Path: engine, /api/next-questions and /api/trials with X-RDD-Path:
+// fallback), all 200 with source "live". The bodies are pasted unchanged; each
+// keeps its original `dataVersions` and `fetchedAt` (the rank and trials
+// bodies were Workers cache hits, so their fetchedAt is slightly earlier).
 //
 // Used ONLY when the live upstream path fails (timeout or 5xx) AND the request
 // is exactly the recorded one (same key rule as the engine's demoRankKey:
@@ -34,7 +37,7 @@ const NPC1_TRIALS_CONDITION = "Niemann-Pick disease, type C1";
 
 const RANK_KEY = demoRankKey([...NPC1_OBSERVED], [...NPC1_EXCLUDED], NPC1_LIMIT);
 
-/** Recorded POST /api/rank response (source "live" as recorded). */
+/** Recorded POST /api/rank response (source "live" as recorded; engine path; recorded at 2026-10-24T19:20Z UTC). */
 const RECORDED_RANK: RankResponse = {
   "version": "0.1",
   "source": "live",
@@ -45,7 +48,7 @@ const RECORDED_RANK: RankResponse = {
       "mondoId": "MONDO:0009757",
       "name": "Niemann-Pick disease, type C1",
       "overlap": "strong",
-      "score": 13.768556970635796,
+      "score": 13.768556970635798,
       "matched": [
         {
           "patientTerm": {
@@ -290,6 +293,17 @@ const RECORDED_RANK: RankResponse = {
             "source": "OMIM:257220",
             "raw": "12/14"
           }
+        },
+        {
+          "term": {
+            "id": "HP:0003621",
+            "label": "Juvenile onset"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:257220",
+            "raw": "3/4"
+          }
         }
       ],
       "contradicted": [],
@@ -297,8 +311,10 @@ const RECORDED_RANK: RankResponse = {
         "Blood and blood-forming tissues",
         "Cardiovascular",
         "Cellular phenotype",
+        "Clinical course",
         "Digestive System",
         "Eye",
+        "Inheritance",
         "Metabolism/Laboratory abnormality",
         "Musculature",
         "Nervous System",
@@ -492,25 +508,6 @@ const RECORDED_RANK: RankResponse = {
         },
         {
           "patientTerm": {
-            "id": "HP:0031833",
-            "label": "Hypometric upward saccades"
-          },
-          "diseaseTerm": {
-            "id": "HP:0001251",
-            "label": "Ataxia"
-          },
-          "via": "ancestor",
-          "frequency": {
-            "label": "Very frequent",
-            "source": "ORPHA:2274"
-          },
-          "ancestor": {
-            "id": "UPHENO:0079826",
-            "label": "behavior process phenotype"
-          }
-        },
-        {
-          "patientTerm": {
             "id": "HP:0031987",
             "label": "Diminished ability to concentrate"
           },
@@ -533,6 +530,10 @@ const RECORDED_RANK: RankResponse = {
         {
           "id": "HP:0003349",
           "label": "Low cholesterol esterification rate"
+        },
+        {
+          "id": "HP:0031833",
+          "label": "Hypometric upward saccades"
         }
       ],
       "notReported": [
@@ -571,6 +572,7 @@ const RECORDED_RANK: RankResponse = {
       "categories": [
         "Cardiovascular",
         "Digestive System",
+        "Inheritance",
         "Nervous System",
         "Skin, Hair, and Nails"
       ],
@@ -592,7 +594,7 @@ const RECORDED_RANK: RankResponse = {
       "mondoId": "MONDO:0011873",
       "name": "Niemann-Pick disease, type C2",
       "overlap": "strong",
-      "score": 13.513454282927396,
+      "score": 13.513454282927398,
       "matched": [
         {
           "patientTerm": {
@@ -836,14 +838,38 @@ const RECORDED_RANK: RankResponse = {
             "source": "OMIM:607625",
             "raw": "5/8"
           }
+        },
+        {
+          "term": {
+            "id": "HP:0001522",
+            "label": "Death in infancy"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:607625",
+            "raw": "4/8"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0003623",
+            "label": "Neonatal onset"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:607625",
+            "raw": "6/8"
+          }
         }
       ],
       "contradicted": [],
       "categories": [
         "Blood and blood-forming tissues",
         "Cardiovascular",
+        "Clinical course",
         "Digestive System",
         "Eye",
+        "Inheritance",
         "Metabolism/Laboratory abnormality",
         "Musculature",
         "Nervous System",
@@ -871,28 +897,8 @@ const RECORDED_RANK: RankResponse = {
       "mondoId": "MONDO:0018816",
       "name": "Isolated neonatal sclerosing cholangitis",
       "overlap": "partial",
-      "score": 12.105663557182055,
+      "score": 12.105663557182051,
       "matched": [
-        {
-          "patientTerm": {
-            "id": "HP:0001251",
-            "label": "Ataxia"
-          },
-          "diseaseTerm": {
-            "id": "HP:0000365",
-            "label": "Hearing impairment"
-          },
-          "via": "ancestor",
-          "frequency": {
-            "label": "Excluded",
-            "source": "OMIM:617394",
-            "raw": "0/4"
-          },
-          "ancestor": {
-            "id": "UPHENO:0005596",
-            "label": "decreased multicellular organismal process"
-          }
-        },
         {
           "patientTerm": {
             "id": "HP:0001260",
@@ -963,26 +969,6 @@ const RECORDED_RANK: RankResponse = {
             "label": "Occasional",
             "source": "OMIM:617394",
             "raw": "1/7"
-          }
-        },
-        {
-          "patientTerm": {
-            "id": "HP:0002527",
-            "label": "Falls"
-          },
-          "diseaseTerm": {
-            "id": "HP:0000365",
-            "label": "Hearing impairment"
-          },
-          "via": "ancestor",
-          "frequency": {
-            "label": "Excluded",
-            "source": "OMIM:617394",
-            "raw": "0/4"
-          },
-          "ancestor": {
-            "id": "UPHENO:0049699",
-            "label": "nervous system process phenotype"
           }
         },
         {
@@ -1067,26 +1053,6 @@ const RECORDED_RANK: RankResponse = {
         },
         {
           "patientTerm": {
-            "id": "HP:0031833",
-            "label": "Hypometric upward saccades"
-          },
-          "diseaseTerm": {
-            "id": "HP:0000365",
-            "label": "Hearing impairment"
-          },
-          "via": "ancestor",
-          "frequency": {
-            "label": "Excluded",
-            "source": "OMIM:617394",
-            "raw": "0/4"
-          },
-          "ancestor": {
-            "id": "UPHENO:0002211",
-            "label": "sense organ physiology phenotype"
-          }
-        },
-        {
-          "patientTerm": {
             "id": "HP:0031987",
             "label": "Diminished ability to concentrate"
           },
@@ -1106,7 +1072,20 @@ const RECORDED_RANK: RankResponse = {
           }
         }
       ],
-      "unmatched": [],
+      "unmatched": [
+        {
+          "id": "HP:0001251",
+          "label": "Ataxia"
+        },
+        {
+          "id": "HP:0002527",
+          "label": "Falls"
+        },
+        {
+          "id": "HP:0031833",
+          "label": "Hypometric upward saccades"
+        }
+      ],
       "notReported": [
         {
           "term": {
@@ -1187,22 +1166,24 @@ const RECORDED_RANK: RankResponse = {
         },
         {
           "term": {
-            "id": "HP:0011985",
-            "label": "Acholic stools"
+            "id": "HP:0003593",
+            "label": "Infantile onset"
           },
           "frequency": {
             "label": "Frequent",
             "source": "OMIM:617394",
-            "raw": "6/11"
+            "raw": "5/7"
           }
         }
       ],
       "contradicted": [],
       "categories": [
         "Cardiovascular",
+        "Clinical course",
         "Digestive System",
         "Ear",
         "Genitourinary system",
+        "Inheritance",
         "Metabolism/Laboratory abnormality",
         "Nervous System",
         "Skin, Hair, and Nails"
@@ -1360,25 +1341,6 @@ const RECORDED_RANK: RankResponse = {
         },
         {
           "patientTerm": {
-            "id": "HP:0003651",
-            "label": "Foam cells"
-          },
-          "diseaseTerm": {
-            "id": "HP:0001923",
-            "label": "Reticulocytosis"
-          },
-          "via": "ancestor",
-          "frequency": {
-            "label": "Occasional",
-            "source": "ORPHA:33574"
-          },
-          "ancestor": {
-            "id": "UPHENO:0079539",
-            "label": "increased number of cell"
-          }
-        },
-        {
-          "patientTerm": {
             "id": "HP:0006579",
             "label": "Prolonged neonatal jaundice"
           },
@@ -1417,25 +1379,6 @@ const RECORDED_RANK: RankResponse = {
         },
         {
           "patientTerm": {
-            "id": "HP:0031833",
-            "label": "Hypometric upward saccades"
-          },
-          "diseaseTerm": {
-            "id": "HP:0001251",
-            "label": "Ataxia"
-          },
-          "via": "ancestor",
-          "frequency": {
-            "label": "Occasional",
-            "source": "ORPHA:33574"
-          },
-          "ancestor": {
-            "id": "UPHENO:0079826",
-            "label": "behavior process phenotype"
-          }
-        },
-        {
-          "patientTerm": {
             "id": "HP:0031987",
             "label": "Diminished ability to concentrate"
           },
@@ -1454,8 +1397,28 @@ const RECORDED_RANK: RankResponse = {
           }
         }
       ],
-      "unmatched": [],
+      "unmatched": [
+        {
+          "id": "HP:0003651",
+          "label": "Foam cells"
+        },
+        {
+          "id": "HP:0031833",
+          "label": "Hypometric upward saccades"
+        }
+      ],
       "notReported": [
+        {
+          "term": {
+            "id": "HP:0000007",
+            "label": "Autosomal recessive inheritance"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:230450",
+            "raw": "1/1"
+          }
+        },
         {
           "term": {
             "id": "HP:0001878",
@@ -1523,6 +1486,7 @@ const RECORDED_RANK: RankResponse = {
         "Blood and blood-forming tissues",
         "Cardiovascular",
         "Digestive System",
+        "Inheritance",
         "Metabolism/Laboratory abnormality",
         "Musculature",
         "Nervous System"
@@ -1546,14 +1510,14 @@ const RECORDED_RANK: RankResponse = {
     }
   ],
   "dataVersions": {
-    "hpo": "unknown",
+    "hpo": "2026-09-01",
     "monarch": "v3 API",
-    "fetchedAt": "2026-10-24T18:13:03.562Z",
+    "fetchedAt": "2026-10-24T19:17:17.534Z",
     "orphanet": "2026-06-23"
   }
 };
 
-/** Recorded POST /api/next-questions response for NPC1_QUESTION_CANDIDATES. */
+/** Recorded POST /api/next-questions response for NPC1_QUESTION_CANDIDATES (default limit 5; recorded at 2026-10-24T19:20Z UTC). */
 const RECORDED_QUESTIONS: NextQuestionsResponse = {
   "version": "0.1",
   "source": "live",
@@ -1615,31 +1579,6 @@ const RECORDED_QUESTIONS: NextQuestionsResponse = {
       "score": 1
     },
     {
-      "hpoId": "HP:0002066",
-      "label": "Gait ataxia",
-      "question": "Has anyone noticed gait ataxia?",
-      "discriminates": [
-        {
-          "diseaseId": "OMIM:257220",
-          "frequency": {
-            "label": "Obligate",
-            "source": "OMIM:257220",
-            "raw": "4/4"
-          }
-        },
-        {
-          "diseaseId": "ORPHA:2274",
-          "frequency": null
-        },
-        {
-          "diseaseId": "OMIM:607625",
-          "frequency": null
-        }
-      ],
-      "why": "Obligate (4/4) in Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; not listed for Niemann-Pick disease, type C2",
-      "score": 1
-    },
-    {
       "hpoId": "HP:0002206",
       "label": "Pulmonary fibrosis",
       "question": "Has anyone noticed pulmonary fibrosis?",
@@ -1691,35 +1630,152 @@ const RECORDED_QUESTIONS: NextQuestionsResponse = {
       ],
       "why": "Very frequent (12/14) in Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; listed without a frequency for Niemann-Pick disease, type C2",
       "score": 0.9
+    },
+    {
+      "hpoId": "HP:0001265",
+      "label": "Hyporeflexia",
+      "question": "Has anyone noticed hyporeflexia?",
+      "discriminates": [
+        {
+          "diseaseId": "OMIM:257220",
+          "frequency": null
+        },
+        {
+          "diseaseId": "ORPHA:2274",
+          "frequency": {
+            "label": "Very frequent",
+            "source": "ORPHA:2274"
+          }
+        },
+        {
+          "diseaseId": "OMIM:607625",
+          "frequency": null
+        }
+      ],
+      "why": "Not listed for Niemann-Pick disease, type C1; Very frequent in Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; not listed for Niemann-Pick disease, type C2",
+      "score": 0.9
     }
   ],
   "dataVersions": {
-    "hpo": "unknown",
-    "fetchedAt": "2026-10-24T18:13:10.857Z"
+    "hpo": "2026-09-01",
+    "fetchedAt": "2026-10-24T19:20:27.328Z"
   }
 };
 
-/** Recorded GET /api/trials response for NPC1_TRIALS_CONDITION. */
+/** Recorded GET /api/trials response for NPC1_TRIALS_CONDITION with ids OMIM:257220,MONDO:0009757, as the app sends for candidate 1 (recorded at 2026-10-24T19:20Z UTC). */
 const RECORDED_TRIALS: TrialsResponse = {
   "version": "0.1",
   "source": "live",
   "studies": [
     {
-      "nctId": "NCT07236190",
-      "title": "Biomarker-based Trial of NPC-1 for Alzheimer's Pathology",
+      "nctId": "NCT00344331",
+      "title": "Evaluation of Biochemical Markers and Clinical Investigation of Niemann-Pick Disease, Type C",
       "status": "RECRUITING",
-      "phases": [
-        "PHASE2"
-      ],
+      "phases": [],
       "conditions": [
-        "Alzheimer Disease",
-        "Mild Cognitive Impairment (MCI)",
-        "Subjective Cognitive Decline (SCD)"
+        "Niemann-Pick Disease, Type C"
       ],
       "countries": [
         "United States"
       ],
-      "url": "https://clinicaltrials.gov/study/NCT07236190"
+      "url": "https://clinicaltrials.gov/study/NCT00344331"
+    },
+    {
+      "nctId": "NCT07054515",
+      "title": "A Study to Evaluate the Safety and Efficacy of Oral Nizubaglustat (AZ-3102) in Late-infantile and Juvenile Forms of Niemann-Pick Type C Disease, GM1 Gangliosidosis or GM2 Gangliosidosis",
+      "status": "RECRUITING",
+      "phases": [
+        "PHASE3"
+      ],
+      "conditions": [
+        "Niemann-Pick Type C Disease",
+        "GM1 Gangliosidosis",
+        "GM2 Gangliosidosis"
+      ],
+      "countries": [
+        "United States",
+        "Argentina",
+        "Australia",
+        "Brazil",
+        "Canada",
+        "France",
+        "Germany",
+        "India",
+        "Italy",
+        "Mexico",
+        "Pakistan",
+        "Portugal",
+        "Spain",
+        "Sweden",
+        "Switzerland",
+        "Turkey (Türkiye)",
+        "United Kingdom"
+      ],
+      "url": "https://clinicaltrials.gov/study/NCT07054515"
+    },
+    {
+      "nctId": "NCT05163288",
+      "title": "A Pivotal Study of N-Acetyl-L-Leucine on Niemann-Pick Disease Type C",
+      "status": "RECRUITING",
+      "phases": [
+        "PHASE3"
+      ],
+      "conditions": [
+        "Niemann-Pick Disease, Type C"
+      ],
+      "countries": [
+        "United States",
+        "Australia",
+        "Czechia",
+        "Germany",
+        "Netherlands",
+        "Slovakia",
+        "Switzerland",
+        "United Kingdom"
+      ],
+      "url": "https://clinicaltrials.gov/study/NCT05163288"
+    },
+    {
+      "nctId": "NCT05588167",
+      "title": "Establishment of Genomic and Phenotypic Database for Niemann-Pick Disease, Type C",
+      "status": "RECRUITING",
+      "phases": [],
+      "conditions": [
+        "Niemann-Pick Disease, Type C"
+      ],
+      "countries": [
+        "United States"
+      ],
+      "url": "https://clinicaltrials.gov/study/NCT05588167"
+    },
+    {
+      "nctId": "NCT07082725",
+      "title": "A Study to Evaluate the Safety and Efficacy of Oral Nizubaglustat (AZ-3102) in Late-infantile and Juvenile Forms of Niemann-Pick Type C Disease (NPC)",
+      "status": "RECRUITING",
+      "phases": [
+        "PHASE3"
+      ],
+      "conditions": [
+        "Niemann-Pick Type C Disease"
+      ],
+      "countries": [
+        "United States",
+        "Argentina",
+        "Australia",
+        "Brazil",
+        "Canada",
+        "Germany",
+        "India",
+        "Italy",
+        "Mexico",
+        "Pakistan",
+        "Portugal",
+        "Spain",
+        "Switzerland",
+        "Turkey (Türkiye)",
+        "United Kingdom"
+      ],
+      "url": "https://clinicaltrials.gov/study/NCT07082725"
     }
   ],
   "query": {
@@ -1730,10 +1786,10 @@ const RECORDED_TRIALS: TrialsResponse = {
     ],
     "status": "RECRUITING"
   },
-  "total": 1,
-  "fetchedAt": "2026-10-24T18:13:11.019Z",
+  "total": 6,
+  "fetchedAt": "2026-10-24T19:18:43.514Z",
   "dataVersions": {
-    "fetchedAt": "2026-10-24T18:13:11.019Z"
+    "fetchedAt": "2026-10-24T19:18:43.514Z"
   }
 };
 
