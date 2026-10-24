@@ -31,8 +31,10 @@
 //     Worst case per call:
 //       annotation phase, per candidate: 1 xref cache match + 2 annotation
 //         sets x (fetch + 1 retry) + Monarch xrefs fetch + 1 retry = 7;
-//         usually 1 + 2 + 1 = 4 or less. Measured for demo-npc1 (5
-//         candidates): 16.
+//         usually 1 + 2 + 1 = 4 or less. An ORPHA / OMIM id without a JAX
+//         set also reads the Monarch mappings and, for ORPHA, Orphadata for
+//         its name (+2 usually, +4 worst case). Measured for demo-npc1 (5
+//         candidates, ORPHA:480556 without a JAX set): see T18o log.
 //       hierarchy phase, per lookup: fetch + 1 retry = 2, usually 1. Up to
 //         MAX_OBSERVED_LOOKUPS (12) observed terms, then features lazily in
 //         score order (dropRelatedToPatient), at most MAX_FEATURE_CHECKS.
@@ -68,7 +70,7 @@ import type {
 } from "../../../engine/index";
 import { fetchAnnotation, hasAnnotationId, mergeAnnotations } from "./annotations";
 import type { AnnotationSet, MergedAnnotations } from "./annotations";
-import { TIMEOUTS_MS } from "./http";
+import { getJson, TIMEOUTS_MS } from "./http";
 import type { FallbackDeps } from "./http";
 import { dropRelatedToPatient, LookupBudget, meteredDeps, SubrequestMeter } from "./hierarchy";
 import { hpoAncestors } from "./hpoAncestors";
@@ -103,19 +105,95 @@ const ANCESTORS_TTL_S = 7 * 24 * 60 * 60;
 
 /**
  * Deps for a JAX read that is cached by the Cloudflare edge (fetch with
- * `cf.cacheTtl`, keyed by URL, i.e. by id) instead of the Cache API (T18o).
- * A Cache API match counts as a subrequest just like the fetch it saves, and a
- * cold read costs match + fetch + put, so the edge cache makes every read one
- * subrequest, cold or warm. Outside Workers the `cf` field is ignored.
+ * `cf.cacheTtlByStatus`, keyed by URL, i.e. by id) instead of the Cache API
+ * (T18o). A Cache API match counts as a subrequest just like the fetch it
+ * saves, and a cold read costs match + fetch + put, so the edge cache makes
+ * every read one subrequest, cold or warm. Only 2xx answers are cached for
+ * `ttlS`; 404, 5xx and every other status are not cached (TTL 0). A 2xx body
+ * that is not valid JSON or fails `usable` (the shape the parser needs) is
+ * never used: the read is repeated once with
+ * `cache: "no-store"` (it counts as the lookup's retry), so a bad body the
+ * edge may have stored is bypassed rather than served. Outside Workers the
+ * `cf` field is ignored.
  */
-function edgeCached(deps: FallbackDeps, ttlS: number): FallbackDeps {
+function edgeCached(deps: FallbackDeps, ttlS: number, usable: (body: unknown) => boolean): FallbackDeps {
   const inner = deps.fetch;
-  const cf = { cacheTtl: ttlS, cacheEverything: true };
-  return {
-    ...deps,
-    cache: undefined,
-    fetch: (input, init) => inner(input, { ...init, cf } as RequestInit),
+  const cf = { cacheTtlByStatus: { "200-299": ttlS, "300-599": 0 } };
+  const fetch: FallbackDeps["fetch"] = async (input, init) => {
+    const res = await inner(input, { ...init, cf } as RequestInit);
+    if (!res.ok) return res;
+    const text = await res.text();
+    let ok = false;
+    try {
+      ok = usable(JSON.parse(text));
+    } catch {
+      ok = false;
+    }
+    if (!ok) return inner(input, { ...init, cache: "no-store" });
+    return new Response(text, { status: res.status, headers: res.headers });
   };
+  return { ...deps, cache: undefined, fetch };
+}
+
+/** JAX annotation body: an object with a `disease` record (annotations.ts parses the rest). */
+function isAnnotationBody(body: unknown): boolean {
+  return typeof body === "object" && body !== null && typeof (body as { disease?: unknown }).disease === "object";
+}
+
+const MONARCH_MAPPINGS = "https://api.monarchinitiative.org/v3/api/mappings?entity_id=";
+const ORPHADATA = "https://api.orphadata.com/rd-cross-referencing/orphacodes/";
+const LOOKUP_TIMEOUT_MS = 2000;
+
+/**
+ * MONDO id for an ORPHA / OMIM id that JAX has no annotation set for (so no
+ * `disease.mondoId`), from the Monarch SSSOM mappings (exactMatch). Checked
+ * 2026-10-24: Orphanet:480556 -> MONDO:0018816. Null on any failure.
+ */
+async function mondoFromMappings(id: DiseaseId, deps: FallbackDeps): Promise<string | null> {
+  const entity = id.startsWith("ORPHA:") ? `Orphanet:${id.slice(6)}` : id;
+  try {
+    const body = (await getJson("monarchSemsim", `${MONARCH_MAPPINGS}${encodeURIComponent(entity)}&limit=20`, deps, {
+      timeoutMs: LOOKUP_TIMEOUT_MS,
+      notFound: "error",
+    })) as { items?: Array<{ subject_id?: unknown; predicate_id?: unknown; object_id?: unknown }> } | null;
+    const hit = (body?.items ?? []).find(
+      (m) => m.predicate_id === "skos:exactMatch" && m.object_id === entity && typeof m.subject_id === "string" && m.subject_id.startsWith("MONDO:"),
+    );
+    return hit ? (hit.subject_id as string) : null;
+  } catch {
+    return null;
+  }
+}
+
+/** Orphanet preferred name from Orphadata (as the engine's name check uses), or null. */
+async function orphadataName(id: DiseaseId, deps: FallbackDeps): Promise<string | null> {
+  try {
+    const body = (await getJson("orphadata", `${ORPHADATA}${encodeURIComponent(id.slice(6))}?lang=en`, deps, {
+      timeoutMs: LOOKUP_TIMEOUT_MS,
+    })) as { data?: { results?: Record<string, unknown> } } | null;
+    const name = body?.data?.results?.["Preferred term"];
+    return typeof name === "string" && name.trim() ? name.trim() : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Display name for a requested ORPHA / OMIM id, matching what /api/rank shows
+ * (engine/rank.ts: Orphanet preferred name for ORPHA ids, else the Monarch
+ * MONDO name). Since T18k /api/rank runs on the engine, which does not write
+ * the xref cache, so the names have to be found here. ORPHA: the JAX ORPHA set
+ * name (Orphanet-sourced), else Orphadata. OMIM: the Monarch name, else the
+ * JAX OMIM set name (JAX writes e.g. "Niemann-pick disease, type C1").
+ */
+async function displayName(
+  id: DiseaseId,
+  primary: AnnotationSet | null,
+  x: DiseaseXrefs | null,
+  deps: FallbackDeps,
+): Promise<string | null> {
+  if (id.startsWith("ORPHA:")) return primary?.name ?? (await orphadataName(id, deps)) ?? x?.name ?? null;
+  return x?.name ?? primary?.name ?? null;
 }
 
 export interface NormalizedQuestionsRequest {
@@ -162,13 +240,15 @@ async function annotationIds(
   }
 
   // ORPHA or OMIM: read it first (failures propagate), then look for its partner.
-  const primary = await fetchAnnotation(id, edgeCached(deps, ANNOTATION_TTL_S));
-  const mondo = primary?.mondoId;
+  const primary = await fetchAnnotation(id, edgeCached(deps, ANNOTATION_TTL_S, isAnnotationBody));
+  // No JAX set for this id (404): find its MONDO id, and so its partner, via Monarch.
+  const mondo = primary?.mondoId ?? (primary === null ? await mondoFromMappings(id, deps) : null);
   const x = mondo ? await monarchXrefs(mondo, deps) : null;
-  if (!x) return { ids: [id], resolved: false, name: null, primary };
+  const name = await displayName(id, primary, x, deps);
+  if (!x) return { ids: [id], resolved: false, name, primary };
   const ids = idsOf(x);
   if (!ids.includes(id)) ids.unshift(id);
-  return { ids, resolved: true, name: null, primary };
+  return { ids, resolved: true, name, primary };
 }
 
 async function loadCandidate(id: DiseaseId, deps: FallbackDeps): Promise<CandidateData> {
@@ -177,7 +257,7 @@ async function loadCandidate(id: DiseaseId, deps: FallbackDeps): Promise<Candida
     plan.ids.map((sid) =>
       sid === id && plan.primary !== undefined
         ? Promise.resolve(plan.primary)
-        : fetchAnnotation(sid, edgeCached(deps, ANNOTATION_TTL_S)),
+        : fetchAnnotation(sid, edgeCached(deps, ANNOTATION_TTL_S, isAnnotationBody)),
     ),
   );
   const sets: AnnotationSet[] = [];
@@ -298,7 +378,7 @@ async function filterByHierarchy(
     observed: req.observed,
     excluded: req.excluded,
     limit: req.limit,
-    lookup: (id) => budget.run((d) => hpoAncestors(id, edgeCached(d, ANCESTORS_TTL_S)), null),
+    lookup: (id) => budget.run((d) => hpoAncestors(id, edgeCached(d, ANCESTORS_TTL_S, Array.isArray)), null),
     maxObservedLookups: MAX_OBSERVED_LOOKUPS,
     maxFeatureChecks: MAX_FEATURE_CHECKS,
     deadline,
