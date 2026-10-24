@@ -22,6 +22,14 @@
 //      when an HPO annotation call for that candidate failed, was unusable or
 //      ran out of budget, so `frequency: null` means "could not be read", not
 //      "not listed". Recorded demo responses have no field (absent = unknown).
+//   6. RDD_RANK_SOURCE = "pcf" (T36, off unless set): PubCaseFinder gives the
+//      order and HPO annotations plus Monarch semsim compare give the evidence
+//      (_lib/fallback/pcf.ts). X-RDD-Path "pcf". If PubCaseFinder fails, times
+//      out, is rate-guarded or maps to nothing, steps 3-4 run in the same
+//      request (X-RDD-Path "pcf->engine" or "pcf->fallback"; ASCII because
+//      header values must be) and that answer is not cached. The cache key
+//      starts with "pcf:" only when the switch is on, so with the switch unset
+//      the key, the path and the body are exactly as before.
 
 import { ENGINE_STATUS, demoRankKey, getDemoRanking, rankCandidatesWithReport } from "../../engine/index";
 import type { RankResponse } from "../../engine/index";
@@ -29,6 +37,7 @@ import { engineFirst, enginePathMode, PATH_HEADER } from "../_lib/fallback/engin
 import { getFallbackDemoRanking } from "../_lib/fallback/demoRecorded";
 import { cacheGetJson, cacheKey, cachePutJson } from "../_lib/fallback/http";
 import type { FallbackDeps } from "../_lib/fallback/http";
+import { pcfEnabled, pcfRank } from "../_lib/fallback/pcf";
 import { fallbackRank } from "../_lib/fallback/rank";
 import type { RankedCandidate } from "../_lib/fallback/rank";
 import { hpoIdList, intInRange, overlapId } from "../_lib/fallback/validate";
@@ -55,7 +64,7 @@ const ENGINE_MONARCH_TIMEOUT_MS = 20000;
 const ENGINE_RANK_BUDGET_MS = 25000;
 
 interface CachedRank {
-  path: "engine" | "fallback";
+  path: "engine" | "fallback" | "pcf";
   body: RankResponse;
 }
 
@@ -89,9 +98,10 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
 
   const req = { observed: observed.value, excluded: excluded.value, limit: limit.value };
   const mode = enginePathMode(context.env, "rank");
+  const usePcf = pcfEnabled(context.env);
   const key = cacheKey(
     "rank",
-    `${mode}:${ENGINE_STATUS.rankCandidates}|${req.observed.join(",")}|${req.excluded.join(",")}|${req.limit}`,
+    `${usePcf ? "pcf:" : ""}${mode}:${ENGINE_STATUS.rankCandidates}|${req.observed.join(",")}|${req.excluded.join(",")}|${req.limit}`,
   );
 
   const deps: FallbackDeps = { fetch: globalThis.fetch.bind(globalThis), waitUntil: (p) => context.waitUntil(p) };
@@ -100,6 +110,24 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
 
   const cached = await cacheGetJson<CachedRank>(cache, key);
   if (cached) return json(cached.body, 200, { [PATH_HEADER]: cached.path, "X-RDD-Cache": "hit" });
+
+  // T36: PubCaseFinder ordering, only when RDD_RANK_SOURCE = "pcf".
+  let pathPrefix = "";
+  if (usePcf) {
+    try {
+      const pcf = await pcfRank(req, deps);
+      const out: RankResponse = { ...pcf.body, version: CONTRACT_VERSION };
+      if (pcf.complete) cachePutJson(deps, key, { path: "pcf", body: out } satisfies CachedRank, RANK_TTL_S);
+      return json(out, 200, {
+        [PATH_HEADER]: "pcf",
+        "X-RDD-Cache": "miss",
+        "X-RDD-Enrichment": pcf.complete ? "complete" : "incomplete",
+      });
+    } catch (err) {
+      logError("rank.pcf", err, "monarch-fallback");
+      pathPrefix = "pcf->";
+    }
+  }
 
   const result = await engineFirst(
     mode,
@@ -136,20 +164,21 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
         getFallbackDemoRanking(demoRankKey(req.observed, req.excluded, req.limit));
       if (demo) {
         logError("rank", result.error, "demo-fallback");
-        return json(asDemoPayload(demo), 200, { [PATH_HEADER]: result.path });
+        return json(asDemoPayload(demo), 200, { [PATH_HEADER]: pathPrefix + result.path });
       }
     }
     logError(`rank.${result.path}`, result.error);
-    return withHeader(engineErrorResponse(result.error, KEPT), PATH_HEADER, result.path);
+    return withHeader(engineErrorResponse(result.error, KEPT), PATH_HEADER, pathPrefix + result.path);
   }
 
   const out: RankResponse = { ...result.value.body, version: CONTRACT_VERSION };
   const complete = result.value.complete;
-  if (out.source === "live" && complete) cachePutJson(deps, key, { path: result.path, body: out } satisfies CachedRank, RANK_TTL_S);
+  // After a PubCaseFinder failure the Monarch answer is not cached under the pcf key.
+  if (out.source === "live" && complete && !pathPrefix) cachePutJson(deps, key, { path: result.path, body: out } satisfies CachedRank, RANK_TTL_S);
   // json() always sends Cache-Control: no-store, so an incomplete response is
   // cached nowhere. X-RDD-Enrichment is for QA only, not part of the contract.
   return json(out, 200, {
-    [PATH_HEADER]: result.path,
+    [PATH_HEADER]: pathPrefix + result.path,
     "X-RDD-Cache": "miss",
     "X-RDD-Enrichment": complete ? "complete" : "incomplete",
   });

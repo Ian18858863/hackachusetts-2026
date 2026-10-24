@@ -137,6 +137,7 @@ The landing page (`landing/`) was started by Peter's Kiro (v1/v2 and its spec, i
 
 - **Human Phenotype Ontology** (https://hpo.jax.org), through the JAX ontology API: term search, term lookup and disease annotations. The app footer and the brief show "This product uses the Human Phenotype Ontology (version <hpo>). Find out more at https://hpo.jax.org", with HPO release 2026-09-01, the release the engine pins (`engine/hpo.ts`).
 - **Monarch Initiative** semantic similarity service (monarchinitiative.org) for ranking. Monarch tools are not for diagnosis or medical decisions.
+- **PubCaseFinder** (DBCLS), CC BY 4.0 (pubcasefinder.dbcls.jp), as an optional ranking source behind `RDD_RANK_SOURCE = "pcf"`, off by default. When it orders the results, the footer shows "PubCaseFinder (DBCLS), CC BY 4.0."
 - **Orphanet** data, CC BY 4.0 (orpha.net, orphadata.com), through Orphanet-sourced HPO annotations.
 - **ClinicalTrials.gov**, U.S. National Library of Medicine, for recruiting studies.
 - **phenopacket-store** (Monarch Initiative), BSD-3-Clause, as the source of the synthetic demo cases and the benchmark cases.

@@ -84,7 +84,7 @@ const HPO_ID = /^HP:\d{7}$/;
 
 // ---------------------------------------------------------------- Monarch
 
-interface BestMatch {
+export interface BestMatch {
   source: HpoId;
   sourceLabel: string;
   target: HpoId;
@@ -93,7 +93,7 @@ interface BestMatch {
   subsumerLabel: string;
 }
 
-interface MonarchRow {
+export interface MonarchRow {
   mondoId: string;
   name: string;
   score: number;
@@ -172,7 +172,7 @@ interface OrphaName {
  * cached. An answer without a name (HTTP 404 or no "Preferred term") is not a
  * failure: there is simply nothing to add.
  */
-async function orphadataName(
+export async function orphadataName(
   orpha: DiseaseId,
   deps: FallbackDeps,
 ): Promise<{ value: OrphaName | null; failed: boolean }> {
@@ -225,7 +225,7 @@ export function weightedMatchCount(matched: readonly Evidence[]): number {
   return Math.floor(exact + 0.5 * ancestor);
 }
 
-function buildCandidate(
+export function buildCandidate(
   row: MonarchRow,
   rank: number,
   req: NormalizedRankRequest,

@@ -20,3 +20,8 @@ binding = "AI"
 # Roll back: set RDD_ENGINE_PATH_RANK = "fallback" (or remove it), then redeploy.
 [vars]
 RDD_ENGINE_PATH_RANK = "engine"
+# Optional PubCaseFinder ordering for /api/rank (T36, functions/_lib/fallback/pcf.ts).
+# Off unless set. "pcf": PubCaseFinder orders the candidates, evidence still
+# comes from HPO annotations and Monarch; on any PubCaseFinder failure the
+# Monarch path above answers in the same request.
+# RDD_RANK_SOURCE = "pcf"
