@@ -3,7 +3,7 @@
  * can show the parent's words, its footnote number and its source sentence.
  */
 import type { CaseObject, CaseTerm, Candidate, Evidence, HpoId, TermRef } from '../../shared/contract';
-import { capitalise, sentenceAround } from './format';
+import { capitalise, sentenceAround, type RankingT } from './format';
 
 export interface Feature {
   id: HpoId;
@@ -72,13 +72,16 @@ export function patientRows(c: Candidate, index: FeatureIndex): PatientRow[] {
 }
 
 /** "Through the broader term X, listed as Y", or nothing for an exact match. */
-export function viaText(e: Evidence): string | null {
+export function viaText(e: Evidence, t: RankingT): string | null {
   const sameTerm = e.diseaseTerm.id === e.patientTerm.id;
   if (e.via === 'exact' && sameTerm) return null;
-  const parts: string[] = [];
-  if (e.via === 'ancestor') parts.push(e.ancestor ? `through the broader term ${e.ancestor.label}` : 'through a broader term');
-  if (!sameTerm) parts.push(`listed as ${e.diseaseTerm.label}`);
-  return capitalise(parts.join(', '));
+  const term = e.diseaseTerm.label;
+  if (e.via !== 'ancestor') return t('viaListed', { term });
+  if (e.ancestor) {
+    const ancestor = e.ancestor.label;
+    return sameTerm ? t('viaAncestorNamed', { ancestor }) : t('viaAncestorNamedListed', { ancestor, term });
+  }
+  return sameTerm ? t('viaAncestor') : t('viaAncestorListed', { term });
 }
 
 export interface MatchCounts {
@@ -95,6 +98,6 @@ export function matchCounts(c: Candidate): MatchCounts {
 }
 
 /** "plus 6 through broader terms", or null when there are none. */
-export function broaderText(broader: number): string | null {
-  return broader > 0 ? `plus ${broader} through broader terms` : null;
+export function broaderText(broader: number, t: RankingT): string | null {
+  return broader > 0 ? t('broader', { n: broader }) : null;
 }

@@ -1,5 +1,7 @@
 import type { CSSProperties } from 'react';
 import type { FrequencyInfo } from '../../shared/contract';
+import { useT } from '../../shared/i18n';
+import ranking from '../../shared/i18n/messages/ranking';
 import styles from './FrequencyMark.module.css';
 import { GLYPH_DOTS, frequencyState, type FrequencyState } from './format';
 
@@ -34,7 +36,8 @@ export function FrequencyMark({
   showRaw?: boolean;
   className?: string;
 }) {
-  const state = frequencyState(frequency, noneWord);
+  const t = useT(ranking);
+  const state = frequencyState(frequency, t, noneWord);
   return (
     <span
       className={[styles.mark, className].filter(Boolean).join(' ')}
@@ -83,7 +86,8 @@ export function BandDot({
   tone?: MarkTone;
   size?: 'matrix' | 'strip';
 }) {
-  const state = frequencyState(frequency);
+  const t = useT(ranking);
+  const state = frequencyState(frequency, t);
   const level = state.kind === 'band' ? state.dots : state.kind === 'none' ? 'none' : 'unknown';
   return <i className={styles.dot} data-level={level} data-tone={tone} data-size={size} aria-hidden="true" />;
 }

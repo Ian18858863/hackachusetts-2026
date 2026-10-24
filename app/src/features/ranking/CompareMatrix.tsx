@@ -1,7 +1,10 @@
 import type { Candidate, FrequencyInfo, HpoId } from '../../shared/contract';
+import { useT } from '../../shared/i18n';
+import common from '../../shared/i18n/messages/common';
+import ranking from '../../shared/i18n/messages/ranking';
 import { BandDot } from './FrequencyMark';
 import { broaderText, featureFor, matchCounts, type Feature, type FeatureIndex } from './evidence';
-import { OVERLAP_TEXT, frequencyState } from './format';
+import { OVERLAP_KEY, frequencyState, type RankingKey } from './format';
 import type { LinkProps } from './parts';
 import styles from './ranking.module.css';
 
@@ -26,6 +29,8 @@ export function CompareMatrix({
   observed: HpoId[];
   index: FeatureIndex;
 } & LinkProps) {
+  const t = useT(ranking);
+  const tc = useT(common);
   const top = candidates.slice(0, MATRIX_CANDIDATES);
   const features: Feature[] = observed
     .map((id) => featureFor(index, { id, label: labelFor(id, candidates) }))
@@ -34,32 +39,27 @@ export function CompareMatrix({
     const e = c.matched.find((m) => m.patientTerm.id === id);
     return e ? { matched: true, broader: e.via === 'ancestor', frequency: e.frequency } : { matched: false };
   };
-  const cellWord = (x: Cell) =>
-    x.matched
-      ? `${frequencyState(x.frequency, 'Frequency not listed').word}${x.broader ? ', through a broader term' : ''}`
-      : 'Not matched';
+  const cellWord = (x: Cell) => {
+    if (!x.matched) return t('notMatched');
+    const word = frequencyState(x.frequency, t, t('freqNotListed')).word;
+    return x.broader ? t('cellBroader', { word }) : word;
+  };
   const active = features.find((f) => f.id === activeTerm && f.sentence);
 
   return (
     <section id="compare" className={styles.compare} aria-labelledby="compare-title" tabIndex={-1}>
       <div className={styles.compareHead}>
         <h2 id="compare-title" className={styles.compareTitle}>
-          Compare side by side
+          {t('compareSideBySide')}
         </h2>
-        <p className={styles.compareDek}>
-          How often each present feature occurs in the top {top.length} possible matches. Larger dot, more often.
-          Decision support, not a diagnosis.
-        </p>
+        <p className={styles.compareDek}>{t('compareDek', { n: top.length, safety: tc('disclaimerLead') })}</p>
       </div>
 
       <div className={styles.cmp}>
         <figure className={styles.cmpFigure}>
           <div className={styles.tableScroll}>
             <table className={styles.table}>
-              <caption className="sr-only">
-                {features.length} present features against {top.length} possible matches, with how often each feature
-                occurs in each condition
-              </caption>
+              <caption className="sr-only">{t('compareCaption', { f: features.length, n: top.length })}</caption>
               <colgroup>
                 <col />
                 {top.map((c) => (
@@ -69,13 +69,13 @@ export function CompareMatrix({
               <thead>
                 <tr>
                   <th scope="col">
-                    <span className="sr-only">Feature</span>
+                    <span className="sr-only">{t('srFeature')}</span>
                   </th>
                   {top.map((c) => (
                     <th key={c.diseaseId} scope="col" data-first={c.rank === 1 || undefined}>
                       <span className={styles.candN}>{c.rank}</span>
                       <span className={styles.candName}>{c.name}</span>
-                      <span className={styles.candOv}>{OVERLAP_TEXT[c.overlap]}</span>
+                      <span className={styles.candOv}>{t(OVERLAP_KEY[c.overlap])}</span>
                     </th>
                   ))}
                 </tr>
@@ -121,15 +121,13 @@ export function CompareMatrix({
               </tbody>
               <tfoot>
                 <tr>
-                  <th scope="row">Features described</th>
+                  <th scope="row">{t('featuresDescribed')}</th>
                   {top.map((c) => {
                     const { exact, broader } = matchCounts(c);
-                    const line = broaderText(broader);
+                    const line = broaderText(broader, t);
                     return (
                       <td key={c.diseaseId} data-first={c.rank === 1 || undefined}>
-                        <b className="num">
-                          {exact} of {features.length}
-                        </b>
+                        <b className="num">{t('countOf', { exact, n: features.length })}</b>
                         {line && <span className={styles.footBroader}>{line}</span>}
                         <span>{c.diseaseId}</span>
                       </td>
@@ -141,13 +139,13 @@ export function CompareMatrix({
           </div>
           <div className={styles.source}>
             <p data-shown={!active || undefined} aria-hidden="true">
-              Hover or focus a feature to read the sentence it came from.
+              {t('compareHint')}
             </p>
             {features
               .filter((f) => f.sentence)
               .map((f) => (
                 <p key={f.id} id={`cmp-src-${f.id.replace(':', '')}`} data-shown={active?.id === f.id || undefined}>
-                  <span>From the notes</span>
+                  <span>{t('fromNotes')}</span>
                   <q>
                     {f.sentence?.before}
                     <mark>{f.sentence?.quote}</mark>
@@ -158,21 +156,18 @@ export function CompareMatrix({
           </div>
         </figure>
 
-        <section className={styles.notes} aria-label="How to read the comparison">
+        <section className={styles.notes} aria-label={t('compareNotesLabel')}>
           <div className={styles.legendNote}>
-            <h3>Reading the dots</h3>
-            <p>How often the feature is reported in people with the condition, from HPO annotations.</p>
-            <p className={styles.legendHint}>
-              “Features described” counts exact matches. A dot with a dotted ring matched only through a broader
-              term, and is counted as “plus N through broader terms”.
-            </p>
+            <h3>{t('readingDots')}</h3>
+            <p>{t('readingDotsBody')}</p>
+            <p className={styles.legendHint}>{t('legendHint')}</p>
             <dl className={styles.legend}>
               {LEGEND.map((l) => (
-                <div key={l.word}>
+                <div key={l.key}>
                   <dt>
                     <BandDot frequency={l.frequency} />
                   </dt>
-                  <dd>{l.word}</dd>
+                  <dd>{t(l.key)}</dd>
                 </div>
               ))}
             </dl>
@@ -183,13 +178,13 @@ export function CompareMatrix({
   );
 }
 
-const LEGEND: Array<{ word: string; frequency: FrequencyInfo | null }> = [
-  { word: 'Always', frequency: { label: 'Obligate', source: '' } },
-  { word: 'Very frequent', frequency: { label: 'Very frequent', source: '' } },
-  { word: 'Frequent', frequency: { label: 'Frequent', source: '' } },
-  { word: 'Occasional or very rare', frequency: { label: 'Occasional', source: '' } },
-  { word: 'Matched, frequency not listed', frequency: { label: null, source: '' } },
-  { word: 'Not matched', frequency: null },
+const LEGEND: Array<{ key: RankingKey; frequency: FrequencyInfo | null }> = [
+  { key: 'freqAlways', frequency: { label: 'Obligate', source: '' } },
+  { key: 'freqVeryFrequent', frequency: { label: 'Very frequent', source: '' } },
+  { key: 'freqFrequent', frequency: { label: 'Frequent', source: '' } },
+  { key: 'legendOccasionalRare', frequency: { label: 'Occasional', source: '' } },
+  { key: 'legendNotListed', frequency: { label: null, source: '' } },
+  { key: 'notMatched', frequency: null },
 ];
 
 function labelFor(id: HpoId, candidates: Candidate[]): string {

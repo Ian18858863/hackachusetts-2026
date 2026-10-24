@@ -5,6 +5,7 @@
  * A ranking restored from localStorage has no record: no motion, no deltas.
  */
 import type { Candidate, RankResponse } from '../../shared/contract';
+import { pick, type RankingT } from './format';
 
 export interface RankingChange {
   /** null: this is the first ranking of the case. */
@@ -52,17 +53,14 @@ export function rankDelta(change: RankingChange | undefined, c: Candidate): Rank
 }
 
 /** One sentence for the polite live region after a ranking arrives (R4.3). */
-export function describeRanking(next: RankResponse, previous: RankResponse | null): string {
+export function describeRanking(next: RankResponse, previous: RankResponse | null, t: RankingT): string {
   const first = next.candidates[0];
   const count = next.candidates.length;
-  if (count === 0) return 'Ranking finished. No possible matches were found for these features.';
-  const lead = `First: ${first?.name ?? 'unknown'}.`;
-  if (!previous) return `${count} possible ${count === 1 ? 'match' : 'matches'} ranked. ${lead}`;
+  if (count === 0) return t('announceNone');
+  const name = first?.name ?? t('unknown');
+  if (!previous) return t(pick(count, 'announceRankedOne', 'announceRankedOther'), { n: count, name });
   const before = new Map(previous.candidates.map((c) => [c.diseaseId, c.rank]));
   const moved = next.candidates.filter((c) => before.get(c.diseaseId) !== c.rank).length;
-  const movedText =
-    moved === 0
-      ? 'No possible match changed place.'
-      : `${moved} possible ${moved === 1 ? 'match' : 'matches'} changed place.`;
-  return `Ranking updated. ${movedText} ${lead}`;
+  if (moved === 0) return t('announceUpdatedNone', { name });
+  return t(pick(moved, 'announceUpdatedOne', 'announceUpdatedOther'), { n: moved, name });
 }

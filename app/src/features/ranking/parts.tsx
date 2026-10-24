@@ -1,9 +1,11 @@
 import type { CSSProperties, ReactNode } from 'react';
 import type { Candidate, DiseaseFeature, HpoId } from '../../shared/contract';
+import { useT } from '../../shared/i18n';
+import ranking from '../../shared/i18n/messages/ranking';
 import { Button, Icon } from '../../shared/ui';
 import { FrequencyMark, type MarkTone } from './FrequencyMark';
 import { featureFor, viaText, type Feature, type FeatureIndex, type PatientRow } from './evidence';
-import { FREQUENCY_NOT_LISTED, SOURCE_NAMES, formatScore } from './format';
+import { formatScore, sourceName } from './format';
 import type { RankDelta } from './rankingChange';
 import styles from './ranking.module.css';
 
@@ -42,6 +44,7 @@ export function EvidenceRow({
   enterIndex: number | null;
   quiet?: boolean;
 } & LinkProps) {
+  const t = useT(ranking);
   const popId = `${idPrefix}-src-${feature.id.replace(':', '')}`;
   const focusable = feature.sentence !== null;
   return (
@@ -66,13 +69,13 @@ export function EvidenceRow({
             {feature.plain}
             {feature.number !== undefined && (
               <span className={styles.fn}>
-                <span className="sr-only">, feature </span>
+                <span className="sr-only">{t('srFeatureNumber')}</span>
                 {feature.number}
               </span>
             )}
           </span>
           <span className={styles.evTerm}>
-            {feature.manual ? `${feature.label} · added by hand` : feature.label}
+            {feature.manual ? `${feature.label} · ${t('addedByHand')}` : feature.label}
             {detail && <> · {detail}</>}
           </span>
         </span>
@@ -80,7 +83,7 @@ export function EvidenceRow({
       </div>
       {feature.sentence && (
         <p id={popId} className={styles.pop} role="tooltip">
-          <span>From the notes</span>
+          <span>{t('fromNotes')}</span>
           <q>
             {feature.sentence.before}
             <mark>{feature.sentence.quote}</mark>
@@ -107,6 +110,7 @@ export function PatientRows({
   enter: EnterRows;
   enterOffset?: number;
 } & LinkProps) {
+  const t = useT(ranking);
   return (
     <>
       {rows.map((row, i) => {
@@ -117,20 +121,20 @@ export function PatientRows({
             key={row.feature.id}
             feature={row.feature}
             idPrefix={idPrefix}
-            detail={row.evidence ? viaText(row.evidence) : null}
+            detail={row.evidence ? viaText(row.evidence, t) : null}
             enterIndex={entering ? enterOffset + i : null}
             quiet={!row.evidence}
             mark={
               row.evidence ? (
                 <FrequencyMark
                   frequency={row.evidence.frequency}
-                  noneWord={FREQUENCY_NOT_LISTED}
+                  noneWord={t('freqNotListed')}
                   tone={tone}
                   animate={entering}
                   delay={enterOffset + i}
                 />
               ) : (
-                <FrequencyMark frequency={null} noneWord="Not matched" />
+                <FrequencyMark frequency={null} noneWord={t('notMatched')} />
               )
             }
             {...link}
@@ -161,6 +165,7 @@ export function EvidenceGroups({
   /** One level below the candidate's name: 3 under the lead's h2, 4 under a side entry's h3. */
   headingLevel?: 3 | 4;
 } & LinkProps) {
+  const t = useT(ranking);
   const Heading = headingLevel === 4 ? 'h4' : 'h3';
   let slot = enterOffset;
   const rows = (items: DiseaseFeature[], prefix: 'c' | 'n', note?: string) =>
@@ -191,14 +196,14 @@ export function EvidenceGroups({
         <div className={styles.group}>
           <Heading className={styles.groupTitle}>
             <NotPresentGlyph />
-            Marked not present, but usually present here
+            {t('contradictedTitle')}
           </Heading>
-          <ul className={styles.evidence}>{rows(c.contradicted, 'c', 'you marked this as not present')}</ul>
+          <ul className={styles.evidence}>{rows(c.contradicted, 'c', t('contradictedNote'))}</ul>
         </div>
       )}
       {c.notReported.length > 0 && (
         <div className={styles.group}>
-          <Heading className={styles.groupTitle}>Usually present here, not described</Heading>
+          <Heading className={styles.groupTitle}>{t('notReportedTitle')}</Heading>
           <ul className={styles.evidence}>{rows(c.notReported, 'n')}</ul>
         </div>
       )}
@@ -207,6 +212,7 @@ export function EvidenceGroups({
 }
 
 export function CandidateLinks({ candidate: c }: { candidate: Candidate }) {
+  const t = useT(ranking);
   const links: Array<{ name: string; href: string }> = [];
   if (c.links.orphanet) links.push({ name: 'Orphanet', href: c.links.orphanet });
   links.push({ name: 'Monarch', href: c.links.monarch });
@@ -217,7 +223,7 @@ export function CandidateLinks({ candidate: c }: { candidate: Candidate }) {
         <a key={l.name} className={styles.link} href={l.href} target="_blank" rel="noreferrer">
           {l.name}
           <Icon name="external" size={13} />
-          <span className="sr-only"> page for {c.name} (opens in a new tab)</span>
+          <span className="sr-only">{t('linkSr', { name: c.name })}</span>
         </a>
       ))}
     </span>
@@ -226,31 +232,33 @@ export function CandidateLinks({ candidate: c }: { candidate: Candidate }) {
 
 /** Genes, raw service score and sources: quiet details under the evidence. */
 export function CandidateFacts({ candidate: c }: { candidate: Candidate }) {
+  const t = useT(ranking);
   return (
     <dl className={styles.facts}>
       <div>
-        <dt>ID</dt>
+        <dt>{t('factId')}</dt>
         <dd>{c.diseaseId}</dd>
       </div>
       {c.genes.length > 0 && (
         <div>
-          <dt>{c.genes.length === 1 ? 'Gene' : 'Genes'} in HPO annotations</dt>
+          <dt>{t(c.genes.length === 1 ? 'genesOne' : 'genesOther')}</dt>
           <dd>{c.genes.map((g) => g.symbol).join(', ')}</dd>
         </div>
       )}
       <div>
-        <dt>Raw service score</dt>
+        <dt>{t('rawScore')}</dt>
         <dd className="num">{formatScore(c.score)}</dd>
       </div>
       <div>
-        <dt>Sources</dt>
-        <dd>{c.sources.map((s) => SOURCE_NAMES[s]).join(', ')}</dd>
+        <dt>{t('sources')}</dt>
+        <dd>{c.sources.map((s) => sourceName(s, t)).join(t('listSep'))}</dd>
       </div>
     </dl>
   );
 }
 
 export function StudiesButton({ selected, onSelect }: { selected: boolean; onSelect(): void }) {
+  const t = useT(ranking);
   return (
     <Button
       variant="secondary"
@@ -259,12 +267,13 @@ export function StudiesButton({ selected, onSelect }: { selected: boolean; onSel
       onClick={onSelect}
       iconStart={<Icon name={selected ? 'check' : 'trial'} size={16} />}
     >
-      {selected ? 'Studies shown below' : 'Show recruiting studies'}
+      {selected ? t('studiesShown') : t('studiesShow')}
     </Button>
   );
 }
 
 export function DeltaBadge({ delta }: { delta: RankDelta }) {
+  const t = useT(ranking);
   if (delta.kind === 'none') return null;
   return (
     <span className={styles.delta}>
@@ -287,7 +296,9 @@ export function DeltaBadge({ delta }: { delta: RankDelta }) {
           <path d="M12 19V5M6 11l6-6 6 6" />
         </svg>
       )}
-      {delta.kind === 'new' ? 'New in the list' : `${delta.kind === 'up' ? 'Up' : 'Down'} from ${delta.from}`}
+      {delta.kind === 'new'
+        ? t('deltaNew')
+        : t(delta.kind === 'up' ? 'deltaUp' : 'deltaDown', { n: delta.from })}
     </span>
   );
 }

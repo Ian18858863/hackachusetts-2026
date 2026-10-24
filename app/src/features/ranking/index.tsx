@@ -15,6 +15,8 @@
  */
 import { useEffect, useMemo, useState } from 'react';
 import { LIMITS, type CaseRanking, type HpoId, type RankResponse } from '../../shared/contract';
+import { useLocale, useT } from '../../shared/i18n';
+import rankingMessages from '../../shared/i18n/messages/ranking';
 import { useCase, useCaseActions } from '../../shared/store';
 import { ApiErrorState, Button, EmptyState, Icon, LoadingPanel, Skeleton, Spinner } from '../../shared/ui';
 import { useQuestionsSync } from '../questions/useQuestionsSync';
@@ -23,13 +25,14 @@ import { FeatureSummary } from './FeatureSummary';
 import { LeadCandidate } from './LeadCandidate';
 import { OtherCandidates } from './OtherCandidates';
 import { indexFeatures } from './evidence';
-import { SOURCE_NAMES, formatDateTime, formatTime, plural, versionEntries } from './format';
+import { formatDateTime, formatTime, pick, sourceName, versionEntries, type RankingT } from './format';
 import type { EnterRows } from './parts';
 import { changeFor, evidenceKeys, rankDelta, type RankingChange } from './rankingChange';
 import styles from './ranking.module.css';
 import { useAutoRank, type AutoRank } from './useAutoRank';
 
 export function RankingStep() {
+  const t = useT(rankingMessages);
   const { caseObject, extractStatus } = useCase();
   const { goToStep, selectCandidate } = useCaseActions();
   const auto = useAutoRank();
@@ -43,7 +46,7 @@ export function RankingStep() {
     if (extractStatus.state === 'loading') {
       return (
         <div data-testid="ranking">
-          <LoadingPanel step="Reading the notes and finding features">
+          <LoadingPanel step={t('loadingReading')}>
             <ResultsSkeleton />
           </LoadingPanel>
         </div>
@@ -53,11 +56,11 @@ export function RankingStep() {
       <div data-testid="ranking">
         <EmptyState
           icon="compare"
-          title="No present features to match yet"
-          description="Possible matches appear here once at least one feature is kept as present."
+          title={t('emptyTitle')}
+          description={t('emptyDesc')}
           action={
             <Button onClick={() => goToStep('features')} iconEnd={<Icon name="arrowRight" size={18} />}>
-              Review the features
+              {t('reviewFeatures')}
             </Button>
           }
         />
@@ -75,10 +78,7 @@ export function RankingStep() {
       {few && (
         <p className={styles.note}>
           <Icon name="info" size={18} />
-          <span>
-            With fewer than {LIMITS.rankRecommendedObserved} present features, matches are usually less useful. Adding
-            more features from the notes can help.
-          </span>
+          <span>{t('fewNote', { n: LIMITS.rankRecommendedObserved })}</span>
         </p>
       )}
 
@@ -109,18 +109,22 @@ export function RankingStep() {
           onRetry={auto.rankNow}
           actions={
             <Button variant="secondary" onClick={() => goToStep('features')}>
-              Review the features
+              {t('reviewFeatures')}
             </Button>
           }
         />
       ) : auto.phase === 'offline' ? (
         <EmptyState
           icon="cloudOff"
-          title="Ranking needs a connection"
-          description="Your features are saved in this browser. The ranking starts when you are back online."
+          title={t('offlineTitle')}
+          description={t('offlineDesc')}
         />
       ) : (
-        <LoadingPanel step={`Matching ${plural(auto.request.observed.length, 'present feature')} with known conditions`}>
+        <LoadingPanel
+          step={t(pick(auto.request.observed.length, 'matchingOne', 'matchingOther'), {
+            n: auto.request.observed.length,
+          })}
+        >
           <ResultsSkeleton />
         </LoadingPanel>
       )}
@@ -145,6 +149,7 @@ function Results({
   activeTerm: HpoId | null;
   onActivate(id: HpoId | null): void;
 }) {
+  const t = useT(rankingMessages);
   const { response } = ranking;
   const animate = useMotionOnce(response);
   const change = changeFor(response);
@@ -155,8 +160,8 @@ function Results({
     return (
       <EmptyState
         icon="compare"
-        title="No possible matches found"
-        description="The ranking service found no conditions for these features. Adding more features from the notes may help."
+        title={t('noMatchesTitle')}
+        description={t('noMatchesDesc')}
         titleLevel={2}
       />
     );
@@ -165,7 +170,7 @@ function Results({
   const observedCount = ranking.request.observed.length;
   return (
     <>
-      <section className={styles.results} aria-label="Ranked possible matches">
+      <section className={styles.results} aria-label={t('resultsLabel')}>
         <LeadCandidate
           candidate={lead}
           index={features.index}
@@ -236,11 +241,9 @@ function enterFor(change: RankingChange | undefined, id: string, response: RankR
 // ---------------------------------------------------------------------------
 
 function RankStatus({ auto, ranking }: { auto: AutoRank; ranking: CaseRanking }) {
-  const { observed, excluded } = auto.request;
-  const counts =
-    excluded.length > 0
-      ? `${plural(observed.length, 'present feature')} and ${excluded.length} not present`
-      : plural(observed.length, 'present feature');
+  const t = useT(rankingMessages);
+  const { locale } = useLocale();
+  const counts = countsText(auto.request.observed.length, auto.request.excluded.length, t);
 
   let body;
   switch (auto.phase) {
@@ -248,7 +251,7 @@ function RankStatus({ auto, ranking }: { auto: AutoRank; ranking: CaseRanking })
       body = (
         <span className={styles.statusText}>
           <Spinner size={14} />
-          Updating the ranking for {counts}
+          {t('statusUpdating', { counts })}
         </span>
       );
       break;
@@ -257,10 +260,10 @@ function RankStatus({ auto, ranking }: { auto: AutoRank; ranking: CaseRanking })
         <>
           <span className={styles.statusText}>
             <Icon name="refresh" size={16} />
-            Features changed. The ranking updates in a moment
+            {t('statusScheduled')}
           </span>
           <Button variant="ghost" size="sm" onClick={auto.rankNow}>
-            Update ranking
+            {t('updateRanking')}
           </Button>
         </>
       );
@@ -269,7 +272,7 @@ function RankStatus({ auto, ranking }: { auto: AutoRank; ranking: CaseRanking })
       body = (
         <span className={styles.statusText}>
           <Icon name="alert" size={16} />
-          These results are for the earlier features
+          {t('statusStale')}
         </span>
       );
       break;
@@ -277,7 +280,7 @@ function RankStatus({ auto, ranking }: { auto: AutoRank; ranking: CaseRanking })
       body = (
         <span className={styles.statusText}>
           <Icon name="cloudOff" size={16} />
-          Offline. The ranking updates when you reconnect
+          {t('statusOffline')}
         </span>
       );
       break;
@@ -285,7 +288,7 @@ function RankStatus({ auto, ranking }: { auto: AutoRank; ranking: CaseRanking })
       body = (
         <span className={styles.statusText}>
           <Icon name="check" size={16} />
-          Ranked at {formatTime(ranking.rankedAt)} on {counts}
+          {t('statusRanked', { time: formatTime(ranking.rankedAt, locale), counts })}
         </span>
       );
   }
@@ -297,20 +300,29 @@ function RankStatus({ auto, ranking }: { auto: AutoRank; ranking: CaseRanking })
   );
 }
 
+/** "12 present features", or "12 present features and 1 not present". */
+function countsText(observed: number, excluded: number, t: RankingT): string {
+  return excluded > 0
+    ? t(pick(observed, 'countsExcludedOne', 'countsExcludedOther'), { n: observed, m: excluded })
+    : t(pick(observed, 'countsOne', 'countsOther'), { n: observed });
+}
+
 function RankingSources({ ranking }: { ranking: CaseRanking }) {
+  const t = useT(rankingMessages);
+  const { locale } = useLocale();
   const { response } = ranking;
-  const sources = [...new Set(response.candidates.flatMap((c) => c.sources))].map((s) => SOURCE_NAMES[s]);
-  const versions = versionEntries(response.dataVersions);
+  const sources = [...new Set(response.candidates.flatMap((c) => c.sources))].map((s) => sourceName(s, t));
+  const versions = versionEntries(response.dataVersions, t);
   return (
     <section className={styles.sources} aria-labelledby="ranking-sources-title">
       <h3 id="ranking-sources-title" className={styles.sourcesTitle}>
-        Data behind this ranking
+        {t('sourcesTitle')}
       </h3>
       <dl className={styles.sourcesList}>
         {sources.length > 0 && (
           <div>
-            <dt>Sources</dt>
-            <dd>{sources.join(', ')}</dd>
+            <dt>{t('sources')}</dt>
+            <dd>{sources.join(t('listSep'))}</dd>
           </div>
         )}
         {versions.map((v) => (
@@ -320,8 +332,8 @@ function RankingSources({ ranking }: { ranking: CaseRanking }) {
           </div>
         ))}
         <div>
-          <dt>Fetched</dt>
-          <dd>{formatDateTime(response.dataVersions.fetchedAt)}</dd>
+          <dt>{t('fetched')}</dt>
+          <dd>{formatDateTime(response.dataVersions.fetchedAt, locale)}</dd>
         </div>
       </dl>
     </section>
@@ -330,16 +342,17 @@ function RankingSources({ ranking }: { ranking: CaseRanking }) {
 
 /** In-content route to the next step, styled like "See possible matches" on the features step. */
 function NextStep({ onNext }: { onNext(): void }) {
+  const t = useT(rankingMessages);
   return (
     <div className={styles.next}>
-      <p className={styles.nextHint}>Next: questions about features that best tell these possible matches apart.</p>
+      <p className={styles.nextHint}>{t('nextHint')}</p>
       <Button
         className={styles.nextCta}
         onClick={onNext}
         data-testid="go-questions"
         iconEnd={<Icon name="arrowRight" size={16} />}
       >
-        What to check next
+        {t('nextCta')}
       </Button>
     </div>
   );

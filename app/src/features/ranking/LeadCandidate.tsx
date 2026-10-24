@@ -1,7 +1,9 @@
 import type { MouseEvent } from 'react';
 import type { Candidate } from '../../shared/contract';
+import { useT } from '../../shared/i18n';
+import ranking from '../../shared/i18n/messages/ranking';
 import { broaderText, matchCounts, patientRows, type FeatureIndex } from './evidence';
-import { OVERLAP_TEXT, plural } from './format';
+import { OVERLAP_KEY, pick } from './format';
 import {
   CandidateFacts,
   CandidateLinks,
@@ -40,9 +42,18 @@ export function LeadCandidate({
   selected: boolean;
   onSelect(): void;
 } & LinkProps) {
+  const t = useT(ranking);
   const rows = patientRows(c, index);
   const { exact, broader } = matchCounts(c);
-  const broaderLine = broaderText(broader);
+  const broaderLine = broaderText(broader, t);
+  const n = observedCount;
+  const coverage =
+    exact === n && n > 0
+      ? t(pick(n, 'leadAllOne', 'leadAllOther'), { n })
+      : broaderLine && exact < n
+        ? t(pick(n, 'leadSomeBroaderOne', 'leadSomeBroaderOther'), { exact, n, broader })
+        : t(pick(n, 'leadSomeOne', 'leadSomeOther'), { exact, n });
+  const contradicted = c.contradicted.length;
 
   return (
     <article
@@ -56,36 +67,32 @@ export function LeadCandidate({
           <span className={styles.leadRankN} aria-hidden="true">
             {c.rank}
           </span>
-          Closest overlap
+          {t('closestOverlap')}
           <DeltaBadge delta={delta} />
         </p>
         <h2 id="lead-title" className={styles.leadName}>
-          <span className="sr-only">Rank {c.rank}: </span>
+          <span className="sr-only">{t('srRank', { n: c.rank })}</span>
           {c.name}
         </h2>
         <p className={styles.leadOverlap}>
-          <b>{OVERLAP_TEXT[c.overlap]}.</b>{' '}
-          {exact === observedCount && observedCount > 0
-            ? `All ${plural(observedCount, 'present feature')} appear in this condition.`
-            : `${exact} of ${plural(observedCount, 'present feature')} appear in this condition`}
-          {exact < observedCount && (broaderLine ? `, ${broaderLine}.` : '.')}
-          {c.contradicted.length > 0 &&
-            ` ${plural(c.contradicted.length, 'feature')} marked not present ${c.contradicted.length === 1 ? 'is' : 'are'} usually present here.`}
+          <b>{t('overlapSentence', { label: t(OVERLAP_KEY[c.overlap]) })}</b>
+          {coverage}
+          {contradicted > 0 && t(pick(contradicted, 'leadContradictedOne', 'leadContradictedOther'), { n: contradicted })}
         </p>
         <p className={styles.leadScore}>
           <b className="num">
-            {exact} <span>of {observedCount}</span>
+            {exact} <span>{t('scoreOf', { n: observedCount })}</span>
           </b>
-          <small>features described</small>
+          <small>{t('scoreSmall')}</small>
           {broaderLine && <small className={styles.leadBroader}>{broaderLine}</small>}
         </p>
       </div>
 
       <p className={styles.evHead} aria-hidden="true">
-        <span>Features described</span>
-        <span>How often in {c.name}</span>
+        <span>{t('featuresDescribed')}</span>
+        <span>{t('howOftenIn', { name: c.name })}</span>
       </p>
-      <ul className={styles.evidence} data-testid={`candidate-evidence-${c.rank}`} aria-label={`Evidence for ${c.name}`}>
+      <ul className={styles.evidence} data-testid={`candidate-evidence-${c.rank}`} aria-label={t('evidenceFor', { name: c.name })}>
         <PatientRows rows={rows} tone="accent" idPrefix="lead" enter={enter} {...link} />
       </ul>
       <EvidenceGroups
@@ -99,10 +106,10 @@ export function LeadCandidate({
       />
 
       <div className={styles.leadFoot}>
-        <p className={styles.hint}>Hover, focus or tap a feature to read the sentence it came from.</p>
+        <p className={styles.hint}>{t('leadHint')}</p>
         <p className={styles.leadLinks}>
           <a href="#compare" onClick={jumpToCompare}>
-            Compare side by side
+            {t('compareSideBySide')}
           </a>
           <CandidateLinks candidate={c} />
         </p>

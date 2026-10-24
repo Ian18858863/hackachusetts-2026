@@ -1,9 +1,11 @@
 import { useRef, useState } from 'react';
 import type { Candidate, RankResponse } from '../../shared/contract';
+import { useT } from '../../shared/i18n';
+import ranking from '../../shared/i18n/messages/ranking';
 import { Icon } from '../../shared/ui';
 import { BandDot } from './FrequencyMark';
 import { broaderText, matchCounts, patientRows, type FeatureIndex } from './evidence';
-import { OVERLAP_TEXT, frequencyState } from './format';
+import { OVERLAP_KEY, frequencyState } from './format';
 import {
   CandidateFacts,
   CandidateLinks,
@@ -45,16 +47,17 @@ export function OtherCandidates({
   selectedId: string | null;
   onSelect(id: string): void;
 } & LinkProps) {
+  const t = useT(ranking);
   const listRef = useRef<HTMLOListElement>(null);
   useFlip(listRef, response);
 
   return (
     <section className={styles.others} aria-labelledby="others-title">
       <h2 id="others-title" className={styles.othersTitle}>
-        Also worth discussing
+        {t('othersTitle')}
       </h2>
       {entries.length === 0 ? (
-        <p className={styles.othersNone}>The ranking returned no other possible matches for these features.</p>
+        <p className={styles.othersNone}>{t('othersNone')}</p>
       ) : (
         <ol ref={listRef} className={styles.altList}>
           {entries.map((e) => (
@@ -71,11 +74,7 @@ export function OtherCandidates({
           ))}
         </ol>
       )}
-      <p className={styles.key}>
-        Numbers follow the features in order. A larger dot means the feature occurs more often in the condition, a
-        ring that it matched without a listed frequency, and a dash that it did not match. The order is phenotype
-        overlap, not a probability.
-      </p>
+      <p className={styles.key}>{t('othersKey')}</p>
     </section>
   );
 }
@@ -94,17 +93,22 @@ function OtherCandidate({
   selected: boolean;
   onSelect(): void;
 } & LinkProps) {
+  const t = useT(ranking);
   const [open, setOpen] = useState(false);
   const rows = patientRows(c, index);
   const regionId = `alt-evidence-${c.rank}`;
   const { exact, broader } = matchCounts(c);
-  const broaderLine = broaderText(broader);
+  const broaderLine = broaderText(broader, t);
   const titleId = `alt-title-${c.rank}`;
 
-  const stripLabel = `How often the ${observedCount} present features occur in ${c.name}: ${rows
-    .map((r) => (r.evidence ? frequencyState(r.evidence.frequency, 'frequency not listed').word : 'not matched'))
-    .join(', ')
-    .toLowerCase()}`;
+  const stripLabel = t('stripLabel', {
+    n: observedCount,
+    name: c.name,
+    list: rows
+      .map((r) => (r.evidence ? frequencyState(r.evidence.frequency, t, t('freqNotListed')).word : t('notMatched')))
+      .join(t('listSep'))
+      .toLowerCase(),
+  });
 
   return (
     <article className={styles.alt} data-testid={`candidate-${c.rank}`} aria-labelledby={titleId}>
@@ -113,14 +117,16 @@ function OtherCandidate({
           {c.rank}
         </span>
         <h3 id={titleId} className={styles.altName}>
-          <span className="sr-only">Rank {c.rank}: </span>
+          <span className="sr-only">{t('srRank', { n: c.rank })}</span>
           {c.name}
         </h3>
       </div>
       <p className={styles.altLine}>
-        <b>{OVERLAP_TEXT[c.overlap]}.</b> {exact} of {observedCount} described
-        {broaderLine ? `, ${broaderLine}.` : '.'}
-        {c.contradicted.length > 0 && ` ${c.contradicted.length} marked not present usually occur here.`}
+        <b>{t('overlapSentence', { label: t(OVERLAP_KEY[c.overlap]) })}</b>
+        {broaderLine
+          ? t('altDescribedBroader', { exact, n: observedCount, broader })
+          : t('altDescribed', { exact, n: observedCount })}
+        {c.contradicted.length > 0 && t('altContradicted', { n: c.contradicted.length })}
       </p>
       {delta.kind !== 'none' && (
         <p className={styles.altDelta}>
@@ -144,12 +150,12 @@ function OtherCandidate({
           aria-controls={regionId}
           onClick={() => setOpen((v) => !v)}
         >
-          {open ? 'Hide evidence' : 'Show evidence'}
+          {open ? t('hideEvidence') : t('showEvidence')}
           <Icon name="chevronRight" size={16} className={styles.discloseIcon} />
         </button>
       </p>
       <div id={regionId} className={styles.altEvidence} hidden={!open}>
-        <ul className={styles.evidence} data-testid={`candidate-evidence-${c.rank}`} aria-label={`Evidence for ${c.name}`}>
+        <ul className={styles.evidence} data-testid={`candidate-evidence-${c.rank}`} aria-label={t('evidenceFor', { name: c.name })}>
           <PatientRows rows={rows} tone="neutral" idPrefix={`alt${c.rank}`} enter={open ? enter : null} {...link} />
         </ul>
         <EvidenceGroups

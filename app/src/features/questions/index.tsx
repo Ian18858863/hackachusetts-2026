@@ -10,6 +10,9 @@
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Candidate, DiseaseId, HpoId, Question, TermStatus } from '../../shared/contract';
+import { useT } from '../../shared/i18n';
+import questionsMessages from '../../shared/i18n/messages/questions';
+import rankingMessages from '../../shared/i18n/messages/ranking';
 import { useCase, useCaseActions } from '../../shared/store';
 import {
   ApiErrorState,
@@ -23,7 +26,7 @@ import {
   useAnnounce,
 } from '../../shared/ui';
 import { FrequencyMark } from '../ranking/FrequencyMark';
-import { NOT_LISTED_FOR_CONDITION, plural } from '../ranking/format';
+import { pick } from '../ranking/format';
 import { useAutoRank } from '../ranking/useAutoRank';
 import styles from './questions.module.css';
 import { topCandidateIds, useQuestionsSync } from './useQuestionsSync';
@@ -39,6 +42,7 @@ export function QuestionsStep() {
 }
 
 function QuestionsBody() {
+  const t = useT(questionsMessages);
   const { caseObject } = useCase();
   const { goToStep, addManualTerm, setTermStatus } = useCaseActions();
   const announce = useAnnounce();
@@ -91,7 +95,7 @@ function QuestionsBody() {
     setAnswers((a) => ({ ...a, [q.hpoId]: { status, previous: statusOf.get(q.hpoId) ?? null } }));
     addManualTerm({ id: q.hpoId, label: q.label }, status);
     announce(
-      `Recorded ${q.label} as ${status === 'observed' ? 'present' : 'not present'}. The ranking will update in a moment.`,
+      t('recorded', { label: q.label, status: t(status === 'observed' ? 'statusPresent' : 'statusNotPresent') }),
     );
   };
 
@@ -103,7 +107,7 @@ function QuestionsBody() {
       delete next[q.hpoId];
       return next;
     });
-    announce(`Answer for ${q.label} undone.`);
+    announce(t('undone', { label: q.label }));
   };
 
   // ---- States before there is anything to ask -----------------------------
@@ -112,11 +116,11 @@ function QuestionsBody() {
     return (
       <EmptyState
         icon="question"
-        title="No features to compare yet"
-        description="Questions appear once at least one feature is kept as present and the possible matches are ranked."
+        title={t('emptyTitle')}
+        description={t('emptyDesc')}
         action={
           <Button onClick={() => goToStep('features')} iconEnd={<Icon name="arrowRight" size={18} />}>
-            Review the features
+            {t('reviewFeatures')}
           </Button>
         }
       />
@@ -128,7 +132,11 @@ function QuestionsBody() {
       return <ApiErrorState error={auto.error} onRetry={auto.rankNow} />;
     }
     return (
-      <LoadingPanel step={`Ranking ${plural(auto.request.observed.length, 'present feature')} first`}>
+      <LoadingPanel
+        step={t(pick(auto.request.observed.length, 'rankingFirstOne', 'rankingFirstOther'), {
+          n: auto.request.observed.length,
+        })}
+      >
         <QuestionsSkeleton />
       </LoadingPanel>
     );
@@ -139,11 +147,11 @@ function QuestionsBody() {
       <div ref={stateRef}>
         <EmptyState
           icon="compare"
-          title="Not enough possible matches to compare"
-          description="Questions need at least two possible matches to tell apart. Adding more features from the notes may help."
+          title={t('tooFewTitle')}
+          description={t('tooFewDesc')}
           action={
             <Button variant="secondary" onClick={() => goToStep('matches')}>
-              See the possible matches
+              {t('seeMatches')}
             </Button>
           }
         />
@@ -166,7 +174,7 @@ function QuestionsBody() {
     }
     if (sync.phase !== 'ready') {
       return (
-        <LoadingPanel step={`Finding the features that best tell the top ${top.length} possible matches apart`}>
+        <LoadingPanel step={t('finding', { n: top.length })}>
           <QuestionsSkeleton />
         </LoadingPanel>
       );
@@ -175,11 +183,11 @@ function QuestionsBody() {
       <div ref={stateRef}>
         <EmptyState
           icon="question"
-          title="No clear question to ask"
-          description="The top possible matches list similar features in HPO annotations, so no single feature tells them apart well. They are still worth discussing with a doctor."
+          title={t('noneTitle')}
+          description={t('noneDesc')}
           action={
             <Button variant="secondary" onClick={() => goToStep('matches')}>
-              See the possible matches
+              {t('seeMatches')}
             </Button>
           }
         />
@@ -198,33 +206,33 @@ function QuestionsBody() {
         {auto.phase === 'loading' || auto.phase === 'scheduled' ? (
           <span className={styles.statusText}>
             <Spinner size={14} />
-            Updating the ranking with your answers
+            {t('updatingRanking')}
           </span>
         ) : auto.phase === 'error' ? (
           <span className={styles.statusText}>
             <Icon name="alert" size={16} />
-            The ranking could not update. These questions are for the earlier features
+            {t('rankFailed')}
             <Button variant="ghost" size="sm" onClick={auto.rankNow}>
-              Try again
+              {t('tryAgain')}
             </Button>
           </span>
         ) : sync.phase === 'loading' ? (
           <span className={styles.statusText}>
             <Spinner size={14} />
-            Finding new questions for the updated ranking
+            {t('findingNew')}
           </span>
         ) : sync.phase === 'error' ? (
           <span className={styles.statusText}>
             <Icon name="alert" size={16} />
-            New questions could not be loaded
+            {t('newFailed')}
             <Button variant="ghost" size="sm" onClick={sync.retry}>
-              Try again
+              {t('tryAgain')}
             </Button>
           </span>
         ) : (
           <span className={styles.statusText}>
             <Icon name="check" size={16} />
-            Comparing the top {plural(top.length, 'possible match', 'possible matches')}
+            {t(pick(top.length, 'comparingOne', 'comparingOther'), { n: top.length })}
           </span>
         )}
       </div>
@@ -233,7 +241,7 @@ function QuestionsBody() {
         ref={listRef}
         className={styles.list}
         aria-busy={refreshing || undefined}
-        aria-label="Questions to check next"
+        aria-label={t('listLabel')}
         tabIndex={-1}
       >
         {questions.map((q, index) => (
@@ -250,11 +258,7 @@ function QuestionsBody() {
         ))}
       </ol>
 
-      <p className={styles.footnote}>
-        Each question names a feature from HPO disease annotations. “Not listed for this condition” means the
-        annotations do not list the feature for that condition, not that it never occurs there. “Frequency not
-        listed” means the feature is listed without a frequency.
-      </p>
+      <p className={styles.footnote}>{t('footnote')}</p>
     </div>
   );
 }
@@ -278,6 +282,8 @@ function QuestionItem({
   onAnswer(status: 'observed' | 'excluded'): void;
   onUndo(): void;
 }) {
+  const t = useT(questionsMessages);
+  const tr = useT(rankingMessages);
   const titleId = `question-${q.hpoId.replace(':', '-')}`;
   const answered = status === 'observed' || status === 'excluded';
   // The answer buttons are replaced on click, so move focus to what replaces them
@@ -323,23 +329,24 @@ function QuestionItem({
           {q.question}
         </h2>
         <p className={styles.term}>
-          HPO term: {q.label} <span className="code">{q.hpoId}</span>
+          {t('hpoTerm', { label: q.label })}
+          <span className="code">{q.hpoId}</span>
         </p>
         <p className={styles.why}>
-          <span className={styles.whyLabel}>Why this question</span>
+          <span className={styles.whyLabel}>{t('why')}</span>
           {q.why}
         </p>
 
-        <div className={styles.answers} role="group" aria-label={`Answer: ${q.question}`}>
+        <div className={styles.answers} role="group" aria-label={t('answerLabel', { question: q.question })}>
           {answered ? (
             <>
               <span className={styles.recorded}>
                 <Icon name="check" size={16} />
-                {status === 'observed' ? 'Recorded as present' : 'Recorded as not present'}
+                {status === 'observed' ? t('recordedPresent') : t('recordedNotPresent')}
               </span>
               {canUndo && (
                 <Button ref={undoRef} variant="ghost" size="sm" onClick={undo}>
-                  Undo
+                  {t('undo')}
                 </Button>
               )}
             </>
@@ -351,19 +358,19 @@ function QuestionItem({
                 onClick={() => answerWith('observed')}
                 data-testid={`answer-yes-${q.hpoId}`}
               >
-                Yes
+                {t('yes')}
               </Button>
               <Button variant="secondary" onClick={() => answerWith('excluded')} data-testid={`answer-no-${q.hpoId}`}>
-                No
+                {t('no')}
               </Button>
-              <span className={styles.answerHint}>Yes adds it as present, No as not present</span>
+              <span className={styles.answerHint}>{t('answerHint')}</span>
             </>
           )}
         </div>
       </div>
 
       <div className={styles.compare}>
-        <h3 className={styles.compareTitle}>How common in each possible match</h3>
+        <h3 className={styles.compareTitle}>{t('howCommon')}</h3>
         <ul className={styles.compareList}>
           {q.discriminates.map((d) => {
             const c = candidates.get(d.diseaseId);
@@ -379,7 +386,7 @@ function QuestionItem({
                 </span>
                 <FrequencyMark
                   frequency={d.frequency}
-                  noneWord={NOT_LISTED_FOR_CONDITION}
+                  noneWord={tr('notListedForCondition')}
                   tone={c?.rank === 1 ? 'accent' : 'neutral'}
                 />
               </li>

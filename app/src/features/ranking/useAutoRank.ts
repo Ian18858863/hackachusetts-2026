@@ -16,6 +16,8 @@ import { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } fr
 import { isAbortError, rank, toApiRequestError, type ApiRequestError } from '../../shared/api';
 import type { CaseRanking } from '../../shared/contract';
 import { currentRankRequest, useCase, useCaseActions } from '../../shared/store';
+import { useT } from '../../shared/i18n';
+import ranking from '../../shared/i18n/messages/ranking';
 import { useAnnounce, useOnlineStatus } from '../../shared/ui';
 import { rankKey } from './format';
 import { describeRanking, recordChange } from './rankingChange';
@@ -50,6 +52,12 @@ export function useAutoRank(): AutoRank {
   const { caseObject } = useCase();
   const { setRanking } = useCaseActions();
   const announce = useAnnounce();
+  // Read through a ref so a language change never restarts a ranking request.
+  const t = useT(ranking);
+  const tRef = useRef(t);
+  useLayoutEffect(() => {
+    tRef.current = t;
+  }, [t]);
   const online = useOnlineStatus();
 
   const { terms, lastRanking } = caseObject;
@@ -84,7 +92,7 @@ export function useAutoRank(): AutoRank {
         const previous = rankingRef.current?.response ?? null;
         recordChange(result.data, previous);
         setRanking(req, result.data, result.origin);
-        announce(describeRanking(result.data, previous));
+        announce(describeRanking(result.data, previous, tRef.current));
         setRun({ phase: 'idle', error: null, key: forKey });
       } catch (error) {
         if (isAbortError(error) || own.signal.aborted) return;

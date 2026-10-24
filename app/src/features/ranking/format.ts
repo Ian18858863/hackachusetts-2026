@@ -10,6 +10,12 @@ import type {
   OverlapLabel,
   RankRequest,
 } from '../../shared/contract';
+import { LOCALE_META, type FormatVars, type Locale, type MessageKey } from '../../shared/i18n';
+import type ranking from '../../shared/i18n/messages/ranking';
+
+export type RankingKey = MessageKey<typeof ranking>;
+/** `t` from `useT(ranking)`, passed to the pure helpers below. */
+export type RankingT = (key: RankingKey, vars?: FormatVars) => string;
 
 /**
  * Filled dots in the four-dot glyph of the approved art direction.
@@ -28,20 +34,15 @@ export const FREQUENCY_DOTS: Record<FrequencyLabel, number> = {
 
 export const GLYPH_DOTS = 4;
 
-/** Plain word for a band. Obligate is said as "Always" (100% in HPO bands). */
-export const FREQUENCY_WORD: Record<FrequencyLabel, string> = {
-  Obligate: 'Always',
-  'Very frequent': 'Very frequent',
-  Frequent: 'Frequent',
-  Occasional: 'Occasional',
-  'Very rare': 'Very rare',
-  Excluded: 'Excluded',
+/** Message key of the plain word for a band. Obligate is said as "Always" (100% in HPO bands). */
+export const FREQUENCY_WORD_KEY: Record<FrequencyLabel, RankingKey> = {
+  Obligate: 'freqAlways',
+  'Very frequent': 'freqVeryFrequent',
+  Frequent: 'freqFrequent',
+  Occasional: 'freqOccasional',
+  'Very rare': 'freqVeryRare',
+  Excluded: 'freqExcluded',
 };
-
-/** The disease annotates the feature but gives no frequency (contract: label null). */
-export const FREQUENCY_NOT_LISTED = 'Frequency not listed';
-/** The disease does not annotate the feature at all (contract 7.5 step 6: frequency null). */
-export const NOT_LISTED_FOR_CONDITION = 'Not listed for this condition';
 
 export type FrequencyState =
   | { kind: 'band'; label: FrequencyLabel; dots: number; word: string }
@@ -50,51 +51,70 @@ export type FrequencyState =
 
 /**
  * Three different situations, three different words (R3.7, contract 7.5):
- * a band; annotated without a frequency; not annotated for the condition.
+ * a band; annotated without a frequency ("Frequency not listed"); not
+ * annotated for the condition (`noneWord`, default "Not listed for this condition").
  */
 export function frequencyState(
   frequency: FrequencyInfo | null | undefined,
-  noneWord: string = NOT_LISTED_FOR_CONDITION,
+  t: RankingT,
+  noneWord: string = t('notListedForCondition'),
 ): FrequencyState {
   if (!frequency) return { kind: 'none', word: noneWord };
-  if (frequency.label === null) return { kind: 'unknown', word: FREQUENCY_NOT_LISTED };
+  if (frequency.label === null) return { kind: 'unknown', word: t('freqNotListed') };
   return {
     kind: 'band',
     label: frequency.label,
     dots: FREQUENCY_DOTS[frequency.label],
-    word: FREQUENCY_WORD[frequency.label],
+    word: t(FREQUENCY_WORD_KEY[frequency.label]),
   };
 }
 
-export const OVERLAP_TEXT: Record<OverlapLabel, string> = {
-  strong: 'Strong overlap',
-  partial: 'Partial overlap',
-  weak: 'Weak overlap',
+export const OVERLAP_KEY: Record<OverlapLabel, RankingKey> = {
+  strong: 'overlapStrong',
+  partial: 'overlapPartial',
+  weak: 'overlapWeak',
 };
 
-export const SOURCE_NAMES: Record<CandidateSource, string> = {
-  'monarch-semsim': 'Monarch semantic similarity',
-  'hpo-annotations': 'HPO disease annotations',
-  orphadata: 'Orphadata',
-  pubcasefinder: 'PubCaseFinder',
-};
+/** Product names stay as they are; descriptive names are translated. */
+export function sourceName(source: CandidateSource, t: RankingT): string {
+  switch (source) {
+    case 'monarch-semsim':
+      return t('sourceMonarch');
+    case 'hpo-annotations':
+      return t('sourceHpo');
+    case 'orphadata':
+      return 'Orphadata';
+    case 'pubcasefinder':
+      return 'PubCaseFinder';
+  }
+}
+
+/** The `one` key for n = 1, else the `other` key (whole-sentence plural templates). */
+export function pick<K extends string>(n: number, one: K, other: K): K {
+  return n === 1 ? one : other;
+}
 
 /** Data versions in reading order, only those present. */
-export function versionEntries(v: DataVersions): Array<{ name: string; value: string }> {
+export function versionEntries(v: DataVersions, t: RankingT): Array<{ name: string; value: string }> {
   const entries: Array<{ name: string; value: string | undefined }> = [
     { name: 'HPO', value: v.hpo },
     { name: 'Monarch', value: v.monarch },
     { name: 'Orphanet', value: v.orphanet },
     { name: 'PubCaseFinder', value: v.pubCaseFinder },
-    { name: 'Demo cache', value: v.demoCache },
+    { name: t('versionDemoCache'), value: v.demoCache },
   ];
   return entries.filter((e): e is { name: string; value: string } => Boolean(e.value));
 }
 
-export function formatDateTime(iso: string): string {
+/** Intl locale for dates and times; English keeps the en-US format it always had. */
+export function intlLocale(locale: Locale): string {
+  return locale === 'en' ? 'en-US' : LOCALE_META[locale].htmlLang;
+}
+
+export function formatDateTime(iso: string, locale: Locale): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return new Intl.DateTimeFormat('en-US', {
+  return new Intl.DateTimeFormat(intlLocale(locale), {
     day: 'numeric',
     month: 'short',
     year: 'numeric',
@@ -103,10 +123,10 @@ export function formatDateTime(iso: string): string {
   }).format(date);
 }
 
-export function formatTime(iso: string): string {
+export function formatTime(iso: string, locale: Locale): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return new Intl.DateTimeFormat('en-US', { hour: 'numeric', minute: '2-digit' }).format(date);
+  return new Intl.DateTimeFormat(intlLocale(locale), { hour: 'numeric', minute: '2-digit' }).format(date);
 }
 
 const SCORE_FORMAT = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 });
@@ -114,10 +134,6 @@ const SCORE_FORMAT = new Intl.NumberFormat('en-US', { maximumFractionDigits: 2 }
 /** The raw service score with at most 2 decimals: no false precision (design steering 7). */
 export function formatScore(score: number): string {
   return Number.isFinite(score) ? SCORE_FORMAT.format(score) : String(score);
-}
-
-export function plural(n: number, one: string, many = `${one}s`): string {
-  return `${n} ${n === 1 ? one : many}`;
 }
 
 /** Stable key for one rank request (ids already sorted and deduplicated). */
