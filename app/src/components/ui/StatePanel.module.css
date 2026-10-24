@@ -5,7 +5,6 @@
   gap: var(--space-2);
   padding: var(--space-12) var(--space-6);
   text-align: center;
-  border: 1px dashed var(--color-border-strong);
   border-radius: var(--radius-lg);
   background: var(--color-surface-sunken);
 }
@@ -17,19 +16,18 @@
 .icon {
   display: grid;
   place-items: center;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: var(--size-state-icon);
+  height: var(--size-state-icon);
   margin-bottom: var(--space-2);
   border-radius: var(--radius-md);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
   color: var(--color-text-muted);
   box-shadow: var(--shadow-sm);
 }
 
 .compact .icon {
-  width: 2.25rem;
-  height: 2.25rem;
+  width: var(--size-state-icon-sm);
+  height: var(--size-state-icon-sm);
 }
 
 .title {
@@ -39,8 +37,8 @@
 }
 
 .description {
-  max-width: 42ch;
-  font-size: var(--text-sm);
+  max-width: var(--measure-narrow);
+  font-size: var(--text-md);
   color: var(--color-text-muted);
 }
 
@@ -54,21 +52,18 @@
 
 /* ---- Danger tone ------------------------------------------------------ */
 .danger {
-  border-style: solid;
-  border-color: color-mix(in srgb, var(--color-danger) 28%, var(--color-border));
   background: var(--color-danger-tint);
 }
 
 .danger .icon {
   color: var(--color-danger-text);
-  border-color: color-mix(in srgb, var(--color-danger) 30%, var(--color-border));
 }
 
 /* ---- Technical details (custom disclosure, no OS look) --------------- */
 .details {
   display: flex;
   flex-direction: column;
-  width: min(100%, 32rem);
+  width: min(100%, var(--size-details-max));
   margin-top: var(--space-3);
   font-size: var(--text-xs);
   color: var(--color-text-muted);
@@ -109,7 +104,6 @@
   padding: var(--space-3);
   border-radius: var(--radius-sm);
   background: var(--color-surface);
-  border: 1px solid var(--color-border);
   font-family: var(--font-mono);
   overflow-wrap: anywhere;
 }

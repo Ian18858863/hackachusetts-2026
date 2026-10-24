@@ -2,7 +2,7 @@
   display: inline-block;
   flex-shrink: 0;
   border-radius: 50%;
-  border: 2px solid currentColor;
+  border: var(--border-indicator) solid currentColor;
   border-right-color: transparent;
   opacity: 0.85;
   animation: spin 720ms linear infinite;

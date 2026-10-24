@@ -1,12 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
-  <style>
-    .bg { fill: #1f6f78; }
-    .fg { fill: none; stroke: #ffffff; }
-    @media (prefers-color-scheme: dark) {
-      .bg { fill: #7cc4cc; }
-      .fg { stroke: #10262a; }
-    }
-  </style>
-  <rect class="bg" width="32" height="32" rx="8" />
-  <rect class="fg" x="8.5" y="8.5" width="15" height="15" rx="3" stroke-width="2.5" stroke-dasharray="3 3" />
+  <!-- Provisional mark: a lens over three evidence points. Colour matches --palette-accent. -->
+  <rect width="32" height="32" rx="8" fill="#2b4c9b" />
+  <circle cx="14" cy="14" r="6.5" fill="none" stroke="#ffffff" stroke-width="2.25" />
+  <path d="m19 19 5 5" stroke="#ffffff" stroke-width="2.25" stroke-linecap="round" />
+  <circle cx="11.5" cy="14" r="1.25" fill="#ffffff" />
+  <circle cx="14" cy="11.5" r="1.25" fill="#ffffff" />
+  <circle cx="16.5" cy="14" r="1.25" fill="#ffffff" />
 </svg>

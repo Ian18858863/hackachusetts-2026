@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
 /**
- * Minimal hash routing ("#primitives"), enough for an internal preview page.
+ * Minimal hash routing ("#/features", "#primitives").
  * Hash routes need no server rewrite rules under the /app/ base path.
- * Swap for a real router once the product has more than a couple of views.
+ * Returns the hash without "#" and without a leading "/".
  */
 export function useHashRoute(): string {
   const [route, setRoute] = useState(() => readRoute());

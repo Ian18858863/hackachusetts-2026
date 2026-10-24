@@ -1,45 +1,88 @@
-import { useEffect, useRef, type MouseEvent } from 'react';
+import { useEffect, useRef, type ComponentType, type MouseEvent } from 'react';
 import styles from './App.module.css';
-import { BuildingState } from './components/shell/BuildingState';
-import { Footer } from './components/shell/Footer';
 import { PrimitivesPreview } from './components/shell/PrimitivesPreview';
+import { StepHeader } from './components/shell/StepHeader';
 import { TopBar } from './components/shell/TopBar';
+import { BriefStep } from './features/brief';
+import { IntakeStep } from './features/intake';
+import { QuestionsStep } from './features/questions';
+import { RankingStep } from './features/ranking';
+import { ReviewStep } from './features/review';
+import { TrialsPanel } from './features/trials';
+import { useDemoParam } from './lib/useDemoParam';
 import { useHashRoute } from './lib/useHashRoute';
+import { stepFromRoute, type StepId } from './shared/steps';
+import { CaseProvider } from './shared/store';
+import { AnnouncerProvider, AppFooter, OfflineNotice } from './shared/ui';
+
+/**
+ * What each step renders. Feature folders own these components; the shell
+ * owns the frame around them (top bar, step header with h1 and labels,
+ * safety line, footer). Trials sit inside the matches step.
+ */
+const STEP_VIEWS: Record<StepId, ComponentType[]> = {
+  notes: [IntakeStep],
+  features: [ReviewStep],
+  matches: [RankingStep, TrialsPanel],
+  questions: [QuestionsStep],
+  brief: [BriefStep],
+};
 
 export function App() {
+  return (
+    <CaseProvider>
+      <AnnouncerProvider>
+        <Shell />
+      </AnnouncerProvider>
+    </CaseProvider>
+  );
+}
+
+function Shell() {
+  useDemoParam();
   const route = useHashRoute();
+  const isPreview = route === 'primitives';
+  // Unknown hashes fall back to the first step.
+  const step = isPreview ? null : (stepFromRoute(route) ?? 'notes');
+  const viewKey = isPreview ? 'primitives' : step;
+
   const mainRef = useRef<HTMLElement>(null);
-  const previousRoute = useRef(route);
+  const previousKey = useRef(viewKey);
 
   // On view change, move focus to the main region so keyboard and screen
   // reader users start at the new content (not on first load).
   useEffect(() => {
-    if (previousRoute.current === route) return;
-    previousRoute.current = route;
+    if (previousKey.current === viewKey) return;
+    previousKey.current = viewKey;
     mainRef.current?.focus({ preventScroll: true });
     window.scrollTo({ top: 0 });
-  }, [route]);
-
-  const isPreview = route === 'primitives';
+  }, [viewKey]);
 
   return (
     <div className={styles.shell}>
       <a className={styles.skip} href="#main" onClick={skipToMain}>
         Skip to content
       </a>
-      <TopBar />
-      <main
-        id="main"
-        ref={mainRef}
-        tabIndex={-1}
-        className={[styles.main, isPreview ? styles.top : styles.centered].join(' ')}
-      >
+      <TopBar current={step} />
+      <OfflineNotice />
+      <main id="main" ref={mainRef} tabIndex={-1} className={styles.main}>
         {/* Keyed so a view change dissolves in place. */}
-        <div key={route} className={styles.view}>
-          {isPreview ? <PrimitivesPreview /> : <BuildingState />}
+        <div key={viewKey} className={styles.view}>
+          {step ? (
+            <>
+              <StepHeader step={step} />
+              <div className={styles.body}>
+                {STEP_VIEWS[step].map((View, i) => (
+                  <View key={i} />
+                ))}
+              </div>
+            </>
+          ) : (
+            <PrimitivesPreview />
+          )}
         </div>
       </main>
-      <Footer />
+      <AppFooter />
     </div>
   );
 }

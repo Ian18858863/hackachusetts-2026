@@ -1,0 +1,44 @@
+.loading {
+  gap: var(--space-4);
+}
+
+.step {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+}
+
+.errorWrap {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.errorActions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-2);
+}
+
+.offline {
+  background: var(--color-warning-tint);
+  color: var(--color-warning);
+}
+
+.offlineInner {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  max-width: var(--content-max);
+  margin-inline: auto;
+  padding: var(--space-3) var(--gutter);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+}
+
+.offlineInner svg {
+  flex-shrink: 0;
+}

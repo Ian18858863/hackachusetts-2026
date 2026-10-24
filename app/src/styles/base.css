@@ -27,9 +27,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
   overflow-x: clip;
-  transition:
-    background-color var(--dur-base) var(--ease-standard),
-    color var(--dur-base) var(--ease-standard);
 }
 
 #root {
@@ -90,6 +87,14 @@ a:hover {
 ::selection {
   background: var(--color-accent-tint);
   color: var(--color-text);
+}
+
+/* HPO ids and other codes. */
+.code {
+  font-family: var(--font-mono);
+  font-size: 0.875em;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0;
 }
 
 /* Numbers keep the heading family at natural width, aligned in columns. */

@@ -3,17 +3,14 @@
   top: 0;
   z-index: var(--z-sticky);
   background: var(--color-bg);
-  border-bottom: 1px solid var(--color-border);
-  transition:
-    background-color var(--dur-base) var(--ease-standard),
-    border-color var(--dur-base) var(--ease-standard);
+  border-bottom: var(--border-hair) solid var(--color-border-soft);
 }
 
 .inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: var(--space-3);
+  gap: var(--space-4) var(--space-8);
   max-width: var(--content-max);
   min-height: var(--topbar-height);
   margin-inline: auto;
@@ -23,26 +20,23 @@
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--space-3);
   min-height: var(--tap-min);
   min-width: 0;
+  flex-shrink: 0;
   color: var(--color-text);
   text-decoration: none;
   border-radius: var(--radius-sm);
 }
 
 .mark {
-  width: 1.75rem;
-  height: 1.75rem;
+  width: var(--size-brand-mark);
+  height: var(--size-brand-mark);
   flex-shrink: 0;
   color: var(--color-accent);
 }
 
 .name {
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-left: var(--space-1);
   font-family: var(--font-display);
   font-size: var(--text-md);
   font-weight: var(--weight-semibold);
@@ -50,70 +44,18 @@
   white-space: nowrap;
 }
 
-/* Dashed tag that makes the placeholder name impossible to miss. */
-.tbd {
-  padding: 0.125rem 0.375rem;
-  border: 1px dashed var(--color-border-strong);
-  border-radius: var(--radius-xs);
-  color: var(--color-text-subtle);
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-semibold);
-  letter-spacing: var(--tracking-caps);
-  line-height: 1.4;
+.steps {
+  min-width: 0;
 }
 
-.tools {
-  display: flex;
-  align-items: center;
-  gap: var(--space-2);
-  flex-shrink: 0;
-}
-
-.iconButton {
-  display: grid;
-  place-items: center;
-  width: var(--control-height-sm);
-  height: var(--control-height-sm);
-  padding: 0;
-  border: 1px solid transparent;
-  border-radius: var(--radius-pill);
-  background: transparent;
-  color: var(--color-text-muted);
-  -webkit-tap-highlight-color: transparent;
-  transition:
-    background-color var(--dur-fast) var(--ease-standard),
-    color var(--dur-fast) var(--ease-standard);
-}
-
-.iconButton:hover {
-  background: var(--color-surface-sunken);
-  color: var(--color-text);
-}
-
-.iconButton:focus-visible {
-  border-radius: var(--radius-pill);
-}
-
-@media (pointer: coarse) {
-  .iconButton {
-    width: var(--tap-min);
-    height: var(--tap-min);
-  }
-}
-
-/* Narrow phones: drop the placeholder mark so name, status and theme fit. */
-@media (max-width: 30rem) {
+/* Narrower than the full step labels: the steps move to their own row. */
+@media (max-width: 64rem) {
   .inner {
-    gap: var(--space-2);
+    flex-wrap: wrap;
+    padding-block: var(--space-2);
   }
-  .mark {
-    display: none;
-  }
-  .name {
-    margin-left: 0;
-    font-size: var(--text-sm);
-  }
-  .tools {
-    gap: var(--space-1);
+
+  .steps {
+    flex-basis: 100%;
   }
 }

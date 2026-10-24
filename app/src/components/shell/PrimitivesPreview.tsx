@@ -14,7 +14,7 @@ import styles from './PrimitivesPreview.module.css';
 /**
  * Internal component kit, reachable at /app/#primitives. Not linked from the
  * product UI. Shows every primitive in its states so the team can check them
- * in both themes before building real screens.
+ * against the tokens before building real screens.
  */
 export function PrimitivesPreview() {
   const [busy, setBusy] = useState(false);
@@ -31,8 +31,8 @@ export function PrimitivesPreview() {
         <p className={styles.eyebrow}>Internal preview</p>
         <h1 className={styles.title}>Component kit</h1>
         <p className={styles.lede}>
-          Shell primitives in every state. Toggle the theme in the top bar to check dark mode.{' '}
-          <a href="#">Back to the app</a>
+          Shell primitives in every state, drawn from the tokens in{' '}
+          <span className="code">styles/tokens.css</span>. <a href="#/notes">Back to the app</a>
         </p>
       </header>
 

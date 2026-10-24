@@ -1,94 +1,128 @@
 /*
  * Design tokens. Components and pages use these variables, never raw values.
  *
- * Re-theming once art direction is approved:
- *   1. Change --hue-accent / --chroma-accent (and the neutral tint) below.
- *   2. Swap --font-display / --font-text for the chosen faces.
- *   3. Adjust the dark block at the bottom only if the new accent needs it.
+ * Provisional look (2026-10-24): white, calm, typography-led. Ian picked the
+ * white direction; the final palette and faces are still being designed, so
+ * re-theming must stay a change to this file only:
+ *   - Colour: edit the "Palette" block. Every other colour token derives from it.
+ *   - Type:   swap --font-display / --font-text / --font-mono (and the
+ *             @fontsource import in src/main.tsx).
+ *   - Shape:  radius, border and shadow scales below.
  *
- * Colours use OKLCH so lightness stays perceptually even across hues.
- * The theme is set on <html data-theme="light|dark"> before first paint
- * (see index.html and src/lib/theme.ts).
+ * One theme only (design steering section 5): no dark mode.
+ *
+ * Contrast (WCAG 2.2, checked with a script, not by eye; ratios on white /
+ * on --color-surface-sunken):
+ *   text 17.8 / 16.5 · text-muted 8.0 / 7.4 · text-subtle 5.8 / 5.4
+ *   accent 8.1 / 7.4 (white on accent 8.1) · danger 6.7 / 6.2 · warning 6.9 / 6.4
+ *   control border 3.8 / 3.5 · focus ring = accent (8.1)
  */
 
 :root {
-  /* ---- Palette inputs ------------------------------------------------ */
-  --hue-neutral: 230;
-  --chroma-neutral: 0.008;
-  --hue-accent: 200;
-  --chroma-accent: 0.1;
+  /* ---- Palette (the only raw colours in the app) --------------------- */
+  --palette-white: #ffffff;
+  --palette-ink: #15181d;
+  --palette-ink-2: #495160;
+  --palette-ink-3: #5e6674;
+  --palette-line: #e7e9ed;
+  --palette-line-soft: #eef0f3;
+  --palette-control: #7c8390;
+  --palette-wash: #f5f6f8;
+  --palette-wash-2: #eceef2;
+  --palette-accent: #2b4c9b;
+  --palette-accent-deep: #223e82;
+  --palette-accent-wash: #eef2fa;
+  --palette-accent-line: #c9d4ee;
+  --palette-danger: #a2382b;
+  --palette-danger-wash: #fbf1ef;
+  --palette-warning: #7a5200;
+  --palette-warning-wash: #fbf5e9;
+  --palette-success: #2f6b4a;
 
-  /* ---- Colour: light (default) -------------------------------------- */
-  --color-bg: oklch(98.4% var(--chroma-neutral) var(--hue-neutral));
-  --color-surface: oklch(100% 0 0);
-  --color-surface-sunken: oklch(96.2% var(--chroma-neutral) var(--hue-neutral));
-  --color-surface-raised: oklch(100% 0 0);
-  --color-border: oklch(90.5% var(--chroma-neutral) var(--hue-neutral));
-  --color-border-strong: oklch(82% var(--chroma-neutral) var(--hue-neutral));
+  /* ---- Colour roles --------------------------------------------------- */
+  --color-bg: var(--palette-white);
+  --color-surface: var(--palette-white);
+  --color-surface-sunken: var(--palette-wash);
+  --color-surface-raised: var(--palette-white);
+  --color-surface-hover: var(--palette-wash);
+  --color-surface-pressed: var(--palette-wash-2);
 
-  --color-text: oklch(23% 0.012 var(--hue-neutral));
-  --color-text-muted: oklch(46% 0.012 var(--hue-neutral));
-  --color-text-subtle: oklch(56% 0.01 var(--hue-neutral));
+  /* Hairlines separate; they never identify a control. */
+  --color-border: var(--palette-line);
+  --color-border-soft: var(--palette-line-soft);
+  /* Control borders must reach 3:1 (inputs, secondary buttons). */
+  --color-border-strong: var(--palette-control);
 
-  --color-accent: oklch(50% var(--chroma-accent) var(--hue-accent));
-  --color-accent-strong: oklch(43% var(--chroma-accent) var(--hue-accent));
-  --color-accent-contrast: oklch(99% 0 0);
-  --color-accent-tint: oklch(95.5% 0.025 var(--hue-accent));
-  --color-accent-text: oklch(44% var(--chroma-accent) var(--hue-accent));
+  --color-text: var(--palette-ink);
+  --color-text-muted: var(--palette-ink-2);
+  --color-text-subtle: var(--palette-ink-3);
 
-  --color-success: oklch(55% 0.13 155);
-  --color-warning: oklch(68% 0.14 70);
-  --color-danger: oklch(54% 0.17 28);
-  --color-danger-tint: oklch(96% 0.025 28);
-  --color-danger-text: oklch(47% 0.16 28);
+  --color-accent: var(--palette-accent);
+  --color-accent-strong: var(--palette-accent-deep);
+  --color-accent-contrast: var(--palette-white);
+  --color-accent-tint: var(--palette-accent-wash);
+  --color-accent-line: var(--palette-accent-line);
+  --color-accent-text: var(--palette-accent);
 
-  --color-focus: oklch(55% 0.16 var(--hue-accent));
-  --color-overlay: oklch(20% 0.01 var(--hue-neutral) / 0.5);
-  --color-skeleton: oklch(93.5% var(--chroma-neutral) var(--hue-neutral));
-  --color-skeleton-shine: oklch(97.5% var(--chroma-neutral) var(--hue-neutral));
+  /* Status colours: muted, separate from the accent, only when they carry state. */
+  --color-success: var(--palette-success);
+  --color-warning: var(--palette-warning);
+  --color-warning-tint: var(--palette-warning-wash);
+  --color-danger: var(--palette-danger);
+  --color-danger-tint: var(--palette-danger-wash);
+  --color-danger-text: var(--palette-danger);
+
+  --color-focus: var(--palette-accent);
+  --color-overlay: rgb(21 24 29 / 0.4);
+  --color-skeleton: var(--palette-wash);
+  --color-skeleton-shine: var(--palette-white);
+  --color-highlight: var(--palette-accent-wash);
 
   /* Button fill that spreads from the pointer (see Button.module.css). */
   --color-fill-primary: var(--color-accent-strong);
-  --color-fill-secondary: var(--color-surface-sunken);
+  --color-fill-secondary: var(--color-surface-hover);
   --color-fill-ghost: var(--color-accent-tint);
 
   color-scheme: light;
 
   /* ---- Typography --------------------------------------------------- */
-  /* Placeholder faces: system stacks so nothing loads before first paint. */
-  --font-display: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue',
-    Arial, sans-serif;
-  --font-text: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
-    sans-serif;
-  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas, 'Liberation Mono',
+  /* Geist (OFL-1.1), self-hosted through @fontsource-variable, font-display: swap. */
+  --font-display: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  --font-text: 'Geist Variable', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, sans-serif;
+  /* For HPO ids and other codes only. */
+  --font-mono: 'Geist Mono Variable', ui-monospace, 'SF Mono', SFMono-Regular, Menlo, Consolas,
     monospace;
 
-  --text-2xs: 0.6875rem; /* 11px */
-  --text-xs: 0.75rem; /* 12px */
+  /* Scale ratio 1.25 from a 16px body. */
+  --text-2xs: 0.75rem; /* 12px: codes, captions */
+  --text-xs: 0.8125rem; /* 13px */
   --text-sm: 0.875rem; /* 14px */
-  --text-md: 1rem; /* 16px */
-  --text-lg: 1.125rem; /* 18px */
-  --text-xl: 1.375rem; /* 22px */
-  --text-2xl: clamp(1.5rem, 1.2rem + 1.2vw, 2rem);
-  --text-3xl: clamp(1.875rem, 1.4rem + 2vw, 2.75rem);
-  /* Display sizes shrink with the viewport so headlines stay on one line. */
-  --text-display: clamp(1.625rem, 0.6rem + 5.2vw, 4rem);
+  --text-md: 1rem; /* 16px: body minimum */
+  --text-lg: 1.125rem; /* 18px: reading text, notes */
+  --text-xl: 1.25rem; /* 20px */
+  --text-2xl: clamp(1.375rem, 1.2rem + 0.6vw, 1.5625rem); /* 22 → 25px */
+  --text-3xl: clamp(1.625rem, 1.3rem + 1.2vw, 1.953rem); /* 26 → 31px */
+  --text-display: clamp(1.75rem, 1.1rem + 2.6vw, 2.441rem); /* 28 → 39px */
 
-  --leading-tight: 1.08;
+  --leading-tight: 1.12;
   --leading-snug: 1.3;
   --leading-normal: 1.55;
+  --leading-reading: 1.65;
 
-  --tracking-display: -0.032em;
-  --tracking-tight: -0.015em;
+  --tracking-display: -0.028em;
+  --tracking-tight: -0.014em;
   --tracking-normal: 0;
-  --tracking-caps: 0.08em;
+  --tracking-caps: 0.06em;
 
   --weight-regular: 400;
   --weight-medium: 500;
   --weight-semibold: 600;
   --weight-bold: 700;
 
-  --measure: 60ch;
+  --measure: 66ch;
+  --measure-narrow: 48ch;
 
   /* ---- Spacing (4px base) ------------------------------------------- */
   --space-0: 0;
@@ -104,14 +138,29 @@
   --space-16: 4rem;
   --space-20: 5rem;
   --space-24: 6rem;
+  --space-32: 8rem;
 
   /* ---- Layout -------------------------------------------------------- */
-  --content-max: 72rem;
-  --gutter: clamp(1rem, 0.5rem + 2.5vw, 2.5rem);
-  --topbar-height: 3.75rem;
+  --content-max: 75rem; /* 1200px */
+  --reading-max: 44rem;
+  --gutter: clamp(1.25rem, 0.6rem + 2.8vw, 3rem);
+  --topbar-height: 4rem;
   --tap-min: 2.75rem; /* 44px */
   --control-height-sm: 2rem;
   --control-height-md: 2.75rem;
+
+  /* ---- Component sizes ---------------------------------------------- */
+  --size-brand-mark: 1.75rem;
+  --size-step-number: 1.375rem;
+  --size-label-min: 1.75rem;
+  --size-state-icon: 2.75rem;
+  --size-state-icon-sm: 2.25rem;
+  --size-details-max: 32rem;
+
+  /* ---- Borders ------------------------------------------------------- */
+  --border-hair: 1px;
+  --border-control: 1px;
+  --border-indicator: 2px;
 
   /* ---- Radius -------------------------------------------------------- */
   --radius-xs: 4px;
@@ -121,28 +170,28 @@
   --radius-xl: 20px;
   --radius-pill: 999px;
 
-  /* ---- Elevation ----------------------------------------------------- */
-  --shadow-sm: 0 1px 2px oklch(25% 0.02 var(--hue-neutral) / 0.06);
-  --shadow-md: 0 1px 2px oklch(25% 0.02 var(--hue-neutral) / 0.05),
-    0 4px 12px -2px oklch(25% 0.02 var(--hue-neutral) / 0.07);
-  --shadow-lg: 0 2px 4px oklch(25% 0.02 var(--hue-neutral) / 0.05),
-    0 16px 40px -8px oklch(25% 0.02 var(--hue-neutral) / 0.14);
+  /* ---- Elevation (soft, used sparingly) ------------------------------ */
+  --shadow-sm: 0 1px 2px rgb(21 24 29 / 0.05);
+  --shadow-md: 0 1px 2px rgb(21 24 29 / 0.04), 0 6px 16px -6px rgb(21 24 29 / 0.08);
+  --shadow-lg: 0 2px 6px rgb(21 24 29 / 0.04), 0 18px 44px -12px rgb(21 24 29 / 0.14);
 
   /* ---- Focus ------------------------------------------------------- */
   --focus-width: 2px;
   --focus-offset: 2px;
 
-  /* ---- Motion -------------------------------------------------------- */
+  /* ---- Motion: one easing family ----------------------------------- */
   --dur-instant: 80ms;
-  --dur-fast: 140ms;
+  --dur-fast: 160ms;
   --dur-base: 220ms;
-  --dur-slow: 420ms;
-  --dur-reveal: 900ms;
-  --stagger-char: 22ms;
+  --dur-slow: 320ms;
+  --dur-proof: 480ms;
+  --dur-reveal: 600ms;
+  --stagger-char: 18ms;
+  --stagger-item: 40ms;
 
-  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
   --ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
 
   /* ---- Layers -------------------------------------------------------- */
   --z-base: 0;
@@ -150,45 +199,6 @@
   --z-overlay: 200;
   --z-modal: 300;
   --z-toast: 400;
-}
-
-/* ---- Colour: dark --------------------------------------------------- */
-:root[data-theme='dark'] {
-  --color-bg: oklch(16.5% 0.01 var(--hue-neutral));
-  --color-surface: oklch(20% 0.011 var(--hue-neutral));
-  --color-surface-sunken: oklch(14.5% 0.009 var(--hue-neutral));
-  --color-surface-raised: oklch(23.5% 0.012 var(--hue-neutral));
-  --color-border: oklch(29% 0.012 var(--hue-neutral));
-  --color-border-strong: oklch(38% 0.012 var(--hue-neutral));
-
-  --color-text: oklch(94% 0.006 var(--hue-neutral));
-  --color-text-muted: oklch(73% 0.01 var(--hue-neutral));
-  --color-text-subtle: oklch(62% 0.01 var(--hue-neutral));
-
-  --color-accent: oklch(76% 0.1 var(--hue-accent));
-  --color-accent-strong: oklch(83% 0.09 var(--hue-accent));
-  --color-accent-contrast: oklch(18% 0.03 var(--hue-accent));
-  --color-accent-tint: oklch(27% 0.04 var(--hue-accent));
-  --color-accent-text: oklch(80% 0.09 var(--hue-accent));
-
-  --color-success: oklch(74% 0.14 155);
-  --color-warning: oklch(80% 0.13 75);
-  --color-danger: oklch(70% 0.15 28);
-  --color-danger-tint: oklch(22% 0.03 28);
-  --color-danger-text: oklch(78% 0.12 28);
-
-  --color-focus: oklch(78% 0.12 var(--hue-accent));
-  --color-overlay: oklch(5% 0 0 / 0.6);
-  --color-skeleton: oklch(25% 0.011 var(--hue-neutral));
-  --color-skeleton-shine: oklch(30% 0.012 var(--hue-neutral));
-
-  --color-fill-secondary: var(--color-surface-raised);
-
-  --shadow-sm: 0 1px 2px oklch(0% 0 0 / 0.4);
-  --shadow-md: 0 1px 2px oklch(0% 0 0 / 0.35), 0 6px 16px -4px oklch(0% 0 0 / 0.45);
-  --shadow-lg: 0 2px 4px oklch(0% 0 0 / 0.35), 0 20px 48px -12px oklch(0% 0 0 / 0.6);
-
-  color-scheme: dark;
 }
 
 /*
@@ -202,7 +212,9 @@
     --dur-fast: 1ms;
     --dur-base: 1ms;
     --dur-slow: 1ms;
+    --dur-proof: 1ms;
     --dur-reveal: 1ms;
     --stagger-char: 0ms;
+    --stagger-item: 0ms;
   }
 }

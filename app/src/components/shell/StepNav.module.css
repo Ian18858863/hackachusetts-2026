@@ -1,0 +1,130 @@
+.nav {
+  display: grid;
+  gap: var(--space-1);
+}
+
+.list {
+  display: flex;
+  align-items: stretch;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.item {
+  display: flex;
+  min-width: 0;
+}
+
+.link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: var(--tap-min);
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-md);
+  color: var(--color-text-muted);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  text-decoration: none;
+  white-space: nowrap;
+  -webkit-tap-highlight-color: transparent;
+  transition:
+    color var(--dur-fast) var(--ease-standard),
+    background-color var(--dur-fast) var(--ease-standard);
+}
+
+.link:hover {
+  color: var(--color-text);
+  background: var(--color-surface-hover);
+  text-decoration: none;
+}
+
+.number {
+  display: inline-grid;
+  place-items: center;
+  width: var(--size-step-number);
+  height: var(--size-step-number);
+  flex-shrink: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-sunken);
+  color: var(--color-text-muted);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  transition:
+    background-color var(--dur-base) var(--ease-standard),
+    color var(--dur-base) var(--ease-standard);
+}
+
+.link[data-state='current'] {
+  color: var(--color-text);
+  font-weight: var(--weight-semibold);
+}
+
+.link[data-state='current'] .number {
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+}
+
+/* A short underline marks the current step; meaning is also in aria-current and weight. */
+.link[data-state='current']::after {
+  content: '';
+  position: absolute;
+  left: var(--space-3);
+  right: var(--space-3);
+  bottom: 0;
+  height: var(--border-indicator);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+}
+
+.caption {
+  display: none;
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+}
+
+/* Laptop and tablet: steps on their own row under the brand, left aligned. */
+@media (max-width: 64rem) {
+  .list {
+    margin-inline: calc(var(--space-3) * -1);
+  }
+}
+
+/* Phone: numbers only, evenly spread; the current step's name sits below. */
+@media (max-width: 40rem) {
+  .list {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    margin-inline: 0;
+  }
+
+  .link {
+    justify-content: center;
+    width: 100%;
+    padding-inline: 0;
+  }
+
+  .link[data-state='current']::after {
+    left: 30%;
+    right: 30%;
+  }
+
+  .label {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+  }
+
+  .caption {
+    display: block;
+    padding-bottom: var(--space-1);
+  }
+}
