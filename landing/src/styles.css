@@ -152,12 +152,8 @@ a:hover { text-decoration-thickness: 2px; }
 .demo-note { margin-top: var(--s-3); font-size: var(--t-xs); color: var(--ink-3); }
 
 .proof { min-width: 0; }
-/* The screenshot already holds the app's rounded focal panel; the bottom fades so the crop reads as intentional. */
-.proof-frame {
-  margin: -8px; /* the capture has 8px of the app's white page around the panel */
-  -webkit-mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
-  mask-image: linear-gradient(to bottom, #000 72%, transparent 100%);
-}
+/* T36c: the crop shows only the top match's rank, name and overlap label, no counts; no fade, so the label stays readable. */
+.proof-frame { padding: var(--s-4); border-radius: var(--r-l); background: var(--surface); }
 .proof img { width: 100%; }
 .proof figcaption { margin-top: var(--s-4); max-width: 82ch; font-size: var(--t-xs); color: var(--ink-3); }
 
@@ -253,7 +249,7 @@ a:hover { text-decoration-thickness: 2px; }
   .sections { order: 3; flex-basis: 100%; }
   .hero-in { grid-template-columns: 1fr; gap: var(--s-7); }
   .hero-copy { padding-top: 0; }
-  .proof { max-width: 657px; }
+  .proof { max-width: 562px; }
   .how { grid-template-columns: 1fr; gap: var(--s-6); }
   .stats { grid-template-columns: 1fr; gap: var(--s-6); }
   .stat, .stat:first-child { padding: 0; }

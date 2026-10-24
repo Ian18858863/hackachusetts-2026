@@ -7,6 +7,10 @@ import styles from './AppFooter.module.css';
 
 const HPO_URL = 'https://hpo.jax.org';
 
+/** Contract 13 v0.1.7 (T36c): ranking credit when PubCaseFinder ordered the list; licence lines stay in English. */
+const PCF_RANKING =
+  'Ranking: PubCaseFinder (DBCLS, CC BY 4.0) with evidence from the Monarch Initiative and HPO annotations. Monarch tools are not for diagnosis or medical decisions.';
+
 /**
  * Footer with the credits required by contract section 13.
  * The HPO sentence is always shown; other credits appear only when their data
@@ -21,12 +25,16 @@ export function AppFooter() {
   const hpoVersion = meta.hpoVersion ?? 'not loaded yet';
 
   const credits: string[] = [];
-  // Family mode shows no ranking, so no Monarch ranking credit (T30a).
-  if (!isFamily && candidates.some((c) => c.sources.includes('monarch-semsim'))) credits.push(ATTRIBUTION.monarch);
+  const dv = caseObject.lastRanking?.response.dataVersions as { rankingSource?: string } | undefined;
+  const rankedByPcf = dv?.rankingSource === 'pubcasefinder' || candidates.some((c) => c.sources.includes('pubcasefinder'));
+  // Family mode shows no ranking, so no ranking credit (T30a).
+  if (!isFamily && rankedByPcf) credits.push(PCF_RANKING);
+  else if (!isFamily && candidates.some((c) => c.sources.includes('monarch-semsim'))) credits.push(ATTRIBUTION.monarch);
   if (candidates.some((c) => c.sources.includes('orphadata') || c.diseaseId.startsWith('ORPHA:'))) {
     credits.push(ATTRIBUTION.orphanet);
   }
-  if (candidates.some((c) => c.sources.includes('pubcasefinder'))) credits.push(ATTRIBUTION.pubCaseFinder);
+  // Family mode: PubCaseFinder data still shaped the questions, so its licence credit stays.
+  if (isFamily && rankedByPcf) credits.push(ATTRIBUTION.pubCaseFinder);
   if (caseObject.demo) credits.push(ATTRIBUTION.phenopacketStore);
 
   const hpoText = hpoAttribution(hpoVersion);

@@ -1,6 +1,6 @@
 # Interface contract: Rare Disease Detective
 
-> **v0.1.6 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.** v0.1.1 to v0.1.6 are non-breaking (v0.1.1: new primary demo case; v0.1.2: timeouts, overlap counting, next-questions filter, trial relevance and temporary demo fallbacks, as implemented in Ian's functions fallback; v0.1.3: broader-term matches count only through an HP: shared ancestor, `/api/rank` is served by the engine, and `dataVersions.hpo` is the pinned HPO_VERSION; v0.1.4: fallback question ordering under a partial hierarchy check, and demo recordings for demo-npc1, demo-marfan and demo-cdls; v0.1.5: safety text and attribution in the app's family mode; v0.1.6: localized demo provenance label in the app UI and the brief); see the changelog in section 14.
+> **v0.1.7 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.** v0.1.1 to v0.1.7 are non-breaking (v0.1.1: new primary demo case; v0.1.2: timeouts, overlap counting, next-questions filter, trial relevance and temporary demo fallbacks, as implemented in Ian's functions fallback; v0.1.3: broader-term matches count only through an HP: shared ancestor, `/api/rank` is served by the engine, and `dataVersions.hpo` is the pinned HPO_VERSION; v0.1.4: fallback question ordering under a partial hierarchy check, and demo recordings for demo-npc1, demo-marfan and demo-cdls; v0.1.5: safety text and attribution in the app's family mode; v0.1.6: localized demo provenance label in the app UI and the brief; v0.1.7: PubCaseFinder orders the ranking in production with a 12 s bound and Monarch fallback, `dataVersions.rankingSource`, ranking attribution from data); see the changelog in section 14.
 > Contract version string in every response: `"0.1"`. Single file editor: Ian's Kiro (T09).
 > Kiro spec that implements this contract: [`.kiro/specs/rare-disease-detective/`](../.kiro/specs/rare-disease-detective/requirements.md).
 > This file is the source of truth for request and response shapes. If the spec and this file disagree, this file wins and the spec gets fixed.
@@ -135,6 +135,7 @@ export interface DataVersions {
   orphanet?: string;       // Orphadata record date, e.g. "2026-06-23"
   clinicalTrials?: string; // ClinicalTrials.gov data date if exposed
   pubCaseFinder?: string;
+  rankingSource?: "pubcasefinder" | "monarch"; // v0.1.7: which service ordered the list (/api/rank only); absent in older bodies = Monarch
   demoCache?: string;      // date the demo cache was recorded; present only when source = "demo"
   fetchedAt: IsoDateTime;  // when this response's upstream data was fetched (or recorded, for demo)
 }
@@ -458,7 +459,9 @@ Budget 12 s: Monarch semsim 10 s (measured ~4.6 s on 2026-10-24, then 4.9–8 s 
    `matched` still lists every match, exact and ancestor. The `overlapLabel` signature is unchanged; only the count passed in changes. Thresholds are engine constants (open question 8, resolved for v0.1.2). The label never shows as a percentage. The UI headline ("N of M features described") counts exact matches only and shows broader-term matches separately (e.g. "plus N through broader terms").
 9. Order by Monarch `score` descending, ties by `diseaseId` ascending. Take the top `limit`. Assign `rank` 1..n. v0.1 does not re-order by contradictions; the contradiction is shown and lowers the label.
 10. Orphadata cross-check for ORPHA ids: if the name differs, keep the Orphanet preferred name and add `"orphadata"` to `sources`.
-11. PubCaseFinder: off by default in v0.1 (open question 3). If enabled, it runs in parallel with a 6 s timeout, only top 50 rows are kept, and it only adds `pubCaseFinderRank`. Its failure never fails the request.
+11. PubCaseFinder: off by default in v0.1 (open question 3). If enabled, it runs in parallel with a 6 s timeout, only top 50 rows are kept, and it only adds `pubCaseFinderRank`. Its failure never fails the request. Superseded in production by the next paragraph (v0.1.7).
+
+PubCaseFinder ordering (v0.1.7, T36, T36c; switch `RDD_RANK_SOURCE = "pcf"` in `wrangler.toml`, on in production; roll back by removing it): `/api/rank` starts the PubCaseFinder list call (`target=omim`, TSV, first 40 rows, excluded terms not sent) and the Monarch path at the same time. If PubCaseFinder's mappable list arrives within 12 s, PubCaseFinder gives the order; the evidence still comes from HPO annotations (exact matches) and Monarch semsim compare (broader matches, same HP-only and organ-system rules as step 5), so `matched`, `overlap`, frequencies and genes keep their meaning, and `score` is the PubCaseFinder score (raw service score). `sources` includes `"pubcasefinder"` only when it ordered the list. Otherwise (no list within 12 s, error, polite per-colo rate guard, nothing mappable) the Monarch answer is returned in the same request and the PubCaseFinder call may finish in the background to fill its cache. `dataVersions.rankingSource` is `"pubcasefinder"` or `"monarch"`. Cache: PubCaseFinder-ordered answers 24 h; a Monarch answer under the switch 10 min, so a later PubCaseFinder answer replaces it; the effective source is part of the key. `X-RDD-Path` (QA only): `pcf`, `pcf-timeout->engine`, or `pcf->engine` after a PubCaseFinder failure. The app's `/api/rank` client timeout is 20 s.
 
 **Response 200** (shape example; values from the 2026-10-24 checks where noted, others illustrative)
 
@@ -855,7 +858,7 @@ Demo cache contents per case: narrative, prepared extraction, one recorded `/api
 | JAX HPO annotations | `GET https://ontology.jax.org/api/network/annotation/{ORPHA:n or OMIM:n}` (~0.15 s) | 3 s | 24 h by id | HPO; Orphanet-sourced rows CC BY 4.0 |
 | Monarch semsim | `GET https://api.monarchinitiative.org/v3/api/semsim/search/{ids}/Human%20Diseases?limit=N` (~4.6 s; 4.9–8 s for demo-npc1) | 10 s (inside the 12 s `/api/rank` budget, section 7.4) | 24 h by sorted ids + limit | Monarch; "not for diagnosis or medical decisions" |
 | Orphadata | `GET https://api.orphadata.com/rd-cross-referencing/orphacodes/{n}?lang=en` | 2 s | 7 days by code | CC BY 4.0 |
-| PubCaseFinder | `GET https://pubcasefinder.dbcls.jp/api/pcf_get_ranked_list?target=omim&format=json&hpo_id=` (~10 s, ~11 MB) | 6 s, optional | 24 h, top 50 rows only | CC BY 4.0 |
+| PubCaseFinder | `GET https://pubcasefinder.dbcls.jp/api/pcf_get_ranked_list?target=omim&format=tsv&hpo_id=` (first byte ~9-11 s cold; first 40 rows read) | v0.1.7: 12 s wait for the list inside `/api/rank`, call itself 20 s (may finish in the background); polite per-colo limit 8/min, 90/h | 24 h list by sorted observed ids | CC BY 4.0 |
 | ClinicalTrials.gov v2 | `GET https://clinicaltrials.gov/api/v2/studies?...` | 6 s | 6 h by condition | US government work |
 | Workers AI (binding `AI`, model `LLM_MODEL`) | `env.AI.run` from `functions/api/extract.ts` only | 15 s | none | Ian's Cloudflare account; no key needed |
 
@@ -908,6 +911,7 @@ Use these strings verbatim (engine constants in `engine/text.ts`, Jerry; the app
 | When Orphanet data appear | `Orphanet data, CC BY 4.0 (orpha.net, orphadata.com).` |
 | When trials appear | `Trial data from ClinicalTrials.gov, U.S. National Library of Medicine.` |
 | When PubCaseFinder appears | `PubCaseFinder (DBCLS), CC BY 4.0.` |
+| When PubCaseFinder ordered the ranking (`dataVersions.rankingSource = "pubcasefinder"`, v0.1.7), instead of the Monarch line and the line above | `Ranking: PubCaseFinder (DBCLS, CC BY 4.0) with evidence from the Monarch Initiative and HPO annotations. Monarch tools are not for diagnosis or medical decisions.` |
 | Demo data anywhere | `Demo case (synthetic narrative from phenopacket-store <id>)` and `phenopacket-store, BSD-3-Clause.` |
 
 - No OMIM API; OMIM appears only as ids and outbound links.
@@ -949,6 +953,9 @@ Changelog:
 
 - 0.1.6 (2026-10-24, draft; Ian's Kiro for Ian; approved by the coordinator on Ian's authority, 16:52 ET):
   - `[CONTRACT CHANGE] §13 the demo provenance label may be localized in the app UI and the brief (chip text, its tooltip, the brief's one demo line) in all 6 locales; the phenopacket-store id stays verbatim and untranslated; the phenopacket JSON keeps the English verbatim label (machine format); English unchanged; breaking no`.
+
+- 0.1.7 (2026-10-24, draft; Ian's Kiro for Ian; approved by the coordinator on Ian's authority, 18:06 ET):
+  - `[CONTRACT CHANGE] §7.4/§10/§13 PubCaseFinder orders /api/rank in production (RDD_RANK_SOURCE = "pcf"), started in parallel with the Monarch path and used only if its list arrives within 12 s, else the Monarch answer in the same request; additive dataVersions.rankingSource ("pubcasefinder" | "monarch"); footer and brief credit the service that ordered the list from that field, keeping the Monarch "not for diagnosis" caveat; Monarch answers under the switch cached 10 min, PubCaseFinder answers 24 h; app /api/rank client timeout 20 s; breaking no`.
 
 ## 15. Open questions
 

@@ -135,9 +135,9 @@ function Hero() {
         <figure className="proof">
           <div className="proof-frame">
             <img
-              src="/proof-matches-demo-npc1.webp"
-              width={657}
-              height={600}
+              src="/proof-top-match-demo-npc1.webp"
+              width={562}
+              height={107}
               alt={t('proofAlt')}
               decoding="async"
               fetchPriority="high"

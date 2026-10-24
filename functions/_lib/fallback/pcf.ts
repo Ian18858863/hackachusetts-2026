@@ -128,19 +128,30 @@ interface PcfList {
 interface Budget {
   fetches: number;
   cacheOps: number;
+  /** Subrequests the rest of the invocation has used (T36c: the parallel Monarch path). */
+  external: () => number;
+}
+
+/** T36c: PCF and the Monarch path run in the same invocation; together they stay under the 50-subrequest limit. */
+const INVOCATION_CAP = 48;
+
+function totalUsed(budget: Budget): number {
+  return budget.fetches + budget.cacheOps + budget.external();
 }
 
 function meteredFetch(deps: FallbackDeps, budget: Budget): FallbackDeps["fetch"] {
   const inner = deps.fetch;
   return (input, init) => {
-    if (budget.fetches >= FETCH_CAP) return Promise.reject(new TypeError("subrequest budget spent"));
+    if (budget.fetches >= FETCH_CAP || totalUsed(budget) >= INVOCATION_CAP) {
+      return Promise.reject(new TypeError("subrequest budget spent"));
+    }
     budget.fetches++;
     return inner(input, init);
   };
 }
 
 function takeCacheOp(budget: Budget): boolean {
-  if (budget.cacheOps >= CACHE_OP_CAP) return false;
+  if (budget.cacheOps >= CACHE_OP_CAP || totalUsed(budget) >= INVOCATION_CAP) return false;
   budget.cacheOps++;
   return true;
 }
@@ -196,7 +207,7 @@ function parseTsvLine(line: string, header: string[]): PcfRow | null {
 }
 
 /** First PCF_MAX_ROWS rows of the TSV stream; the rest of the body is cancelled. */
-async function fetchPcfRows(observed: readonly HpoId[], deps: FallbackDeps): Promise<PcfRow[]> {
+async function fetchPcfRows(observed: readonly HpoId[], deps: FallbackDeps, timeoutMs: number): Promise<PcfRow[]> {
   const url = `${PCF_URL}?target=omim&format=tsv&hpo_id=${observed.join(",")}`;
   const doFetch = deps.fetch;
   let res: Response;
@@ -204,7 +215,7 @@ async function fetchPcfRows(observed: readonly HpoId[], deps: FallbackDeps): Pro
     res = await doFetch(url, {
       method: "GET",
       headers: { Accept: "text/tab-separated-values, text/plain" },
-      signal: AbortSignal.timeout(PCF_TIMEOUT_MS),
+      signal: AbortSignal.timeout(timeoutMs),
     });
   } catch (err) {
     if (err instanceof Error && (err.name === "TimeoutError" || err.name === "AbortError")) {
@@ -255,7 +266,7 @@ async function fetchPcfRows(observed: readonly HpoId[], deps: FallbackDeps): Pro
   return rows;
 }
 
-async function pcfList(req: NormalizedRankRequest, deps: FallbackDeps, budget: Budget): Promise<PcfList> {
+async function pcfList(req: NormalizedRankRequest, deps: FallbackDeps, budget: Budget, timeoutMs: number): Promise<PcfList> {
   const key = cacheKey("pcf-list", req.observed.join(","));
   if (deps.cache && takeCacheOp(budget)) {
     const hit = await cacheGetJson<PcfList>(deps.cache, key);
@@ -263,7 +274,7 @@ async function pcfList(req: NormalizedRankRequest, deps: FallbackDeps, budget: B
   }
   const now = deps.now ?? (() => new Date());
   if (!(await rateGuard(deps, budget, now().getTime()))) throw new PcfUnavailable("rate guard");
-  const rows = await fetchPcfRows(req.observed, upstreamDeps(deps, budget));
+  const rows = await fetchPcfRows(req.observed, upstreamDeps(deps, budget), timeoutMs);
   if (rows.length === 0) throw new PcfUnavailable("empty list");
   const list: PcfList = { rows, fetchedAt: now().toISOString() };
   if (takeCacheOp(budget)) cachePutJson(deps, key, list, PCF_LIST_TTL_S);
@@ -398,10 +409,20 @@ export interface PcfRankResult extends FallbackRankResult {
  * Rank with PubCaseFinder ordering. Throws (UpstreamTimeout, UpstreamError,
  * PcfUnavailable) when PCF cannot be used; the handler then runs the Monarch path.
  */
-export async function pcfRank(req: NormalizedRankRequest, deps: FallbackDeps): Promise<PcfRankResult> {
-  const budget: Budget = { fetches: 0, cacheOps: 0 };
+export interface PcfRankOptions {
+  /** Called once the mappable PCF list is in hand (cache hit or live), before evidence is built. */
+  onList?: () => void;
+  /** Subrequests used elsewhere in this invocation (T36c parallel Monarch path). */
+  external?: () => number;
+  /** Timeout of the PCF list call itself; default PCF_TIMEOUT_MS. */
+  listTimeoutMs?: number;
+}
+
+export async function pcfRank(req: NormalizedRankRequest, deps: FallbackDeps, opts: PcfRankOptions = {}): Promise<PcfRankResult> {
+  const budget: Budget = { fetches: 0, cacheOps: 0, external: opts.external ?? (() => 0) };
   const now = deps.now ?? (() => new Date());
-  const list = await pcfList(req, deps, budget);
+  const list = await pcfList(req, deps, budget, opts.listTimeoutMs ?? PCF_TIMEOUT_MS);
+  opts.onList?.();
 
   // Resolve rows in order, one batch of `limit`, plus one more batch if merging left gaps.
   const chosen = new Map<DiseaseId, Resolved>();
@@ -461,7 +482,8 @@ export async function pcfRank(req: NormalizedRankRequest, deps: FallbackDeps): P
 
   const fetchedAt = now().toISOString();
   const pcfDate = list.fetchedAt.slice(0, 10);
-  const dataVersions: DataVersions = { hpo: HPO_VERSION, monarch: "v3 API", pubCaseFinder: pcfDate, fetchedAt };
+  // rankingSource (T36c, additive): which service ordered this list; the footer and brief credit it.
+  const dataVersions = { hpo: HPO_VERSION, monarch: "v3 API", pubCaseFinder: pcfDate, fetchedAt, rankingSource: "pubcasefinder" } as DataVersions;
   const body: RankResponse = { version: "0.1", source: "live", candidates, dataVersions };
   return { body, complete: candidates.every((c) => c.evidenceComplete === true), pcfDate };
 }

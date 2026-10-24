@@ -35,8 +35,8 @@ export default defineMessages(
     familyCta: 'For families: prepare notes for your doctor',
     demoNote: 'Opens a synthetic demo case with no sign-up. Not a real patient.',
     proofAlt:
-      "Screenshot of the app's Possible matches step for a demo case, not a real patient. Rank 1 of 5 possible matches is Niemann-Pick disease, type C1, with strong overlap: 6 of 12 present features described, plus 6 through broader terms. Each feature is listed in plain words with its HPO term and how often it occurs in the condition, for example Frequency not listed.",
-    proofCaption: 'The live app on the demo case, rank 1 of 5 possible matches, captured on 2026-10-24.',
+      "Screenshot of the app's Possible matches step for a demo case, not a real patient. The top possible match is Niemann-Pick disease, type C1, with Strong overlap.",
+    proofCaption: 'The live app on the demo case, the top possible match, captured on 2026-10-24.',
 
     problemTitle: 'Rare diseases take years to name',
     problemDek:
@@ -121,8 +121,8 @@ export default defineMessages(
       familyCta: '家庭使用：为医生整理症状描述',
       demoNote: '打开一个合成的演示病例，无需注册。并非真实患者。',
       proofAlt:
-        '应用“可能匹配”步骤的截图，使用的是演示病例，并非真实患者。5 个可能匹配中排名第 1 的是 Niemann-Pick disease, type C1，重叠程度为 strong：已描述的 12 个存在特征中 6 个直接匹配，另有 6 个通过更宽泛的术语匹配。每个特征都以通俗语言列出，并附有其 HPO 术语以及它在该疾病中的出现频率，例如 Frequency not listed。',
-      proofCaption: '实时应用中的演示病例：5 个可能匹配中的第 1 名，截取于 2026-10-24。',
+        '应用“可能匹配”步骤的截图，使用的是演示病例，并非真实患者。排名第一的可能匹配是 Niemann-Pick disease, type C1，重叠程度为 Strong overlap。',
+      proofCaption: '实时应用中的演示病例：排名第一的可能匹配，截取于 2026-10-24。',
 
       problemTitle: '罕见病往往要很多年才能确诊',
       problemDek: '家庭和非专科临床医生掌握的线索是日常语言，而罕见病工具需要的是本体术语。',
@@ -202,8 +202,8 @@ export default defineMessages(
       familyCta: 'ご家族の方へ：医師に渡す記録を準備する',
       demoNote: '登録不要で、合成のデモ症例が開きます。実在の患者ではありません。',
       proofAlt:
-        'アプリの「一致候補」ステップのスクリーンショット。デモ症例で、実在の患者ではありません。5 件の一致候補のうち 1 位は Niemann-Pick disease, type C1 で、重なりは strong です。記載された 12 個の特徴のうち 6 個が一致し、さらに 6 個がより広い用語を通じて一致しています。各特徴は平易な言葉で、HPO 用語とその疾患での頻度（例：Frequency not listed）とともに表示されています。',
-      proofCaption: 'デモ症例を表示した実際のアプリ。5 件の一致候補のうち 1 位。2026-10-24 に撮影。',
+        'アプリの「一致候補」ステップのスクリーンショット。デモ症例で、実在の患者ではありません。最上位の一致候補は Niemann-Pick disease, type C1 で、重なりは Strong overlap です。',
+      proofCaption: 'デモ症例を表示した実際のアプリ。最上位の一致候補。2026-10-24 に撮影。',
 
       problemTitle: '希少疾患は診断がつくまでに何年もかかります',
       problemDek:
@@ -286,8 +286,8 @@ export default defineMessages(
       familyCta: 'Para familias: prepare notas para su médico',
       demoNote: 'Abre un caso de demostración sintético, sin registro. No es un paciente real.',
       proofAlt:
-        'Captura de pantalla del paso Possible matches (posibles coincidencias) de la aplicación con un caso de demostración, no un paciente real. La coincidencia 1 de 5 es Niemann-Pick disease, type C1, con solapamiento strong (fuerte): 6 de 12 rasgos presentes descritos, más 6 a través de términos más amplios. Cada rasgo aparece en palabras sencillas con su término HPO y con qué frecuencia se presenta en la enfermedad, por ejemplo Frequency not listed.',
-      proofCaption: 'La aplicación en vivo con el caso de demostración, coincidencia 1 de 5, capturada el 2026-10-24.',
+        'Captura de pantalla del paso Possible matches (posibles coincidencias) de la aplicación con un caso de demostración, no un paciente real. La primera coincidencia posible es Niemann-Pick disease, type C1, con Strong overlap (solapamiento fuerte).',
+      proofCaption: 'La aplicación en vivo con el caso de demostración, la primera coincidencia posible, capturada el 2026-10-24.',
 
       problemTitle: 'Las enfermedades raras tardan años en tener nombre',
       problemDek:
@@ -372,8 +372,8 @@ export default defineMessages(
       familyCta: '가족용: 의사에게 전할 기록 준비하기',
       demoNote: '가입 없이 합성 데모 사례가 열립니다. 실제 환자가 아닙니다.',
       proofAlt:
-        '데모 사례로 본 앱의 가능한 일치 단계 화면입니다. 실제 환자가 아닙니다. 가능한 일치 5개 중 1위는 Niemann-Pick disease, type C1이며 겹침 정도는 strong입니다. 기술된 특징 12개 중 6개가 일치하고, 6개는 더 넓은 용어를 통해 일치합니다. 각 특징은 쉬운 말로, HPO 용어 및 해당 질환에서 나타나는 빈도(예: Frequency not listed)와 함께 표시됩니다.',
-      proofCaption: '데모 사례를 띄운 실제 앱, 가능한 일치 5개 중 1위, 2026-10-24 캡처.',
+        '데모 사례로 본 앱의 가능한 일치 단계 화면입니다. 실제 환자가 아닙니다. 가장 위의 가능한 일치는 Niemann-Pick disease, type C1이며 겹침 정도는 Strong overlap입니다.',
+      proofCaption: '데모 사례를 띄운 실제 앱, 가장 위의 가능한 일치, 2026-10-24 캡처.',
 
       problemTitle: '희귀질환은 이름을 찾기까지 몇 년이 걸립니다',
       problemDek: '가족과 비전문 임상의는 단서를 일상 언어로 갖고 있습니다. 희귀질환 도구는 온톨로지 용어를 요구합니다.',
@@ -455,8 +455,8 @@ export default defineMessages(
       familyCta: 'Pour les familles : préparer des notes pour votre médecin',
       demoNote: 'Ouvre un cas de démonstration synthétique, sans inscription. Ce n’est pas un vrai patient.',
       proofAlt:
-        'Capture d’écran de l’étape Possible matches (correspondances possibles) de l’application, sur un cas de démonstration, pas un vrai patient. La correspondance 1 sur 5 est Niemann-Pick disease, type C1, avec un recoupement strong (fort) : 6 des 12 caractéristiques présentes décrites, plus 6 par des termes plus larges. Chaque caractéristique est indiquée en mots simples avec son terme HPO et sa fréquence dans la maladie, par exemple Frequency not listed.',
-      proofCaption: 'L’application en direct sur le cas de démonstration, correspondance 1 sur 5, capturée le 2026-10-24.',
+        'Capture d’écran de l’étape Possible matches (correspondances possibles) de l’application, sur un cas de démonstration, pas un vrai patient. La première correspondance possible est Niemann-Pick disease, type C1, avec Strong overlap (recoupement fort).',
+      proofCaption: 'L’application en direct sur le cas de démonstration, la première correspondance possible, capturée le 2026-10-24.',
 
       problemTitle: 'Il faut des années pour nommer une maladie rare',
       problemDek:

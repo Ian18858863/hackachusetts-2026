@@ -43,7 +43,7 @@ Cloudflare Pages Functions: functions/api/*.ts
    ├── /api/extract   Workers AI (@cf/meta/llama-3.3-70b-instruct-fp8-fast) proposes phrases and labels,
    │                  then the engine grounds every term against the JAX HPO API
    ├── /api/terms     HPO term search for manual add
-   ├── /api/rank      Monarch semantic similarity ranks; HPO annotations add frequencies, genes and categories
+   ├── /api/rank      PubCaseFinder orders (12 s bound, else Monarch semantic similarity); HPO annotations and Monarch add the evidence
    ├── /api/next-questions  frequency spread across the top candidates, with an HPO hierarchy filter
    ├── /api/trials    ClinicalTrials.gov v2, recruiting studies only, filtered for condition relevance
    └── /api/brief     brief + phenopacket, pure functions, no network
@@ -54,6 +54,7 @@ engine/: Workers-compatible TypeScript domain logic (fetch only, injected for te
 
 - `/api/extract` and `/api/terms` use the engine's `groundTerms` and `searchTerms`. On the live path, `/api/extract` reduces the model's labels to plain ASCII before grounding (a curly apostrophe in "Gowers’ sign" made the JAX search answer 400 and the whole extraction fail with 502). Phrases the engine drops are retried through HPO synonyms and the model's alternative labels; a term found through an alternative label gets lower confidence and a "please check it" warning (T37, `87a605a`, `8603c0b`). Live extraction is limited per client IP to 10 requests per minute and 60 per hour (approximate counters in the Workers Cache API; 429 `RATE_LIMITED` with `Retry-After`). The demo cases are never limited (T18p, `a645016`, `c499387`).
 - `/api/rank` runs on Jerry's engine (`rankCandidatesWithReport`) since T18k (`820e7ff`), after a parity check against Ian's fallback on `demo-npc1` and `demo-dmd`. The engine now includes R6.1 (`6788d66`). On this path Monarch gets 20 s inside a 25 s budget, and each candidate carries `evidenceComplete`, false when an annotation call for that candidate failed (T32a, `29e22a7`). When `evidenceComplete` is false and a frequency is missing, the app says "Could not be loaded" instead of "not listed" (T34, `c6f3743`). The field and the new timeouts are not yet in the contract. A second parity check on all five demo cases (T18n-2) gave the same top 5 on both paths.
+- Since T36c, `RDD_RANK_SOURCE = "pcf"` in `wrangler.toml` makes PubCaseFinder (DBCLS) the primary ranking source. `/api/rank` starts the PubCaseFinder call and the Monarch path above at the same time. If PubCaseFinder's list arrives within 12 s, it gives the order; otherwise the Monarch answer is returned in the same request and the PubCaseFinder call finishes in the background to fill its 24 h cache. The evidence on each card (exact matches, broader matches, frequencies, genes) still comes from HPO annotations and Monarch. `dataVersions.rankingSource` says which service ordered the list, and the footer and the brief credit that service. A Monarch answer given under the switch is cached only 10 minutes, so a later PubCaseFinder answer replaces it. The app waits up to 20 s for `/api/rank`. Roll back by removing the line and redeploying (contract §7.4, v0.1.7).
 - `/api/next-questions` runs on Ian's fallback in `functions/_lib/fallback/`. Jerry's engine `nextQuestions` exists (`eaf9c0d`, `6788d66`), but in T18n-2 its "why" lines named the diseases differently from the ranking (JAX or MONDO names instead of the names on the match cards), so the endpoint did not switch. The fallback applies the HPO hierarchy filter inside a 5 s budget and at most 40 subrequests (T18o, contract §7.5 v0.1.4).
 - `/api/trials` and `/api/brief` run on the fallback, because the engine's `searchTrials` and `buildBrief` are placeholders.
 
@@ -73,7 +74,9 @@ Request and response shapes, timeouts and error codes: [docs/CONTRACT.md](docs/C
 
 On 10 published cases selected by a fixed rule, the correct condition ranked first in 5 and in the top 3 in 6 (our own small evaluation).
 
-We also pre-registered a frequency-aware re-rank (method written at 12:57 ET before any result was computed). It did not improve recall (top-1 5 → 4, top-3 6 → 6 over 14 cases), so it is not shipped and `/api/rank` keeps Monarch's order. Method, both runs (including one invalidated by a benchmark bug) and per-case results: [docs/research/ranking-benchmark.md](docs/research/ranking-benchmark.md).
+We also pre-registered a frequency-aware re-rank (method written at 12:57 ET before any result was computed). It did not improve recall (top-1 5 → 4, top-3 6 → 6 over 14 cases), so it is not shipped. Method, both runs (including one invalidated by a benchmark bug) and per-case results: [docs/research/ranking-benchmark.md](docs/research/ranking-benchmark.md).
+
+**Why PubCaseFinder orders the list (T36c).** On 20 held-out published cases that two teammates picked (10 each) after the 14-case runs, top-1 / top-3 / top-10 was 6 / 8 / 9 with Monarch and 7 / 10 / 11 with PubCaseFinder. Through our own `/api/rank` with PubCaseFinder ordering, the 14 benchmark cases scored 9 / 10 / 11 of 14. The samples are small, and PubCaseFinder, like the HPO annotations, may already include these published cases, so the gain may be smaller on new patients.
 
 Limitations:
 
@@ -83,7 +86,7 @@ Limitations:
 - Among the demo cases, only `demo-npc1` shows its source condition first. In the benchmark run of 2026-10-24 13:04 ET, Monarch ranks Duchenne muscular dystrophy #40 for `demo-dmd`, and the Marfan, Kabuki and Cornelia de Lange sources fall outside its top 50. We kept these cases to show the tool's limits honestly. `demo-npc1` became the primary case because of this benchmark, and its source phenopacket is one of the 10 cases.
 - The 50-case benchmark planned in contract §12 is not complete: in Jerry's held-out run (below), PubCaseFinder answered only 10 of the 50 cases.
 
-We also tried PubCaseFinder (DBCLS) as the ranking source, behind a switch that is off in production (`RDD_RANK_SOURCE`, T36). On the same 14 cases through our `/api/rank` it ranked the correct condition first in 9 and in the top 3 in 10 (Monarch: 5 and 6), but most of that gain was on the four demo cases, which were picked because Monarch misses them. In Jerry's pre-registered held-out run, PubCaseFinder hit its rate limit after 10 cases; on those 10, top-1/top-3/top-10 were Monarch 3/5/6, PubCaseFinder 3/5/5 and a fusion of both 2/4/9. With no held-out gain, production stays on Monarch. PubCaseFinder is partly built from published case reports, so its numbers on published cases are likely optimistic. Details: [docs/research/pcf-ranking.md](docs/research/pcf-ranking.md).
+We also tried PubCaseFinder (DBCLS) as the ranking source, behind the `RDD_RANK_SOURCE` switch (T36). On the same 14 cases through our `/api/rank` it ranked the correct condition first in 9 and in the top 3 in 10 (Monarch: 5 and 6), but most of that gain was on the four demo cases, which were picked because Monarch misses them. In Jerry's pre-registered held-out run, PubCaseFinder hit its rate limit after 10 cases; on those 10, top-1/top-3/top-10 were Monarch 3/5/6, PubCaseFinder 3/5/5 and a fusion of both 2/4/9. With no held-out gain in that run, production first stayed on Monarch; the later 20-case held-out run described above (T36c) made PubCaseFinder the primary source. PubCaseFinder is partly built from published case reports, so its numbers on published cases are likely optimistic. Details: [docs/research/pcf-ranking.md](docs/research/pcf-ranking.md).
 
 ## Safety
 
@@ -138,8 +141,8 @@ The landing page (`landing/`) was started by Peter's Kiro (v1/v2 and its spec, i
 ## Data sources and attribution
 
 - **Human Phenotype Ontology** (https://hpo.jax.org), through the JAX ontology API: term search, term lookup and disease annotations. The app footer and the brief show "This product uses the Human Phenotype Ontology (version <hpo>). Find out more at https://hpo.jax.org", with HPO release 2026-09-01, the release the engine pins (`engine/hpo.ts`).
-- **Monarch Initiative** semantic similarity service (monarchinitiative.org) for ranking. Monarch tools are not for diagnosis or medical decisions.
-- **PubCaseFinder** (DBCLS), CC BY 4.0 (pubcasefinder.dbcls.jp), as an optional ranking source behind `RDD_RANK_SOURCE = "pcf"`, off by default. When it orders the results, the footer shows "PubCaseFinder (DBCLS), CC BY 4.0."
+- **Monarch Initiative** semantic similarity service (monarchinitiative.org) for broader-term evidence and as the fallback ranking. Monarch tools are not for diagnosis or medical decisions.
+- **PubCaseFinder** (DBCLS), CC BY 4.0 (pubcasefinder.dbcls.jp), the primary ranking source since T36c (`RDD_RANK_SOURCE = "pcf"`), with Monarch as the fallback when it does not answer within 12 s. When it ordered the results, the footer and the brief show "Ranking: PubCaseFinder (DBCLS, CC BY 4.0) with evidence from the Monarch Initiative and HPO annotations. Monarch tools are not for diagnosis or medical decisions."
 - **Orphanet** data, CC BY 4.0 (orpha.net, orphadata.com), through Orphanet-sourced HPO annotations.
 - **ClinicalTrials.gov**, U.S. National Library of Medicine, for recruiting studies.
 - **phenopacket-store** (Monarch Initiative), BSD-3-Clause, as the source of the synthetic demo cases and the benchmark cases.

@@ -22,24 +22,29 @@
 //      when an HPO annotation call for that candidate failed, was unusable or
 //      ran out of budget, so `frequency: null` means "could not be read", not
 //      "not listed". Recorded demo responses have no field (absent = unknown).
-//   6. RDD_RANK_SOURCE = "pcf" (T36, off unless set): PubCaseFinder gives the
-//      order and HPO annotations plus Monarch semsim compare give the evidence
-//      (_lib/fallback/pcf.ts). X-RDD-Path "pcf". If PubCaseFinder fails, times
-//      out, is rate-guarded or maps to nothing, steps 3-4 run in the same
-//      request (X-RDD-Path "pcf->engine" or "pcf->fallback"; ASCII because
-//      header values must be) and that answer is not cached. The cache key
-//      starts with "pcf:" only when the switch is on, so with the switch unset
-//      the key, the path and the body are exactly as before.
+//   6. RDD_RANK_SOURCE = "pcf" (T36, T36c): PubCaseFinder and the Monarch
+//      path (steps 3-4) start at the same time. If PCF's mappable list arrives
+//      within 12 s, PCF gives the order and HPO annotations plus Monarch
+//      semsim compare give the evidence (_lib/fallback/pcf.ts; X-RDD-Path
+//      "pcf"; cached 24 h under "pcf:"). Otherwise the Monarch answer is
+//      returned in the same request (X-RDD-Path "pcf-timeout->engine" after
+//      12 s, "pcf->engine" when PCF failed, was rate-guarded or mapped to
+//      nothing; ASCII because header values must be), cached only 10 min
+//      under "pcfmon:", and the PCF call keeps running in the background so
+//      its list is cached for the next request.
+//   7. dataVersions.rankingSource (T36c, additive): "pubcasefinder" or
+//      "monarch", whichever ordered the list. The footer and the brief credit
+//      it. Older cached bodies have no field (read as Monarch).
 
 import { ENGINE_STATUS, demoRankKey, getDemoRanking, rankCandidatesWithReport } from "../../engine/index";
-import type { RankResponse } from "../../engine/index";
+import type { DataVersions, RankResponse } from "../../engine/index";
 import { engineFirst, enginePathMode, PATH_HEADER } from "../_lib/fallback/engineFirst";
 import { getFallbackDemoRanking } from "../_lib/fallback/demoRecorded";
 import { cacheGetJson, cacheKey, cachePutJson } from "../_lib/fallback/http";
 import type { FallbackDeps } from "../_lib/fallback/http";
 import { pcfEnabled, pcfRank } from "../_lib/fallback/pcf";
 import { fallbackRank } from "../_lib/fallback/rank";
-import type { RankedCandidate } from "../_lib/fallback/rank";
+import type { NormalizedRankRequest, RankedCandidate } from "../_lib/fallback/rank";
 import { hpoIdList, intInRange, overlapId } from "../_lib/fallback/validate";
 import {
   CONTRACT_VERSION,
@@ -62,9 +67,13 @@ const RANK_TTL_S = 24 * 60 * 60;
 const KEPT = "Your terms are kept";
 const ENGINE_MONARCH_TIMEOUT_MS = 20000;
 const ENGINE_RANK_BUDGET_MS = 25000;
+/** T36c: longest wait for PubCaseFinder's list before the Monarch answer is used. */
+const PCF_WAIT_MS = 12000;
+/** T36c: a Monarch answer given under the pcf switch is cached this long (s), so a PCF list can replace it. */
+const PCF_MONARCH_TTL_S = 10 * 60;
 
 interface CachedRank {
-  path: "engine" | "fallback" | "pcf";
+  path: string;
   body: RankResponse;
 }
 
@@ -99,10 +108,12 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
   const req = { observed: observed.value, excluded: excluded.value, limit: limit.value };
   const mode = enginePathMode(context.env, "rank");
   const usePcf = pcfEnabled(context.env);
-  const key = cacheKey(
-    "rank",
-    `${usePcf ? "pcf:" : ""}${mode}:${ENGINE_STATUS.rankCandidates}|${req.observed.join(",")}|${req.excluded.join(",")}|${req.limit}`,
-  );
+  const ids = `${mode}:${ENGINE_STATUS.rankCandidates}|${req.observed.join(",")}|${req.excluded.join(",")}|${req.limit}`;
+  // The effective ranking source is part of the key (T36c): "pcf:" for a
+  // PubCaseFinder-ordered list, "pcfmon:" for a Monarch answer given under
+  // the pcf switch, plain for the Monarch path with the switch off.
+  const key = cacheKey("rank", usePcf ? `pcf:${ids}` : ids);
+  const monKey = cacheKey("rank", `pcfmon:${ids}`);
 
   const deps: FallbackDeps = { fetch: globalThis.fetch.bind(globalThis), waitUntil: (p) => context.waitUntil(p) };
   const cache = defaultCache();
@@ -110,26 +121,84 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
 
   const cached = await cacheGetJson<CachedRank>(cache, key);
   if (cached) return json(cached.body, 200, { [PATH_HEADER]: cached.path, "X-RDD-Cache": "hit" });
-
-  // T36: PubCaseFinder ordering, only when RDD_RANK_SOURCE = "pcf".
-  let pathPrefix = "";
   if (usePcf) {
-    try {
-      const pcf = await pcfRank(req, deps);
-      const out: RankResponse = { ...pcf.body, version: CONTRACT_VERSION };
-      if (pcf.complete) cachePutJson(deps, key, { path: "pcf", body: out } satisfies CachedRank, RANK_TTL_S);
+    const mon = await cacheGetJson<CachedRank>(cache, monKey);
+    if (mon) return json(mon.body, 200, { [PATH_HEADER]: mon.path, "X-RDD-Cache": "hit" });
+  }
+
+  if (!usePcf) {
+    const result = await monarchPath(mode, req, deps);
+    return monarchResponse(result, req, "", (out, complete) => {
+      if (out.source === "live" && complete) cachePutJson(deps, key, { path: result.path, body: out } satisfies CachedRank, RANK_TTL_S);
+    });
+  }
+
+  // T36c: PubCaseFinder and the Monarch path start together. PCF orders the
+  // list only if its mappable list arrives within PCF_WAIT_MS; otherwise the
+  // Monarch answer is used and the PCF call keeps running in the background
+  // (waitUntil) so a later request finds its list in the cache.
+  let monarchUsed = 0;
+  const monarchDeps: FallbackDeps = {
+    ...deps,
+    fetch: (input, init) => {
+      monarchUsed++;
+      return deps.fetch(input, init);
+    },
+  };
+  const monarchP = monarchPath(mode, req, monarchDeps);
+  let listArrived!: () => void;
+  const listP = new Promise<"list">((resolve) => {
+    listArrived = () => resolve("list");
+  });
+  const pcfP = pcfRank(req, deps, { onList: () => listArrived(), external: () => monarchUsed + 2 });
+  const pcfSettled = pcfP.then(
+    (value) => ({ ok: true as const, value }),
+    (error: unknown) => ({ ok: false as const, error }),
+  );
+  const pcfCacheWrite = pcfSettled.then((r) => {
+    if (r.ok && r.value.complete) {
+      cachePutJson(deps, key, { path: "pcf", body: { ...r.value.body, version: CONTRACT_VERSION } } satisfies CachedRank, RANK_TTL_S);
+    }
+    return r;
+  });
+
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const wait = new Promise<"timeout">((resolve) => {
+    timer = setTimeout(() => resolve("timeout"), PCF_WAIT_MS);
+  });
+  const first = await Promise.race([listP, pcfSettled.then(() => "settled" as const), wait]);
+  if (timer !== undefined) clearTimeout(timer);
+
+  let prefix = "pcf->";
+  if (first !== "timeout") {
+    const r = await pcfCacheWrite;
+    if (r.ok) {
+      // Let the Monarch path finish in the background; its answer is not used.
+      context.waitUntil(monarchP.then(() => undefined, () => undefined));
+      const out: RankResponse = { ...r.value.body, version: CONTRACT_VERSION };
       return json(out, 200, {
         [PATH_HEADER]: "pcf",
         "X-RDD-Cache": "miss",
-        "X-RDD-Enrichment": pcf.complete ? "complete" : "incomplete",
+        "X-RDD-Enrichment": r.value.complete ? "complete" : "incomplete",
       });
-    } catch (err) {
-      logError("rank.pcf", err, "monarch-fallback");
-      pathPrefix = "pcf->";
     }
+    logError("rank.pcf", r.error, "monarch-fallback");
+  } else {
+    prefix = "pcf-timeout->";
+    context.waitUntil(pcfCacheWrite.then(() => undefined));
   }
 
-  const result = await engineFirst(
+  const result = await monarchP;
+  return monarchResponse(result, req, prefix, (out, complete) => {
+    // A Monarch answer under the pcf switch is cached briefly so a PCF list can replace it.
+    if (out.source === "live" && complete) cachePutJson(deps, monKey, { path: prefix + result.path, body: out } satisfies CachedRank, PCF_MONARCH_TTL_S);
+  });
+}
+
+type MonarchResult = Awaited<ReturnType<typeof monarchPath>>;
+
+function monarchPath(mode: ReturnType<typeof enginePathMode>, req: NormalizedRankRequest, deps: FallbackDeps) {
+  return engineFirst(
     mode,
     // The engine reports whether any annotation or Orphadata call lost data
     // (enrichment.complete). Incomplete evidence is served as is, never cached.
@@ -155,7 +224,14 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
     },
     () => fallbackRank(req, deps),
   );
+}
 
+function monarchResponse(
+  result: MonarchResult,
+  req: NormalizedRankRequest,
+  pathPrefix: string,
+  store: (out: RankResponse, complete: boolean) => void,
+): Response {
   if (!result.ok) {
     if (isUpstreamFailure(result.error)) {
       // Engine demo cache first; the T18e recorded demo-npc1 entry only while the engine has none.
@@ -171,10 +247,12 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
     return withHeader(engineErrorResponse(result.error, KEPT), PATH_HEADER, pathPrefix + result.path);
   }
 
-  const out: RankResponse = { ...result.value.body, version: CONTRACT_VERSION };
+  const body = result.value.body;
+  // rankingSource (T36c, additive): Monarch ordered this list.
+  const dataVersions = { ...body.dataVersions, rankingSource: "monarch" } as DataVersions;
+  const out: RankResponse = { ...body, dataVersions, version: CONTRACT_VERSION };
   const complete = result.value.complete;
-  // After a PubCaseFinder failure the Monarch answer is not cached under the pcf key.
-  if (out.source === "live" && complete && !pathPrefix) cachePutJson(deps, key, { path: result.path, body: out } satisfies CachedRank, RANK_TTL_S);
+  store(out, complete);
   // json() always sends Cache-Control: no-store, so an incomplete response is
   // cached nowhere. X-RDD-Enrichment is for QA only, not part of the contract.
   return json(out, 200, {

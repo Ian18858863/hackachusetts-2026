@@ -13,6 +13,10 @@
 // - Disclaimer and attributions verbatim from engine/text.ts (section 13).
 // The notes text is not copied into the brief.
 
+/** Contract 13 v0.1.7 (T36c): ranking credit when PubCaseFinder ordered the list. Keeps Monarch's caveat. */
+export const PCF_RANKING_ATTRIBUTION =
+  "Ranking: PubCaseFinder (DBCLS, CC BY 4.0) with evidence from the Monarch Initiative and HPO annotations. Monarch tools are not for diagnosis or medical decisions.";
+
 import {
   DISCLAIMER,
   MONARCH_ATTRIBUTION,
@@ -94,9 +98,14 @@ export function fallbackBuildBrief(
   const hpoVersion = opts.dataVersions.hpo ?? "unknown";
 
   const attributions = [hpoAttribution(hpoVersion)];
-  if (candidates.some((x) => x.sources.includes("monarch-semsim"))) attributions.push(MONARCH_ATTRIBUTION);
+  // Contract 13 v0.1.7 (T36c): credit whichever service ordered the list.
+  const rankedByPcf =
+    (c.lastRanking?.response.dataVersions as { rankingSource?: string } | undefined)?.rankingSource === "pubcasefinder" ||
+    candidates.some((x) => x.sources.includes("pubcasefinder"));
+  if (rankedByPcf) attributions.push(PCF_RANKING_ATTRIBUTION);
+  else if (candidates.some((x) => x.sources.includes("monarch-semsim"))) attributions.push(MONARCH_ATTRIBUTION);
   if (usesOrphanet(candidates)) attributions.push(ORPHANET_ATTRIBUTION);
-  if (candidates.some((x) => x.sources.includes("pubcasefinder"))) attributions.push(PUBCASEFINDER_ATTRIBUTION);
+  if (!rankedByPcf && candidates.some((x) => x.sources.includes("pubcasefinder"))) attributions.push(PUBCASEFINDER_ATTRIBUTION);
   if (c.demo) attributions.push(PHENOPACKET_STORE_ATTRIBUTION);
 
   const patientSummary: Brief["patientSummary"] = { demo: c.demo !== null };
