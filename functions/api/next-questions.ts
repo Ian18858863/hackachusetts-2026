@@ -4,15 +4,18 @@
 // separate those candidates, as plain questions.
 //   1. Validate: `observed` 1-50 HPO ids, `excluded` 0-50, no id in both,
 //      `candidates` 2-5 ORPHA / OMIM / MONDO ids, `limit` 1-8 (default 5).
-//   2. Engine nextQuestions first; while it is a placeholder, the fallback in
-//      functions/_lib/fallback/questions.ts (X-RDD-Path: engine | fallback).
+//   2. RDD_ENGINE_PATH / RDD_ENGINE_PATH_NEXT_QUESTIONS (see
+//      _lib/fallback/engineFirst.ts): "fallback" (default) runs
+//      functions/_lib/fallback/questions.ts directly; "engine" runs
+//      nextQuestions first and falls back while it is a placeholder
+//      (X-RDD-Path: engine | fallback). Not cached as a whole response.
 //      Annotations are cached per disease id for 24 h by the fallback.
 //   3. Upstream failed -> recorded demo questions for
 //      demoRankKey(observed, excluded, candidates.length), else 502/504.
 
 import { demoRankKey, getDemoQuestions, nextQuestions } from "../../engine/index";
 import type { NextQuestionsResponse } from "../../engine/index";
-import { engineFirst, PATH_HEADER } from "../_lib/fallback/engineFirst";
+import { engineFirst, enginePathMode, PATH_HEADER } from "../_lib/fallback/engineFirst";
 import { getFallbackDemoQuestions } from "../_lib/fallback/demoRecorded";
 import type { FallbackDeps } from "../_lib/fallback/http";
 import { fallbackNextQuestions } from "../_lib/fallback/questions";
@@ -83,6 +86,7 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
   if (cache) deps.cache = cache;
 
   const result = await engineFirst(
+    enginePathMode(context.env, "next-questions"),
     () => nextQuestions({ ...req, candidates: [...req.candidates] }, deps),
     () => fallbackNextQuestions(req, deps),
   );

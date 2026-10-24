@@ -4,18 +4,20 @@
 //   1. Validate: `observed` 1-50 HPO ids, `excluded` 0-50, no id in both,
 //      `limit` 1-10 (default 5). Ids are deduplicated and sorted first, so the
 //      result and the cache key do not depend on input order.
-//   2. Workers Cache API, key rank:v0.1:<engine status>|<observed>|<excluded>|<limit>,
-//      24 h. The engine status is in the key so a fallback result is not served
-//      after the engine implementation lands. Degraded responses (an
-//      annotation call failed) are not cached (R11.4).
-//   3. Engine rankCandidates first; while it is a placeholder, the fallback in
-//      functions/_lib/fallback/rank.ts (X-RDD-Path: engine | fallback).
+//   2. Workers Cache API, key rank:v0.1:<path mode>:<engine status>|<observed>|<excluded>|<limit>,
+//      24 h. Path mode and engine status are in the key so engine and fallback
+//      results never mix. Degraded responses (an annotation call failed) are
+//      not cached (R11.4).
+//   3. RDD_ENGINE_PATH / RDD_ENGINE_PATH_RANK (see _lib/fallback/engineFirst.ts):
+//      "fallback" (default) runs functions/_lib/fallback/rank.ts directly;
+//      "engine" runs rankCandidates first and falls back while it is a
+//      placeholder (X-RDD-Path: engine | fallback).
 //   4. Monarch failed or timed out -> the recorded demo ranking for this exact
 //      term set if there is one (source "demo"), else 502/504 retryable.
 
 import { ENGINE_STATUS, demoRankKey, getDemoRanking, rankCandidates } from "../../engine/index";
 import type { RankResponse } from "../../engine/index";
-import { engineFirst, PATH_HEADER } from "../_lib/fallback/engineFirst";
+import { engineFirst, enginePathMode, PATH_HEADER } from "../_lib/fallback/engineFirst";
 import { getFallbackDemoRanking } from "../_lib/fallback/demoRecorded";
 import { cacheGetJson, cacheKey, cachePutJson } from "../_lib/fallback/http";
 import type { FallbackDeps } from "../_lib/fallback/http";
@@ -75,9 +77,10 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
   if (!limit.ok) return invalid(limit.message);
 
   const req = { observed: observed.value, excluded: excluded.value, limit: limit.value };
+  const mode = enginePathMode(context.env, "rank");
   const key = cacheKey(
     "rank",
-    `${ENGINE_STATUS.rankCandidates}|${req.observed.join(",")}|${req.excluded.join(",")}|${req.limit}`,
+    `${mode}:${ENGINE_STATUS.rankCandidates}|${req.observed.join(",")}|${req.excluded.join(",")}|${req.limit}`,
   );
 
   const deps: FallbackDeps = { fetch: globalThis.fetch.bind(globalThis), waitUntil: (p) => context.waitUntil(p) };
@@ -88,6 +91,7 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
   if (cached) return json(cached.body, 200, { [PATH_HEADER]: cached.path, "X-RDD-Cache": "hit" });
 
   const result = await engineFirst(
+    mode,
     // The engine owns its own degradation rules; its live responses are cached as is.
     async () => ({ body: await rankCandidates({ ...req }, deps), complete: true }),
     () => fallbackRank(req, deps),

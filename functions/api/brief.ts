@@ -3,8 +3,10 @@
 // Case object -> one-page specialist brief + GA4GH Phenopacket v2 (features only).
 //   1. Validate the case object (section 8): at least one observed term and a
 //      `lastRanking`; otherwise 400. Removed terms are ignored.
-//   2. Engine buildBrief first; while it is a placeholder, the fallback in
-//      functions/_lib/fallback/brief.ts (X-RDD-Path: engine | fallback).
+//   2. RDD_ENGINE_PATH / RDD_ENGINE_PATH_BRIEF (see _lib/fallback/engineFirst.ts):
+//      "fallback" (default) runs functions/_lib/fallback/brief.ts directly;
+//      "engine" runs buildBrief first and falls back while it is a
+//      placeholder (X-RDD-Path: engine | fallback).
 //   3. Phenopacket from the engine's toPhenopacket (implemented): no
 //      `diseases`, no `interpretations`, so it never states a diagnosis.
 // Pure, no network, not cached. The notes text is never logged.
@@ -12,7 +14,7 @@
 import { buildBrief, toPhenopacket } from "../../engine/index";
 import type { Brief, CaseObject, DataVersions, Phenopacket } from "../../engine/index";
 import { fallbackBuildBrief } from "../_lib/fallback/brief";
-import { engineFirst, PATH_HEADER } from "../_lib/fallback/engineFirst";
+import { engineFirst, enginePathMode, PATH_HEADER } from "../_lib/fallback/engineFirst";
 import { DISEASE_ID_RE, HPO_ID_RE } from "../_lib/fallback/validate";
 import {
   CONTRACT_VERSION,
@@ -193,6 +195,7 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
   const opts = { generatedAt, dataVersions };
 
   const result = await engineFirst(
+    enginePathMode(context.env, "brief"),
     () => buildBrief(c, opts),
     () => fallbackBuildBrief(c, opts),
   );

@@ -3,16 +3,18 @@
 // Recruiting ClinicalTrials.gov studies for one candidate condition.
 //   1. Validate: `condition` 2-200 characters; `ids` optional, comma-separated
 //      ORPHA / OMIM / MONDO ids (at most 10), echoed in `query` only.
-//   2. Workers Cache API, 6 h, key = engine status + normalised condition (plus
-//      the echoed ids, so the echo stays correct).
-//   3. Engine searchTrials first; while it is a placeholder, the fallback in
-//      functions/_lib/fallback/trials.ts (X-RDD-Path: engine | fallback).
+//   2. Workers Cache API, 6 h, key = path mode + engine status + normalised
+//      condition (plus the echoed ids, so the echo stays correct).
+//   3. RDD_ENGINE_PATH / RDD_ENGINE_PATH_TRIALS (see _lib/fallback/engineFirst.ts):
+//      "fallback" (default) runs functions/_lib/fallback/trials.ts directly;
+//      "engine" runs searchTrials first and falls back while it is a
+//      placeholder (X-RDD-Path: engine | fallback).
 //   4. Upstream failed -> recorded demo trials for this condition if any
 //      (source "demo"), else 502/504 retryable.
 
 import { ENGINE_STATUS, getDemoTrials, searchTrials } from "../../engine/index";
 import type { TrialsResponse } from "../../engine/index";
-import { engineFirst, PATH_HEADER } from "../_lib/fallback/engineFirst";
+import { engineFirst, enginePathMode, PATH_HEADER } from "../_lib/fallback/engineFirst";
 import { getFallbackDemoTrials } from "../_lib/fallback/demoRecorded";
 import { cacheGetJson, cacheKey, cachePutJson } from "../_lib/fallback/http";
 import type { FallbackDeps } from "../_lib/fallback/http";
@@ -68,9 +70,10 @@ async function handleGet(context: PagesContext<Record<string, unknown>>): Promis
     return invalid(`\`ids\` must be up to ${IDS_MAX} comma-separated ORPHA, OMIM or MONDO ids.`);
   }
 
+  const mode = enginePathMode(context.env, "trials");
   const key = cacheKey(
     "trials-v2",
-    `${ENGINE_STATUS.searchTrials}|${condition.toLowerCase()}|${[...ids].sort().join(",")}`,
+    `${mode}:${ENGINE_STATUS.searchTrials}|${condition.toLowerCase()}|${[...ids].sort().join(",")}`,
   );
   const deps: FallbackDeps = { fetch: globalThis.fetch.bind(globalThis), waitUntil: (p) => context.waitUntil(p) };
   const cache = defaultCache();
@@ -80,6 +83,7 @@ async function handleGet(context: PagesContext<Record<string, unknown>>): Promis
   if (cached) return json(cached.body, 200, { [PATH_HEADER]: cached.path, "X-RDD-Cache": "hit" });
 
   const result = await engineFirst(
+    mode,
     () => searchTrials({ condition, ids: [...ids] }, deps),
     () => fallbackSearchTrials({ condition, ids }, deps),
   );
