@@ -1,0 +1,490 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Final specimen · B1 UI with B2 typography · Rare Disease Detective</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Source+Sans+3:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* Final art direction (T12c), approved by Ian 2026-10-24 12:33 ET.
+   UI from B1 (quiet clinical), typography from B2 (data editorial).
+   Static specimen: demo patient, illustrative frequencies. No JavaScript. */
+:root {
+  /* colour */
+  --bg: #FFFFFF;
+  --surface: #F5F6F8;
+  --ink: #14161B;
+  --ink-2: #454A54;
+  --ink-3: #5D636E;
+  --hair: #E7E9ED;
+  --mark: #454A54;
+  --mark-off: #CDD2DA;
+  --mark-none: #7A808A;
+  --accent: #2B55C0;
+  --accent-soft: #EEF2FB;
+  --on-dark: #FFFFFF;
+  --focus: #2B55C0;
+
+  /* type */
+  --f-display: "Newsreader", Georgia, "Times New Roman", serif;
+  --f-text: "Source Sans 3", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --t-xs: 0.875rem;   /* 14 */
+  --t-sm: 0.9375rem;  /* 15 */
+  --t-base: 1.0625rem;/* 17 */
+  --t-md: 1.1875rem;  /* 19 */
+  --t-lg: 1.5rem;     /* 24 */
+  --t-xl: 2.125rem;   /* 34 */
+  --t-2xl: 2.75rem;   /* 44 */
+  --lh-text: 1.5;
+  --lh-head: 1.1;
+
+  /* space, radius, shadow, layers */
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px; --s-6: 32px;
+  --s-7: 48px; --s-8: 64px; --s-9: 96px; --s-10: 128px;
+  --r-s: 10px; --r-m: 16px; --r-l: 28px; --r-pill: 999px;
+  --shadow-pop: 0 12px 32px -12px rgba(20, 22, 27, 0.20), 0 2px 6px rgba(20, 22, 27, 0.06);
+  --z-pop: 10;
+
+  /* motion */
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 160ms; --dur-base: 220ms; --dur-proof: 520ms; --stagger: 60ms;
+
+  /* layout */
+  --content: 1056px;
+  --gutter: var(--s-7);
+  --col: 184px;
+}
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font: 400 var(--t-base)/var(--lh-text) var(--f-text);
+  -webkit-font-smoothing: antialiased; text-rendering: optimizeLegibility; }
+h1, h2, h3, p, ul, figure { margin: 0; padding: 0; }
+ul { list-style: none; }
+a { color: inherit; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 6px; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.wrap { max-width: calc(var(--content) + 2 * var(--gutter)); margin: 0 auto; padding: 0 var(--gutter); }
+.num { font-variant-numeric: lining-nums tabular-nums; }
+
+/* specimen label */
+.specimen { text-align: center; font-size: var(--t-xs); color: var(--ink-3); padding: var(--s-2) var(--s-5); background: var(--surface); }
+.specimen b { color: var(--ink-2); font-weight: 600; }
+.show-s { display: none; }
+
+/* header */
+.top-in { display: flex; align-items: center; gap: var(--s-6); height: 72px; }
+.brand { display: flex; align-items: center; gap: 10px; white-space: nowrap; text-decoration: none;
+  font: 500 1.375rem/1 var(--f-display); letter-spacing: -0.005em; }
+.brand-mark { width: 20px; height: 20px; border-radius: 6px; background: var(--ink); position: relative; flex: none; }
+.brand-mark::after { content: ""; position: absolute; inset: 5px; border-radius: 50%; border: 2px solid var(--on-dark); }
+.steps { display: flex; gap: var(--s-5); margin-left: var(--s-4); font-size: var(--t-sm); color: var(--ink-3); }
+.steps a { text-decoration: none; padding: 10px 0; }
+.steps a:hover { color: var(--ink); }
+.steps a[aria-current] { color: var(--ink); font-weight: 600; }
+.top-r { margin-left: auto; display: flex; align-items: center; gap: var(--s-4); }
+.chip { font-size: var(--t-xs); color: var(--ink-2); background: var(--surface); padding: 6px 12px; border-radius: var(--r-pill); white-space: nowrap; }
+.btn { display: inline-flex; align-items: center; min-height: 44px; padding: 0 22px; border-radius: var(--r-pill); white-space: nowrap;
+  background: var(--ink); color: var(--on-dark); text-decoration: none; font: 600 var(--t-sm)/1 var(--f-text);
+  transition: background var(--dur-fast) var(--ease); }
+.btn:hover { background: #2A2D34; }
+
+/* intro */
+.intro { padding: var(--s-7) 0 var(--s-6); }
+.kicker { font-size: var(--t-sm); color: var(--ink-3); margin-bottom: var(--s-3); }
+.kicker b { color: var(--ink); font-weight: 600; }
+h1 { font: 500 var(--t-2xl)/var(--lh-head) var(--f-display); letter-spacing: -0.012em; }
+.safety { margin-top: var(--s-4); max-width: 62ch; font-size: var(--t-md); color: var(--ink-2); }
+.safety b { color: var(--ink); font-weight: 600; }
+
+/* results: one focal panel, quieter candidates at the side */
+.results { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); gap: var(--s-7); align-items: start; }
+
+.lead { background: var(--surface); border-radius: var(--r-l); padding: 40px 40px var(--s-6); }
+.lead-head { display: grid; grid-template-columns: minmax(0, 1fr) auto; column-gap: var(--s-6); row-gap: var(--s-1); align-items: end; }
+.lead-head .rank, .lead-head h2 { grid-column: 1 / -1; }
+.rank { display: flex; align-items: center; gap: var(--s-2); font-size: var(--t-sm); font-weight: 600; color: var(--accent); }
+.rank .n { width: 24px; height: 24px; border-radius: 50%; display: inline-grid; place-items: center; background: var(--accent); color: var(--on-dark); font-size: 13px; }
+.lead h2 { margin-top: var(--s-3); font: 500 var(--t-xl)/1.12 var(--f-display); letter-spacing: -0.01em; }
+.lead .ov { margin-top: var(--s-2); font-size: var(--t-md); color: var(--ink-2); }
+.lead .ov b { color: var(--ink); font-weight: 600; }
+.score { text-align: right; padding-bottom: 4px; }
+.score b { display: block; font: 500 var(--t-2xl)/1 var(--f-display); font-variant-numeric: lining-nums tabular-nums; letter-spacing: -0.01em; }
+.score b span { font-size: var(--t-lg); color: var(--ink-3); }
+.score small { display: block; margin-top: var(--s-1); font-size: var(--t-xs); color: var(--ink-3); }
+
+.ev-head { display: flex; justify-content: space-between; margin: var(--s-6) 0 var(--s-1); padding: 0 var(--s-4); font-size: var(--t-xs); color: var(--ink-3); }
+.evidence li { position: relative; }
+.ev { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: var(--s-4); min-height: 60px;
+  padding: 8px var(--s-4); border-radius: var(--r-s); cursor: default; transition: background var(--dur-fast) var(--ease); }
+.ev:hover, .ev:focus { background: var(--bg); }
+.ev-name { font-weight: 600; }
+.fn { display: inline-grid; place-items: center; min-width: 20px; height: 20px; margin-left: 6px; padding: 0 5px; border-radius: var(--r-pill);
+  vertical-align: 1px; font: 600 12px/1 var(--f-text); color: var(--accent); background: var(--accent-soft);
+  transition: background var(--dur-fast) var(--ease), color var(--dur-fast) var(--ease); }
+.ev:hover .fn, .ev:focus .fn { background: var(--accent); color: var(--on-dark); }
+.ev-term { display: block; font-size: var(--t-xs); line-height: 1.35; color: var(--ink-3); }
+.freq { display: flex; align-items: center; justify-content: flex-end; gap: var(--s-3); min-width: 148px; font-size: var(--t-sm); color: var(--ink-2); }
+
+/* frequency glyph: four dots filled from the left, always paired with a word */
+.g { display: inline-flex; gap: 3px; }
+.g i { width: 6px; height: 6px; border-radius: 50%; background: var(--mark-off); }
+.g[data-b="1"] i:nth-child(-n+1), .g[data-b="2"] i:nth-child(-n+2),
+.g[data-b="3"] i:nth-child(-n+3), .g[data-b="4"] i { background: var(--accent); }
+
+/* footnote: the source sentence floats above its row, so nothing below moves */
+.pop { position: absolute; z-index: var(--z-pop); left: var(--s-4); right: var(--s-4); bottom: calc(100% - 6px);
+  padding: var(--s-3) var(--s-4); border-radius: var(--r-m); background: var(--bg); box-shadow: var(--shadow-pop);
+  font-size: var(--t-xs); color: var(--ink-3); opacity: 0; transform: translateY(4px); pointer-events: none;
+  transition: opacity var(--dur-base) var(--ease), transform var(--dur-base) var(--ease); }
+.pop q { display: block; margin-top: 2px; font: 400 var(--t-md)/1.4 var(--f-display); color: var(--ink); quotes: "\201C" "\201D"; }
+.evidence li:hover .pop, .evidence li:focus-within .pop { opacity: 1; transform: none; }
+
+.lead-foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: var(--s-2) var(--s-4); margin-top: var(--s-5); padding: 0 var(--s-4);
+  font-size: var(--t-xs); color: var(--ink-3); }
+.lead-foot a { color: var(--ink-2); }
+
+.others { padding-top: var(--s-5); }
+.others-h { margin-bottom: var(--s-2); font-size: var(--t-sm); color: var(--ink-3); }
+.alt { padding: var(--s-5) 0; }
+.alt + .alt { border-top: 1px solid var(--hair); }
+.alt-top { display: flex; align-items: baseline; gap: var(--s-3); }
+.alt-n { flex: none; width: 20px; font: 500 var(--t-lg)/1 var(--f-display); color: var(--ink-3); }
+.alt h3 { font: 500 1.3125rem/1.25 var(--f-display); letter-spacing: -0.005em; text-wrap: balance; }
+.alt p { margin: var(--s-2) 0 0 32px; font-size: var(--t-sm); color: var(--ink-2); }
+.alt p b { color: var(--ink); font-weight: 600; }
+.strip { display: flex; gap: var(--s-2); margin: var(--s-4) 0 0 32px; }
+.strip span { display: grid; grid-template-rows: 14px auto; justify-items: center; align-items: center; gap: 6px; width: 28px; font-size: 12px; color: var(--ink-3); font-variant-numeric: tabular-nums; }
+.strip .d { width: 14px; height: 14px; border-radius: 50%; background: var(--mark); }
+.strip .d[data-b="1"] { transform: scale(0.45); }
+.strip .d[data-b="2"] { transform: scale(0.65); }
+.strip .d[data-b="3"] { transform: scale(0.85); }
+.alt .code { display: inline-block; margin: var(--s-3) 0 0 32px; font-size: var(--t-xs); color: var(--ink-3); }
+
+.key { margin-top: var(--s-4); padding: var(--s-4) var(--s-5); border-radius: var(--r-m); background: var(--surface); font-size: var(--t-xs); color: var(--ink-2); }
+
+/* compare side by side: the B2 dot matrix in the final type */
+.compare { padding: var(--s-9) 0 var(--s-9); }
+.compare-head { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: var(--s-2) var(--s-6); }
+.compare h2 { font: 500 var(--t-xl)/1.15 var(--f-display); letter-spacing: -0.01em; }
+.compare-dek { margin-top: var(--s-2); max-width: 64ch; font-size: var(--t-base); color: var(--ink-2); }
+.cmp { display: grid; grid-template-columns: minmax(0, 1fr) 232px; gap: var(--s-7); margin-top: var(--s-6); }
+
+table { width: 100%; border-collapse: collapse; table-layout: fixed; font-variant-numeric: tabular-nums; }
+col.c-cand { width: var(--col); }
+thead th { padding: var(--s-4) var(--s-2); vertical-align: top; text-align: center; font-weight: 400; }
+.cand-n { display: block; font-size: var(--t-xs); color: var(--ink-3); }
+.cand-name { display: block; min-height: 2.4em; margin-top: 2px; font: 500 1.125rem/1.2 var(--f-display); color: var(--ink); }
+.cand-ov { display: block; margin-top: var(--s-2); font-size: var(--t-xs); color: var(--ink-2); }
+th.top1 .cand-n, th.top1 .cand-ov { color: var(--accent); font-weight: 600; }
+.c1 { background: var(--accent-soft); }
+thead th.c1 { border-radius: var(--r-m) var(--r-m) 0 0; }
+tfoot td.c1 { border-radius: 0 0 var(--r-m) var(--r-m); }
+
+tbody tr { border-top: 1px solid var(--hair); cursor: default; }
+tbody th { padding: 8px var(--s-4) 8px var(--s-2); text-align: left; font-weight: 400; border-radius: var(--r-s) 0 0 var(--r-s);
+  transition: background var(--dur-fast) var(--ease); }
+.f-plain { display: block; font-weight: 600; }
+.f-term { display: block; font-size: var(--t-xs); line-height: 1.35; color: var(--ink-3); }
+tbody td { height: 56px; padding: 0; text-align: center; }
+tbody tr:hover th, tbody tr:focus th { background: var(--surface); }
+tbody tr:focus-visible { outline-offset: -2px; }
+
+.d { display: inline-block; vertical-align: middle; border-radius: 50%; background: var(--mark); }
+.c1 .d { background: var(--accent); }
+.d[data-b="1"] { width: 7px; height: 7px; }
+.d[data-b="2"] { width: 12px; height: 12px; }
+.d[data-b="3"] { width: 17px; height: 17px; }
+.d[data-b="4"] { width: 22px; height: 22px; }
+.d[data-b="0"], .c1 .d[data-b="0"] { width: 14px; height: 2px; border-radius: 1px; background: var(--mark-none); }
+
+tfoot th { padding: var(--s-4) var(--s-2); text-align: left; font-weight: 400; font-size: var(--t-xs); color: var(--ink-3); }
+tfoot td { padding: var(--s-4) var(--s-2) var(--s-5); text-align: center; font-size: var(--t-xs); color: var(--ink-3); }
+tfoot td b { display: block; font: 500 var(--t-lg)/1.1 var(--f-display); font-variant-numeric: lining-nums tabular-nums; color: var(--ink); }
+tfoot td a { display: inline-block; margin-top: var(--s-1); }
+
+/* reserved source line: one slot, every sentence stacked in it, no layout shift */
+.source { display: grid; margin-top: var(--s-5); min-height: 64px; }
+.source > p { grid-area: 1 / 1; opacity: 0; transition: opacity var(--dur-base) var(--ease); font-size: var(--t-xs); color: var(--ink-3); }
+.source > p.idle { opacity: 1; font-size: var(--t-sm); }
+.source q { display: block; margin-top: 2px; font: 400 var(--t-md)/1.4 var(--f-display); color: var(--ink); quotes: "\201C" "\201D"; }
+.cmp:has(tbody tr:hover, tbody tr:focus) .source .idle { opacity: 0; }
+.cmp:has(tr[data-r="1"]:is(:hover, :focus)) #q1, .cmp:has(tr[data-r="2"]:is(:hover, :focus)) #q2,
+.cmp:has(tr[data-r="3"]:is(:hover, :focus)) #q3, .cmp:has(tr[data-r="4"]:is(:hover, :focus)) #q4,
+.cmp:has(tr[data-r="5"]:is(:hover, :focus)) #q5, .cmp:has(tr[data-r="6"]:is(:hover, :focus)) #q6,
+.cmp:has(tr[data-r="7"]:is(:hover, :focus)) #q7 { opacity: 1; }
+.codes { display: none; margin-top: var(--s-3); font-size: var(--t-xs); color: var(--ink-3); }
+
+.notes { padding-top: var(--s-4); font-size: var(--t-sm); color: var(--ink-2); }
+.note + .note { margin-top: var(--s-5); padding-top: var(--s-5); border-top: 1px solid var(--hair); }
+.note h3 { margin-bottom: var(--s-2); font: 600 var(--t-sm)/1.3 var(--f-text); color: var(--ink); }
+.legend { display: grid; grid-template-columns: 28px 1fr; row-gap: 8px; align-items: center; margin-top: var(--s-3); }
+.legend .d { justify-self: center; }
+.note .src { margin-top: var(--s-3); font-size: var(--t-xs); color: var(--ink-3); }
+
+/* footer */
+.foot { padding: var(--s-7) 0; background: var(--surface); font-size: var(--t-xs); color: var(--ink-3); }
+.foot p { max-width: 82ch; }
+.foot p + p { margin-top: var(--s-2); }
+.foot b { color: var(--ink-2); font-weight: 600; }
+
+/* load motion (CSS only): the headline sharpens, then evidence lines up behind rank 1 */
+@keyframes sharpen { from { opacity: 0; filter: blur(6px); } to { opacity: 1; filter: none; } }
+@keyframes fade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes line-up { from { opacity: 0; transform: translateX(-8px); } to { opacity: 1; transform: none; } }
+@keyframes dot { from { opacity: 0; transform: scale(0.2); } to { opacity: 1; transform: none; } }
+h1 { animation: sharpen 600ms var(--ease) both; }
+.lead-head { animation: fade 480ms var(--ease) 120ms both; }
+.ev { animation: line-up var(--dur-proof) var(--ease) both; animation-delay: calc(280ms + var(--i) * var(--stagger)); }
+.ev .g i { animation: dot 320ms var(--ease) both; animation-delay: calc(440ms + var(--i) * var(--stagger)); }
+.score b { animation: fade 480ms var(--ease) both; animation-delay: calc(440ms + 7 * var(--stagger)); }
+.others { animation: fade 480ms var(--ease) 720ms both; }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* laptop and tablet */
+@media (max-width: 1120px) { .steps { display: none; } }
+@media (max-width: 900px) {
+  :root { --gutter: var(--s-5); }
+  .results { grid-template-columns: 1fr; gap: var(--s-5); }
+  .others { padding-top: 0; }
+  .cmp { grid-template-columns: 1fr; gap: var(--s-6); }
+  .notes { display: grid; grid-template-columns: 1fr 1fr; gap: var(--s-6); padding-top: 0; }
+  .note + .note { margin-top: 0; padding-top: 0; border-top: 0; }
+}
+/* short laptop screens (about 1000x600): keep the first evidence rows above the fold */
+@media (max-height: 700px) and (min-width: 901px) {
+  .intro { padding: var(--s-5) 0 var(--s-5); }
+  .safety { margin-top: var(--s-3); }
+  .lead { padding-top: var(--s-6); }
+  .ev-head { margin-top: var(--s-5); }
+}
+/* phone */
+@media (max-width: 600px) {
+  :root { --gutter: var(--s-4); --col: 64px; --t-base: 1rem; }
+  .hide-s, .chip, tfoot td a { display: none; }
+  .show-s { display: inline; }
+  .specimen { font-size: 13px; }
+  .top-in { height: 64px; gap: var(--s-3); }
+  .brand { font-size: 1.25rem; }
+  .btn { padding: 0 18px; }
+  .intro { padding: var(--s-6) 0 var(--s-5); }
+  h1 { font-size: 2.125rem; line-height: 1.12; }
+  .safety { font-size: var(--t-base); }
+  .lead { margin: 0 calc(var(--s-2) * -1); padding: var(--s-5) var(--s-2) var(--s-4); border-radius: 22px; }
+  .lead-head { grid-template-columns: 1fr; gap: var(--s-3); padding: 0 var(--s-3); }
+  .lead h2 { font-size: 1.875rem; }
+  .lead .ov { font-size: var(--t-base); }
+  .score { display: flex; align-items: baseline; gap: var(--s-2); margin-top: var(--s-3); text-align: left; padding: 0; }
+  .score b { font-size: var(--t-xl); }
+  .score b span { font-size: var(--t-md); }
+  .score small { margin: 0; }
+  .ev-head { margin-top: var(--s-5); padding: 0 var(--s-3); }
+  .ev { gap: var(--s-3); padding: 8px var(--s-3); }
+  .freq { min-width: 0; gap: var(--s-2); font-size: var(--t-xs); }
+  .pop { left: var(--s-2); right: var(--s-2); }
+  .lead-foot { padding: 0 var(--s-3); }
+  .strip { gap: 4px; }
+  .compare { padding: var(--s-8) 0; }
+  .compare h2 { font-size: 1.75rem; }
+  thead th { padding: var(--s-3) 2px; }
+  .cand-name { min-height: 0; font-size: 0.9375rem; white-space: nowrap; }
+  .cand-long { display: none; }
+  .cand-ov { font-size: 0.8125rem; }
+  tbody th { padding: 10px var(--s-2) 10px 0; }
+  .f-plain { font-size: var(--t-sm); }
+  .f-term { font-size: 0.8125rem; }
+  tbody td { height: 60px; }
+  tfoot td { padding: var(--s-3) 2px var(--s-4); }
+  tfoot td b { font-size: 1.125rem; }
+  .codes { display: block; }
+  .notes { grid-template-columns: 1fr; }
+  .note + .note { padding-top: var(--s-5); border-top: 1px solid var(--hair); }
+}
+@media (min-width: 601px) { .cand-short { display: none; } }
+</style>
+</head>
+<body>
+<p class="specimen"><b>Final specimen<span class="hide-s"> · B1 UI with B2 typography</span>.</b> <span class="hide-s">Approved by Ian on 2026-10-24. Static mock with a demo patient and illustrative frequencies.</span><span class="show-s">Demo patient, illustrative frequencies.</span></p>
+
+<header>
+  <div class="wrap top-in">
+    <a class="brand" href="#"><span class="brand-mark" aria-hidden="true"></span>Rare Disease Detective</a>
+    <nav class="steps" aria-label="Steps">
+      <a href="#">Notes</a><a href="#">Features</a><a href="#" aria-current="page">Possible matches</a><a href="#">What to check next</a><a href="#">Brief</a>
+    </nav>
+    <div class="top-r">
+      <span class="chip">Demo patient</span>
+      <a class="btn" href="#"><span class="hide-s">Prepare brief</span><span class="show-s">Brief</span></a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <section class="intro">
+      <p class="kicker"><b>Leo, age 6</b> · demo patient, not a real person</p>
+      <h1>Possible matches to discuss with a doctor</h1>
+      <p class="safety"><b>Decision support, not a diagnosis.</b> Ranked by how closely Leo's 7 features overlap with each condition.</p>
+    </section>
+
+    <section class="results" aria-label="Ranked possible matches">
+      <article class="lead" aria-labelledby="c1">
+        <div class="lead-head">
+          <p class="rank"><span class="n" aria-hidden="true">1</span>Closest overlap</p>
+          <h2 id="c1">Duchenne muscular dystrophy</h2>
+          <p class="ov"><b>Strong overlap.</b> All 7 of Leo's features appear in this condition.</p>
+          <p class="score"><b>7 <span>of 7</span></b><small>features described</small></p>
+        </div>
+
+        <p class="ev-head" aria-hidden="true"><span>Leo's features</span><span>How often in Duchenne</span></p>
+        <ul class="evidence">
+          <li><div class="ev" tabindex="0" style="--i:0" aria-describedby="p1"><span><span class="ev-name">Walked late</span><span class="fn" aria-label="source sentence 1">1</span><span class="ev-term">Delayed ability to walk</span></span><span class="freq"><span class="g" data-b="2" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Frequent</span></div>
+            <p class="pop" id="p1">From the parent's notes, sentence 1<q>Leo started walking late, at about 18 months.</q></p></li>
+          <li><div class="ev" tabindex="0" style="--i:1" aria-describedby="p2"><span><span class="ev-name">Falls often</span><span class="fn" aria-label="source sentence 2">2</span><span class="ev-term">Frequent falls</span></span><span class="freq"><span class="g" data-b="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Very frequent</span></div>
+            <p class="pop" id="p2">From the parent's notes, sentence 2<q>Since he turned four he falls a lot, sometimes several times a day.</q></p></li>
+          <li><div class="ev" tabindex="0" style="--i:2" aria-describedby="p3"><span><span class="ev-name">Weak hips and thighs</span><span class="fn" aria-label="source sentence 3">3</span><span class="ev-term">Proximal muscle weakness</span></span><span class="freq"><span class="g" data-b="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Very frequent</span></div>
+            <p class="pop" id="p3">From the parent's notes, sentence 3<q>He can't climb stairs without holding the rail…</q></p></li>
+          <li><div class="ev" tabindex="0" style="--i:3" aria-describedby="p4"><span><span class="ev-name">Uses hands to stand up</span><span class="fn" aria-label="source sentence 3">3</span><span class="ev-term">Gowers sign</span></span><span class="freq"><span class="g" data-b="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Very frequent</span></div>
+            <p class="pop" id="p4">From the parent's notes, sentence 3<q>…to get up from the floor he pushes on his knees with his hands.</q></p></li>
+          <li><div class="ev" tabindex="0" style="--i:4" aria-describedby="p5"><span><span class="ev-name">Large firm calves</span><span class="fn" aria-label="source sentence 4">4</span><span class="ev-term">Calf muscle pseudohypertrophy</span></span><span class="freq"><span class="g" data-b="3" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Very frequent</span></div>
+            <p class="pop" id="p5">From the parent's notes, sentence 4<q>His calves look big and feel hard compared with his thighs.</q></p></li>
+          <li><div class="ev" tabindex="0" style="--i:5" aria-describedby="p6"><span><span class="ev-name">High CK on a blood test</span><span class="fn" aria-label="source sentence 5">5</span><span class="ev-term">Elevated circulating creatine kinase concentration</span></span><span class="freq"><span class="g" data-b="4" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Always</span></div>
+            <p class="pop" id="p6">From the parent's notes, sentence 5<q>At his last check-up a blood test showed a very high CK.</q></p></li>
+          <li><div class="ev" tabindex="0" style="--i:6" aria-describedby="p7"><span><span class="ev-name">Tires quickly</span><span class="fn" aria-label="source sentence 6">6</span><span class="ev-term">Exercise intolerance</span></span><span class="freq"><span class="g" data-b="2" aria-hidden="true"><i></i><i></i><i></i><i></i></span>Frequent</span></div>
+            <p class="pop" id="p7">From the parent's notes, sentence 6<q>He tires quickly at the playground and asks to be carried home.</q></p></li>
+        </ul>
+        <p class="lead-foot"><span>Hover or focus a feature to read the sentence it came from.</span><span><a href="#compare">Compare side by side</a> · <a href="#">ORPHA:98896</a></span></p>
+      </article>
+
+      <aside class="others" aria-label="Other possible matches">
+        <p class="others-h">Also worth discussing</p>
+        <article class="alt">
+          <div class="alt-top"><span class="alt-n">2</span><h3>Becker muscular dystrophy</h3></div>
+          <p><b>Strong overlap.</b> All 7 described. Walking late is less common than in Duchenne.</p>
+          <div class="strip" role="img" aria-label="How often Leo's 7 features occur in Becker: occasional, frequent, very frequent, frequent, very frequent, very frequent, frequent">
+            <span><i class="d" data-b="1"></i>1</span><span><i class="d" data-b="2"></i>2</span><span><i class="d" data-b="3"></i>3</span><span><i class="d" data-b="2"></i>4</span><span><i class="d" data-b="3"></i>5</span><span><i class="d" data-b="3"></i>6</span><span><i class="d" data-b="2"></i>7</span>
+          </div>
+          <a class="code" href="#">ORPHA:98895</a>
+        </article>
+        <article class="alt">
+          <div class="alt-top"><span class="alt-n">3</span><h3>Limb-girdle muscular dystrophy R9</h3></div>
+          <p><b>Partial overlap.</b> 5 of 7 described. Walking late and frequent falls are not recorded.</p>
+          <div class="strip" role="img" aria-label="How often Leo's 7 features occur in limb-girdle R9: not recorded, not recorded, very frequent, frequent, frequent, very frequent, frequent">
+            <span><i class="d" data-b="0"></i>1</span><span><i class="d" data-b="0"></i>2</span><span><i class="d" data-b="3"></i>3</span><span><i class="d" data-b="2"></i>4</span><span><i class="d" data-b="2"></i>5</span><span><i class="d" data-b="3"></i>6</span><span><i class="d" data-b="2"></i>7</span>
+          </div>
+          <a class="code" href="#">ORPHA:34515</a>
+        </article>
+        <p class="key">Numbers follow Leo's features in order. A larger dot means the feature occurs more often in the condition; a dash means it is not recorded. HPO frequencies, illustrative in this demo. The order is phenotype overlap, not a probability.</p>
+      </aside>
+    </section>
+  </div>
+
+  <section class="compare" id="compare" aria-labelledby="cmp-t">
+    <div class="wrap">
+      <div class="compare-head">
+        <div>
+          <h2 id="cmp-t">Compare side by side</h2>
+          <p class="compare-dek">How often each of Leo's features occurs in each possible match. Larger dot, more often. Decision support, not a diagnosis.</p>
+        </div>
+      </div>
+
+      <div class="cmp">
+        <figure>
+          <table>
+            <caption class="sr">Leo's 7 features against 3 possible matches, with how often each feature occurs in each condition</caption>
+            <colgroup><col><col class="c-cand"><col class="c-cand"><col class="c-cand"></colgroup>
+            <thead>
+              <tr>
+                <th scope="col"><span class="sr">Leo's feature</span></th>
+                <th scope="col" class="c1 top1"><span class="cand-n">1</span><span class="cand-name"><span class="cand-long">Duchenne muscular dystrophy</span><span class="cand-short">Duchenne</span></span><span class="cand-ov">Strong overlap</span></th>
+                <th scope="col"><span class="cand-n">2</span><span class="cand-name"><span class="cand-long">Becker muscular dystrophy</span><span class="cand-short">Becker</span></span><span class="cand-ov">Strong overlap</span></th>
+                <th scope="col"><span class="cand-n">3</span><span class="cand-name"><span class="cand-long">Limb-girdle muscular dystrophy R9</span><span class="cand-short">LGMD R9</span></span><span class="cand-ov">Partial overlap</span></th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr tabindex="0" data-r="1" aria-describedby="q1">
+                <th scope="row"><span class="f-plain">Walked late</span><span class="f-term">Delayed ability to walk</span></th>
+                <td class="c1"><i class="d" data-b="2"></i><span class="sr">Frequent</span></td><td><i class="d" data-b="1"></i><span class="sr">Occasional</span></td><td><i class="d" data-b="0"></i><span class="sr">Not recorded</span></td>
+              </tr>
+              <tr tabindex="0" data-r="2" aria-describedby="q2">
+                <th scope="row"><span class="f-plain">Falls often</span><span class="f-term">Frequent falls</span></th>
+                <td class="c1"><i class="d" data-b="3"></i><span class="sr">Very frequent</span></td><td><i class="d" data-b="2"></i><span class="sr">Frequent</span></td><td><i class="d" data-b="0"></i><span class="sr">Not recorded</span></td>
+              </tr>
+              <tr tabindex="0" data-r="3" aria-describedby="q3">
+                <th scope="row"><span class="f-plain">Weak hips and thighs</span><span class="f-term">Proximal muscle weakness</span></th>
+                <td class="c1"><i class="d" data-b="3"></i><span class="sr">Very frequent</span></td><td><i class="d" data-b="3"></i><span class="sr">Very frequent</span></td><td><i class="d" data-b="3"></i><span class="sr">Very frequent</span></td>
+              </tr>
+              <tr tabindex="0" data-r="4" aria-describedby="q4">
+                <th scope="row"><span class="f-plain">Uses hands to stand up</span><span class="f-term">Gowers sign</span></th>
+                <td class="c1"><i class="d" data-b="3"></i><span class="sr">Very frequent</span></td><td><i class="d" data-b="2"></i><span class="sr">Frequent</span></td><td><i class="d" data-b="2"></i><span class="sr">Frequent</span></td>
+              </tr>
+              <tr tabindex="0" data-r="5" aria-describedby="q5">
+                <th scope="row"><span class="f-plain">Large firm calves</span><span class="f-term">Calf muscle pseudohypertrophy</span></th>
+                <td class="c1"><i class="d" data-b="3"></i><span class="sr">Very frequent</span></td><td><i class="d" data-b="3"></i><span class="sr">Very frequent</span></td><td><i class="d" data-b="2"></i><span class="sr">Frequent</span></td>
+              </tr>
+              <tr tabindex="0" data-r="6" aria-describedby="q6">
+                <th scope="row"><span class="f-plain">High CK on a blood test</span><span class="f-term">Elevated circulating creatine kinase concentration</span></th>
+                <td class="c1"><i class="d" data-b="4"></i><span class="sr">Always</span></td><td><i class="d" data-b="3"></i><span class="sr">Very frequent</span></td><td><i class="d" data-b="3"></i><span class="sr">Very frequent</span></td>
+              </tr>
+              <tr tabindex="0" data-r="7" aria-describedby="q7">
+                <th scope="row"><span class="f-plain">Tires quickly</span><span class="f-term">Exercise intolerance</span></th>
+                <td class="c1"><i class="d" data-b="2"></i><span class="sr">Frequent</span></td><td><i class="d" data-b="2"></i><span class="sr">Frequent</span></td><td><i class="d" data-b="2"></i><span class="sr">Frequent</span></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <th scope="row">Features described</th>
+                <td class="c1"><b>7 of 7</b><a href="#">ORPHA:98896</a></td>
+                <td><b>7 of 7</b><a href="#">ORPHA:98895</a></td>
+                <td><b>5 of 7</b><a href="#">ORPHA:34515</a></td>
+              </tr>
+            </tfoot>
+          </table>
+          <p class="codes">Orphanet: 1 <a href="#">ORPHA:98896</a> · 2 <a href="#">ORPHA:98895</a> · 3 <a href="#">ORPHA:34515</a></p>
+          <div class="source" aria-hidden="true">
+            <p class="idle">Hover or focus a feature to read the sentence it came from.</p>
+            <p id="q1">From the parent's notes, sentence 1<q>Leo started walking late, at about 18 months.</q></p>
+            <p id="q2">From the parent's notes, sentence 2<q>Since he turned four he falls a lot, sometimes several times a day.</q></p>
+            <p id="q3">From the parent's notes, sentence 3<q>He can't climb stairs without holding the rail…</q></p>
+            <p id="q4">From the parent's notes, sentence 3<q>…to get up from the floor he pushes on his knees with his hands.</q></p>
+            <p id="q5">From the parent's notes, sentence 4<q>His calves look big and feel hard compared with his thighs.</q></p>
+            <p id="q6">From the parent's notes, sentence 5<q>At his last check-up a blood test showed a very high CK.</q></p>
+            <p id="q7">From the parent's notes, sentence 6<q>He tires quickly at the playground and asks to be carried home.</q></p>
+          </div>
+        </figure>
+
+        <aside class="notes" aria-label="How to read the comparison">
+          <div class="note">
+            <h3>Reading the dots</h3>
+            <p>How often the feature is reported in people with the condition.</p>
+            <div class="legend">
+              <i class="d" data-b="4"></i><span>Always</span>
+              <i class="d" data-b="3"></i><span>Very frequent</span>
+              <i class="d" data-b="2"></i><span>Frequent</span>
+              <i class="d" data-b="1"></i><span>Occasional</span>
+              <i class="d" data-b="0"></i><span>Not recorded</span>
+            </div>
+            <p class="src">Bands from HPO annotations. Illustrative in this demo.</p>
+          </div>
+          <div class="note">
+            <h3>What separates 1 and 2</h3>
+            <p>Both describe all 7 features. Walking late is frequent in Duchenne but occasional in Becker, so the age at first symptoms is worth asking about.</p>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p><b>Decision support, not a diagnosis.</b> Discuss every possible match with a doctor.</p>
+    <p>This product uses the Human Phenotype Ontology (HPO). Find out more at <a href="https://hpo.jax.org">hpo.jax.org</a>. HPO release: shown live in the app (placeholder in this specimen). Disease names and ORPHAcodes from Orphanet, CC BY 4.0. Ranking via the Monarch Initiative, which is not intended for diagnosis.</p>
+    <p>Demo patient. Leo is not a real person. Frequencies shown are illustrative.</p>
+  </div>
+</footer>
+</body>
+</html>
