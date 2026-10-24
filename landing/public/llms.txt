@@ -1,0 +1,32 @@
+# Rare Disease Detective
+
+> A web app that turns a plain-language symptom history into Human Phenotype Ontology (HPO) terms, each linked to the phrase it came from, then lists possible rare conditions with the evidence behind each, questions for the next appointment, and a one-page specialist brief with a GA4GH Phenopacket v2 export. Decision support, not a diagnosis. Built with Kiro at Hackachusetts 2026 (Healthcare & Biotech track). Built at Sundai. Code and docs under Apache-2.0.
+
+The ontology and the ranking services rank; the language model only proposes phrases, and every kept term is confirmed by the HPO API. Demo cases are synthetic narratives derived from phenopacket-store, not real patients.
+
+## Try it
+
+- [Live demo with the primary demo case](https://hackachusetts-2026.pages.dev/app/?demo=demo-npc1): no sign-up
+- [Family mode](https://hackachusetts-2026.pages.dev/app/?demo=demo-npc1&audience=family): no disease names, rankings or trials
+- [Landing page](https://hackachusetts-2026.pages.dev/)
+
+## Docs
+
+- [README](https://github.com/Ian18858863/hackachusetts-2026/blob/main/README.md): what it does, how it works, how to run it
+- [Submission map](https://github.com/Ian18858863/hackachusetts-2026/blob/main/SUBMISSION.md): evidence for each judging criterion and a 60-second test path
+- [Kiro write-up](https://github.com/Ian18858863/hackachusetts-2026/blob/main/docs/KIRO_WRITEUP.md): how Kiro was used
+- [Kiro usage log](https://github.com/Ian18858863/hackachusetts-2026/blob/main/docs/KIRO_USAGE.md): dated record of Kiro actions
+- [Interface contract](https://github.com/Ian18858863/hackachusetts-2026/blob/main/docs/CONTRACT.md): API shapes, safety rule, attribution text
+
+## Evaluation
+
+- [Pre-registered re-rank benchmark (14 cases)](https://github.com/Ian18858863/hackachusetts-2026/blob/main/docs/research/ranking-benchmark.md)
+- [Pre-registered 50-case benchmark](https://github.com/Ian18858863/hackachusetts-2026/blob/main/docs/research/ranking-benchmark-50.md)
+- [20 held-out cases](https://github.com/Ian18858863/hackachusetts-2026/blob/main/docs/research/held-out-20.md)
+- [PubCaseFinder evaluation](https://github.com/Ian18858863/hackachusetts-2026/blob/main/docs/research/pcf-ranking.md)
+
+## Optional
+
+- [Problem and competitor research](https://github.com/Ian18858863/hackachusetts-2026/blob/main/docs/research/health-visions.md)
+- [biomcp cross-checks of the demo cases](https://github.com/Ian18858863/hackachusetts-2026/blob/main/docs/research/biomcp-checks.md)
+- [Third-party notices](https://github.com/Ian18858863/hackachusetts-2026/blob/main/THIRD_PARTY_NOTICES.md)
