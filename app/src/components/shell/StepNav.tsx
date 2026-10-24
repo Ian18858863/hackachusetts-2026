@@ -1,18 +1,35 @@
+import { useLayoutEffect, useRef } from 'react';
 import { STEPS, stepHref, type StepId } from '../../shared/steps';
 import styles from './StepNav.module.css';
 
 /**
- * The five steps of the flow as plain links (hash routes). The current step
- * has aria-current="step". On phones only the numbers show in the row and the
- * current step's name is written out underneath.
+ * The five steps of the flow as plain text links (hash routes), like the
+ * specimen's header: quiet grey, the current step in ink and semibold, with
+ * aria-current="step". When the row is narrower than the labels (phones) it
+ * scrolls sideways inside its own box and keeps the current step in view.
  */
 export function StepNav({ current, className }: { current: StepId | null; className?: string }) {
   const index = current ? STEPS.findIndex((s) => s.id === current) : -1;
-  const currentStep = index >= 0 ? STEPS[index] : undefined;
+  const listRef = useRef<HTMLOListElement>(null);
+
+  useLayoutEffect(() => {
+    const list = listRef.current;
+    if (!list || list.scrollWidth <= list.clientWidth) return;
+    const link = list.querySelector<HTMLElement>('[aria-current="step"]');
+    if (!link) {
+      list.scrollLeft = 0;
+      return;
+    }
+    const start = link.offsetLeft - list.offsetLeft;
+    const end = start + link.offsetWidth;
+    if (start < list.scrollLeft || end > list.scrollLeft + list.clientWidth) {
+      list.scrollLeft = Math.max(0, start - (list.clientWidth - link.offsetWidth) / 2);
+    }
+  }, [index]);
 
   return (
     <nav className={[styles.nav, className].filter(Boolean).join(' ')} aria-label="Steps">
-      <ol className={styles.list}>
+      <ol ref={listRef} className={styles.list}>
         {STEPS.map((step, i) => {
           const state = i === index ? 'current' : i < index ? 'before' : 'after';
           return (
@@ -23,20 +40,15 @@ export function StepNav({ current, className }: { current: StepId | null; classN
                 data-state={state}
                 aria-current={state === 'current' ? 'step' : undefined}
               >
-                <span className={styles.number} aria-hidden="true">
-                  {i + 1}
+                {/* data-text reserves the semibold width, so the row never shifts. */}
+                <span className={styles.label} data-text={step.label}>
+                  {step.label}
                 </span>
-                <span className={styles.label}>{step.label}</span>
               </a>
             </li>
           );
         })}
       </ol>
-      {currentStep && (
-        <p className={styles.caption} aria-hidden="true">
-          Step {index + 1} of {STEPS.length} · {currentStep.label}
-        </p>
-      )}
     </nav>
   );
 }

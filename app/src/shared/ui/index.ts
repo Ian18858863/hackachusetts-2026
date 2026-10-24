@@ -9,6 +9,7 @@ export { ApiErrorState, LoadingPanel, OfflineNotice, useOnlineStatus } from './s
 // Primitives, re-exported so features have one import path.
 export {
   Button,
+  ButtonLink,
   Card,
   EmptyState,
   ErrorState,

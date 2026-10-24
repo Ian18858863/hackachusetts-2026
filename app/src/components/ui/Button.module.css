@@ -1,8 +1,14 @@
+/*
+ * Pill buttons from the approved specimen (final.html .btn).
+ * Primary: black pill, white text (18.1:1). Secondary: white pill with a
+ * 3:1 control border. Ghost: text only, a soft surface on hover.
+ * The accent stays reserved for rank 1, footnotes and the focus ring.
+ */
 .button {
-  --btn-bg: var(--color-accent);
-  --btn-fg: var(--color-accent-contrast);
+  --btn-bg: var(--ink);
+  --btn-fg: var(--on-dark);
   --btn-border: transparent;
-  --btn-fill: var(--color-fill-primary);
+  --btn-fill: var(--ink-hover);
 
   position: relative;
   isolation: isolate;
@@ -12,19 +18,24 @@
   flex-shrink: 0;
   overflow: hidden;
   border: 1px solid var(--btn-border);
-  border-radius: var(--radius-md);
+  border-radius: var(--r-pill);
   background: var(--btn-bg);
   color: var(--btn-fg);
-  font-family: var(--font-text);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-normal);
+  font-family: var(--f-text);
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: 0;
+  text-decoration: none;
   white-space: nowrap;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
   transition:
-    transform var(--dur-fast) var(--ease-out),
-    border-color var(--dur-base) var(--ease-standard),
-    box-shadow var(--dur-fast) var(--ease-standard);
+    transform var(--dur-fast) var(--ease),
+    border-color var(--dur-fast) var(--ease);
+}
+
+a.button:hover {
+  color: var(--btn-fg);
 }
 
 .button:active:not(:disabled):not([data-loading]) {
@@ -42,7 +53,7 @@
   border-radius: 50%;
   background: var(--btn-fill);
   transform: translate(-50%, -50%) scale(0);
-  transition: transform var(--dur-slow) var(--ease-out);
+  transition: transform var(--dur-slow) var(--ease);
   pointer-events: none;
 }
 
@@ -61,7 +72,7 @@
 .content {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
+  gap: var(--s-2);
 }
 
 .label {
@@ -71,15 +82,14 @@
 /* ---- Sizes ------------------------------------------------------------ */
 .md {
   min-height: var(--control-height-md);
-  padding-inline: var(--space-5);
-  font-size: var(--text-sm);
+  padding-inline: 22px;
+  font-size: var(--t-sm);
 }
 
 .sm {
   min-height: var(--control-height-sm);
-  padding-inline: var(--space-3);
-  font-size: var(--text-sm);
-  border-radius: var(--radius-sm);
+  padding-inline: var(--s-4);
+  font-size: var(--t-xs);
 }
 
 @media (pointer: coarse) {
@@ -88,29 +98,39 @@
   }
 }
 
-/* ---- Variants --------------------------------------------------------- */
-.primary {
-  box-shadow: var(--shadow-sm);
+@media (max-width: 600px) {
+  .md {
+    padding-inline: 18px;
+  }
 }
 
+/* ---- Variants --------------------------------------------------------- */
 .secondary {
-  --btn-bg: var(--color-surface);
-  --btn-fg: var(--color-text);
-  --btn-border: var(--color-border-strong);
-  --btn-fill: var(--color-fill-secondary);
+  --btn-bg: var(--bg);
+  --btn-fg: var(--ink);
+  --btn-border: var(--mark-none);
+  --btn-fill: var(--surface);
+}
+
+.secondary[data-hover]:not(:disabled) {
+  --btn-border: var(--ink-2);
 }
 
 .ghost {
   --btn-bg: transparent;
-  --btn-fg: var(--color-accent-text);
-  --btn-fill: var(--color-fill-ghost);
+  --btn-fg: var(--ink);
+  --btn-fill: var(--surface);
+}
+
+/* Ghost buttons on a surface panel fill with white instead. */
+:where([data-surface]) .ghost {
+  --btn-fill: var(--bg);
 }
 
 /* ---- States ----------------------------------------------------------- */
 .button:disabled {
   cursor: not-allowed;
-  opacity: 0.5;
-  box-shadow: none;
+  opacity: 0.45;
 }
 
 .button[data-loading] {

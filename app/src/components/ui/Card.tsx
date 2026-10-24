@@ -42,6 +42,7 @@ export function Card({
   return (
     <Element
       className={[styles.card, styles[padding], styles[tone], className].filter(Boolean).join(' ')}
+      data-surface={tone === 'surface' ? '' : undefined}
       {...rest}
     >
       {hasHeader && (

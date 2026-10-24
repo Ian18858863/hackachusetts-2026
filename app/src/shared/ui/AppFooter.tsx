@@ -1,5 +1,6 @@
 import { useCase } from '../store';
-import { ATTRIBUTION, DISCLAIMER, hpoAttribution } from '../text';
+import { ATTRIBUTION, hpoAttribution } from '../text';
+import { Disclaimer } from './Disclaimer';
 import styles from './AppFooter.module.css';
 
 const HPO_URL = 'https://hpo.jax.org';
@@ -29,24 +30,23 @@ export function AppFooter() {
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
-        <div className={styles.sources}>
-          <p className={styles.safety}>{DISCLAIMER}</p>
-          <ul className={styles.credits} aria-label="Data sources and credits">
-            <li>
-              {hpoBefore}
-              <a href={HPO_URL} target="_blank" rel="noreferrer">
-                {HPO_URL}
-              </a>
-            </li>
-            {credits.map((text) => (
-              <li key={text}>{text}</li>
-            ))}
-          </ul>
-        </div>
-        <div className={styles.meta}>
-          <p className={styles.built}>Built at Sundai</p>
-          <p>Hackachusetts 2026 · powered by Kiro</p>
-        </div>
+        <p className={styles.safety}>
+          <Disclaimer inline />
+        </p>
+        <ul className={styles.credits} aria-label="Data sources and credits">
+          <li>
+            {hpoBefore}
+            <a href={HPO_URL} target="_blank" rel="noreferrer">
+              {HPO_URL}
+            </a>
+          </li>
+          {credits.map((text) => (
+            <li key={text}>{text}</li>
+          ))}
+        </ul>
+        <p className={styles.built}>
+          <b>Built at Sundai</b> · Hackachusetts 2026 · powered by Kiro
+        </p>
       </div>
     </footer>
   );

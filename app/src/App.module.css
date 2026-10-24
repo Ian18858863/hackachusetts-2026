@@ -6,12 +6,13 @@
   min-height: 100dvh;
 }
 
+/* Same frame as the specimen's .wrap: 1056px content plus the gutters. */
 .main {
   min-width: 0;
   width: 100%;
   max-width: var(--content-max);
   margin-inline: auto;
-  padding: clamp(var(--space-8), 6vh, var(--space-16)) var(--gutter) 0;
+  padding: var(--s-7) var(--gutter) 0;
 }
 
 .main:focus {
@@ -20,14 +21,14 @@
 
 .view {
   display: grid;
-  gap: var(--space-10);
+  gap: var(--s-6);
   min-width: 0;
-  animation: dissolve var(--dur-slow) var(--ease-standard) both;
+  animation: dissolve var(--dur-base) var(--ease) both;
 }
 
 .body {
   display: grid;
-  gap: var(--space-8);
+  gap: var(--s-7);
   min-width: 0;
 }
 
@@ -40,26 +41,41 @@
   }
 }
 
-@media (prefers-reduced-motion: reduce) {
+/* Short laptop screens (about 1000×600): keep the first content above the fold. */
+@media (max-height: 700px) and (min-width: 901px) {
+  .main {
+    padding-top: var(--s-5);
+  }
+}
+
+@media (max-width: 600px) {
+  .main {
+    padding-top: var(--s-6);
+  }
+
   .view {
-    animation: none;
+    gap: var(--s-5);
   }
 }
 
 .skip {
   position: fixed;
-  top: var(--space-2);
-  left: var(--space-2);
+  top: var(--s-2);
+  left: var(--s-2);
   z-index: var(--z-toast);
-  padding: var(--space-2) var(--space-4);
-  border-radius: var(--radius-sm);
-  background: var(--color-text);
-  color: var(--color-bg);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
+  padding: var(--s-2) var(--s-4);
+  border-radius: var(--r-pill);
+  background: var(--ink);
+  color: var(--on-dark);
+  font-size: var(--t-sm);
+  font-weight: 600;
   text-decoration: none;
-  transform: translateY(calc(-100% - var(--space-4)));
-  transition: transform var(--dur-fast) var(--ease-out);
+  transform: translateY(calc(-100% - var(--s-4)));
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+.skip:hover {
+  color: var(--on-dark);
 }
 
 .skip:focus-visible {

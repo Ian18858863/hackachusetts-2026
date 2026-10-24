@@ -1,12 +1,11 @@
 .nav {
-  display: grid;
-  gap: var(--space-1);
+  min-width: 0;
 }
 
 .list {
   display: flex;
-  align-items: stretch;
-  gap: var(--space-1);
+  align-items: center;
+  gap: var(--s-5);
   margin: 0;
   padding: 0;
   list-style: none;
@@ -14,117 +13,70 @@
 
 .item {
   display: flex;
-  min-width: 0;
+  flex: none;
 }
 
 .link {
-  position: relative;
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
   min-height: var(--tap-min);
-  padding-inline: var(--space-3);
-  border-radius: var(--radius-md);
-  color: var(--color-text-muted);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
+  border-radius: var(--radius-xs);
+  color: var(--ink-3);
+  font-size: var(--t-sm);
   text-decoration: none;
   white-space: nowrap;
   -webkit-tap-highlight-color: transparent;
-  transition:
-    color var(--dur-fast) var(--ease-standard),
-    background-color var(--dur-fast) var(--ease-standard);
+  transition: color var(--dur-fast) var(--ease);
 }
 
 .link:hover {
-  color: var(--color-text);
-  background: var(--color-surface-hover);
-  text-decoration: none;
-}
-
-.number {
-  display: inline-grid;
-  place-items: center;
-  width: var(--size-step-number);
-  height: var(--size-step-number);
-  flex-shrink: 0;
-  border-radius: var(--radius-pill);
-  background: var(--color-surface-sunken);
-  color: var(--color-text-muted);
-  font-size: var(--text-2xs);
-  font-weight: var(--weight-semibold);
-  font-variant-numeric: tabular-nums;
-  transition:
-    background-color var(--dur-base) var(--ease-standard),
-    color var(--dur-base) var(--ease-standard);
+  color: var(--ink);
 }
 
 .link[data-state='current'] {
-  color: var(--color-text);
-  font-weight: var(--weight-semibold);
+  color: var(--ink);
+  font-weight: 600;
 }
 
-.link[data-state='current'] .number {
-  background: var(--color-accent);
-  color: var(--color-accent-contrast);
+/* Stack the label over an invisible semibold copy: the slot is always wide enough. */
+.label {
+  display: inline-grid;
 }
 
-/* A short underline marks the current step; meaning is also in aria-current and weight. */
-.link[data-state='current']::after {
-  content: '';
-  position: absolute;
-  left: var(--space-3);
-  right: var(--space-3);
-  bottom: 0;
-  height: var(--border-indicator);
-  border-radius: var(--radius-pill);
-  background: var(--color-accent);
+.label::after {
+  content: attr(data-text);
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+  font-weight: 600;
+  user-select: none;
+  pointer-events: none;
 }
 
-.caption {
-  display: none;
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
-  color: var(--color-text-muted);
-}
-
-/* Laptop and tablet: steps on their own row under the brand, left aligned. */
-@media (max-width: 64rem) {
+/* Under the brand (laptop, tablet, phone): scroll inside the row, never the page. */
+@media (max-width: 1120px) {
   .list {
-    margin-inline: calc(var(--space-3) * -1);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scrollbar-width: none;
+    /* Room for the focus ring inside the scroll box. */
+    padding: 6px;
+    margin: -6px;
+  }
+
+  .list::-webkit-scrollbar {
+    display: none;
   }
 }
 
-/* Phone: numbers only, evenly spread; the current step's name sits below. */
-@media (max-width: 40rem) {
+@media (max-width: 600px) {
   .list {
-    display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
-    margin-inline: 0;
+    gap: var(--s-4);
+    /* Fade the last label when the row is cut, so it reads as scrollable. */
+    mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
   }
 
-  .link {
-    justify-content: center;
-    width: 100%;
-    padding-inline: 0;
-  }
-
-  .link[data-state='current']::after {
-    left: 30%;
-    right: 30%;
-  }
-
-  .label {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0, 0, 0, 0);
-    white-space: nowrap;
-  }
-
-  .caption {
-    display: block;
-    padding-bottom: var(--space-1);
+  .item:last-child {
+    padding-right: var(--s-6);
   }
 }

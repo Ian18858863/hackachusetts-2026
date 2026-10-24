@@ -1,66 +1,72 @@
+/*
+ * Static container. "surface" is the specimen's rounded focal panel (.lead):
+ * a soft grey surface, 28px radius, no border. "sunken" is the quieter
+ * variant: white with a hairline, for secondary grouped content.
+ */
 .card {
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
+  gap: var(--s-5);
   min-width: 0;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-lg);
   list-style: none;
 }
 
 .surface {
-  background: var(--color-surface);
-  box-shadow: var(--shadow-sm);
+  border-radius: var(--r-l);
+  background: var(--surface);
 }
 
 .sunken {
-  background: var(--color-surface-sunken);
+  border: 1px solid var(--hair);
+  border-radius: var(--r-m);
+  background: var(--bg);
 }
 
 .md {
-  padding: var(--space-5);
+  padding: var(--s-5);
 }
 
 .lg {
-  padding: clamp(var(--space-5), 3vw, var(--space-8));
+  padding: 40px 40px var(--s-6);
 }
 
 .header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: var(--space-4);
+  gap: var(--s-4);
 }
 
 .heading {
   display: grid;
-  gap: var(--space-1);
+  gap: var(--s-1);
   min-width: 0;
 }
 
 .eyebrow {
-  font-size: var(--text-xs);
-  font-weight: var(--weight-medium);
-  letter-spacing: var(--tracking-caps);
-  text-transform: uppercase;
-  color: var(--color-text-subtle);
+  font-size: var(--t-sm);
+  color: var(--ink-3);
 }
 
 .title {
-  font-size: var(--text-lg);
-  letter-spacing: var(--tracking-tight);
-  color: var(--color-text);
+  font-family: var(--f-display);
+  font-size: var(--t-lg);
+  font-weight: 500;
+  font-optical-sizing: auto;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  color: var(--ink);
 }
 
 .description {
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
   max-width: var(--measure);
+  font-size: var(--t-sm);
+  color: var(--ink-2);
 }
 
 .actions {
   display: flex;
-  gap: var(--space-2);
+  gap: var(--s-2);
   flex-shrink: 0;
 }
 
@@ -72,9 +78,17 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--space-2);
-  padding-top: var(--space-4);
-  border-top: 1px solid var(--color-border);
-  font-size: var(--text-sm);
-  color: var(--color-text-muted);
+  gap: var(--s-2) var(--s-4);
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+
+@media (max-width: 600px) {
+  .lg {
+    padding: var(--s-5) var(--s-4) var(--s-4);
+  }
+
+  .surface {
+    border-radius: 22px;
+  }
 }

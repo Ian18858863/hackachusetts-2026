@@ -1,16 +1,22 @@
+/*
+ * Empty and error states in the specimen's voice: one calm rounded surface
+ * panel (like .lead and .key), left aligned, a Newsreader title, plain text
+ * and one pill action. No red: an error reads as a calm note with a way on.
+ */
 .panel {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  gap: var(--space-2);
-  padding: var(--space-12) var(--space-6);
-  text-align: center;
-  border-radius: var(--radius-lg);
-  background: var(--color-surface-sunken);
+  align-items: flex-start;
+  min-width: 0;
+  padding: 40px 40px var(--s-6);
+  border-radius: var(--r-l);
+  background: var(--surface);
+  text-align: left;
 }
 
 .compact {
-  padding: var(--space-8) var(--space-5);
+  padding: var(--s-5);
+  border-radius: var(--r-m);
 }
 
 .icon {
@@ -18,45 +24,51 @@
   place-items: center;
   width: var(--size-state-icon);
   height: var(--size-state-icon);
-  margin-bottom: var(--space-2);
-  border-radius: var(--radius-md);
-  background: var(--color-surface);
-  color: var(--color-text-muted);
-  box-shadow: var(--shadow-sm);
+  margin-bottom: var(--s-4);
+  color: var(--ink-3);
 }
 
 .compact .icon {
   width: var(--size-state-icon-sm);
   height: var(--size-state-icon-sm);
+  margin-bottom: var(--s-3);
 }
 
 .title {
-  font-size: var(--text-lg);
-  font-weight: var(--weight-semibold);
-  color: var(--color-text);
+  font-family: var(--f-display);
+  font-size: var(--t-lg);
+  font-weight: 500;
+  font-optical-sizing: auto;
+  line-height: 1.2;
+  letter-spacing: -0.005em;
+  color: var(--ink);
+}
+
+.compact .title {
+  font-size: 1.3125rem;
 }
 
 .description {
-  max-width: var(--measure-narrow);
-  font-size: var(--text-md);
-  color: var(--color-text-muted);
+  max-width: 58ch;
+  margin-top: var(--s-2);
+  font-size: var(--t-base);
+  color: var(--ink-2);
 }
 
 .actions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-2);
-  margin-top: var(--space-3);
+  gap: var(--s-3);
+  margin-top: var(--s-5);
 }
 
-/* ---- Danger tone ------------------------------------------------------ */
-.danger {
-  background: var(--color-danger-tint);
+.compact .actions {
+  margin-top: var(--s-4);
 }
 
+/* Error tone: same calm panel; the icon carries the state, with the title. */
 .danger .icon {
-  color: var(--color-danger-text);
+  color: var(--ink-2);
 }
 
 /* ---- Technical details (custom disclosure, no OS look) --------------- */
@@ -64,22 +76,24 @@
   display: flex;
   flex-direction: column;
   width: min(100%, var(--size-details-max));
-  margin-top: var(--space-3);
-  font-size: var(--text-xs);
-  color: var(--color-text-muted);
-  text-align: left;
+  margin-top: var(--s-4);
+  font-size: var(--t-xs);
+  color: var(--ink-3);
 }
 
 .details summary {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-1);
+  align-self: flex-start;
+  gap: var(--s-2);
   min-height: var(--tap-min);
-  padding-inline: var(--space-2);
-  margin-inline: auto;
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-xs);
   cursor: pointer;
   list-style: none;
+}
+
+.details summary:hover {
+  color: var(--ink);
 }
 
 .details summary::-webkit-details-marker {
@@ -93,7 +107,7 @@
   border-right: 1.5px solid currentColor;
   border-bottom: 1.5px solid currentColor;
   transform: rotate(-45deg);
-  transition: transform var(--dur-fast) var(--ease-out);
+  transition: transform var(--dur-fast) var(--ease);
 }
 
 .details[open] summary::before {
@@ -101,9 +115,25 @@
 }
 
 .detailsBody {
-  padding: var(--space-3);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface);
-  font-family: var(--font-mono);
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-s);
+  background: var(--bg);
+  font-variant-numeric: tabular-nums;
   overflow-wrap: anywhere;
+}
+
+@media (max-width: 600px) {
+  .panel {
+    padding: var(--s-5) var(--s-5) var(--s-5);
+    border-radius: 22px;
+  }
+
+  .compact {
+    padding: var(--s-4);
+    border-radius: var(--r-m);
+  }
+
+  .title {
+    font-size: 1.375rem;
+  }
 }

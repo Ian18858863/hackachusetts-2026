@@ -1,18 +1,11 @@
 .disclaimer {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--space-2);
   max-width: var(--measure);
-  font-size: var(--text-md);
-  line-height: var(--leading-normal);
-  color: var(--color-text-muted);
+  font-size: var(--t-base);
+  line-height: var(--lh-text);
+  color: var(--ink-2);
 }
 
-.icon {
-  display: flex;
-  flex-shrink: 0;
-  align-items: center;
-  /* One line box tall, so the icon centres on the first line of text. */
-  height: 1lh;
-  color: var(--color-text-subtle);
+.lead {
+  color: var(--ink);
+  font-weight: 600;
 }

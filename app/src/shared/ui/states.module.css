@@ -1,44 +1,43 @@
 .loading {
-  gap: var(--space-4);
+  gap: var(--s-4);
 }
 
 .step {
   display: inline-flex;
   align-items: center;
-  gap: var(--space-2);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
-  color: var(--color-text-muted);
+  gap: var(--s-2);
+  font-size: var(--t-sm);
+  color: var(--ink-2);
 }
 
 .errorWrap {
   display: grid;
-  gap: var(--space-3);
+  gap: var(--s-3);
 }
 
 .errorActions {
   display: flex;
   flex-wrap: wrap;
-  justify-content: center;
-  gap: var(--space-2);
+  gap: var(--s-3);
 }
 
+/* Offline: a calm surface band under the header, like the specimen's top line. */
 .offline {
-  background: var(--color-warning-tint);
-  color: var(--color-warning);
+  background: var(--surface);
+  color: var(--ink-2);
 }
 
 .offlineInner {
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  gap: var(--s-3);
   max-width: var(--content-max);
   margin-inline: auto;
-  padding: var(--space-3) var(--gutter);
-  font-size: var(--text-sm);
-  font-weight: var(--weight-medium);
+  padding: var(--s-3) var(--gutter);
+  font-size: var(--t-sm);
 }
 
 .offlineInner svg {
   flex-shrink: 0;
+  color: var(--ink-3);
 }

@@ -1,4 +1,11 @@
-export { Button, type ButtonProps, type ButtonVariant, type ButtonSize } from './Button';
+export {
+  Button,
+  ButtonLink,
+  type ButtonLinkProps,
+  type ButtonProps,
+  type ButtonVariant,
+  type ButtonSize,
+} from './Button';
 export { Card, type CardProps } from './Card';
 export { EmptyState, type EmptyStateProps } from './EmptyState';
 export { ErrorState, type ErrorStateProps } from './ErrorState';

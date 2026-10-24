@@ -1,37 +1,44 @@
-import { PRODUCT_NAME } from '../../shared/text';
+import { termCounts, useCase } from '../../shared/store';
 import { stepHref, type StepId } from '../../shared/steps';
+import { PRODUCT_NAME } from '../../shared/text';
+import { ButtonLink } from '../ui';
 import { StepNav } from './StepNav';
 import styles from './TopBar.module.css';
 
-/** White top bar: brand on the left, the five steps on the right (below on narrow screens). */
+/**
+ * Header from the approved specimen: brand on the left, the five steps as
+ * plain text links, and on the right a quiet demo chip and the black pill
+ * that opens the brief. No bar, no border: whitespace separates it.
+ */
 export function TopBar({ current }: { current: StepId | null }) {
+  const { caseObject } = useCase();
+  const { observed } = termCounts(caseObject);
+  const showBrief = observed > 0 && current !== 'brief';
+
   return (
     <header className={styles.bar}>
       <div className={styles.inner}>
         <a className={styles.brand} href={stepHref('notes')} aria-label={`${PRODUCT_NAME}, start`}>
-          <BrandMark />
+          <span className={styles.mark} aria-hidden="true" />
           <span className={styles.name}>{PRODUCT_NAME}</span>
         </a>
         <StepNav current={current} className={styles.steps} />
+        {(caseObject.demo || showBrief) && (
+          <div className={styles.end}>
+            {caseObject.demo && <span className={styles.chip}>Demo case</span>}
+            {showBrief && (
+              <ButtonLink href={stepHref('brief')} aria-label="Prepare brief">
+                <span className={styles.wide} aria-hidden="true">
+                  Prepare brief
+                </span>
+                <span className={styles.narrow} aria-hidden="true">
+                  Brief
+                </span>
+              </ButtonLink>
+            )}
+          </div>
+        )}
       </div>
     </header>
-  );
-}
-
-/** Provisional mark: a lens over three evidence points (same as favicon.svg). */
-function BrandMark() {
-  return (
-    <svg className={styles.mark} viewBox="0 0 32 32" aria-hidden="true" focusable="false">
-      <rect width="32" height="32" rx="8" fill="currentColor" />
-      <g stroke="var(--color-accent-contrast)" strokeWidth="2.25" fill="none" strokeLinecap="round">
-        <circle cx="14" cy="14" r="6.5" />
-        <path d="m19 19 5 5" />
-      </g>
-      <g fill="var(--color-accent-contrast)">
-        <circle cx="11.5" cy="14" r="1.25" />
-        <circle cx="14" cy="11.5" r="1.25" />
-        <circle cx="16.5" cy="14" r="1.25" />
-      </g>
-    </svg>
   );
 }

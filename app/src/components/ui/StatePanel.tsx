@@ -35,9 +35,10 @@ export function StatePanel({
         .filter(Boolean)
         .join(' ')}
       role={role}
+      data-surface=""
     >
       <span className={styles.icon}>
-        <Icon name={icon} size={compact ? 20 : 22} />
+        <Icon name={icon} size={compact ? 20 : 24} />
       </span>
       <Heading className={styles.title}>{title}</Heading>
       {description && <p className={styles.description}>{description}</p>}
