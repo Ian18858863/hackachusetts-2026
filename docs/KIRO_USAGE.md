@@ -17,7 +17,7 @@ Ian's assistant (Claude, outside Kiro) writes natural-language task prompts and 
 - Every integration into `main` is a reviewed, smoke-tested, fast-forward push without force. Deploys happen only after a passing smoke test.
 
 ## Tools
-- Kiro IDE: used once for Ian, at 15:44 ET in Kiro IDE 1.4.26, to show an IDE agent hook firing: the agent edited `app/src/components/shell/TopBar.tsx` and the v1 `PostFileSave` command hook `typecheck-app-on-save` fired (worktree `wt/t27-ide-demo`, branch `ian/t27-ide-hook-demo`, not merged; see the log row). The `contract-drift-check` agent hook has not been observed firing. Peter's and Jerry's Kiro IDE usage will be logged here only when their real usage lines arrive.
+- Kiro IDE: used for Ian at 15:09–15:44 ET in Kiro IDE 1.4.26 to show an IDE agent hook firing; of three attempts, the hook fired once, at 15:44 ET: the agent edited `app/src/components/shell/TopBar.tsx` and the v1 `PostFileSave` command hook `typecheck-app-on-save` fired (worktree `wt/t27-ide-demo`, branch `ian/t27-ide-hook-demo`, not merged; see the log row). The `contract-drift-check` agent hook has not been observed firing. Peter's and Jerry's Kiro IDE usage will be logged here only when their real usage lines arrive.
 - Kiro CLI: `kiro-cli chat` edited, committed and pushed a README change in the private test repo `Ian18858863/kiro-connection-test` (commit `28aac81`) to verify Kiro-to-GitHub access before the event. Since 11:40 ET, `kiro-cli chat --no-interactive` has authored every project commit listed in the log below, run the builds and checks, created and deployed the Cloudflare Pages project, and run the custom agents `rdd-builder` and `rdd-reviewer`.
 - Kiro Web and Kiro Crew: not used; see "Not used, and why".
 
@@ -67,7 +67,7 @@ Ian's assistant (Claude, outside Kiro) writes natural-language task prompts and 
 - A ClinicalTrials.gov condition search for "Niemann-Pick disease, type C1" matched the drug name NPC-1 and returned an unrelated Alzheimer's study (NCT07236190). T18f added a relevance filter: a study is kept only when one of its listed conditions contains all distinctive words of the disease name (commits `6b73f5d`, `cf07006`).
 
 ## Not used, and why
-- Kiro Web: not used, because it needs a paid plan.
+- Kiro Web: not used.
 - Kiro Crew: not used; we skipped it to save time during the event.
 
 ## Log

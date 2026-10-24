@@ -1,6 +1,6 @@
 # How we built Rare Disease Detective with Kiro
 
-Kiro authored every project file, spec, steering file and this write-up. Ian planned tasks and reviewed diffs with a separate planning assistant; that assistant wrote no project content. Two early steering drafts are the exception, disclosed in [Corrections](#corrections) at the end.
+Kiro authored the application code, functions, specs, steering, hooks, agents, power and judge-facing documents, including this write-up. Ian planned tasks and reviewed diffs with a separate planning assistant. That assistant drafted only the team coordination files (`BRIEFING.md`, `docs/PROTOCOL.md`), the pre-event repo setup and topic research, and two early steering drafts that Kiro later re-authored. All of these are listed in [Corrections](#corrections) at the end.
 
 Every claim below cites a commit, a path or a row in the usage log [docs/KIRO_USAGE.md](KIRO_USAGE.md). Everything we did not do or did not verify is in one table, [Known limits](#known-limits), at the end. Times are Eastern Time on 2026-10-24.
 
@@ -30,7 +30,7 @@ Kiro integration session (docs/PROTOCOL.md 6A)
 
 | Task | Before | Caught by | After |
 |---|---|---|---|
-| T13a app foundation | The offline mocks gave four real diseases (Duchenne, Marfan, Kabuki 1, CdLS 1) invented frequency bands, labelling the patient's own features "Very frequent" / "Frequent" by position, and a production build fell back to those mocks on network errors | `rdd-reviewer`, 2 blockers citing CONTRACT §1 and R9.3 ([review](reviews/T13a.md)) | Real JAX annotation values in the mocks, and mocks only in dev or with `?mock=1` (`87febca`). A production build shows "The service could not be reached … Try again" instead of mock data |
+| T13a app foundation | The offline mocks attached invented frequency bands to real HPO terms for four real diseases (Duchenne, Marfan, Kabuki 1, CdLS 1), labelling the patient's own features "Very frequent" or "Frequent" by their position in the list, and a production build fell back to those mocks on network errors | `rdd-reviewer`, 2 blockers citing CONTRACT §1 and R9.3 ([review](reviews/T13a.md)) | Real JAX annotation values in the mocks, and mocks only in dev or with `?mock=1` (`87febca`). A production build shows "The service could not be reached … Try again" instead of mock data |
 | T18d next-questions hierarchy filter | Ancestor lookups ran in series with no overall cap, close to the Cloudflare Workers limit of 50 subrequests per invocation | `rdd-reviewer` flagged the 50-subrequest risk ([review](reviews/T18d.md), finding 2); in the fix session a **Context7** lookup of the Cloudflare docs showed that Cache API calls (`match`, `put`, `delete`) count toward the same limit | A `SubrequestMeter` caps the hierarchy phase at 40 subrequests, counting `fetch` and cache calls; a 4,750 ms deadline skips the filter instead of failing; 10 Node tests (`1e79554`) |
 | T18f trial relevance | A ClinicalTrials.gov search for "Niemann-Pick disease, type C1" matched the drug name NPC-1 and returned an unrelated Alzheimer's study (NCT07236190). The first filter accepted one shared word, so "niemann" would also pass Pick disease studies | A live ClinicalTrials.gov query on 2026-10-24 (contract §7.6), then `rdd-reviewer` on the first filter ([review](reviews/T18f.md), finding 3) | A study is kept only when a listed condition contains all distinctive words of the disease name (`6b73f5d`, `cf07006`; contract §7.6). The T18l re-recording has 6 Niemann-Pick type C studies and no NCT07236190 (`a6b4286`) |
 
@@ -112,9 +112,9 @@ Configured in `.kiro/settings/mcp.json` and, since `0dca96f`, in `rdd-builder`'s
 
 | Item | Status | Evidence |
 |---|---|---|
-| Kiro Web | Not used; it needs a paid plan | — |
+| Kiro Web | Not used | — |
 | Kiro Crew | Not used; skipped to save time | — |
-| Kiro IDE hook firing | Seen once, for the command hook `typecheck-app-on-save`, on the unmerged branch `ian/t27-ide-hook-demo`; the first two takes did not fire (untrusted window) | Usage-log row 15:44 |
+| Kiro IDE hook firing | Three attempts; the hook fired once, for the command hook `typecheck-app-on-save`, on the unmerged branch `ian/t27-ide-hook-demo`; the first two takes did not fire (untrusted window) | Usage-log row 15:44 |
 | `contract-drift-check` IDE hook | Not observed firing | — |
 | Steering fileMatch and manual modes in Kiro IDE | Not exercised; the CLI agents load all four files as resources | `.kiro/agents/*.json` |
 | MCP in Kiro IDE | Not verified that the IDE reads `.kiro/settings/mcp.json`; `kiro_default` sessions get both servers without `rdd-builder`'s query rule | Usage log, MCP section |
@@ -134,3 +134,5 @@ Configured in `.kiro/settings/mcp.json` and, since `0dca96f`, in `rdd-builder`'s
 
 - At 10:55 ET Ian's assistant (Claude, outside Kiro) committed a draft of `.kiro/steering/design.md` in `c31e29f`, and an early usage-log line claimed Kiro had used it. Kiro had not. The log's Corrections section records this, and Kiro re-authored the file under T02 (`38291ac`).
 - `.kiro/steering/team.md` was also drafted by Ian's assistant outside Kiro, in `926bfee` and `c9c7c03`. Kiro re-authored it under T02b (`cac4d5a`).
+- `BRIEFING.md` (first version in `c9c7c03`) and `docs/PROTOCOL.md` (`fa0180f`) are team coordination files drafted by Ian's assistant outside Kiro, as `BRIEFING.md` sections 0 and 3 state. Ian's Kiro committed the later board updates (T11 to T11m), but the coordination text also carries edits from several teammates' assistants. Neither file is project code.
+- The pre-event setup commits `926bfee` to `c9c7c03` (09:19–09:43 ET, before the first logged Kiro action at 11:40 ET) were made outside Kiro. They created placeholder versions of `README.md`, `.gitignore`, `docs/KIRO_USAGE.md` and `docs/CONTRACT.md`, the topic research `docs/research/health-visions.md`, and `docs/TEAM_SETUP.md` (since deleted). Kiro later rewrote `README.md` (`6fcbcdb`), `docs/CONTRACT.md` (`f77cc31`) and `docs/KIRO_USAGE.md` (`e4d0c8e`) and edited `.gitignore` (`53263d4`). `docs/research/health-visions.md` is still the assistant's research text.
