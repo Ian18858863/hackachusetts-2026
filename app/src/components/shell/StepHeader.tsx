@@ -1,6 +1,8 @@
 import { useOfflineMockEndpoints, type DataOrigin } from '../../shared/api';
 import type { DataVersions, Source } from '../../shared/contract';
 import { findDemoCase } from '../../shared/mocks';
+import { useT } from '../../shared/i18n';
+import shell from '../../shared/i18n/messages/shell';
 import { getStep, STEPS, type StepId } from '../../shared/steps';
 import { useCase } from '../../shared/store';
 import { DataOriginLabel, DemoCaseLabel, Disclaimer, OfflineMockLabel } from '../../shared/ui';
@@ -23,6 +25,7 @@ export function StepHeader({ step }: { step: StepId }) {
   const def = getStep(step);
   const index = STEPS.findIndex((s) => s.id === step);
   const { caseObject, meta } = useCase();
+  const t = useT(shell);
   const mockEndpoints = useOfflineMockEndpoints();
   const demoTitle = caseObject.demo ? findDemoCase(caseObject.demo.caseId)?.title : undefined;
 
@@ -33,7 +36,7 @@ export function StepHeader({ step }: { step: StepId }) {
   return (
     <header className={styles.header}>
       <p className={styles.kicker}>
-        Step {index + 1} of {STEPS.length}
+        {t('stepOf', { n: index + 1, total: STEPS.length })}
         {caseObject.demo && (
           <>
             {' · '}
@@ -43,18 +46,18 @@ export function StepHeader({ step }: { step: StepId }) {
                 {' · '}
               </>
             )}
-            demo case, not a real patient
+            {t('demoNotReal')}
           </>
         )}
       </p>
-      <h1 className={styles.title}>{def.title}</h1>
+      <h1 className={styles.title}>{t(`${step}Title`)}</h1>
       <p className={styles.lede}>
         {def.showsResults && (
           <>
             <Disclaimer inline />{' '}
           </>
         )}
-        {def.lede}
+        {t(`${step}Lede`)}
       </p>
       {hasLabels && (
         <div className={styles.labels}>

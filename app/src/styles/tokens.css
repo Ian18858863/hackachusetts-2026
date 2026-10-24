@@ -42,8 +42,14 @@
   /* Newsreader (OFL-1.1, opsz + wght axes; 400 and 500 used) and
      Source Sans 3 (OFL-1.1, 400 and 600), self-hosted via @fontsource
      (imported in src/main.tsx). */
-  --f-display: 'Newsreader Variable', 'Newsreader', Georgia, 'Times New Roman', serif;
-  --f-text: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-display: 'Newsreader Variable', 'Newsreader', Georgia, 'Times New Roman', var(--f-cjk-serif), serif;
+  --f-text: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', var(--f-cjk-sans), sans-serif;
+  /* CJK fallbacks: system fonts only, no webfont downloads. They come after the
+     Latin faces, so Latin text keeps the stacks above; the :lang() rules at the
+     end of this file put each language's own fonts first within this slot. */
+  --f-cjk-sans: 'PingFang SC', 'Hiragino Sans', 'Apple SD Gothic Neo', 'Noto Sans CJK SC', 'Microsoft YaHei',
+    'Yu Gothic', 'Malgun Gothic';
+  --f-cjk-serif: 'Songti SC', 'Hiragino Mincho ProN', 'Noto Serif CJK SC', var(--f-cjk-sans);
   --t-xs: 0.875rem; /* 14 */
   --t-sm: 0.9375rem; /* 15 */
   --t-base: 1.0625rem; /* 17 */
@@ -313,4 +319,38 @@
     --stagger-char: 0ms;
     --stagger-item: 0ms;
   }
+}
+
+/* ------------------------------------------------------------------------
+   CJK typography (T28a). Latin faces stay first, so English is unchanged;
+   each language orders its own system fonts in the CJK slot. Headings drop
+   the negative Latin tracking, which crowds CJK glyphs.
+   ------------------------------------------------------------------------ */
+:root:lang(zh) {
+  --f-cjk-sans: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei';
+  --f-cjk-serif: 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', var(--f-cjk-sans);
+}
+
+:root:lang(ja) {
+  --f-cjk-sans: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', 'Yu Gothic';
+  --f-cjk-serif: 'Hiragino Mincho ProN', 'Noto Serif CJK JP', 'Yu Mincho', var(--f-cjk-sans);
+}
+
+:root:lang(ko) {
+  --f-cjk-sans: 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Malgun Gothic';
+  --f-cjk-serif: 'AppleMyungjo', 'Noto Serif CJK KR', var(--f-cjk-sans);
+  word-break: keep-all;
+}
+
+:root:lang(zh),
+:root:lang(ja),
+:root:lang(ko) {
+  --tracking-display: normal;
+  --tracking-tight: normal;
+}
+
+:lang(zh) :is(h1, h2, h3, h4),
+:lang(ja) :is(h1, h2, h3, h4),
+:lang(ko) :is(h1, h2, h3, h4) {
+  letter-spacing: normal;
 }

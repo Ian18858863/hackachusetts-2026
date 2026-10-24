@@ -1,24 +1,23 @@
-import { DISCLAIMER } from '../text';
+import { useT } from '../i18n';
+import common from '../i18n/messages/common';
 import styles from './Disclaimer.module.css';
 
 // "Decision support, not a diagnosis." leads in semibold, as in the specimen.
-// The text stays the verbatim contract string; only its first sentence is weighted.
-// If the marker is ever missing, the whole sentence renders unweighted.
-const MARKER = DISCLAIMER.indexOf('. ');
-const LEAD = MARKER >= 0 ? DISCLAIMER.slice(0, MARKER + 1) : '';
-const REST = MARKER >= 0 ? DISCLAIMER.slice(MARKER + 1) : DISCLAIMER;
+// In English the two parts are the verbatim contract string (DISCLAIMER in ../text);
+// other languages use the faithful translations in i18n/messages/common.ts.
 
 /**
- * The safety line from contract section 13, verbatim, in body size.
+ * The safety line from contract section 13 (verbatim in English), in body size.
  * Shown near every result (ranking, questions, trials) and in the brief.
  * Calm and permanent: not a banner, not dismissible, not fine print.
  * `inline` renders a span to open a lead paragraph (the step header does this).
  */
 export function Disclaimer({ className, inline = false }: { className?: string; inline?: boolean }) {
+  const t = useT(common);
   const content = (
     <>
-      {LEAD && <strong className={styles.lead}>{LEAD}</strong>}
-      {REST}
+      <strong className={styles.lead}>{t('disclaimerLead')}</strong>
+      {t('disclaimerRest')}
     </>
   );
   if (inline) return <span className={className}>{content}</span>;

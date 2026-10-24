@@ -1,7 +1,9 @@
 import { Icon } from '../../components/ui';
 import type { DataOrigin } from '../api';
 import type { DataVersions, Source } from '../contract';
-import { OFFLINE_MOCK_LABEL, demoCaseLabel } from '../text';
+import { useT } from '../i18n';
+import common from '../i18n/messages/common';
+import { demoCaseLabel } from '../text';
 import styles from './DemoLabel.module.css';
 
 /**
@@ -20,20 +22,22 @@ export function DemoCaseLabel({ sourcePhenopacketId }: { sourcePhenopacketId: st
 
 /** The payload came from the app's bundled offline mocks, not the server. */
 export function OfflineMockLabel() {
+  const t = useT(common);
   return (
     <span className={styles.label} data-tone="mock">
       <Icon name="cloudOff" size={14} className={styles.icon} />
-      <span>{OFFLINE_MOCK_LABEL}</span>
+      <span>{t('demoDataOffline')}</span>
     </span>
   );
 }
 
 /** The server answered from its recorded demo cache (source: "demo"). */
 export function DemoCacheLabel({ recorded }: { recorded?: string }) {
+  const t = useT(common);
   return (
     <span className={styles.label} data-tone="demo">
       <Icon name="flask" size={14} className={styles.icon} />
-      <span>{recorded ? `Demo data (recorded ${recorded})` : 'Demo data (recorded)'}</span>
+      <span>{recorded ? t('demoDataRecorded', { date: recorded }) : t('demoDataRecordedNoDate')}</span>
     </span>
   );
 }

@@ -1,4 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
+import { useT } from '../../shared/i18n';
+import shell from '../../shared/i18n/messages/shell';
 import { STEPS, stepHref, type StepId } from '../../shared/steps';
 import styles from './StepNav.module.css';
 
@@ -11,6 +13,7 @@ import styles from './StepNav.module.css';
 export function StepNav({ current, className }: { current: StepId | null; className?: string }) {
   const index = current ? STEPS.findIndex((s) => s.id === current) : -1;
   const listRef = useRef<HTMLOListElement>(null);
+  const t = useT(shell);
 
   useLayoutEffect(() => {
     const list = listRef.current;
@@ -28,10 +31,11 @@ export function StepNav({ current, className }: { current: StepId | null; classN
   }, [index]);
 
   return (
-    <nav className={[styles.nav, className].filter(Boolean).join(' ')} aria-label="Steps">
+    <nav className={[styles.nav, className].filter(Boolean).join(' ')} aria-label={t('stepsNavLabel')}>
       <ol ref={listRef} className={styles.list}>
         {STEPS.map((step, i) => {
           const state = i === index ? 'current' : i < index ? 'before' : 'after';
+          const label = t(`${step.id}Label`);
           return (
             <li key={step.id} className={styles.item}>
               <a
@@ -43,8 +47,8 @@ export function StepNav({ current, className }: { current: StepId | null; classN
                 aria-current={state === 'current' ? 'step' : undefined}
               >
                 {/* data-text reserves the semibold width, so the row never shifts. */}
-                <span className={styles.label} data-text={step.label}>
-                  {step.label}
+                <span className={styles.label} data-text={label}>
+                  {label}
                 </span>
               </a>
             </li>

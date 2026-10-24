@@ -11,6 +11,8 @@ import { ReviewStep } from './features/review';
 import { TrialsPanel } from './features/trials';
 import { useDemoParam } from './lib/useDemoParam';
 import { useHashRoute } from './lib/useHashRoute';
+import { I18nProvider, useT } from './shared/i18n';
+import shell from './shared/i18n/messages/shell';
 import { stepFromRoute, type StepId } from './shared/steps';
 import { CaseProvider } from './shared/store';
 import { AnnouncerProvider, AppFooter, OfflineNotice } from './shared/ui';
@@ -30,16 +32,19 @@ const STEP_VIEWS: Record<StepId, ComponentType[]> = {
 
 export function App() {
   return (
-    <CaseProvider>
-      <AnnouncerProvider>
-        <Shell />
-      </AnnouncerProvider>
-    </CaseProvider>
+    <I18nProvider>
+      <CaseProvider>
+        <AnnouncerProvider>
+          <Shell />
+        </AnnouncerProvider>
+      </CaseProvider>
+    </I18nProvider>
   );
 }
 
 function Shell() {
   useDemoParam();
+  const t = useT(shell);
   const route = useHashRoute();
   const isPreview = route === 'primitives';
   // Unknown hashes fall back to the first step.
@@ -61,7 +66,7 @@ function Shell() {
   return (
     <div className={styles.shell}>
       <a className={styles.skip} href="#main" onClick={skipToMain}>
-        Skip to content
+        {t('skipToContent')}
       </a>
       <TopBar current={step} />
       <OfflineNotice />

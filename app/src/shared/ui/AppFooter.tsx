@@ -1,3 +1,6 @@
+import { useLocale, useT } from '../i18n';
+import common from '../i18n/messages/common';
+import shell from '../i18n/messages/shell';
 import { useCase } from '../store';
 import { ATTRIBUTION, hpoAttribution } from '../text';
 import { Disclaimer } from './Disclaimer';
@@ -13,6 +16,9 @@ const HPO_URL = 'https://hpo.jax.org';
  */
 export function AppFooter() {
   const { caseObject, meta } = useCase();
+  const { locale } = useLocale();
+  const tc = useT(common);
+  const ts = useT(shell);
   const candidates = caseObject.lastRanking?.response.candidates ?? [];
   const hpoVersion = meta.hpoVersion ?? 'not loaded yet';
 
@@ -33,7 +39,9 @@ export function AppFooter() {
         <p className={styles.safety}>
           <Disclaimer inline />
         </p>
-        <ul className={styles.credits} aria-label="Data sources and credits">
+        {/* Licence lines below stay in English (contract section 13), so other languages say why. */}
+        {locale !== 'en' && <p>{tc('medicalTermsNote')}</p>}
+        <ul className={styles.credits} aria-label={ts('creditsLabel')}>
           <li>
             {hpoBefore}
             <a href={HPO_URL} target="_blank" rel="noreferrer">
@@ -45,7 +53,7 @@ export function AppFooter() {
           ))}
         </ul>
         <p className={styles.built}>
-          <b>Built at Sundai</b> · Hackachusetts 2026 · powered by Kiro
+          <b>Built at Sundai</b> · Hackachusetts 2026 · {ts('poweredByKiro')}
         </p>
       </div>
     </footer>

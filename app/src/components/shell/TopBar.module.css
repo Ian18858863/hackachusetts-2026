@@ -5,8 +5,8 @@
 
 .inner {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  grid-template-areas: 'brand steps end';
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  grid-template-areas: 'brand steps end lang';
   align-items: center;
   column-gap: var(--s-6);
   max-width: var(--content-max);
@@ -61,6 +61,12 @@
   margin-left: var(--s-4);
 }
 
+/* Language switcher: last in the bar; on phones it moves to the end of the steps row. */
+.lang {
+  grid-area: lang;
+  justify-self: end;
+}
+
 .end {
   grid-area: end;
   display: flex;
@@ -104,10 +110,10 @@
 /* Tablet: the steps move to their own row under the brand. */
 @media (max-width: 900px) {
   .inner {
-    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-columns: minmax(0, 1fr) auto auto;
     grid-template-areas:
-      'brand end'
-      'steps steps';
+      'brand end lang'
+      'steps steps steps';
     padding-top: var(--s-3);
   }
 
@@ -118,6 +124,10 @@
 
 @media (max-width: 600px) {
   .inner {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      'brand end'
+      'steps lang';
     column-gap: var(--s-3);
     padding-top: var(--s-2);
   }

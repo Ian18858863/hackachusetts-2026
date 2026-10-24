@@ -1,6 +1,8 @@
 import { useSyncExternalStore, type ReactNode } from 'react';
 import { ErrorState, Icon, SkeletonGroup, Spinner } from '../../components/ui';
 import type { ApiRequestError } from '../api';
+import { useT, type MessageKey } from '../i18n';
+import common from '../i18n/messages/common';
 import styles from './states.module.css';
 
 // ---------------------------------------------------------------------------
@@ -28,18 +30,18 @@ export function LoadingPanel({ step, children }: { step: string; children: React
 // Error: contract error shape → plain words, retry when retryable
 // ---------------------------------------------------------------------------
 
-const TITLES: Partial<Record<ApiRequestError['code'], string>> = {
-  TIMEOUT: 'The service is slow right now',
-  UPSTREAM_TIMEOUT: 'A data service is slow right now',
-  UPSTREAM_ERROR: 'A data service did not answer',
-  RATE_LIMITED: 'Too many requests for a moment',
-  OFFLINE: 'You are offline',
-  UNREACHABLE: 'The service could not be reached',
-  NO_TERMS_FOUND: 'No features found in this text',
-  TEXT_TOO_LONG: 'Text is too long',
-  LLM_UNAVAILABLE: 'Reading notes is not available here',
-  INVALID_REQUEST: 'This request could not be sent',
-  BAD_RESPONSE: 'The answer could not be read',
+const TITLES: Partial<Record<ApiRequestError['code'], MessageKey<typeof common>>> = {
+  TIMEOUT: 'errTimeout',
+  UPSTREAM_TIMEOUT: 'errUpstreamTimeout',
+  UPSTREAM_ERROR: 'errUpstreamError',
+  RATE_LIMITED: 'errRateLimited',
+  OFFLINE: 'errOffline',
+  UNREACHABLE: 'errUnreachable',
+  NO_TERMS_FOUND: 'errNoTermsFound',
+  TEXT_TOO_LONG: 'errTextTooLong',
+  LLM_UNAVAILABLE: 'errLlmUnavailable',
+  INVALID_REQUEST: 'errInvalidRequest',
+  BAD_RESPONSE: 'errBadResponse',
 };
 
 /**
@@ -63,11 +65,14 @@ export function ApiErrorState({
   compact?: boolean;
   titleLevel?: 2 | 3 | 4;
 }) {
+  const t = useT(common);
+  const titleKey = TITLES[error.code];
   const status = error.status === null ? 'no HTTP response' : `HTTP ${error.status}`;
   return (
     <div className={styles.errorWrap}>
       <ErrorState
-        title={TITLES[error.code] ?? 'Something went wrong'}
+        title={t(titleKey ?? 'errGeneric')}
+        retryLabel={t('tryAgain')}
         description={error.message}
         onRetry={error.retryable ? onRetry : undefined}
         retrying={retrying}
@@ -105,15 +110,13 @@ export function useOnlineStatus(): boolean {
 /** Calm notice shown under the top bar while the browser is offline. */
 export function OfflineNotice() {
   const online = useOnlineStatus();
+  const t = useT(common);
   if (online) return null;
   return (
     <div className={styles.offline} role="status">
       <div className={styles.offlineInner}>
         <Icon name="cloudOff" size={18} />
-        <p>
-          You are offline. Your case is saved in this browser. Actions that need the network are paused until
-          you reconnect.
-        </p>
+        <p>{t('offlineNotice')}</p>
       </div>
     </div>
   );
