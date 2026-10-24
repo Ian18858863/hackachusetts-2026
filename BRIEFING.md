@@ -160,11 +160,11 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T09 API contract, mock response examples | Ian + relevant owners approve; **Ian is sole file editor**; Jerry approves the engine interface fields | `docs/CONTRACT.md`, `.kiro/specs/rare-disease-detective/**` | REVIEWING (contract v0.1 draft and spec pushed `f77cc31658296dfe0cbc956c9b180ba7b5262f6e`; pending APPROVE by Jerry and Ian) | 12:25 (v0.1 draft) |
 | T09b Spec progress ticks | Ian | `.kiro/specs/rare-disease-detective/tasks.md` (Ian's Kiro ticks tasks as they ship) | PUSHED (`5508f1a`) | Rolling |
 | T09c demo-npc1 primary demo case | Ian | `docs/CONTRACT.md`, `.kiro/specs/rare-disease-detective/**` | PUSHED (`629c869`); claimed late; recorded 13:50 ET | — |
-| T09d Contract v0.1.2 | Ian | `docs/CONTRACT.md` | IN_PROGRESS (Ian); claimed late; recorded 14:50 ET | TBD |
+| T09d Contract v0.1.2 | Ian | `docs/CONTRACT.md` | PUSHED (`18556d7`); claimed late; recorded 14:50 ET | TBD |
 | T10 Kiro usage record aggregation + correct early inaccurate entry | Ian/Kiro is sole file editor; all members supply **actual** usage evidence | `docs/KIRO_USAGE.md` | PUSHED (`e4d0c8e83cb41664f0f4cd86902ac4c0a507a03b`); T10b pushed as `ff02d63ca96510976851e6cae8ed78761d88a5dc` | 11:50 |
 | T10c Kiro usage log and AI-development strategy | Ian | `docs/KIRO_USAGE.md`, `docs/reviews/**` (verbatim rdd-reviewer outputs) | PUSHED (`9ebf2f5`) | 13:20 |
 | T10d Kiro usage log + reviews update | Ian | `docs/KIRO_USAGE.md`, `docs/reviews/**` | PUSHED (`db88b59`) | TBD |
-| T10e Kiro usage log update | Ian | `docs/KIRO_USAGE.md`, `docs/reviews/**` | IN_PROGRESS (Ian); claimed late; recorded 14:50 ET | TBD |
+| T10e Kiro usage log update | Ian | `docs/KIRO_USAGE.md`, `docs/reviews/**` | PUSHED (`4a9a791`); claimed late; recorded 14:50 ET | TBD |
 | T11 Team board updates | Ian, or named one-time delegate | `BRIEFING.md`, `docs/PROTOCOL.md` | DONE (`fa0180f`); rolling board updates continue as T11c | 11:45 |
 | T11c Topic decision record + board refresh | Ian | `BRIEFING.md` | PUSHED (`b1804930bc9388dc2a01b0b12405522c053bde1e`) | 12:05 |
 | T11d Topic approval, teammate claims and first deploy on the board | Ian | `BRIEFING.md` | PUSHED (`69fe53d04188ff6f993e9a42475febce2ad13d69`) | 12:15 |
@@ -172,7 +172,8 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T11f Kiro coverage claims on the board | Ian | `BRIEFING.md` | PUSHED (`6b94db7`) | 12:40 |
 | T11g Claim T13c–T16, record pushed Kiro coverage tasks | Ian | `BRIEFING.md` | PUSHED (`079e559`) | 12:55 |
 | T11h Board refresh: functions live, demo-npc1, late claims | Ian | `BRIEFING.md` | PUSHED (`4d80302`) | 13:55 |
-| T11i Board refresh after T16–T18f deploys | Ian | `BRIEFING.md` | IN_PROGRESS (Ian); claimed late; recorded 14:50 ET | 14:55 |
+| T11i Board refresh after T16–T18f deploys | Ian | `BRIEFING.md` | PUSHED (`86d41c9`); claimed late; recorded 14:50 ET | 14:55 |
+| T11j Claim T24 smoke script and T25 QA pass | Ian | `BRIEFING.md` | CLAIMED (Ian) | 14:35 |
 | T12 Art direction note | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`8460be2`); Ian picked the white direction (Option B) at ~12:20 ET but judged both options not good enough; refinement continues as T12b | 12:25 |
 | T12b Refined white art direction variants | Ian; Ian picks | `docs/art-direction/**` | PUSHED (`9208298`); Ian picking B1/B2/B3 | 12:45 |
 | T12c Ian-approved art direction | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`e8fe0f8`); approved by Ian 12:33 ET: B1 UI + B2 typography | 12:35 |
@@ -196,6 +197,8 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T21 Kiro IDE 1.x hooks and steering | Ian | `.kiro/hooks/**`, `.kiro/steering/medical-data.md`, `.kiro/steering/release-check.md` | PUSHED (`6c6ce91`, `68ec5cb`) | 13:05 |
 | T22 Kiro project power `rdd-medical-data` | Ian | `.kiro/powers/rdd-medical-data/**` | PUSHED (`c5f619f`, `47521fa`) | 13:10 |
 | T23 Pre-registered re-rank experiment (research only, not shipped) | Ian | `docs/research/ranking-benchmark.md`, `functions/_lib/rerank.ts` + test (not wired into any endpoint), `scripts/ranking-benchmark.ts`, `scripts/benchmark-data/**` | PUSHED (`4682cdd`); claimed late; recorded 13:50 ET | — |
+| T24 End-to-end smoke script (spec task 5.1) | Ian | `scripts/smoke.mjs` | CLAIMED (Ian) | 15:15 |
+| T25 Accessibility, responsive and definition-of-done QA pass (spec tasks 3.8, 5.2, 5.3) | Ian | `docs/QA.md`, `docs/qa/**` (screenshots) | CLAIMED (Ian) | 15:30 |
 
 From 12:35 ET every Ian task diff gets a first-pass review by the read-only Kiro agent rdd-reviewer before the assistant's review.
 
