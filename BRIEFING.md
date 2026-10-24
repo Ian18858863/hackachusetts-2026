@@ -1,6 +1,6 @@
 # Team Briefing — Hackachusetts 2026 (read this first)
 
-Last updated: 2026-10-24. **v4.4 — Kiro coverage claims (T20–T22, T10c, T09b), T17 deploy and rdd-reviewer first-pass rule recorded 2026-10-24 ~12:35 ET by Ian's Kiro.** **v4 was approved by all three humans (Ian, Peter, Jerry) in the team chat at ~11:35 ET.** This version preserves the original event rules, topic research, and submission requirements, and adopts the faster 3-person coordination workflow.
+Last updated: 2026-10-24. **v4.5 — T13c–T16 claimed; T12c art direction approved (B1 UI + B2 typography); T13a, T20–T22 and T11f recorded as pushed. Recorded 2026-10-24 ~12:51 ET by Ian's Kiro.** **v4 was approved by all three humans (Ian, Peter, Jerry) in the team chat at ~11:35 ET.** This version preserves the original event rules, topic research, and submission requirements, and adopts the faster 3-person coordination workflow.
 
 This is the single source of shared **decisions and current task claims**. The companion [`docs/PROTOCOL.md`](docs/PROTOCOL.md) (Assistant × Kiro Agent Collaboration Protocol v4) is the operational handbook for human teammates, their AI Assistants, and Kiro coding Agents.
 
@@ -147,7 +147,7 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 
 | Task ID / task | Suggested owner | Owned area / conflict boundary | Status | ETA (ET) |
 |---|---|---|---|---|
-| T01 Main demo shell, core frontend + backend | Ian | Main application routes, demo API, root project config. Now split into T13a–T18: T13a foundation (claimed); planned T14 intake + review, T15 ranking + questions, T16 brief + trials in app feature folders; T18 functions rank / next-questions / trials / brief / terms, one file each | OPEN | TBD |
+| T01 Main demo shell, core frontend + backend | Ian | Main application routes, demo API, root project config. Now split into T13a–T16 plus T18 functions: T13a foundation (pushed), T13c re-theme, T14 intake + review, T15 ranking + questions, T16 brief + trials (all claimed, app feature folders); T18 functions rank / next-questions / trials / brief / terms, one file each, pending Jerry's engine exports | OPEN | TBD |
 | T01a Topic-neutral app shell | Ian | `app/**`; no deployment config inside `app/` | PUSHED (`5d54ab95d65a4f110bd401e21e3e78d31a71b106`) | 12:15 |
 | T02 Unified visual steering + honest remediation of 10:55 draft | Ian | `.kiro/steering/design.md` only; log correction handled via separately claimed T10 | PUSHED (`38291acacb9d7895e17c7ecf088e4eafbd937c3d`) | 12:00 |
 | T02b Re-author team steering | Ian | `.kiro/steering/team.md` only | PUSHED (`cac4d5aad6a8c072a99f7397dfca1cd47acdcc8a`) | 12:10 |
@@ -165,15 +165,21 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T11c Topic decision record + board refresh | Ian | `BRIEFING.md` | PUSHED (`b1804930bc9388dc2a01b0b12405522c053bde1e`) | 12:05 |
 | T11d Topic approval, teammate claims and first deploy on the board | Ian | `BRIEFING.md` | PUSHED (`69fe53d04188ff6f993e9a42475febce2ad13d69`) | 12:15 |
 | T11e LLM decision, contract draft and new Ian tasks on the board | Ian | `BRIEFING.md` | PUSHED (`c46c832`) | 12:25 |
-| T11f Kiro coverage claims on the board | Ian | `BRIEFING.md` | IN_PROGRESS (Ian) | 12:40 |
+| T11f Kiro coverage claims on the board | Ian | `BRIEFING.md` | PUSHED (`6b94db7`) | 12:40 |
+| T11g Claim T13c–T16, record pushed Kiro coverage tasks | Ian | `BRIEFING.md` | IN_PROGRESS (Ian) | 12:55 |
 | T12 Art direction note | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`8460be2`); Ian picked the white direction (Option B) at ~12:20 ET but judged both options not good enough; refinement continues as T12b | 12:25 |
 | T12b Refined white art direction variants | Ian; Ian picks | `docs/art-direction/**` | PUSHED (`9208298`); Ian picking B1/B2/B3 | 12:45 |
-| T13a App foundation: shared contract types, API client, mocks, case store, flow shell | Ian | `app/**` (feature folders are created as stubs and handed to T14–T16) | IN_PROGRESS (Ian) | 13:10 |
+| T12c Ian-approved art direction | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`e8fe0f8`); approved by Ian 12:33 ET: B1 UI + B2 typography | 12:35 |
+| T13a App foundation: shared contract types, API client, mocks, case store, flow shell | Ian | `app/**` (feature folders are created as stubs and handed to T14–T16) | PUSHED with T13b fixes (`6c1f106`, `87febca`; first-pass rdd-reviewer review, 2 blockers fixed) | 13:10 |
+| T13c Re-theme app shell to approved art direction | Ian | `app/src/styles/**`, `app/src/components/**`, `app/src/shared/ui/**`, `app/src/App.*`, `app/src/main.tsx`, `app/index.html`, app manifests | IN_PROGRESS (Ian) | 13:20 |
+| T14 Notes intake + feature review | Ian | `app/src/features/intake/**`, `app/src/features/review/**` | IN_PROGRESS (Ian) | 13:30 |
+| T15 Possible matches with evidence + what to check next | Ian | `app/src/features/ranking/**`, `app/src/features/questions/**` | IN_PROGRESS (Ian) | 13:40 |
+| T16 Brief + phenopacket export + recruiting trials | Ian | `app/src/features/brief/**`, `app/src/features/trials/**` | IN_PROGRESS (Ian) | 13:40 |
 | T17 Workers AI LLM proposal layer + model bake-off | Ian | `functions/_lib/**` and the `[ai]` binding in `wrangler.toml` (T03 claim extended). `functions/api/extract.ts` follows once Jerry's engine skeleton is on main | DEPLOYED_VERIFIED (`cd1a1a47af9ccd7993909fc76ce718e8ad3a6eaf`, live 12:30 ET; `/api/extract` not yet routed) | 12:50 |
 | T19 Kiro CLI custom agents and safe agent hooks | Ian | `.kiro/agents/**`, `.kiro/hooks/**` | PUSHED (`dd8a0791ef5fcfdcd3621a83df6ec8a42ed675ab`) | 12:25 |
-| T20 Kiro MCP for development | Ian | `.kiro/settings/mcp.json`, `.kiro/agents/rdd-builder.json` (Context7 remote MCP server; real doc lookups logged) | CLAIMED (Ian) | 13:00 |
-| T21 Kiro IDE 1.x hooks and steering | Ian | `.kiro/hooks/**`, `.kiro/steering/medical-data.md`, `.kiro/steering/release-check.md` | CLAIMED (Ian) | 13:05 |
-| T22 Kiro project power `rdd-medical-data` | Ian | `.kiro/powers/rdd-medical-data/**` | CLAIMED (Ian) | 13:10 |
+| T20 Kiro MCP for development | Ian | `.kiro/settings/mcp.json`, `.kiro/agents/rdd-builder.json`, `docs/research/biomcp-checks.md` (Context7 remote MCP server; real doc lookups logged) | PUSHED (`b3dce59`, `d35a18e` biomcp, `0dca96f` reviewer fixes) | 13:00 |
+| T21 Kiro IDE 1.x hooks and steering | Ian | `.kiro/hooks/**`, `.kiro/steering/medical-data.md`, `.kiro/steering/release-check.md` | PUSHED (`6c6ce91`, `68ec5cb`) | 13:05 |
+| T22 Kiro project power `rdd-medical-data` | Ian | `.kiro/powers/rdd-medical-data/**` | PUSHED (`c5f619f`, `47521fa`) | 13:10 |
 
 From 12:35 ET every Ian task diff gets a first-pass review by the read-only Kiro agent rdd-reviewer before the assistant's review.
 
