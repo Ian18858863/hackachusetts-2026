@@ -139,8 +139,8 @@ All in contract §5 (types) and §8 (case object). Key points:
 
 1. **Grounding.** The LLM output is untrusted input. Exact-substring search sets offsets; ids are confirmed by the HPO term endpoint; labels that disagree trigger a label search; anything unconfirmed is dropped with a warning. The HPO primary name replaces the LLM's wording.
 2. **Ranking.** Monarch semsim (`ancestor_information_content`) is the only ranker in v0.1. The engine adds evidence on top: per-feature frequencies and genes from JAX HPO annotations (ORPHA and OMIM both fetched, because ORPHA gives frequency bands and OMIM gives genes, verified 2026-10-24), and an Orphadata name check. Input ids are sorted and deduplicated before any call, so output and cache key do not depend on order.
-3. **Overlap label.** `overlapLabel(matched, observed, contradicted)` turns coverage into strong / partial / weak and lowers it one step per contradicted feature. It is monotone by construction, which makes Requirement 4.4 testable.
-4. **What to check next.** Discrimination score = spread of frequency midpoints across the top candidates (Köhler 2009 idea), excluding already observed or excluded terms. Questions use a fixed template.
+3. **Overlap label.** `overlapLabel(matched, observed, contradicted)` turns coverage into strong / partial / weak and lowers it one step per contradicted feature. Since contract v0.1.2 the matched count passed in is floor(exact matches + 0.5 × ancestor matches); thresholds 0.6 / 0.3 unchanged (contract §7.4 step 8). It is monotone by construction, which makes Requirement 4.4 testable.
+4. **What to check next.** Discrimination score = spread of frequency midpoints across the top candidates (Köhler 2009 idea), excluding already observed or excluded terms and, since contract v0.1.2, features that are ancestors or descendants of observed terms or descendants of excluded terms (lookups bounded by the 5 s budget and the 50-subrequest Workers limit; skipped on failure, contract §7.5). Questions use a fixed template.
 5. **Brief and phenopacket.** Pure functions of the case object. Specialists and tests appear only when traceable to the mapping table or to annotated genes.
 6. **Demo cache.** Recorded responses keyed by `demoRankKey(sorted observed, sorted excluded, limit)`. Used for demo-case extraction always, and for ranking, questions and trials only as a fallback on upstream failure.
 
@@ -186,4 +186,4 @@ Each property maps to requirements; full wording and function names are in contr
 
 ## Open design points
 
-Tracked in contract §15 (LLM provider is decided: Workers AI binding `AI`): ORPHA vs OMIM primary id, PubCaseFinder, specialist table, demo cache size, HPO version source, ancestor-aware contradictions, overlap thresholds, `/api/terms`.
+Tracked in contract §15 (LLM provider is decided: Workers AI binding `AI`): ORPHA vs OMIM primary id, PubCaseFinder, specialist table, demo cache size, HPO version source, ancestor-aware contradictions, `/api/terms`. Overlap thresholds are resolved for v0.1.2, pending Jerry's confirmation.

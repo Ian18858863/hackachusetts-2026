@@ -1,6 +1,6 @@
 # Interface contract: Rare Disease Detective
 
-> **v0.1.1 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.** v0.1.1 is additive (new demo case, primary case changed); see the changelog in section 14.
+> **v0.1.2 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.** v0.1.1 and v0.1.2 are additive (v0.1.1: new primary demo case; v0.1.2: timeouts, overlap counting, next-questions filter, trial relevance and temporary demo fallbacks, as implemented in Ian's functions fallback); see the changelog in section 14.
 > Contract version string in every response: `"0.1"`. Single file editor: Ian's Kiro (T09).
 > Kiro spec that implements this contract: [`.kiro/specs/rare-disease-detective/`](../.kiro/specs/rare-disease-detective/requirements.md).
 > This file is the source of truth for request and response shapes. If the spec and this file disagree, this file wins and the spec gets fixed.
@@ -98,7 +98,7 @@ Domain engine (engine/**, Jerry) — repo-root TypeScript, pure functions
 - Every error uses one shape, with the HTTP status from the table below:
 
 ```json
-{ "version": "0.1", "error": { "code": "UPSTREAM_TIMEOUT", "message": "The ranking service did not answer within 8 seconds. Your terms are kept; try again.", "retryable": true } }
+{ "version": "0.1", "error": { "code": "UPSTREAM_TIMEOUT", "message": "The ranking service did not answer within 10 seconds. Your terms are kept; try again.", "retryable": true } }
 ```
 
 | HTTP | `code` | `retryable` | When |
@@ -425,7 +425,7 @@ Errors: 400, 502, 504.
 ### 7.4 POST /api/rank
 
 Owner: Ian (`functions/api/rank.ts`). Engine: `rankCandidates`, `demoRankKey`, `getDemoRanking`, `overlapLabel`, `normalizeFrequency` (Jerry).
-Budget 12 s: Monarch semsim 8 s (measured ~4.6 s on 2026-10-24), HPO annotations 3 s each in parallel, Orphadata 2 s (non-blocking: on failure keep the Monarch name and id).
+Budget 12 s: Monarch semsim 10 s (measured ~4.6 s on 2026-10-24, then 4.9–8 s for the demo-npc1 term set, so 8 s caused 504s; v0.1.2), HPO annotations 3 s each in parallel, Orphadata 2 s (non-blocking: on failure keep the Monarch name and id). The annotation and Orphadata calls that follow Monarch keep their own timeouts but are capped by the time left in the 12 s budget, so the total budget never grows.
 
 **Request**
 
@@ -449,10 +449,11 @@ Budget 12 s: Monarch semsim 8 s (measured ~4.6 s on 2026-10-24), HPO annotations
 5. Build `matched` from Monarch `object_best_matches` (patient term → disease term). `via` is `"exact"` when `match_source == match_target`, else `"ancestor"` with `match_subsumer`. A match counts only if the subsumer is not `HP:0000118` (Phenotypic abnormality) and not a direct child of it (organ-system level). Those patient terms go to `unmatched`.
 6. `notReported`: disease features with frequency Obligate, Very frequent or Frequent whose id is not a matched `diseaseTerm`, not observed and not excluded. Sorted by frequency band then id; max 8.
 7. `contradicted`: patient-excluded ids that appear in the disease annotations with frequency Obligate, Very frequent or Frequent (exact id match in v0.1; ancestor-aware matching is open question 7).
-8. `overlap = overlapLabel(matched.length, observed.length, contradicted.length)`:
-   - coverage = matched / observed; base = `strong` if coverage ≥ 0.6, `partial` if ≥ 0.3, else `weak`;
+8. `overlap = overlapLabel(weightedMatched, observed.length, contradicted.length)`:
+   - weightedMatched = floor(exact matches + 0.5 × ancestor matches), where exact and ancestor are `via` values in `matched` (v0.1.2; with plain counting every demo-npc1 candidate came out `strong`, because any shared term below the organ-system level counts as a match);
+   - coverage = weightedMatched / observed; base = `strong` if coverage ≥ 0.6, `partial` if ≥ 0.3, else `weak` (thresholds unchanged);
    - each contradicted feature lowers the label one step, floor `weak`.
-   Thresholds are engine constants that Jerry approves (open question 8). The label never shows as a percentage.
+   `matched` still lists every match, exact and ancestor. The `overlapLabel` signature is unchanged; only the count passed in changes. Thresholds are engine constants (open question 8, resolved for v0.1.2). The label never shows as a percentage. The UI headline ("N of M features described") counts exact matches only and shows broader-term matches separately (e.g. "plus N through broader terms").
 9. Order by Monarch `score` descending, ties by `diseaseId` ascending. Take the top `limit`. Assign `rank` 1..n. v0.1 does not re-order by contradictions; the contradiction is shown and lowers the label.
 10. Orphadata cross-check for ORPHA ids: if the name differs, keep the Orphanet preferred name and add `"orphadata"` to `sources`.
 11. PubCaseFinder: off by default in v0.1 (open question 3). If enabled, it runs in parallel with a 6 s timeout, only top 50 rows are kept, and it only adds `pubCaseFinderRank`. Its failure never fails the request.
@@ -509,7 +510,7 @@ The `score` value and the `HP:0004942` ancestor are illustrative. `overlap` is `
 
 | Situation | Result |
 |---|---|
-| Monarch over 8 s or non-2xx, and `demoRankKey(...)` hits the demo cache | 200 with the cached ranking, `source: "demo"`, `dataVersions.demoCache` set |
+| Monarch over 10 s or non-2xx, and `demoRankKey(...)` hits the demo cache | 200 with the cached ranking, `source: "demo"`, `dataVersions.demoCache` set |
 | Same, no demo cache hit | 504 `UPSTREAM_TIMEOUT` or 502 `UPSTREAM_ERROR`, `retryable: true` |
 | One HPO annotation call fails | That candidate keeps Monarch evidence; `frequency: null`; `"hpo-annotations"` missing from its `sources`; response still 200 |
 | Orphadata or PubCaseFinder fails | Ignored; response still 200 |
@@ -538,9 +539,10 @@ Owner: Ian (`functions/api/next-questions.ts`). Engine: `nextQuestions`, `getDem
 1. Fetch HPO annotations for each candidate.
 2. Map each feature's frequency to a midpoint: Obligate 1.0, Very frequent 0.9, Frequent 0.55, Occasional 0.17, Very rare 0.025, Excluded 0; annotated without frequency 0.5; not annotated 0.
 3. For each HPO id annotated in at least one candidate and not in `observed` or `excluded`: `score = max − min` of the midpoints across candidates.
-4. Keep features with `score ≥ 0.35`, order by score descending then `hpoId`; take `limit`.
-5. `question` comes from a fixed template using the HPO label, e.g. `"Has anyone noticed <label, lower case>?"`, with the label kept visible. Any future LLM rephrasing may change wording only; the term, the `discriminates` list and `why` always come from data.
-6. "Not annotated" is reported as `frequency: null` and written as "not listed for", never as "absent in".
+4. Keep features with `score ≥ 0.35`, order by score descending then `hpoId`.
+5. Hierarchy filter (v0.1.2): skip a feature that is an ancestor or a descendant of an observed term, or a descendant of an excluded term (it would ask about something already reported). An ancestor of an excluded term is kept (no headache does not rule out a broader feature such as pain). Ancestors come from `GET https://ontology.jax.org/api/hp/terms/{HP:id}/ancestors` (cached 7 days). The lookups are bounded by the 5 s budget and by the Cloudflare Workers free-plan limit of 50 subrequests per invocation, where Cache API calls count too (the fallback stops hierarchy lookups at 40 subrequests in total). If a lookup fails, times out or is refused by the budget, that check is skipped and the feature is kept; if the whole filter cannot run, the scored list is returned unfiltered. Then take `limit`.
+6. `question` comes from a fixed template using the HPO label, e.g. `"Has anyone noticed <label, lower case>?"`, with the label kept visible. Any future LLM rephrasing may change wording only; the term, the `discriminates` list and `why` always come from data.
+7. "Not annotated" is reported as `frequency: null` and written as "not listed for", never as "absent in".
 
 **Response 200**
 
@@ -578,7 +580,9 @@ Owner: Ian (`functions/api/trials.ts`). Engine: `searchTrials`, `getDemoTrials`.
 | `condition` | yes | Disease name, 2–200 chars |
 | `ids` | no | Echoed in `query`; v0.1 searches by name only |
 
-Upstream: `https://clinicaltrials.gov/api/v2/studies?query.cond=<condition>&filter.overallStatus=RECRUITING&pageSize=5&countTotal=true&fields=NCTId,BriefTitle,OverallStatus,Phase,Condition,LocationCountry`.
+Upstream: `https://clinicaltrials.gov/api/v2/studies?query.cond=<condition>&filter.overallStatus=RECRUITING&pageSize=20&countTotal=true&fields=NCTId,BriefTitle,OverallStatus,Phase,Condition,LocationCountry` (20 fetched so the relevance filter can still leave 5; v0.1.2).
+
+Relevance (v0.1.2): `query.cond` also matches intervention names and other fields (checked 2026-10-24: "Niemann-Pick disease, type C1" returned only a study of the drug NPC-1). Keep only studies where at least one listed condition contains all distinctive words of the condition name (case and accents ignored; generic words such as "disease", "syndrome", "type", Roman numerals and subtype codes such as "1", "C1", "2A" are not distinctive). If fewer than 3 studies remain, run one broader search with the subtype suffix removed (e.g. "Niemann-Pick disease type C", which returned 6 relevant studies on 2026-10-24), apply the same filter and append new studies after the first ones. At most 2 ClinicalTrials.gov calls per request.
 
 ```json
 {
@@ -594,7 +598,7 @@ Upstream: `https://clinicaltrials.gov/api/v2/studies?query.cond=<condition>&filt
 }
 ```
 
-(The study is a placeholder for shape; never show it in the UI.) `studies` has at most 5 items; `total` is the upstream count. Zero studies is a 200 with `studies: []`. Failure: demo cache if the condition belongs to a demo case, else 504/502 retryable.
+(The study is a placeholder for shape; never show it in the UI.) `studies` has at most 5 items; `total` is the upstream `totalCount` of the query whose results are shown (the first query's count if it contributed any study, else the broader query's; the two counts overlap and are never added). `query.condition` always echoes the requested condition, even when the broader search was used. Zero studies is a 200 with `studies: []`. Failure: demo cache if the condition belongs to a demo case, else 504/502 retryable.
 
 ### 7.7 POST /api/brief
 
@@ -829,6 +833,8 @@ export interface DemoCase extends DemoCaseSummary {
 | `HP:0001250` | Seizure | "never had a seizure" | 345 | 364 | true |
 | `HP:0011968` | Feeding difficulties | "no trouble feeding" | 377 | 395 | true |
 
+Temporary fallback copies (v0.1.2): until `engine/demo/**` contains `demo-npc1`, Ian's functions hold fallback copies for that case only: the prepared extraction (`functions/_lib/fallback/demoCases.ts`) and one recorded rank, next-questions and trials response (`functions/_lib/fallback/demoRecorded.ts`). The recorded responses are used only when the live upstream fails (timeout or 5xx) and the request matches the recorded one exactly (same `demoRankKey`; next-questions also the same candidate ids; trials the same normalised condition). The engine's `getDemoCase`, `getDemoRanking`, `getDemoQuestions` and `getDemoTrials` take precedence. Both files are deleted once `engine/demo` has `demo-npc1`.
+
 Demo cache contents per case: narrative, prepared extraction, one recorded `/api/rank` response for the prepared term set (limit 5), the matching `/api/next-questions` response, and `/api/trials` for the top candidate. Each recorded payload keeps its original `dataVersions` plus `demoCache`. Target size: five cases, under 400 KB total (open question 5).
 
 ## 10. Upstream services, timeouts and caching
@@ -837,8 +843,9 @@ Demo cache contents per case: narrative, prepared extraction, one recorded `/api
 |---|---|---|---|---|
 | JAX HPO search | `GET https://ontology.jax.org/api/hp/search?q=&limit=` (~0.1 s) | 2 s | 7 days by `q|limit` | HPO licence: cite, show version, do not alter |
 | JAX HPO term | `GET https://ontology.jax.org/api/hp/terms/{HP:id}` | 2 s | 7 days by id | HPO |
+| JAX HPO ancestors | `GET https://ontology.jax.org/api/hp/terms/{HP:id}/ancestors` (next-questions filter, section 7.5) | 2 s, inside the 5 s budget | 7 days by id | HPO |
 | JAX HPO annotations | `GET https://ontology.jax.org/api/network/annotation/{ORPHA:n or OMIM:n}` (~0.15 s) | 3 s | 24 h by id | HPO; Orphanet-sourced rows CC BY 4.0 |
-| Monarch semsim | `GET https://api.monarchinitiative.org/v3/api/semsim/search/{ids}/Human%20Diseases?limit=N` (~4.6 s) | 8 s | 24 h by sorted ids + limit | Monarch; "not for diagnosis or medical decisions" |
+| Monarch semsim | `GET https://api.monarchinitiative.org/v3/api/semsim/search/{ids}/Human%20Diseases?limit=N` (~4.6 s; 4.9–8 s for demo-npc1) | 10 s (inside the 12 s `/api/rank` budget, section 7.4) | 24 h by sorted ids + limit | Monarch; "not for diagnosis or medical decisions" |
 | Orphadata | `GET https://api.orphadata.com/rd-cross-referencing/orphacodes/{n}?lang=en` | 2 s | 7 days by code | CC BY 4.0 |
 | PubCaseFinder | `GET https://pubcasefinder.dbcls.jp/api/pcf_get_ranked_list?target=omim&format=json&hpo_id=` (~10 s, ~11 MB) | 6 s, optional | 24 h, top 50 rows only | CC BY 4.0 |
 | ClinicalTrials.gov v2 | `GET https://clinicaltrials.gov/api/v2/studies?...` | 6 s | 6 h by condition | US government work |
@@ -846,7 +853,9 @@ Demo cache contents per case: narrative, prepared extraction, one recorded `/api
 
 - Timeouts use `AbortSignal.timeout(ms)` (or an `AbortController`) inside the engine's fetch wrapper.
 - One retry with 300 ms backoff for idempotent GETs on 5xx or network error, only if the remaining budget allows.
+- Subrequests: the Cloudflare Workers free plan allows 50 subrequests per invocation, and Cache API calls count toward that limit. Functions that fan out (next-questions) must stay under it.
 - Cache keys are built from sorted, deduplicated ids so term order never changes the key.
+- Demo fallback on upstream failure (v0.1.2): the engine's demo cache first, then Ian's temporary `demo-npc1` copies (section 9) only on an exact key match; otherwise 504/502 retryable.
 - OMIM: links only. No OMIM API calls, no OMIM data beyond ids and names already in HPO annotations and Monarch xrefs.
 
 ## 11. Properties for property-based tests (T08)
@@ -907,6 +916,13 @@ Changelog:
 
 - 0.1 (2026-10-24, draft): first version. Same draft, before approval: LLM provider decided (Workers AI binding `AI`), primary demo case `demo-dmd` added.
 - 0.1.1 (2026-10-24, draft): `[CONTRACT CHANGE] §9 new demo case demo-npc1 is the primary case; demo-dmd kept as a harder case; landing CTA is /app/?demo=demo-npc1; breaking no`.
+- 0.1.2 (2026-10-24, draft; already implemented in Ian's functions fallback, Jerry's engine may adopt):
+  - `[CONTRACT CHANGE] §7.4/§10 Monarch semsim timeout 10 s (was 8 s); /api/rank total budget 12 s unchanged; annotation and Orphadata calls capped by the remaining budget; breaking no`.
+  - `[CONTRACT CHANGE] §7.4 step 8 overlap coverage = floor(exact matches + 0.5 × ancestor matches) / observed, thresholds unchanged; UI headline counts exact matches, broader-term matches shown separately; breaking no`.
+  - `[CONTRACT CHANGE] §7.5 next-questions skips features that are ancestors or descendants of observed terms and descendants of excluded terms; ancestor lookups bounded by the 5 s budget and the Workers free-plan limit of 50 subrequests (cache calls count); filter skipped on lookup failure; breaking no`.
+  - `[CONTRACT CHANGE] §7.6 trials keep only studies whose conditions contain all distinctive words of the condition name; fewer than 3 left → one broader search without the subtype suffix; total = upstream totalCount of the query used; query.condition echoes the request; breaking no`.
+  - `[CONTRACT CHANGE] §9/§10 temporary demo-npc1 fallback copies in Ian's functions (prepared extraction; recorded rank/questions/trials only on upstream failure with an exact key match); engine demo cache takes precedence; deleted once engine/demo has demo-npc1; breaking no`.
+  - `[CONTRACT CHANGE] §15 open question 8 resolved for v0.1.2, pending Jerry's confirmation; breaking no`.
 
 ## 15. Open questions
 
@@ -917,5 +933,5 @@ Changelog:
 5. **Demo cache size** (Jerry). Draft: five cases, under 400 KB.
 6. **HPO version source** (Jerry). The JAX API version field is unverified; fallback is a pinned constant checked at build time, or `"unknown"` with `fetchedAt`.
 7. **Ancestor-aware contradictions** (Jerry). v0.1 matches excluded ids exactly.
-8. **Overlap thresholds** (Jerry). 0.6 / 0.3 and one step down per contradiction are a draft.
+8. **Overlap thresholds: RESOLVED for v0.1.2** (pending Jerry's confirmation). Thresholds 0.6 / 0.3 and one step down per contradiction stay; coverage counts exact matches 1 and ancestor matches 0.5, floored (section 7.4 step 8).
 9. **`GET /api/terms`** (Ian). Proposed here so manual add works without the app calling HPO directly.
