@@ -1,0 +1,295 @@
+.panel {
+  container-type: inline-size;
+  display: grid;
+  gap: var(--space-5);
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-4) var(--space-8);
+}
+
+.heading {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  max-width: var(--measure);
+}
+
+.title {
+  font-family: var(--font-display);
+  font-size: var(--text-2xl);
+  font-weight: var(--weight-medium);
+  color: var(--color-text);
+}
+
+.lede {
+  font-size: var(--text-md);
+  color: var(--color-text-muted);
+}
+
+/* ---- Candidate chooser: a segmented radio group --------------------- */
+
+.chooser {
+  display: grid;
+  gap: var(--space-2);
+  min-width: 0;
+  padding: 0;
+  border: 0;
+}
+
+.chooserLegend {
+  padding: 0;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-subtle);
+}
+
+.options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+.option {
+  position: relative;
+  display: inline-flex;
+  min-width: 0;
+}
+
+/* The native radio stays in the tab order and drives the styled pill. */
+.radio {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.optionText {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  padding: var(--space-2) var(--space-4);
+  border: var(--border-control) solid var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  line-height: var(--leading-snug);
+  color: var(--color-text);
+  background: var(--color-surface);
+  transition:
+    background-color var(--dur-fast) var(--ease-standard),
+    border-color var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard);
+}
+
+.radio:hover + .optionText {
+  background: var(--color-surface-hover);
+}
+
+/* Selected: the black pill of the approved buttons; the accent stays reserved for rank 1. */
+.radio:checked + .optionText {
+  border-color: var(--color-text);
+  background: var(--color-text);
+  color: var(--color-accent-contrast);
+}
+
+.radio:focus-visible + .optionText {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+/* ---- Result ---------------------------------------------------------- */
+
+.result {
+  display: grid;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+}
+
+.count {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.countNumber {
+  font-variant-numeric: tabular-nums;
+  font-weight: var(--weight-semibold);
+  color: var(--color-text);
+}
+
+.list {
+  display: grid;
+  min-width: 0;
+  padding: 0;
+  list-style: none;
+  border-top: var(--border-hair) solid var(--color-border);
+}
+
+.study {
+  display: grid;
+  gap: var(--space-3);
+  min-width: 0;
+  padding: var(--space-4) 0;
+  border-bottom: var(--border-hair) solid var(--color-border);
+}
+
+.studySkeleton {
+  gap: var(--space-4);
+  padding-block: var(--space-5);
+}
+
+.studyTitle {
+  font-family: var(--font-text);
+  font-size: var(--text-md);
+  font-weight: var(--weight-semibold);
+  line-height: var(--leading-snug);
+  letter-spacing: var(--tracking-normal);
+  text-wrap: pretty;
+}
+
+.studyLink {
+  color: var(--color-text);
+  text-decoration: none;
+  border-radius: var(--radius-xs);
+}
+
+.studyLink:hover {
+  color: var(--color-accent-text);
+  text-decoration: underline;
+  text-decoration-thickness: var(--border-hair);
+}
+
+.studyLink:focus-visible,
+.moreLink:focus-visible {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+.externalIcon {
+  display: inline-block;
+  margin-left: var(--space-1);
+  vertical-align: -0.1em;
+  color: var(--color-text-subtle);
+}
+
+.facts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 9rem), 1fr));
+  gap: var(--space-2) var(--space-6);
+  min-width: 0;
+}
+
+.fact {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+  align-content: start;
+}
+
+.factWide {
+  grid-column: span 2;
+}
+
+.fact dt {
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-medium);
+  letter-spacing: var(--tracking-caps);
+  text-transform: uppercase;
+  color: var(--color-text-subtle);
+}
+
+.fact dd {
+  font-size: var(--text-sm);
+  line-height: var(--leading-snug);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.status {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.code {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  font-variant-numeric: tabular-nums;
+}
+
+.more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+}
+
+.moreLink {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1);
+  min-height: var(--tap-min);
+  font-weight: var(--weight-medium);
+  border-radius: var(--radius-xs);
+}
+
+.fetched {
+  color: var(--color-text-subtle);
+}
+
+.credit {
+  padding-top: var(--space-4);
+  border-top: var(--border-hair) solid var(--color-border);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* Narrow panel (a sidebar or a phone): one fact per line, label beside value. */
+@container (max-width: 30rem) {
+  .facts {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-1);
+  }
+
+  .fact,
+  .factWide {
+    grid-column: auto;
+    grid-template-columns: var(--space-24) minmax(0, 1fr);
+    gap: var(--space-3);
+    align-items: baseline;
+  }
+}
+
+@media (max-width: 40rem) {
+  .factWide {
+    grid-column: 1 / -1;
+  }
+
+  .options {
+    display: grid;
+  }
+
+  .option,
+  .optionText {
+    width: 100%;
+  }
+}

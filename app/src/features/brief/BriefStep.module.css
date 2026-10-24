@@ -1,0 +1,154 @@
+.step {
+  display: grid;
+  gap: var(--space-6);
+  min-width: 0;
+}
+
+/* The document, then recruiting studies under it, on one reading column. */
+.layout {
+  display: grid;
+  gap: var(--space-12);
+  min-width: 0;
+  max-width: calc(var(--reading-max) + 2 * var(--space-12));
+}
+
+/* ---- Actions ---------------------------------------------------------- */
+
+.toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3) var(--space-6);
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+}
+
+.hint {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap-min);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+.updating,
+.saved {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-wrap: wrap;
+}
+
+.saved {
+  color: var(--color-text);
+}
+
+.outdated {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-text);
+}
+
+.saved svg {
+  color: var(--color-accent);
+}
+
+.file {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  overflow-wrap: anywhere;
+}
+
+.note {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
+/* ---- Paper preview ---------------------------------------------------- */
+
+/* A sheet on the page: the reading measure plus its margins, raised so it reads as a document. */
+.paper {
+  width: 100%;
+}
+
+.trials {
+  min-width: 0;
+}
+
+/* Same rhythm as the trials section until there is a match to search for. */
+.trialsSkeleton {
+  display: grid;
+  gap: var(--space-4);
+}
+
+@media (max-width: 40rem) {
+  .actions,
+  .actions > * {
+    width: 100%;
+  }
+}
+
+.paper {
+  /* One calm sheet: a single hairline edge, no shadow, nothing boxed inside. */
+  padding: clamp(var(--space-5), 5vw, var(--space-12));
+  border: var(--border-hair) solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-raised);
+  transition: opacity var(--dur-base) var(--ease-standard);
+}
+
+.paper[data-stale] {
+  opacity: 0.6;
+}
+
+.skeleton {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.skeletonBlock {
+  display: grid;
+  gap: var(--space-3);
+  padding-top: var(--space-4);
+}
+
+/* ---- Print ------------------------------------------------------------ */
+
+/* The print copy is portalled to <body> and only exists while this step is open. */
+.printRoot {
+  display: none;
+}
+
+/*
+ * Page box. size: auto keeps the reader's paper choice (A4 or US Letter);
+ * the content is laid out for the smaller of the two (A4 width, Letter
+ * height). Page margins are print units because no screen token applies.
+ */
+@page {
+  size: auto;
+  margin: 8mm 11mm;
+}
+
+@media print {
+  .printing > :global(#root) {
+    display: none !important;
+  }
+
+  .printing {
+    background: var(--color-bg);
+  }
+
+  .printRoot {
+    display: block;
+    color: var(--color-text);
+  }
+}
