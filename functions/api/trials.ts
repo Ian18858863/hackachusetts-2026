@@ -69,7 +69,7 @@ async function handleGet(context: PagesContext<Record<string, unknown>>): Promis
   }
 
   const key = cacheKey(
-    "trials",
+    "trials-v2",
     `${ENGINE_STATUS.searchTrials}|${condition.toLowerCase()}|${[...ids].sort().join(",")}`,
   );
   const deps: FallbackDeps = { fetch: globalThis.fetch.bind(globalThis), waitUntil: (p) => context.waitUntil(p) };
