@@ -78,6 +78,9 @@ const GROUPING_TERMS: ReadonlySet<HpoId> = new Set([
 
 const NOT_REPORTED_MAX = 8;
 
+/** HPO id shape (contract section 4); used to keep only HPO matches and subsumers, as the engine does. */
+const HPO_ID = /^HP:\d{7}$/;
+
 // ---------------------------------------------------------------- Monarch
 
 interface BestMatch {
@@ -122,7 +125,7 @@ function parseMonarch(body: unknown): MonarchRow[] {
         const mm = (m ?? {}) as Record<string, unknown>;
         const source = str(mm.match_source);
         const target = str(mm.match_target);
-        if (!source || !target) continue;
+        if (!HPO_ID.test(source) || !HPO_ID.test(target)) continue; // as engine/rank.ts parseMonarch
         best.set(source, {
           source,
           sourceLabel: str(mm.match_source_label),
@@ -226,18 +229,25 @@ function buildCandidate(
   for (const id of req.observed) {
     const m = row.best.get(id);
     const patientTerm: TermRef = { id, label: labels.get(id) ?? m?.sourceLabel ?? id };
-    if (!m || !m.subsumer || GROUPING_TERMS.has(m.subsumer)) {
+    // Same rule as engine/rank.ts (T18i): an exact match always counts; a
+    // broader-term match counts only when the shared ancestor is an HPO term
+    // (contract section 5 types Evidence.ancestor as an HPO TermRef) below
+    // the organ-system level. Monarch sometimes returns uPheno subsumers such
+    // as UPHENO:0002386 "organ physiology phenotype"; those go to unmatched.
+    const exact = m !== undefined && m.target === id;
+    const subsumerOk =
+      m !== undefined && m.subsumer !== null && HPO_ID.test(m.subsumer) && !GROUPING_TERMS.has(m.subsumer);
+    if (!m || (!exact && !subsumerOk)) {
       unmatched.push(patientTerm);
       continue;
     }
-    const exact = m.source === m.target;
     const ev: Evidence = {
       patientTerm,
       diseaseTerm: { id: m.target, label: m.targetLabel || m.target },
       via: exact ? "exact" : "ancestor",
       frequency: ann?.features.get(m.target)?.frequency ?? null,
     };
-    if (!exact) ev.ancestor = { id: m.subsumer, label: m.subsumerLabel || m.subsumer };
+    if (!exact && m.subsumer) ev.ancestor = { id: m.subsumer, label: m.subsumerLabel || m.subsumer };
     matched.push(ev);
   }
 
