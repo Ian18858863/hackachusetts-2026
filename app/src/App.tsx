@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, type ComponentType, type MouseEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, type ComponentType, type MouseEvent } from 'react';
 import styles from './App.module.css';
 import { PrimitivesPreview } from './components/shell/PrimitivesPreview';
 import { StepHeader } from './components/shell/StepHeader';
@@ -9,9 +9,12 @@ import { QuestionsStep } from './features/questions';
 import { RankingStep } from './features/ranking';
 import { ReviewStep } from './features/review';
 import { TrialsPanel } from './features/trials';
+import { FamilyQuestions } from './features/questions/FamilyQuestions';
 import { useDemoParam } from './lib/useDemoParam';
 import { useHashRoute } from './lib/useHashRoute';
+import { AudienceProvider, useAudience } from './shared/audience';
 import { I18nProvider, useT } from './shared/i18n';
+import common from './shared/i18n/messages/common';
 import shell from './shared/i18n/messages/shell';
 import { stepFromRoute, type StepId } from './shared/steps';
 import { CaseProvider } from './shared/store';
@@ -30,14 +33,28 @@ const STEP_VIEWS: Record<StepId, ComponentType[]> = {
   brief: [BriefStep],
 };
 
+/**
+ * Family mode (T30a) never renders anything from the ranking: no matches
+ * step (it redirects to questions), no trials, and its own questions view.
+ * BriefStep picks the family brief by itself.
+ */
+const FAMILY_STEP_VIEWS: Record<Exclude<StepId, 'matches'>, ComponentType[]> = {
+  notes: [IntakeStep],
+  features: [ReviewStep],
+  questions: [FamilyQuestions],
+  brief: [BriefStep],
+};
+
 export function App() {
   return (
     <I18nProvider>
-      <CaseProvider>
-        <AnnouncerProvider>
-          <Shell />
-        </AnnouncerProvider>
-      </CaseProvider>
+      <AudienceProvider>
+        <CaseProvider>
+          <AnnouncerProvider>
+            <Shell />
+          </AnnouncerProvider>
+        </CaseProvider>
+      </AudienceProvider>
     </I18nProvider>
   );
 }
@@ -48,8 +65,23 @@ function Shell() {
   const route = useHashRoute();
   const isPreview = route === 'primitives';
   // Unknown hashes fall back to the first step.
-  const step = isPreview ? null : (stepFromRoute(route) ?? 'notes');
+  const { isFamily } = useAudience();
+  const routed = isPreview ? null : (stepFromRoute(route) ?? 'notes');
+  // Family mode has no matches step: show questions and fix the hash.
+  const step = isFamily && routed === 'matches' ? 'questions' : routed;
   const viewKey = isPreview ? 'primitives' : step;
+  const views = step === null ? [] : isFamily && step !== 'matches' ? FAMILY_STEP_VIEWS[step] : STEP_VIEWS[step];
+
+  useEffect(() => {
+    if (isFamily && routed === 'matches') window.location.replace('#/questions');
+  }, [isFamily, routed]);
+
+  // The tab title follows the language and the audience; family mode never says "possible matches" (T34).
+  const tc = useT(common);
+  const appTitle = tc(isFamily ? 'appTitleFamily' : 'appTitleClinician');
+  useEffect(() => {
+    document.title = appTitle;
+  }, [appTitle]);
 
   const mainRef = useRef<HTMLElement>(null);
   const previousKey = useRef(viewKey);
@@ -77,7 +109,7 @@ function Shell() {
             <>
               <StepHeader step={step} />
               <div className={styles.body}>
-                {STEP_VIEWS[step].map((View, i) => (
+                {views.map((View, i) => (
                   <View key={i} />
                 ))}
               </div>

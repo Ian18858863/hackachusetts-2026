@@ -60,6 +60,19 @@
   white-space: nowrap;
 }
 
+/*
+ * Quiet "no frequency to show" mark: one small ring, 4.0:1 on white. Used only
+ * by the quietUnknown variant (patient rows) and its legend line.
+ */
+.ring {
+  display: inline-block;
+  flex: none;
+  width: calc(var(--s-2) - 1px); /* 7px, as the matrix ring */
+  height: calc(var(--s-2) - 1px);
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--mark-none);
+}
+
 /* Proof moment: filled dots pop in, one stagger step after their row. */
 .mark[data-animate] .glyph i[data-on] {
   animation: dot var(--dur-dot) var(--ease) both;
@@ -148,4 +161,28 @@
 
 .dot[data-size='strip'][data-level='none'] {
   width: var(--s-3);
+}
+
+/* T32b: evidence that could not be loaded. A dotted ring, told apart from the
+   solid "not listed" ring and the dash; the word beside it carries the meaning. */
+.missingRing {
+  display: inline-block;
+  flex: none;
+  width: var(--s-3);
+  height: var(--s-3);
+  border: 1.5px dotted var(--mark-none);
+  border-radius: 50%;
+}
+
+.mark[data-kind='quiet'] .word,
+.mark[data-kind='missing'] .word {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.dot[data-level='missing'] {
+  width: var(--d2);
+  height: var(--d2);
+  background: transparent;
+  border: 1.5px dotted var(--mark-none);
 }

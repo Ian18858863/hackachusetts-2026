@@ -1,6 +1,7 @@
 import { useRef, useState } from 'react';
 import type { Candidate, RankResponse } from '../../shared/contract';
 import { useT } from '../../shared/i18n';
+import common from '../../shared/i18n/messages/common';
 import ranking from '../../shared/i18n/messages/ranking';
 import { Icon } from '../../shared/ui';
 import { BandDot } from './FrequencyMark';
@@ -11,7 +12,9 @@ import {
   CandidateLinks,
   DeltaBadge,
   EvidenceGroups,
+  IncompleteNote,
   PatientRows,
+  isIncomplete,
   StudiesButton,
   type EnterRows,
   type LinkProps,
@@ -74,7 +77,6 @@ export function OtherCandidates({
           ))}
         </ol>
       )}
-      <p className={styles.key}>{t('othersKey')}</p>
     </section>
   );
 }
@@ -94,6 +96,7 @@ function OtherCandidate({
   onSelect(): void;
 } & LinkProps) {
   const t = useT(ranking);
+  const tc = useT(common);
   const [open, setOpen] = useState(false);
   const rows = patientRows(c, index);
   const regionId = `alt-evidence-${c.rank}`;
@@ -105,7 +108,13 @@ function OtherCandidate({
     n: observedCount,
     name: c.name,
     list: rows
-      .map((r) => (r.evidence ? frequencyState(r.evidence.frequency, t, t('freqNotListed')).word : t('notMatched')))
+      .map((r) =>
+        r.evidence
+          ? !r.evidence.frequency && isIncomplete(c)
+            ? tc('evidenceCouldNotLoad')
+            : frequencyState(r.evidence.frequency, t, t('freqNotListed')).word
+          : t('notMatched'),
+      )
       .join(t('listSep'))
       .toLowerCase(),
   });
@@ -137,13 +146,17 @@ function OtherCandidate({
       <div className={styles.strip} role="img" aria-label={stripLabel}>
         {rows.map((r) => (
           <span key={r.feature.id} data-active={link.activeTerm === r.feature.id || undefined}>
-            <BandDot frequency={r.evidence ? (r.evidence.frequency ?? { label: null, source: c.diseaseId }) : null} size="strip" />
+            <BandDot
+              frequency={r.evidence ? (r.evidence.frequency ?? { label: null, source: c.diseaseId }) : null}
+              missing={Boolean(r.evidence) && !r.evidence?.frequency && isIncomplete(c)}
+              size="strip"
+            />
             {r.feature.number ?? ''}
           </span>
         ))}
       </div>
+      <IncompleteNote candidate={c} />
       <p className={styles.altMeta}>
-        <span>{c.diseaseId}</span>
         <button
           type="button"
           className={styles.disclose}
@@ -157,7 +170,14 @@ function OtherCandidate({
       </p>
       <div id={regionId} className={styles.altEvidence} hidden={!open}>
         <ul className={styles.evidence} data-testid={`candidate-evidence-${c.rank}`} aria-label={t('evidenceFor', { name: c.name })}>
-          <PatientRows rows={rows} tone="neutral" idPrefix={`alt${c.rank}`} enter={open ? enter : null} {...link} />
+          <PatientRows
+            rows={rows}
+            tone="neutral"
+            idPrefix={`alt${c.rank}`}
+            enter={open ? enter : null}
+            incomplete={isIncomplete(c)}
+            {...link}
+          />
         </ul>
         <EvidenceGroups
           candidate={c}

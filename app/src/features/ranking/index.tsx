@@ -16,6 +16,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { LIMITS, type CaseRanking, type HpoId, type RankResponse } from '../../shared/contract';
 import { useLocale, useT } from '../../shared/i18n';
+import common from '../../shared/i18n/messages/common';
 import rankingMessages from '../../shared/i18n/messages/ranking';
 import { useCase, useCaseActions } from '../../shared/store';
 import { ApiErrorState, Button, EmptyState, Icon, LoadingPanel, Skeleton, Spinner } from '../../shared/ui';
@@ -26,7 +27,7 @@ import { LeadCandidate } from './LeadCandidate';
 import { OtherCandidates } from './OtherCandidates';
 import { indexFeatures } from './evidence';
 import { formatDateTime, formatTime, pick, sourceName, versionEntries, type RankingT } from './format';
-import type { EnterRows } from './parts';
+import { RetryRankContext, type EnterRows } from './parts';
 import { changeFor, evidenceKeys, rankDelta, type RankingChange } from './rankingChange';
 import styles from './ranking.module.css';
 import { useAutoRank, type AutoRank } from './useAutoRank';
@@ -87,6 +88,7 @@ export function RankingStep() {
           {auto.phase === 'error' && auto.error && (
             <ApiErrorState error={auto.error} onRetry={auto.rankNow} compact titleLevel={3} />
           )}
+          <RetryRankContext.Provider value={auto.refresh}>
           <Results
             ranking={ranking}
             features={features}
@@ -94,6 +96,7 @@ export function RankingStep() {
             onSelect={selectCandidate}
             {...link}
           />
+          </RetryRankContext.Provider>
           <FeatureSummary
             observed={features.observed}
             excluded={features.excluded}
@@ -314,6 +317,7 @@ function countsText(observed: number, excluded: number, t: RankingT): string {
 
 function RankingSources({ ranking }: { ranking: CaseRanking }) {
   const t = useT(rankingMessages);
+  const tc = useT(common);
   const { locale } = useLocale();
   const { response } = ranking;
   const sources = [...new Set(response.candidates.flatMap((c) => c.sources))].map((s) => sourceName(s, t));
@@ -341,7 +345,8 @@ function RankingSources({ ranking }: { ranking: CaseRanking }) {
           <dd>{formatDateTime(response.dataVersions.fetchedAt, locale)}</dd>
         </div>
       </dl>
-      <p className={styles.sourcesScope}>{t('scopeNote')}</p>
+      {/* i18n I4.4: one note near the results that medical terms stay in English. */}
+      {locale !== 'en' && <p className={styles.sourcesScope}>{tc('medicalTermsNote')}</p>}
     </section>
   );
 }
@@ -351,7 +356,6 @@ function NextStep({ onNext }: { onNext(): void }) {
   const t = useT(rankingMessages);
   return (
     <div className={styles.next}>
-      <p className={styles.nextHint}>{t('nextHint')}</p>
       <Button
         className={styles.nextCta}
         onClick={onNext}

@@ -17,6 +17,8 @@ interface DropdownProps<V extends string> {
   /** data-testid of the trigger button. */
   testId?: string;
   align?: 'start' | 'end';
+  /** 44px tap height with a 32px drawn outline, for the app's compact utility row. */
+  compact?: boolean;
 }
 
 /**
@@ -35,6 +37,7 @@ export function Dropdown<V extends string>({
   className,
   testId,
   align = 'end',
+  compact = false,
 }: DropdownProps<V>) {
   const id = useId();
   const listId = `${id}-list`;
@@ -135,6 +138,7 @@ export function Dropdown<V extends string>({
         title={label}
         data-testid={testId}
         data-open={open || undefined}
+        data-compact={compact || undefined}
         onClick={() => (open ? close() : openList())}
         onKeyDown={onButtonKey}
       >

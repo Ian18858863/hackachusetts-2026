@@ -1,11 +1,13 @@
 import { useOfflineMockEndpoints, type DataOrigin } from '../../shared/api';
 import type { DataVersions, Source } from '../../shared/contract';
-import { findDemoCase } from '../../shared/mocks';
-import { useT } from '../../shared/i18n';
+import { useAudience } from '../../shared/audience';
+import { useLocale, useT } from '../../shared/i18n';
+import audienceMessages from '../../shared/i18n/messages/audience';
+import common from '../../shared/i18n/messages/common';
 import shell from '../../shared/i18n/messages/shell';
-import { getStep, STEPS, type StepId } from '../../shared/steps';
+import { getStep, stepsFor, type StepId } from '../../shared/steps';
 import { useCase } from '../../shared/store';
-import { DataOriginLabel, DemoCaseLabel, Disclaimer, OfflineMockLabel } from '../../shared/ui';
+import { DataOriginLabel, Disclaimer, OfflineMockLabel } from '../../shared/ui';
 import { headingText, useFitHeading } from '../ui/useFitHeading';
 import styles from './StepHeader.module.css';
 
@@ -16,57 +18,52 @@ interface PayloadInfo {
 }
 
 /**
- * The view's intro, laid out like the specimen: a quiet kicker line, the
- * single <h1> in Newsreader, then one lead paragraph. On result steps the
- * lead paragraph opens with the safety line in semibold. Every label the step
- * needs (demo case, demo cache, offline mock) follows, so no feature can
- * forget them.
+ * The view's intro: a quiet step line and the single <h1>. Result steps add
+ * the contract section 13 safety line, once and compact; there is no
+ * explainer paragraph (T34). The demo notice lives only in the top bar chip;
+ * data-origin labels (demo cache, offline mock) follow when they apply.
  */
 export function StepHeader({ step }: { step: StepId }) {
   const def = getStep(step);
-  const index = STEPS.findIndex((s) => s.id === step);
+  const { audience, isFamily } = useAudience();
+  const steps = stepsFor(audience);
+  const index = steps.findIndex((s) => s.id === step);
   const { caseObject, meta } = useCase();
   const t = useT(shell);
-  const mockEndpoints = useOfflineMockEndpoints();
-  const title = headingText(t(`${step}Title`));
+  const ta = useT(audienceMessages);
+  const tc = useT(common);
+  const { locale } = useLocale();
+  // Chinese and Japanese sentences need no space after the full stop.
+  const gap = locale === 'zh' || locale === 'ja' ? '' : ' ';
+  // Family mode has its own wording for the questions and brief steps.
+  const familyText = isFamily && (step === 'questions' || step === 'brief');
+  const title = headingText(familyText ? ta(`${step}Title`) : t(`${step}Title`));
   const titleRef = useFitHeading<HTMLHeadingElement>(title);
-  const demoTitle = caseObject.demo ? findDemoCase(caseObject.demo.caseId)?.title : undefined;
+  const mockEndpoints = useOfflineMockEndpoints();
 
   const payload = payloadFor(step, caseObject.lastRanking?.response, meta);
   const showGlobalMock = mockEndpoints.length > 0 && payload.origin !== 'mock';
-  const hasLabels = Boolean(caseObject.demo) || payload.origin === 'mock' || payload.source === 'demo' || showGlobalMock;
+  const hasLabels = payload.origin === 'mock' || payload.source === 'demo' || showGlobalMock;
 
   return (
     <header className={styles.header}>
-      <p className={styles.kicker}>
-        {t('stepOf', { n: index + 1, total: STEPS.length })}
-        {caseObject.demo && (
-          <>
-            {' · '}
-            {demoTitle && (
-              <>
-                <b>{demoTitle}</b>
-                {' · '}
-              </>
-            )}
-            {t('demoNotReal')}
-          </>
-        )}
-      </p>
+      <p className={styles.kicker}>{t('stepOf', { n: index + 1, total: steps.length })}</p>
       <h1 ref={titleRef} className={styles.title}>
         {title}
       </h1>
-      <p className={styles.lede}>
-        {def.showsResults && (
-          <>
-            <Disclaimer inline />{' '}
-          </>
-        )}
-        {t(`${step}Lede`)}
-      </p>
+      {isFamily ? (
+        // Contract section 13 v0.1.5 (family mode only): "Decision support, not a diagnosis." verbatim,
+        // followed by "This view prepares your notes for a clinician. It does not suggest conditions."
+        <p className={styles.safety} data-testid="family-banner">
+          <strong className={styles.familyLead}>{tc('disclaimerLead')}</strong>
+          {gap}
+          {ta('banner')}
+        </p>
+      ) : (
+        def.showsResults && <Disclaimer className={styles.safety} />
+      )}
       {hasLabels && (
         <div className={styles.labels}>
-          {caseObject.demo && <DemoCaseLabel sourcePhenopacketId={caseObject.demo.sourcePhenopacketId} />}
           <DataOriginLabel {...payload} />
           {showGlobalMock && <OfflineMockLabel />}
         </div>

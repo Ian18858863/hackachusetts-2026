@@ -41,6 +41,18 @@
 }
 
 /* ---- Quotes -------------------------------------------------------- */
+
+/*
+ * A quote's last word, its footnote number and the punctuation after it never
+ * break apart. Breaks inside the rest of the quote stay allowed (.wrap).
+ */
+.glue {
+  white-space: nowrap;
+}
+
+.wrap {
+  white-space: pre-wrap;
+}
 .quote {
   padding: 0 var(--border-indicator);
   border-radius: var(--radius-xs);

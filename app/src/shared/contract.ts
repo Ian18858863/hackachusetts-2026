@@ -140,6 +140,8 @@ export interface Gene {
 export type CandidateSource = 'monarch-semsim' | 'hpo-annotations' | 'orphadata' | 'pubcasefinder';
 
 export interface Candidate {
+  /** /api/rank (T32b): false when some annotation data could not be loaded; absent means true. */
+  evidenceComplete?: boolean;
   rank: number;
   diseaseId: DiseaseId;
   mondoId: MondoId;

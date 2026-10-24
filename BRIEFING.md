@@ -1,6 +1,6 @@
 # Team Briefing — Hackachusetts 2026 (read this first)
 
-Last updated: 2026-10-24. **v4.8 — latest deploy `6c89a84` (Cloudflare deployment `e05358cc`, 15:17 ET): `/api/rank` runs on the engine (T18k), landing page live (T04); next-questions, trials and brief on the fallback. Recorded 2026-10-24 ~15:40 ET by Ian's Kiro (T11m).** Earlier: v4.7, deploy `cf07006` with the full demo-npc1 flow verified live, recorded ~14:50 ET. **v4 was approved by all three humans (Ian, Peter, Jerry) in the team chat at ~11:35 ET.** This version preserves the original event rules, topic research, and submission requirements, and adopts the faster 3-person coordination workflow.
+Last updated: 2026-10-24. **v4.9 — latest deploy `3c1ca45` (Cloudflare deployment `bad0ceda`, ~17:00 ET): family mode (T30a) and six languages (T28) live; `/api/rank` on the engine with R6.1 and `evidenceComplete` (T32a); next-questions, trials and brief on the fallback; production smoke 14 passed, 0 failed, 1 noted. Recorded 2026-10-24 ~17:10 ET by Ian's Kiro (T11o).** Earlier: v4.8, deploy `6c89a84` (deployment `e05358cc`, 15:17 ET), recorded ~15:40 ET; v4.7, deploy `cf07006`, recorded ~14:50 ET. **v4 was approved by all three humans (Ian, Peter, Jerry) in the team chat at ~11:35 ET.** This version preserves the original event rules, topic research, and submission requirements, and adopts the faster 3-person coordination workflow.
 
 This is the single source of shared **decisions and current task claims**. The companion [`docs/PROTOCOL.md`](docs/PROTOCOL.md) (Assistant × Kiro Agent Collaboration Protocol v4) is the operational handbook for human teammates, their AI Assistants, and Kiro coding Agents.
 
@@ -176,7 +176,9 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T11j Claim T24 smoke script and T25 QA pass | Ian | `BRIEFING.md` | PUSHED (`6188c11`) | 14:35 |
 | T11k Record T06 hand-over from Peter to Ian | Ian | `BRIEFING.md` | PUSHED (`fabb222`) | TBD |
 | T11l Record T04 hand-over to Ian, T18g switch, QA fixes | Ian | `BRIEFING.md` | PUSHED (`237e86d`) | 15:00 |
-| T11m Records after the engine rank switch: usage log, reviews, board, README, write-up, spec ticks | Ian | `docs/KIRO_USAGE.md`, `docs/reviews/**` (new files), `BRIEFING.md` (section 6 rows), `README.md`, `docs/KIRO_WRITEUP.md`, `.kiro/specs/rare-disease-detective/tasks.md` | CLAIMED (Ian) | 15:45 |
+| T11m Records after the engine rank switch: usage log, reviews, board, README, write-up, spec ticks | Ian | `docs/KIRO_USAGE.md`, `docs/reviews/**` (new files), `BRIEFING.md` (section 6 rows), `README.md`, `docs/KIRO_WRITEUP.md`, `.kiro/specs/rare-disease-detective/tasks.md` | PUSHED (`6c14f5b`, fix `44300cd`) | 15:45 |
+| T11n Restructure the Kiro write-up; log the Kiro IDE hook evidence | Ian | `docs/KIRO_WRITEUP.md`, `docs/KIRO_USAGE.md` | DEPLOYED_VERIFIED (`42a5940`, fix `28fb6d1`; in deploy `a147901`, docs only) | 16:15 |
+| T11o Records after deploys B and C: reviews, usage log, README, board, write-up facts | Ian | `README.md`, `docs/KIRO_USAGE.md`, `docs/KIRO_WRITEUP.md` (stale facts only), `docs/reviews/**` (new files), `BRIEFING.md` (section 6 rows and header deploy line) | REVIEWING (branch `ian/t11o-records`) | 17:25 |
 | T12 Art direction note | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`8460be2`); Ian picked the white direction (Option B) at ~12:20 ET but judged both options not good enough; refinement continues as T12b | 12:25 |
 | T12b Refined white art direction variants | Ian; Ian picks | `docs/art-direction/**` | PUSHED (`9208298`); Ian picking B1/B2/B3 | 12:45 |
 | T12c Ian-approved art direction | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`e8fe0f8`); approved by Ian 12:33 ET: B1 UI + B2 typography | 12:35 |
@@ -201,15 +203,30 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T18i Fallback ranking counts only HP shared ancestors (parity with the engine); no caching after an Orphadata failure | Ian | `functions/_lib/fallback/rank.ts`, `functions/api/rank.ts` | DEPLOYED_VERIFIED (`50cfc74`, fix `0f36748`); parity on demo-npc1 and demo-dmd; claimed late; recorded 15:20 ET | — |
 | T18j Report the pinned HPO release in extract and brief | Ian | `functions/api/extract.ts`, `functions/api/brief.ts`, `README.md` | DEPLOYED_VERIFIED (`973ec39`); claimed late; recorded 15:20 ET | — |
 | T18k Serve `/api/rank` from the engine (coordinator decision 15:10 ET); contract v0.1.3 | Ian | `wrangler.toml`, `docs/CONTRACT.md` | DEPLOYED_VERIFIED (`820e7ff`; production `/api/rank` answers `X-RDD-Path: engine`); claimed late; recorded 15:20 ET | — |
-| T18l Re-record the demo-npc1 failure-path recordings | Ian | `functions/_lib/fallback/demoRecorded.ts` | REVIEWED (branch `ian/t18l-rerecord`) | TBD |
-| T18m HPO version open question + brief default | Ian | `docs/CONTRACT.md`, `functions/api/brief.ts` | CLAIMED (Ian) | TBD |
-| T28s i18n spec (requested by Ian via the coordinator, 15:36 ET) | Ian | `.kiro/specs/i18n/**` | CLAIMED (Ian) | 16:45 |
-| T28a i18n core + shell | Ian | `app/src/shared/i18n/**`, `app/src/main.tsx`, `app/src/App.tsx`, `app/src/components/shell/**`, `app/src/shared/{steps,text}.ts`, `app/src/shared/ui/**`, `app/src/styles/tokens.css`, `app/package.json` | CLAIMED (Ian) | 16:45 |
-| T28b i18n intake + review strings | Ian | `app/src/features/{intake,review}/**`, `messages/{intake,review}.ts` | CLAIMED (Ian) | 16:45 |
-| T28c i18n matches + questions | Ian | `app/src/features/{ranking,questions}/**`, `messages/{ranking,questions}.ts` | CLAIMED (Ian) | 16:45 |
-| T28d i18n brief + trials + UI states + API messages | Ian | `app/src/features/{brief,trials}/**`, `app/src/components/ui/**`, `app/src/shared/{api.ts,store.tsx}`, `messages/{brief,trials,api}.ts` | CLAIMED (Ian) | 16:45 |
-| T28e Landing i18n | Ian | `landing/**` | CLAIMED (Ian) | 16:45 |
-| T28f T28 integration, QA and deploy | Ian | T28a–T28e paths (integration only) | CLAIMED (Ian) | 16:45 |
+| T18l Re-record the demo-npc1 failure-path recordings | Ian | `functions/_lib/fallback/demoRecorded.ts` | DEPLOYED_VERIFIED (`a6b4286`, `947c0d6`; in deploy `b7e8e8b`) | — |
+| T18m HPO version open question + brief default | Ian | `docs/CONTRACT.md`, `functions/api/brief.ts` | DEPLOYED_VERIFIED (`423c1af`; in deploy `b7e8e8b`) | — |
+| T18n Parity check of the engine `nextQuestions` (R6, `eaf9c0d`) | Ian | none (read-only check) | DONE: FAIL, no commit; next-questions stays on the fallback | — |
+| T18n-2 Parity re-check with R6.1 (`6788d66`) on all five demo cases | Ian | none (read-only check) | DONE: rank SAME on 5 demos; next-questions FAIL (why-line disease names differ from the ranking's names); no commit | — |
+| T18o Fallback next-questions hierarchy budget, 2xx-only edge cache, subrequest bound | Ian | `functions/_lib/fallback/{questions,hierarchy,hierarchy.test,demoRecorded}.ts` | DEPLOYED_VERIFIED (`ad41591`, fixes `2b7e0cc`, `f88e727`; in deploy `a147901`) | — |
+| T18p Per-IP rate limit on live extraction | Ian | `functions/_lib/rateLimit{,.test}.ts`, `functions/api/extract.ts`, `docs/CONTRACT.md` | DEPLOYED_VERIFIED (`a645016`, fix `c499387`; in deploy `a147901`) | — |
+| T18q Recorded demo-marfan and demo-cdls rankings | Ian | `functions/_lib/fallback/demoRecorded.ts` | DEPLOYED_VERIFIED (`8b4a41f`; in deploy `a147901`) | — |
+| T18r Contract v0.1.4 and v0.1.5 | Ian | `docs/CONTRACT.md` | DEPLOYED_VERIFIED (`fb84992` in deploy `a147901`; fixes `e2feaef`, `3c1ca45` in deploy `3c1ca45`) | — |
+| T28s i18n spec (requested by Ian via the coordinator, 15:36 ET) | Ian | `.kiro/specs/i18n/**` | PUSHED (`83a1b77`) | 16:45 |
+| T28a i18n core + shell | Ian | `app/src/shared/i18n/**`, `app/src/main.tsx`, `app/src/App.tsx`, `app/src/components/shell/**`, `app/src/shared/{steps,text}.ts`, `app/src/shared/ui/**`, `app/src/styles/tokens.css`, `app/package.json` | DEPLOYED_VERIFIED (`a8d7ec0`; in deploy `b7e8e8b`) | 16:45 |
+| T28b i18n intake + review strings | Ian | `app/src/features/{intake,review}/**`, `messages/{intake,review}.ts` | DEPLOYED_VERIFIED (`57c1ae4`, fix `44abdeb`; in deploy `b7e8e8b`) | 16:45 |
+| T28c i18n matches + questions | Ian | `app/src/features/{ranking,questions}/**`, `messages/{ranking,questions}.ts` | DEPLOYED_VERIFIED (`5c1b2ee`, fix `b84bc1e`; in deploy `b7e8e8b`) | 16:45 |
+| T28d i18n brief + trials + UI states + API messages | Ian | `app/src/features/{brief,trials}/**`, `app/src/components/ui/**`, `app/src/shared/{api.ts,store.tsx}`, `messages/{brief,trials,api}.ts` | DEPLOYED_VERIFIED (`0b8e104`, fix `c985eba`; in deploy `b7e8e8b`) | 16:45 |
+| T28e Landing i18n | Ian | `landing/**` | DEPLOYED_VERIFIED (`8a5c4fa`, fix `b7e8e8b`; in deploy `b7e8e8b`) | 16:45 |
+| T28f T28 integration, QA and deploy | Ian | T28a–T28e paths (integration only) | DONE (pushed `eaf9c0d..b7e8e8b`, deployment `7f773af6` ~16:13 ET; local and production smoke 14 passed, 0 failed, 1 noted) | 16:45 |
+| T30a Family mode (`?audience=family`) | Ian | `app/**` (family screens, shell top bar, `shared/audience/**`, brief download) | DEPLOYED_VERIFIED (`843a1c7`, top bar `1aeeaee`, fix `130602e`; in deploy `3c1ca45`; family mode checked in en and zh) | — |
+| T30b Landing for clinicians + family entry point | Ian | `landing/**` | DEPLOYED_VERIFIED (`0f0d9a5`, fix `130da53`; in deploy `3c1ca45`) | — |
+| T30c Hard-case labels and scope notes | Ian | `app/src/features/{intake,ranking,trials}/**`, their message files | DEPLOYED_VERIFIED (`cd7c8ea`, fix `a147901`; deploy `a147901`) | — |
+| T31 Apache-2.0 licence and third-party notices (licence confirmed by all three humans) | Ian | `LICENSE`, `THIRD_PARTY_NOTICES.md`, `README.md` (licence section) | DEPLOYED_VERIFIED (`90562d0`, fix `23ac4f9`; in deploy `a147901`) | — |
+| T32a Engine rank 20 s / 25 s and per-candidate `evidenceComplete` | Ian | `functions/api/rank.ts`, `functions/_lib/fallback/rank.ts` | DEPLOYED_VERIFIED (`29e22a7`; in deploy `3c1ca45`). Open: field and timeouts not in the contract; cached limit-5 rank bodies predate it | — |
+| T32b App handling of `evidenceComplete` (inside T34) | Ian | with T34 | CLAIMED (Ian) | TBD |
+| T33 Notes footnotes and matches evidence polish | Ian | `app/src/features/{review,ranking}/**`, `messages/ranking.ts` | DEPLOYED_VERIFIED (`4418ebf`, fix `907106f`; in deploy `3c1ca45`) | — |
+| T34 v1 polish (incl. T32b and the translation-sweep findings) | Ian | `app/**`, `landing/**` (exact paths in the claim) | CLAIMED (Ian); translation sweep done read-only | TBD |
+| T35 v2 redesign, preview only (not for production) | Ian | branch `ian/t35-v2` only | CLAIMED (Ian) | TBD |
 | T19 Kiro CLI custom agents and safe agent hooks | Ian | `.kiro/agents/**`, `.kiro/hooks/**` | PUSHED (`dd8a0791ef5fcfdcd3621a83df6ec8a42ed675ab`) | 12:25 |
 | T20 Kiro MCP for development | Ian | `.kiro/settings/mcp.json`, `.kiro/agents/rdd-builder.json`, `docs/research/biomcp-checks.md` (Context7 remote MCP server; real doc lookups logged) | PUSHED (`b3dce59`, `d35a18e` biomcp, `0dca96f` reviewer fixes) | 13:00 |
 | T21 Kiro IDE 1.x hooks and steering | Ian | `.kiro/hooks/**`, `.kiro/steering/medical-data.md`, `.kiro/steering/release-check.md` | PUSHED (`6c6ce91`, `68ec5cb`) | 13:05 |

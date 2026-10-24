@@ -24,7 +24,7 @@ Kiro integration session (docs/PROTOCOL.md 6A)
      cherry-pick → scope check → smoke test → push without force → deploy to Cloudflare Pages
 ```
 
-**Counts**, each from a file in the repo: 24 `rdd-reviewer` reviews in `docs/reviews/`, with 2 blocker, 60 should-fix and 71 nit findings by their own labels · 8 deploys in the usage log, each after a passing smoke test · 2 commands blocked live by the shell-guard hook (usage-log row "Kiro CLI agent hooks (`preToolUse`)") · 2 custom agents (`.kiro/agents/`) · 5 hooks (3 CLI hook scripts in `.kiro/hooks/scripts/`, 2 IDE hooks in `.kiro/hooks/*.json`) · 4 steering files · 2 MCP servers (`.kiro/settings/mcp.json`) · 1 power · 3 specs (`.kiro/specs/`) · 8 fast-check properties in `engine/test/` · 1 pre-registered benchmark with a negative result.
+**Counts**, each from a file in the repo: 41 `rdd-reviewer` reviews in `docs/reviews/`, with 6 blocker, 84 should-fix and 114 nit findings by their own labels (counted as numbered review lines by their severity label; item 1 of the T28b review is a should-fix with a nit-level note inside it, counted once as each) · 11 deploys in the usage log, each after a passing smoke test · 2 commands blocked live by the shell-guard hook (usage-log row "Kiro CLI agent hooks (`preToolUse`)") · 2 custom agents (`.kiro/agents/`) · 5 hooks (3 CLI hook scripts in `.kiro/hooks/scripts/`, 2 IDE hooks in `.kiro/hooks/*.json`) · 4 steering files · 2 MCP servers (`.kiro/settings/mcp.json`) · 1 power · 3 specs (`.kiro/specs/`) · 10 fast-check properties in `engine/test/` · 1 pre-registered benchmark with a negative result.
 
 ## What the loop caught: three before/after stories
 
@@ -48,8 +48,8 @@ Kiro integration session (docs/PROTOCOL.md 6A)
 
 ## Spec-driven development compared with vibe coding
 
-- **Specs.** `.kiro/specs/rare-disease-detective/` has `requirements.md` (12 requirements in EARS form, for example "WHEN the user submits text longer than 8,000 characters THE SYSTEM SHALL keep the text…"), `design.md` (architecture, error handling, testing strategy and correctness properties P1–P14) and `tasks.md` (five lanes with owners and paths). Kiro wrote them with the interface contract `docs/CONTRACT.md` v0.1 in `f77cc31`. `.kiro/specs/landing/` (T04) and `.kiro/specs/i18n/` (T28s, `83a1b77`, written before any i18n code) follow the same pattern.
-- **The contract sits next to the spec** and wins on conflict. Changes follow its section 14 and are logged in its changelog: v0.1.1 (`629c869`), v0.1.2 (`18556d7`), v0.1.3 (`820e7ff`).
+- **Specs.** `.kiro/specs/rare-disease-detective/` has `requirements.md` (12 requirements in EARS form, for example "WHEN the user submits text longer than 8,000 characters THE SYSTEM SHALL keep the text…"), `design.md` (architecture, error handling, testing strategy and correctness properties P1–P14) and `tasks.md` (five lanes with owners and paths). Kiro wrote them with the interface contract `docs/CONTRACT.md` v0.1 in `f77cc31`. `.kiro/specs/landing/` (T04) and `.kiro/specs/i18n/` (T28s, `83a1b77`, written before any i18n code) follow the same pattern. The i18n spec split the work into T28a–T28e on disjoint paths. Kiro built T28a (i18n core and shell) first, alone, from 15:28 to 15:40 ET; then T28b–T28e ran in four parallel sessions (`a8d7ec0` to `b7e8e8b`). The interface now runs in six languages.
+- **The contract sits next to the spec** and wins on conflict. Changes follow its section 14 and are logged in its changelog: v0.1.1 (`629c869`), v0.1.2 (`18556d7`), v0.1.3 (`820e7ff`, `423c1af`, `a645016`), v0.1.4 (`fb84992`, `e2feaef`) and v0.1.5 (`3c1ca45`, family-mode safety text).
 - **The spec changed when the evidence changed.** T09c (`629c869`) made `demo-npc1` the primary demo case after the T23 benchmark showed Monarch ranks its source condition first while it ranks Duchenne #40 for `demo-dmd`. Requirements, design, tasks and contract changed in the same commit.
 - **Ticks.** Kiro ticks `tasks.md` as work ships (`5508f1a`, then T11m `6c14f5b`); partly done items say what is missing.
 - **Why it mattered.** Parallel sessions needed one shared reference. The app foundation (T13a) was built against the contract's example JSON before any function existed, and the functions (T18a, T18b) later matched those shapes. Review findings cite requirement ids and contract sections (R1.2, R9.1, CONTRACT §4), so each one can be checked. Small polish with no interface change was a direct prompt without a spec change (T15b, `253641b`).
@@ -82,12 +82,12 @@ Configured in `.kiro/settings/mcp.json` and, since `0dca96f`, in `rdd-builder`'s
 ## Property-based testing
 
 - The design names 14 correctness properties (P1–P14 in `.kiro/specs/rare-disease-detective/design.md`; full wording in `docs/CONTRACT.md` section 11).
-- On `main`, Jerry's engine tests hold 8 fast-check properties (count of `fc.assert` calls), all with the fixed seed 20261024:
+- On `main`, Jerry's engine tests hold 10 fast-check properties (count of `fc.assert` calls), all with the fixed seed 20261024:
   - `engine/test/ground.test.ts` (`c2ffb08`): 1 property for P1–P3 on `groundTerms` (only HPO-confirmed ids, exact quote offsets with the HPO primary name, no duplicate ids), 200 runs.
-  - `engine/test/rank.test.ts` (`f6a3ebe`): 1 property for P4–P6 on `rankCandidates` (order and duplicate independence, ranks 1..n, matched plus unmatched covers every observed term), and 1 property that removing a matched phenotype never raises another candidate's matched count.
-  - `engine/test/questions.test.ts` (`eaf9c0d`): 5 properties on `nextQuestions`: P9 plus the hierarchy filter, limit and order, determinism, no fabricated frequencies, and a cap on fetch calls.
+  - `engine/test/rank.test.ts` (`f6a3ebe`): 1 property for P4–P6 on `rankCandidates` (order and duplicate independence, ranks 1..n, matched plus unmatched covers every observed term), 1 property that removing a matched phenotype never raises another candidate's matched count, and 1 property (`6788d66`) that the order of Monarch rows does not change the result after the obsolete-term filter.
+  - `engine/test/questions.test.ts` (`eaf9c0d`, `6788d66`): 6 properties on `nextQuestions`: P9 plus the hierarchy filter, limit and order, determinism, no fabricated frequencies, a cap on fetch calls, and (R6.1) every frequency traces to the candidate's own or linked annotation set.
 - P12 (`normalizeFrequency`, `engine/test/skeleton.test.ts`) and P14 (demo offsets, `engine/test/demo.test.ts`) are example-based tests, not fast-check.
-- Ian's functions have Node tests: `functions/_lib/fallback/hierarchy.test.ts` (10 tests, `1e79554`) and `functions/_lib/rerank.test.ts` (8 tests, `4682cdd`).
+- Ian's functions and app have Node tests: `functions/_lib/fallback/hierarchy.test.ts` (23 tests, `1e79554`, `ad41591`, `f88e727`), `functions/_lib/rateLimit.test.ts` (11 tests, `a645016`, `c499387`), `functions/_lib/rerank.test.ts` (8 tests, `4682cdd`) and `app/src/features/brief/familyNames.test.ts` (2 tests, `130602e`: the family-mode file name and print title never contain a demo id).
 - How Jerry authored his tests is not in the usage log.
 
 ## Powers
@@ -98,7 +98,7 @@ Configured in `.kiro/settings/mcp.json` and, since `0dca96f`, in `rdd-builder`'s
 
 - **Pre-registered benchmark** (T23, `4682cdd`, [docs/research/ranking-benchmark.md](research/ranking-benchmark.md)). Kiro wrote the method of a frequency-aware re-rank at 12:57 ET, before any result. The first run was invalid: the benchmark's fetch cache kept HTTP 429 answers as final (281 of 773 JAX responses). Kiro kept that run in the file, marked it invalid, fixed only the script and changed no scoring constant. The corrected run was negative (top-1 5 → 4, top-3 6 → 6 over 14 cases), so the re-rank is not shipped.
 - **LLM choice** (T17, `cd1a1a4`). In a bake-off on the demo narratives, `@cf/meta/llama-3.3-70b-instruct-fp8-fast` matched `gpt-oss-120b` on quality and was 2–3 times faster (2.3–4.9 s; `gpt-oss-120b` reached 10.4 s). Both models got most HPO ids wrong, so the prompt stopped asking for ids and the engine grounds by label.
-- **Engine parity before switching** (T18h, T18i; `310ea07`, `50cfc74`, `0f36748`). Kiro compared Ian's fallback ranking with Jerry's engine on `demo-npc1` and `demo-dmd`, found that the fallback counted non-HP shared ancestors (`UPHENO:` terms), aligned it, and got identical top 5 before `/api/rank` moved to the engine (T18k, `820e7ff`). The same check on `nextQuestions` (T18n, on `eaf9c0d`) failed, so that endpoint did not move (see Known limits).
+- **Engine parity before switching** (T18h, T18i; `310ea07`, `50cfc74`, `0f36748`). Kiro compared Ian's fallback ranking with Jerry's engine on `demo-npc1` and `demo-dmd`, found that the fallback counted non-HP shared ancestors (`UPHENO:` terms), aligned it, and got identical top 5 before `/api/rank` moved to the engine (T18k, `820e7ff`). The same check on `nextQuestions` failed twice (T18n on `eaf9c0d`, T18n-2 on `6788d66`), so that endpoint did not move (see Known limits). T18n-2 also re-checked rank on all five demo cases: same top 5 on both paths.
 
 ## Lessons
 
@@ -119,15 +119,17 @@ Configured in `.kiro/settings/mcp.json` and, since `0dca96f`, in `rdd-builder`'s
 | Steering fileMatch and manual modes in Kiro IDE | Not exercised; the CLI agents load all four files as resources | `.kiro/agents/*.json` |
 | MCP in Kiro IDE | Not verified that the IDE reads `.kiro/settings/mcp.json`; `kiro_default` sessions get both servers without `rdd-builder`'s query rule | Usage log, MCP section |
 | Power in Kiro IDE and custom agents | IDE Powers panel not checked; not checked whether custom agents load the power | Usage log, Powers section |
-| `/api/next-questions` on the engine | Parity check FAIL (T18n): for ORPHA candidates the engine reads only the ORPHA annotation set, which produced a false "not listed for" line on `demo-dmd`. The endpoint stays on the fallback. The engine applied the hierarchy filter correctly where the fallback did not (Gait ataxia on `demo-npc1`), and that fallback bug needs its own claim | Usage-log row T18n; `wrangler.toml` sets only `RDD_ENGINE_PATH_RANK` |
+| `/api/next-questions` on the engine | Parity check FAIL twice. T18n: for ORPHA candidates the engine read only the ORPHA annotation set (false "not listed for" line on `demo-dmd`); Jerry's R6.1 (`6788d66`) fixed that. T18n-2: the engine's why lines name diseases differently from `/api/rank` (JAX or MONDO names). The endpoint stays on the fallback. The fallback's Gait ataxia bug found in T18n was fixed in T18o (`ad41591`) | Usage-log rows T18n, T18n-2; `wrangler.toml` sets only `RDD_ENGINE_PATH_RANK` |
 | `/api/trials`, `/api/brief` on the engine | Engine `searchTrials` and `buildBrief` are placeholders; both endpoints run on the fallback | `README.md`, "What runs where today" |
 | Property-based tests | P7, P8, P10, P11 and P13 have no tests; P12 and P14 are example-based | `engine/test/` |
 | Function tests (spec task 2.8) | Not started; T18f finding 5 (no tests for the relevance filter) open | `tasks.md`; [T18f review](reviews/T18f.md) |
 | 50-case benchmark (contract §12) | Not run; the T23 benchmark used 14 cases | `docs/research/ranking-benchmark.md` |
 | Forced-upstream-failure smoke run | NOT RUN; `scripts/smoke.mjs` prints it as a NOTE | Usage-log row T24 |
-| Review text for T18l, T18j/T18k and T11m | Logged in the usage log; the files are not yet in `docs/reviews/` | Usage-log rows |
-| T18j/T18k review findings 3 and 4 (HPO version open question, brief default) | Claimed as T18m; not on `main` | `BRIEFING.md` T18m |
-| Contract v0.1.3 | Still a draft; APPROVE by Jerry and Ian not recorded | `docs/CONTRACT.md` header |
+| Reviews not run | T28a, T18m, T32a, the contract v0.1.5 commit and this T11o record have no logged `rdd-reviewer` review | Usage-log rows |
+| `evidenceComplete` (T32a) | Not in the contract yet; the app does not read it (T32b); cached limit-5 rank responses from before deploy C lack it until the 24 h cache expires | Usage-log row deploy C |
+| Family mode limits | The server's phenopacket for a demo case contains the demo id until the family download replaces it; `?demo=` stays in the address bar until the case has loaded (contract §13 v0.1.5); a real print dialog and file save were not tested | [T30a review](reviews/T30a.md) |
+| Translations | Written and reviewed by Kiro, not by native speakers; the T34 sweep found English UI text left in translated locales (for example demo titles, "Recruiting") | Usage-log row T34 sweep |
+| Contract v0.1.3 to v0.1.5 | Still drafts; APPROVE by Jerry and Ian not recorded (v0.1.5 approved by the coordinator on Ian's authority) | `docs/CONTRACT.md` header |
 | Jerry's and Peter's Kiro tool usage | Not in the usage log | `docs/KIRO_USAGE.md` |
 
 ## Corrections

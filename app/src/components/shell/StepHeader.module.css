@@ -12,11 +12,6 @@
   color: var(--ink-3);
 }
 
-.kicker b {
-  color: var(--ink);
-  font-weight: 600;
-}
-
 .title {
   font-family: var(--f-display);
   font-size: var(--text-display);
@@ -29,11 +24,12 @@
   white-space: nowrap;
 }
 
-.lede {
-  max-width: var(--measure);
-  margin-top: var(--s-4);
-  font-size: var(--t-md);
-  line-height: 1.6;
+/* The section 13 safety line: once per result step, body size, calm. */
+.safety {
+  max-width: var(--measure-wide);
+  margin-top: var(--s-3);
+  font-size: var(--t-base);
+  line-height: var(--lh-text);
   color: var(--ink-2);
 }
 
@@ -43,7 +39,6 @@
   gap: var(--s-2);
   margin-top: var(--s-5);
 }
-
 
 /*
  * Short laptop screens: tighter intro so results stay above the fold. The
@@ -57,10 +52,8 @@
     line-height: var(--leading-snug);
   }
 
-  .lede {
-    max-width: var(--measure-wide);
-    margin-top: var(--s-3);
-    font-size: var(--t-base);
+  .safety {
+    margin-top: var(--s-2);
   }
 
   .labels {
@@ -73,11 +66,13 @@
     line-height: 1.12;
   }
 
-  .lede {
-    font-size: var(--t-base);
-  }
 
   .labels {
     margin-top: var(--s-4);
   }
+}
+
+.familyLead {
+  font-weight: 600;
+  color: var(--ink);
 }

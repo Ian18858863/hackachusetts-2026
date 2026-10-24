@@ -25,14 +25,14 @@ export default defineMessages(
     openDemo: 'Open the demo',
     openDemoShort: 'Demo',
 
-    kickerLead: 'For families and clinicians',
-    kickerRest: ' · rare disease decision support',
-    heroTitle: 'A specialist-ready brief in minutes, not a diagnosis in years.',
+    kickerLead: 'For clinicians and genetic counselors',
+    kickerRest: ' · families can prepare their notes',
+    heroTitle: 'A specialist-ready brief in minutes',
     heroLede: 'Turn years of scattered notes into a specialist-ready brief in minutes.',
     heroSafetyRest: ' Possible matches to discuss with a doctor, each with the evidence behind it.',
     tryDemo: 'Try the demo case',
-    forFamilies: 'For families',
     howLink: 'How it works',
+    familyCta: 'For families: prepare notes for your doctor',
     demoNote: 'Opens a synthetic demo case with no sign-up. Not a real patient.',
     proofAlt:
       "Screenshot of the app's Possible matches step for a demo case, not a real patient. Rank 1 of 5 possible matches is Niemann-Pick disease, type C1, with strong overlap: 6 of 12 present features described, plus 6 through broader terms. Each feature is listed in plain words with its HPO term and how often it occurs in the condition, for example Frequency not listed.",
@@ -52,6 +52,8 @@ export default defineMessages(
 
     howTitle: 'How it works',
     howDek: 'Five steps from a parent’s notes to something a specialist can check.',
+    howFamily:
+      'In family mode the app never shows disease names; it prepares the notes and the questions for a clinician.',
     step1Title: 'Notes',
     step1Body: 'Paste a symptom history in plain words, or open the demo case.',
     step2Title: 'Features with their source sentence',
@@ -65,7 +67,7 @@ export default defineMessages(
     step5Title: 'Brief, phenopacket and trials',
     step5Body:
       'A one-page brief to print or save as PDF, a GA4GH Phenopacket file with the features and no diagnosis inside, and recruiting studies from ClinicalTrials.gov.',
-    panelTitle: 'The ontology ranks; the LLM only translates',
+    panelTitle: 'The LLM only translates',
     panelGrounding:
       'A language model proposes phrases from the notes. A feature is kept only if its phrase appears word for word in the notes and the Human Phenotype Ontology confirms the term.',
     panelSources:
@@ -75,10 +77,10 @@ export default defineMessages(
 
     evidenceTitle: 'Why the ontology does the ranking',
     evidenceDek: 'Published work points to the same split of roles that this tool uses.',
-    study1Claim: 'A language model and an ontology tool together beat either alone',
+    study1Claim: 'LLM plus ontology beats either alone',
     study1Detail:
       'In 424 patients of the Undiagnosed Diseases Network, GPT-4o with the Exomiser ranking tool reached 30% differential accuracy, against 22.4% for GPT-4o and 13.9% for Exomiser on their own.',
-    study2Claim: 'An agent with ontology tools and traceable evidence leads the field',
+    study2Claim: 'Agents with ontology tools and traceable evidence lead',
     study2Detail:
       'DeepRare, an LLM agent that calls more than 40 tools and shows its reasoning, ranked the right disease first in 57% of cases on average across HPO-based benchmarks.',
     ownTitle: 'Our own check',
@@ -109,14 +111,14 @@ export default defineMessages(
       openDemo: '打开演示',
       openDemoShort: '演示',
 
-      kickerLead: '面向家庭和临床医生',
-      kickerRest: ' · 罕见病决策辅助',
-      heroTitle: '几分钟内备好专科医生简报，而不是多年后才等来诊断。',
+      kickerLead: '面向临床医生和遗传咨询师',
+      kickerRest: ' · 家庭也可以整理自己的症状描述',
+      heroTitle: '几分钟备好专科医生简报',
       heroLede: '把多年零散的症状描述，在几分钟内整理成一份可交给专科医生的简报。',
       heroSafetyRest: '列出可与医生讨论的可能匹配，并附上每一项背后的证据。',
       tryDemo: '试用演示病例',
-      forFamilies: '面向家庭',
       howLink: '工作原理',
+      familyCta: '家庭使用：为医生整理症状描述',
       demoNote: '打开一个合成的演示病例，无需注册。并非真实患者。',
       proofAlt:
         '应用“可能匹配”步骤的截图，使用的是演示病例，并非真实患者。5 个可能匹配中排名第 1 的是 Niemann-Pick disease, type C1，重叠程度为 strong：已描述的 12 个存在特征中 6 个直接匹配，另有 6 个通过更宽泛的术语匹配。每个特征都以通俗语言列出，并附有其 HPO 术语以及它在该疾病中的出现频率，例如 Frequency not listed。',
@@ -134,6 +136,7 @@ export default defineMessages(
 
       howTitle: '工作原理',
       howDek: '从家长的症状描述到专科医生可以核查的内容，共五步。',
+      howFamily: '在家庭模式下，应用从不显示疾病名称，而是为临床医生整理症状描述和要问的问题。',
       step1Title: '症状描述',
       step1Body: '用日常语言粘贴症状经过，或打开演示病例。',
       step2Title: '特征及其原句',
@@ -147,7 +150,7 @@ export default defineMessages(
       step5Title: '简报、Phenopacket 和临床试验',
       step5Body:
         '一页简报，可打印或另存为 PDF；一个 GA4GH Phenopacket 文件，只含特征，不含任何诊断；以及来自 ClinicalTrials.gov 的正在招募的研究。',
-      panelTitle: '本体负责排序，LLM 只负责转换语言',
+      panelTitle: 'LLM 只负责转换语言',
       panelGrounding:
         '语言模型从症状描述中提出短语。只有当短语逐字出现在描述中，并且人类表型本体（Human Phenotype Ontology）确认了该术语时，这个特征才会被保留。',
       panelSources:
@@ -157,10 +160,10 @@ export default defineMessages(
 
       evidenceTitle: '为什么由本体来排序',
       evidenceDek: '已发表的研究指向与本工具相同的分工。',
-      study1Claim: '语言模型与本体工具结合，优于任何一方单独使用',
+      study1Claim: 'LLM 与本体结合胜过单独使用',
       study1Detail:
         '在 Undiagnosed Diseases Network 的 424 名患者中，GPT-4o 结合 Exomiser 排序工具的鉴别诊断准确率达到 30%，而 GPT-4o 和 Exomiser 单独使用时分别为 22.4% 和 13.9%。',
-      study2Claim: '使用本体工具并给出可追溯证据的智能体处于领先',
+      study2Claim: '使用本体工具并给出可追溯证据的智能体领先',
       study2Detail:
         'DeepRare 是一个调用 40 多种工具并展示推理过程的 LLM 智能体，在多个基于 HPO 的基准测试中，平均在 57% 的病例中把正确的疾病排在第一位。',
       ownTitle: '我们自己的检验',
@@ -189,14 +192,14 @@ export default defineMessages(
       openDemo: 'デモを開く',
       openDemoShort: 'デモ',
 
-      kickerLead: 'ご家族と臨床医のために',
-      kickerRest: ' · 希少疾患の意思決定支援',
-      heroTitle: '何年もかかる診断ではなく、数分で専門医向けサマリーを。',
+      kickerLead: '臨床医と遺伝カウンセラーのために',
+      kickerRest: ' · ご家族は記録を準備できます',
+      heroTitle: '数分で専門医向けサマリーを',
       heroLede: '何年分もの散らばった記録を、数分で専門医向けサマリーにまとめます。',
       heroSafetyRest: '医師と相談するための一致候補を、それぞれの根拠とともに示します。',
       tryDemo: 'デモ症例を試す',
-      forFamilies: 'ご家族の方へ',
       howLink: '仕組み',
+      familyCta: 'ご家族の方へ：医師に渡す記録を準備する',
       demoNote: '登録不要で、合成のデモ症例が開きます。実在の患者ではありません。',
       proofAlt:
         'アプリの「一致候補」ステップのスクリーンショット。デモ症例で、実在の患者ではありません。5 件の一致候補のうち 1 位は Niemann-Pick disease, type C1 で、重なりは strong です。記載された 12 個の特徴のうち 6 個が一致し、さらに 6 個がより広い用語を通じて一致しています。各特徴は平易な言葉で、HPO 用語とその疾患での頻度（例：Frequency not listed）とともに表示されています。',
@@ -216,6 +219,7 @@ export default defineMessages(
 
       howTitle: '仕組み',
       howDek: '保護者の記録から、専門医が確認できる形になるまでの 5 つのステップ。',
+      howFamily: 'ご家族向けモードでは、アプリは疾患名を一切表示せず、臨床医のために記録と質問を準備します。',
       step1Title: '症状の記録',
       step1Body: '症状の経過を普段の言葉で貼り付けるか、デモ症例を開きます。',
       step2Title: '特徴と元の文',
@@ -229,7 +233,7 @@ export default defineMessages(
       step5Title: 'サマリー、Phenopacket、臨床試験',
       step5Body:
         '印刷または PDF 保存ができる 1 ページのサマリー、特徴だけを含み診断を含まない GA4GH Phenopacket ファイル、そして ClinicalTrials.gov の募集中の研究。',
-      panelTitle: '順位付けはオントロジー、LLM は言葉の変換だけ',
+      panelTitle: 'LLM は言葉の変換だけ',
       panelGrounding:
         '言語モデルが記録から語句を提案します。特徴が残るのは、その語句が記録にそのまま含まれ、かつ Human Phenotype Ontology がその用語を確認した場合だけです。',
       panelSources:
@@ -239,10 +243,10 @@ export default defineMessages(
 
       evidenceTitle: 'なぜオントロジーが順位付けを担うのか',
       evidenceDek: '公表された研究は、このツールと同じ役割分担を示しています。',
-      study1Claim: '言語モデルとオントロジーツールを組み合わせると、どちらか単独より優れています',
+      study1Claim: 'LLM とオントロジーの併用が単独に勝る',
       study1Detail:
         'Undiagnosed Diseases Network の患者 424 人で、GPT-4o と順位付けツール Exomiser の組み合わせは鑑別診断の正答率 30% に達し、GPT-4o 単独の 22.4%、Exomiser 単独の 13.9% を上回りました。',
-      study2Claim: 'オントロジーツールを使い、追跡可能な根拠を示すエージェントが先頭に立っています',
+      study2Claim: 'オントロジーツールと追跡可能な根拠を持つエージェントが先頭に',
       study2Detail:
         'DeepRare は 40 を超えるツールを呼び出し、推論の過程を示す LLM エージェントで、HPO に基づく複数のベンチマークで、平均 57% の症例で正しい疾患を 1 位に挙げました。',
       ownTitle: '私たち自身による検証',
@@ -272,14 +276,14 @@ export default defineMessages(
       openDemo: 'Abrir la demostración',
       openDemoShort: 'Demo',
 
-      kickerLead: 'Para familias y profesionales clínicos',
-      kickerRest: ' · apoyo a la decisión en enfermedades raras',
-      heroTitle: 'Un resumen para el especialista en minutos, no un diagnóstico en años.',
+      kickerLead: 'Para profesionales clínicos y asesores genéticos',
+      kickerRest: ' · las familias pueden preparar sus notas',
+      heroTitle: 'Un resumen para el especialista en minutos',
       heroLede: 'Convierta años de notas dispersas en un resumen para el especialista en minutos.',
       heroSafetyRest: ' Posibles coincidencias para comentar con un médico, cada una con la evidencia que la respalda.',
       tryDemo: 'Probar el caso de demostración',
-      forFamilies: 'Para familias',
       howLink: 'Cómo funciona',
+      familyCta: 'Para familias: prepare notas para su médico',
       demoNote: 'Abre un caso de demostración sintético, sin registro. No es un paciente real.',
       proofAlt:
         'Captura de pantalla del paso Possible matches (posibles coincidencias) de la aplicación con un caso de demostración, no un paciente real. La coincidencia 1 de 5 es Niemann-Pick disease, type C1, con solapamiento strong (fuerte): 6 de 12 rasgos presentes descritos, más 6 a través de términos más amplios. Cada rasgo aparece en palabras sencillas con su término HPO y con qué frecuencia se presenta en la enfermedad, por ejemplo Frequency not listed.',
@@ -299,6 +303,8 @@ export default defineMessages(
 
       howTitle: 'Cómo funciona',
       howDek: 'Cinco pasos desde las notas de una madre o un padre hasta algo que un especialista puede comprobar.',
+      howFamily:
+        'En el modo para familias, la aplicación nunca muestra nombres de enfermedades; prepara las notas y las preguntas para un profesional clínico.',
       step1Title: 'Notas',
       step1Body: 'Pegue un historial de síntomas en palabras sencillas o abra el caso de demostración.',
       step2Title: 'Rasgos con su frase de origen',
@@ -312,7 +318,7 @@ export default defineMessages(
       step5Title: 'Resumen, phenopacket y ensayos',
       step5Body:
         'Un resumen de una página para imprimir o guardar como PDF, un archivo GA4GH Phenopacket con los rasgos y sin ningún diagnóstico, y estudios con reclutamiento abierto de ClinicalTrials.gov.',
-      panelTitle: 'La ontología ordena; el LLM solo traduce',
+      panelTitle: 'El LLM solo traduce',
       panelGrounding:
         'Un modelo de lenguaje propone frases de las notas. Un rasgo se conserva solo si su frase aparece palabra por palabra en las notas y la Human Phenotype Ontology confirma el término.',
       panelSources:
@@ -322,10 +328,10 @@ export default defineMessages(
 
       evidenceTitle: 'Por qué la ontología hace la clasificación',
       evidenceDek: 'Los trabajos publicados apuntan al mismo reparto de funciones que usa esta herramienta.',
-      study1Claim: 'Un modelo de lenguaje y una herramienta de ontología juntos superan a cada uno por separado',
+      study1Claim: 'LLM y ontología juntos superan a cada uno',
       study1Detail:
         'En 424 pacientes de la Undiagnosed Diseases Network, GPT-4o con la herramienta de clasificación Exomiser alcanzó un 30 % de precisión en el diagnóstico diferencial, frente al 22,4 % de GPT-4o y el 13,9 % de Exomiser por separado.',
-      study2Claim: 'Un agente con herramientas de ontología y evidencia trazable encabeza el campo',
+      study2Claim: 'Lideran los agentes con ontología y evidencia trazable',
       study2Detail:
         'DeepRare, un agente LLM que llama a más de 40 herramientas y muestra su razonamiento, situó la enfermedad correcta en primer lugar en el 57 % de los casos de media en las pruebas de referencia basadas en HPO.',
       ownTitle: 'Nuestra propia comprobación',
@@ -356,14 +362,14 @@ export default defineMessages(
       openDemo: '데모 열기',
       openDemoShort: '데모',
 
-      kickerLead: '가족과 임상의를 위한',
-      kickerRest: ' · 희귀질환 의사결정 지원',
-      heroTitle: '몇 년 걸리는 진단이 아니라, 몇 분 만에 전문의용 요약서를.',
+      kickerLead: '임상의와 유전 상담사를 위한',
+      kickerRest: ' · 가족은 기록을 준비할 수 있습니다',
+      heroTitle: '몇 분 만에 전문의용 요약서를',
       heroLede: '여러 해 동안 흩어진 기록을 몇 분 만에 전문의용 요약서로 정리합니다.',
       heroSafetyRest: ' 의사와 상의할 가능한 일치 항목을 각각의 근거와 함께 보여 줍니다.',
       tryDemo: '데모 사례 사용해 보기',
-      forFamilies: '가족을 위한 안내',
       howLink: '작동 방식',
+      familyCta: '가족용: 의사에게 전할 기록 준비하기',
       demoNote: '가입 없이 합성 데모 사례가 열립니다. 실제 환자가 아닙니다.',
       proofAlt:
         '데모 사례로 본 앱의 가능한 일치 단계 화면입니다. 실제 환자가 아닙니다. 가능한 일치 5개 중 1위는 Niemann-Pick disease, type C1이며 겹침 정도는 strong입니다. 기술된 특징 12개 중 6개가 일치하고, 6개는 더 넓은 용어를 통해 일치합니다. 각 특징은 쉬운 말로, HPO 용어 및 해당 질환에서 나타나는 빈도(예: Frequency not listed)와 함께 표시됩니다.',
@@ -382,6 +388,7 @@ export default defineMessages(
 
       howTitle: '작동 방식',
       howDek: '부모의 기록에서 전문의가 확인할 수 있는 자료까지, 다섯 단계.',
+      howFamily: '가족 모드에서는 앱이 질환 이름을 전혀 보여 주지 않고, 임상의를 위해 기록과 질문을 준비합니다.',
       step1Title: '증상 기록',
       step1Body: '증상 경과를 일상 언어로 붙여 넣거나 데모 사례를 엽니다.',
       step2Title: '특징과 원래 문장',
@@ -395,7 +402,7 @@ export default defineMessages(
       step5Title: '요약서, Phenopacket, 임상시험',
       step5Body:
         '인쇄하거나 PDF로 저장할 수 있는 한 쪽짜리 요약서, 특징만 담고 진단은 담지 않은 GA4GH Phenopacket 파일, 그리고 ClinicalTrials.gov의 모집 중인 연구.',
-      panelTitle: '순위는 온톨로지가 매기고, LLM은 말을 옮기기만 합니다',
+      panelTitle: 'LLM은 말만 옮깁니다',
       panelGrounding:
         '언어 모델이 기록에서 문구를 제안합니다. 특징은 그 문구가 기록에 글자 그대로 있고 Human Phenotype Ontology가 그 용어를 확인한 경우에만 남습니다.',
       panelSources:
@@ -405,10 +412,10 @@ export default defineMessages(
 
       evidenceTitle: '왜 온톨로지가 순위를 매기는가',
       evidenceDek: '발표된 연구들은 이 도구가 쓰는 것과 같은 역할 분담을 가리킵니다.',
-      study1Claim: '언어 모델과 온톨로지 도구를 함께 쓰면 각각 따로 쓸 때보다 낫습니다',
+      study1Claim: 'LLM과 온톨로지를 함께 쓰면 각각 따로 쓸 때보다 낫습니다',
       study1Detail:
         'Undiagnosed Diseases Network 환자 424명에서 GPT-4o와 순위 도구 Exomiser를 함께 쓴 경우 감별 진단 정확도가 30%였고, GPT-4o 단독은 22.4%, Exomiser 단독은 13.9%였습니다.',
-      study2Claim: '온톨로지 도구와 추적 가능한 근거를 갖춘 에이전트가 가장 앞서 있습니다',
+      study2Claim: '온톨로지 도구와 추적 가능한 근거를 갖춘 에이전트가 앞섭니다',
       study2Detail:
         'DeepRare는 40개가 넘는 도구를 호출하고 추론 과정을 보여 주는 LLM 에이전트로, HPO 기반 벤치마크들에서 평균 57%의 사례에서 올바른 질환을 1위에 올렸습니다.',
       ownTitle: '자체 점검',
@@ -438,14 +445,14 @@ export default defineMessages(
       openDemo: 'Ouvrir la démo',
       openDemoShort: 'Démo',
 
-      kickerLead: 'Pour les familles et les cliniciens',
-      kickerRest: ' · aide à la décision pour les maladies rares',
-      heroTitle: 'Une synthèse pour le spécialiste en quelques minutes, pas un diagnostic après des années.',
+      kickerLead: 'Pour les cliniciens et les conseillers en génétique',
+      kickerRest: ' · les familles peuvent préparer leurs notes',
+      heroTitle: 'Une synthèse pour le spécialiste en quelques minutes',
       heroLede: 'Transformez des années de notes éparses en une synthèse pour le spécialiste en quelques minutes.',
       heroSafetyRest: ' Des correspondances possibles à discuter avec un médecin, chacune avec les éléments qui l’appuient.',
       tryDemo: 'Essayer le cas de démonstration',
-      forFamilies: 'Pour les familles',
       howLink: 'Fonctionnement',
+      familyCta: 'Pour les familles : préparer des notes pour votre médecin',
       demoNote: 'Ouvre un cas de démonstration synthétique, sans inscription. Ce n’est pas un vrai patient.',
       proofAlt:
         'Capture d’écran de l’étape Possible matches (correspondances possibles) de l’application, sur un cas de démonstration, pas un vrai patient. La correspondance 1 sur 5 est Niemann-Pick disease, type C1, avec un recoupement strong (fort) : 6 des 12 caractéristiques présentes décrites, plus 6 par des termes plus larges. Chaque caractéristique est indiquée en mots simples avec son terme HPO et sa fréquence dans la maladie, par exemple Frequency not listed.',
@@ -465,6 +472,8 @@ export default defineMessages(
 
       howTitle: 'Fonctionnement',
       howDek: 'Cinq étapes, des notes d’un parent à un document qu’un spécialiste peut vérifier.',
+      howFamily:
+        'En mode famille, l’application n’affiche jamais de noms de maladies ; elle prépare les notes et les questions pour un clinicien.',
       step1Title: 'Notes',
       step1Body: 'Collez un historique des symptômes en mots simples, ou ouvrez le cas de démonstration.',
       step2Title: 'Caractéristiques avec leur phrase source',
@@ -479,7 +488,7 @@ export default defineMessages(
       step5Title: 'Synthèse, phenopacket et essais',
       step5Body:
         'Une synthèse d’une page à imprimer ou à enregistrer en PDF, un fichier GA4GH Phenopacket avec les caractéristiques et aucun diagnostic, et des études en cours de recrutement issues de ClinicalTrials.gov.',
-      panelTitle: 'L’ontologie classe ; le LLM ne fait que traduire',
+      panelTitle: 'Le LLM ne fait que traduire',
       panelGrounding:
         'Un modèle de langage propose des expressions tirées des notes. Une caractéristique n’est conservée que si son expression figure mot pour mot dans les notes et que la Human Phenotype Ontology confirme le terme.',
       panelSources:
@@ -489,10 +498,10 @@ export default defineMessages(
 
       evidenceTitle: 'Pourquoi l’ontologie fait le classement',
       evidenceDek: 'Les travaux publiés vont dans le sens de la même répartition des rôles que cet outil.',
-      study1Claim: 'Un modèle de langage et un outil d’ontologie font mieux ensemble que chacun seul',
+      study1Claim: 'LLM et ontologie font mieux ensemble',
       study1Detail:
         'Chez 424 patients de l’Undiagnosed Diseases Network, GPT-4o associé à l’outil de classement Exomiser a atteint 30 % de précision du diagnostic différentiel, contre 22,4 % pour GPT-4o et 13,9 % pour Exomiser seuls.',
-      study2Claim: 'Un agent doté d’outils d’ontologie et de preuves traçables est en tête',
+      study2Claim: 'Les agents à ontologie et preuves traçables sont en tête',
       study2Detail:
         'DeepRare, un agent LLM qui appelle plus de 40 outils et montre son raisonnement, a classé la bonne maladie en premier dans 57 % des cas en moyenne sur des bancs d’essai fondés sur HPO.',
       ownTitle: 'Notre propre vérification',

@@ -350,6 +350,13 @@ function budgetedDeps(deps: FallbackDeps, leftMs: number): FallbackDeps {
   return { ...deps, timeoutsMs: { ...deps.timeoutsMs, hpoAnnotation: cap("hpoAnnotation"), orphadata: cap("orphadata") } };
 }
 
+/**
+ * Candidate plus the additive /api/rank field evidenceComplete (T32a): false
+ * when an HPO annotation call for this candidate failed, so `frequency: null`
+ * means "could not be read" rather than "not listed".
+ */
+export type RankedCandidate = Candidate & { evidenceComplete?: boolean };
+
 export interface FallbackRankResult {
   body: RankResponse;
   /** False when an annotation or Orphadata lookup failed: do not cache this response (R11.4). */
@@ -392,9 +399,10 @@ export async function fallbackRank(req: NormalizedRankRequest, deps: FallbackDep
     ),
   ]);
 
-  const candidates = top.map((row, i) =>
-    buildCandidate(row, i + 1, req, labels, annotations[i]?.merged ?? null, orphaNames[i]?.value ?? null),
-  );
+  const candidates: RankedCandidate[] = top.map((row, i) => ({
+    ...buildCandidate(row, i + 1, req, labels, annotations[i]?.merged ?? null, orphaNames[i]?.value ?? null),
+    evidenceComplete: annotations[i]?.failed !== true,
+  }));
   // Let /api/next-questions read the same ORPHA + OMIM sets and names.
   candidates.forEach((c, i) => {
     const row = top[i];

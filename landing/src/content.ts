@@ -12,6 +12,16 @@ export function demoHref(locale: string): string {
   return locale === 'en' ? DEMO_HREF : `${DEMO_HREF}&lang=${encodeURIComponent(locale)}`;
 }
 
+/**
+ * The family entry point (T30): the same demo case in the app's family mode, which never
+ * shows disease names. Other languages add &lang=<code>, as for DEMO_HREF.
+ */
+export const FAMILY_HREF = `${DEMO_HREF}&audience=family`;
+
+export function familyHref(locale: string): string {
+  return locale === 'en' ? FAMILY_HREF : `${FAMILY_HREF}&lang=${encodeURIComponent(locale)}`;
+}
+
 export const REPO_URL = 'https://github.com/Ian18858863/hackachusetts-2026';
 export const README_URL = `${REPO_URL}#readme`;
 export const BENCHMARK_URL = `${REPO_URL}/blob/main/docs/research/ranking-benchmark.md`;

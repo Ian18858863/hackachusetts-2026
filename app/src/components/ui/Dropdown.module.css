@@ -147,3 +147,26 @@
     padding: 0 12px;
   }
 }
+
+/* Compact: the outline is drawn 6px inside the 44px tap area (matches the audience switch). */
+.button[data-compact] {
+  position: relative;
+  border-color: transparent;
+  padding: 0 12px;
+  font-size: var(--t-xs);
+}
+
+.button[data-compact]::before {
+  content: '';
+  position: absolute;
+  inset: 6px 0;
+  border: 1px solid var(--color-border-strong, var(--mark-none));
+  border-radius: var(--r-pill);
+  pointer-events: none;
+}
+
+.button[data-compact]:hover::before,
+.button[data-compact][data-open]::before {
+  border-color: var(--ink-2);
+}
+

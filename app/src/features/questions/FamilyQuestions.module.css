@@ -1,0 +1,14 @@
+/* Family questions (T30a): no comparison column, so the question uses the full width. */
+.list > li {
+  grid-template-columns: auto minmax(0, 1fr);
+}
+
+.skeletonItem {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+@media (max-width: 600px) {
+  .list > li {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

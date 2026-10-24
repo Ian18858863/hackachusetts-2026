@@ -24,6 +24,7 @@ export function LanguageSwitcher({ className }: { className?: string }) {
       onChange={setLocale}
       label={t('languageLabel')}
       testId="language-switcher"
+      compact
     />
   );
 }

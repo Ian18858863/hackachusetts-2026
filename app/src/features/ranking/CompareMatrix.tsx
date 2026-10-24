@@ -10,7 +10,7 @@ import styles from './ranking.module.css';
 
 const MATRIX_CANDIDATES = 3;
 
-type Cell = { matched: false } | { matched: true; broader: boolean; frequency: FrequencyInfo | null };
+type Cell = { matched: false } | { matched: true; broader: boolean; frequency: FrequencyInfo | null; missing: boolean };
 
 /**
  * "Compare side by side": the B2 dot matrix in the final type. Rows are the
@@ -37,10 +37,13 @@ export function CompareMatrix({
     .sort((a, b) => (a.number ?? Number.MAX_SAFE_INTEGER) - (b.number ?? Number.MAX_SAFE_INTEGER));
   const cell = (c: Candidate, id: HpoId): Cell => {
     const e = c.matched.find((m) => m.patientTerm.id === id);
-    return e ? { matched: true, broader: e.via === 'ancestor', frequency: e.frequency } : { matched: false };
+    return e
+      ? { matched: true, broader: e.via === 'ancestor', frequency: e.frequency, missing: !e.frequency && c.evidenceComplete === false }
+      : { matched: false };
   };
   const cellWord = (x: Cell) => {
     if (!x.matched) return t('notMatched');
+    if (x.missing) return x.broader ? t('cellBroader', { word: tc('evidenceCouldNotLoad') }) : tc('evidenceCouldNotLoad');
     const word = frequencyState(x.frequency, t, t('freqNotListed')).word;
     return x.broader ? t('cellBroader', { word }) : word;
   };
@@ -52,7 +55,6 @@ export function CompareMatrix({
         <h2 id="compare-title" className={styles.compareTitle}>
           {t('compareSideBySide')}
         </h2>
-        <p className={styles.compareDek}>{t('compareDek', { n: top.length, safety: tc('disclaimerLead') })}</p>
       </div>
 
       <div className={styles.cmp}>
@@ -110,6 +112,7 @@ export function CompareMatrix({
                         >
                           <BandDot
                             frequency={x.matched ? (x.frequency ?? { label: null, source: c.diseaseId }) : null}
+                            missing={x.matched && x.missing}
                             tone={c.rank === 1 ? 'accent' : 'neutral'}
                           />
                           <span className="sr-only">{cellWord(x)}</span>
@@ -129,7 +132,6 @@ export function CompareMatrix({
                       <td key={c.diseaseId} data-first={c.rank === 1 || undefined}>
                         <b className="num">{t('countOf', { exact, n: features.length })}</b>
                         {line && <span className={styles.footBroader}>{line}</span>}
-                        <span>{c.diseaseId}</span>
                       </td>
                     );
                   })}
@@ -139,7 +141,7 @@ export function CompareMatrix({
           </div>
           <div className={styles.source}>
             <p data-shown={!active || undefined} aria-hidden="true">
-              {t('compareHint')}
+              {'\u00a0'}
             </p>
             {features
               .filter((f) => f.sentence)
@@ -158,9 +160,7 @@ export function CompareMatrix({
 
         <section className={styles.notes} aria-label={t('compareNotesLabel')}>
           <div className={styles.legendNote}>
-            <h3>{t('readingDots')}</h3>
-            <p>{t('readingDotsBody')}</p>
-            <p className={styles.legendHint}>{t('legendHint')}</p>
+            <h3 className="sr-only">{t('readingDots')}</h3>
             <dl className={styles.legend}>
               {LEGEND.map((l) => (
                 <div key={l.key}>
@@ -170,6 +170,14 @@ export function CompareMatrix({
                   <dd>{t(l.key)}</dd>
                 </div>
               ))}
+              {top.some((c) => c.evidenceComplete === false) && (
+                <div>
+                  <dt>
+                    <BandDot frequency={LEGEND_MISSING.frequency} missing={LEGEND_MISSING.missing} />
+                  </dt>
+                  <dd>{tc('evidenceCouldNotLoad')}</dd>
+                </div>
+              )}
             </dl>
           </div>
         </section>
@@ -186,6 +194,8 @@ const LEGEND: Array<{ key: RankingKey; frequency: FrequencyInfo | null }> = [
   { key: 'legendNotListed', frequency: { label: null, source: '' } },
   { key: 'notMatched', frequency: null },
 ];
+
+const LEGEND_MISSING = { frequency: null, missing: true } as const;
 
 function labelFor(id: HpoId, candidates: Candidate[]): string {
   for (const c of candidates) {

@@ -351,6 +351,9 @@
   --tracking-display: 0;
   --track-display: 0;
   --tracking-tight: normal;
+  /* T34 used the system CJK sans for CJK headings because only Songti/Mincho
+     fallbacks existed; v2 (T35) ships Noto Serif SC/JP/KR 500, so headings stay
+     in one serif family in every language. */
 }
 
 :lang(zh) :is(h1, h2, h3, h4),

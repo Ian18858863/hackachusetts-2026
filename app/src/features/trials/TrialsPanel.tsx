@@ -70,12 +70,6 @@ export function TrialsPanel() {
           <h2 id={headingId} className={styles.title}>
             {t('heading')}
           </h2>
-          <p className={styles.lede}>
-            {candidate
-              ? t('ledeWithCandidate')
-              : t('ledeNoCandidate')}
-          </p>
-          <p className={styles.notRecommendation}>{t('notRecommendation')}</p>
         </div>
         {choices.length > 1 && candidate && (
           <CandidateChooser
@@ -272,7 +266,7 @@ function StudyRow({ study }: { study: Trial }) {
           <dt>{t('status')}</dt>
           <dd className={styles.status}>
             <Icon name="check" size={14} />
-            Recruiting
+            {t('statusRecruiting')}
           </dd>
         </div>
         <div className={styles.fact}>

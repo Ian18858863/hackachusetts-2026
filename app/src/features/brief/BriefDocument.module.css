@@ -86,9 +86,6 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-sunken);
   font-size: var(--text-xs);
   line-height: var(--leading-snug);
   color: var(--color-text-muted);
@@ -709,4 +706,24 @@
   .doc a {
     text-decoration: none;
   }
+}
+
+/* T34: on screen the top bar chip is the one demo notice; the printed page keeps this line. */
+@media screen {
+  .demo[data-demo-notice] {
+    display: none;
+  }
+}
+
+/* T34: the verbatim English section 13 sentence under its translation, one small line. */
+.disclaimerEn {
+  display: block;
+  margin-top: var(--space-1);
+  font-size: var(--text-xs);
+  color: var(--color-text-muted);
+}
+
+/* i18n I4.4: one note that medical terms stay in English (non-English locales only). */
+.termsNote {
+  margin-bottom: var(--space-1);
 }

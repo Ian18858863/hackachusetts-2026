@@ -1,7 +1,9 @@
 import { useLayoutEffect, useRef } from 'react';
+import { useAudience } from '../../shared/audience';
 import { useT } from '../../shared/i18n';
+import audienceMessages from '../../shared/i18n/messages/audience';
 import shell from '../../shared/i18n/messages/shell';
-import { STEPS, stepHref, type StepId } from '../../shared/steps';
+import { stepHref, stepsFor, type StepId } from '../../shared/steps';
 import styles from './StepNav.module.css';
 
 /**
@@ -11,9 +13,12 @@ import styles from './StepNav.module.css';
  * scrolls sideways inside its own box and keeps the current step in view.
  */
 export function StepNav({ current, className }: { current: StepId | null; className?: string }) {
-  const index = current ? STEPS.findIndex((s) => s.id === current) : -1;
+  const { audience, isFamily } = useAudience();
+  const steps = stepsFor(audience);
+  const index = current ? steps.findIndex((s) => s.id === current) : -1;
   const listRef = useRef<HTMLOListElement>(null);
   const t = useT(shell);
+  const ta = useT(audienceMessages);
 
   useLayoutEffect(() => {
     const list = listRef.current;
@@ -28,14 +33,15 @@ export function StepNav({ current, className }: { current: StepId | null; classN
     if (start < list.scrollLeft || end > list.scrollLeft + list.clientWidth) {
       list.scrollLeft = Math.max(0, start - (list.clientWidth - link.offsetWidth) / 2);
     }
-  }, [index]);
+  }, [index, audience]);
 
   return (
     <nav className={[styles.nav, className].filter(Boolean).join(' ')} aria-label={t('stepsNavLabel')}>
       <ol ref={listRef} className={styles.list}>
-        {STEPS.map((step, i) => {
+        {steps.map((step, i) => {
           const state = i === index ? 'current' : i < index ? 'before' : 'after';
-          const label = t(`${step.id}Label`);
+          const label =
+            isFamily && (step.id === 'questions' || step.id === 'brief') ? ta(`${step.id}Label`) : t(`${step.id}Label`);
           return (
             <li key={step.id} className={styles.item}>
               <a

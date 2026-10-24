@@ -115,7 +115,7 @@ const W: World = {
 };
 W.parent["HP:9900020"] = null;
 
-describe("nextQuestions: request", () => {
+describe.concurrent("nextQuestions: request", () => {
   it("validates input", async () => {
     const { deps } = mockWorld(W);
     const ok = { observed: [term(3)], candidates: ["ORPHA:9000001", "OMIM:9000002"] };
@@ -128,7 +128,7 @@ describe("nextQuestions: request", () => {
   });
 });
 
-describe("nextQuestions: method (contract 7.5)", () => {
+describe.concurrent("nextQuestions: method (contract 7.5)", () => {
   it("scores the spread, applies the hierarchy filter, builds questions from data", async () => {
     // observed 3: drops 4 (descendant of 3) and 2 (ancestor of 3); excluded 5: drops 6 (descendant of 5)
     const { response, report } = await nextQuestionsWithReport(
@@ -173,7 +173,7 @@ describe("nextQuestions: method (contract 7.5)", () => {
   });
 });
 
-describe("nextQuestions: missing data is never filled in", () => {
+describe.concurrent("nextQuestions: missing data is never filled in", () => {
   it("a failed candidate takes no part: frequency null, not named in why, report incomplete", async () => {
     const { response, report } = await nextQuestionsWithReport(
       { observed: [term(8)], candidates: ["ORPHA:9000001", "OMIM:9000002", "ORPHA:9000003"] },
@@ -295,7 +295,7 @@ const caseArb = worldArb.chain((w) =>
     })),
 );
 
-describe("nextQuestions: properties (contract 7.5, section 11 P9)", () => {
+describe.concurrent("nextQuestions: properties (contract 7.5, section 11 P9)", () => {
   it("P9 + hierarchy: never a reported term, its descendant, an observed term's ancestor; one discriminator per candidate", async () => {
     await fc.assert(
       fc.asyncProperty(caseArb, async (c) => {
@@ -371,7 +371,7 @@ describe("nextQuestions: properties (contract 7.5, section 11 P9)", () => {
     );
   });
 
-  it(`subrequest cap: never more than ${ENGINE_SUBREQUEST_CAP} fetch calls, retries included, even when upstream fails`, async () => {
+  it.concurrent(`subrequest cap: never more than ${ENGINE_SUBREQUEST_CAP} fetch calls, retries included, even when upstream fails`, async () => {
     await fc.assert(
       fc.asyncProperty(
         caseArb,
@@ -398,7 +398,7 @@ describe("nextQuestions: properties (contract 7.5, section 11 P9)", () => {
   }, 120_000);
 });
 
-describe("nextQuestions: budgets", () => {
+describe.concurrent("nextQuestions: budgets", () => {
   it("a wide request stays under the cap and keeps the rest unchecked rather than failing", async () => {
     // 50 observed terms + 5 candidates with 40 features each would need ~100 calls without a cap
     const parent: World["parent"] = {};
@@ -454,7 +454,7 @@ function harness(
 // Whole operation, end to end: strictly under the 5 s budget (no slack).
 const BUDGET_MS = 5000;
 
-describe("nextQuestions: five-second budget", () => {
+describe.concurrent("nextQuestions: five-second budget", () => {
   it("every request hangs (and ignores its signal): returns an upstream error within the budget", async () => {
     const h = harness(W, () => "hang");
     const t0 = Date.now();
@@ -596,7 +596,7 @@ const REAL: World = {
 };
 const REAL_REQ = { observed: [term(1)], candidates: ["ORPHA:488650", "ORPHA:206564"], limit: 5 };
 
-describe("R6.1 linked OMIM evidence", () => {
+describe.concurrent("R6.1 linked OMIM evidence", () => {
   it("ORPHA:488650: HP:0008981 from linked OMIM:614321 is evidence, never 'not listed'", async () => {
     const { response, report } = await nextQuestionsWithReport(REAL_REQ, mockWorld(REAL).deps);
     const q = response.questions.find((x) => x.hpoId === CALF)!;
@@ -672,7 +672,7 @@ describe("R6.1 linked OMIM evidence", () => {
     ).rejects.toBeInstanceOf(UpstreamError);
   });
 
-  it("property: with random links and random partner failures, every frequency traces to the candidate's own or linked set, and 'not listed' is only said with complete data", async () => {
+  it.concurrent("property: with random links and random partner failures, every frequency traces to the candidate's own or linked set, and 'not listed' is only said with complete data", async () => {
     const arb = caseArb.chain((c) =>
       fc.record({
         linkMask: fc.array(fc.boolean(), { minLength: 5, maxLength: 5 }),
@@ -721,7 +721,7 @@ describe("R6.1 linked OMIM evidence", () => {
   }, 120_000);
 });
 
-describe("R6.1 R2: a failed primary ORPHA call still uses its verified OMIM partner", () => {
+describe.concurrent("R6.1 R2: a failed primary ORPHA call still uses its verified OMIM partner", () => {
   it("ORPHA:488650 fails (503); OMIM:614321 evidence is still used, and the candidate stays incomplete", async () => {
     // Same real link as above; Monarch maps Orphanet:488650 -> MONDO:0013686 (verified 2026-10-24).
     const w: World = { ...REAL, links: { ...REAL.links, "ORPHA:488650": { mondo: "MONDO:0013686", omim: "OMIM:614321" } } };

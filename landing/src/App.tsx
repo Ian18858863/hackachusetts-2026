@@ -2,7 +2,7 @@ import { useEffect, useLayoutEffect, useRef, type CSSProperties, type PointerEve
 import {
   BENCHMARK_URL,
   CLINICAL_TRIALS_ATTRIBUTION,
-  DEMO_LABEL,
+  DEMO_SOURCE_ID,
   HPO_VERSION,
   MONARCH_ATTRIBUTION,
   ORPHANET_ATTRIBUTION,
@@ -13,6 +13,7 @@ import {
   STAT_CITES,
   STUDY_CITES,
   demoHref,
+  familyHref,
 } from './content';
 import { LOCALES, LOCALE_META, useLocale, useT } from './i18n';
 import { Dropdown } from './ui/Dropdown';
@@ -26,6 +27,10 @@ function useLandingT() {
 
 function useDemoHref(): string {
   return demoHref(useLocale().locale);
+}
+
+function useFamilyHref(): string {
+  return familyHref(useLocale().locale);
 }
 
 /** Document title and meta description follow the language (English values equal index.html). */
@@ -200,6 +205,7 @@ function Hero() {
   const t = useLandingT();
   const tc = useT(commonMessages);
   const href = useDemoHref();
+  const familyLink = useFamilyHref();
   const title = headingText(t('heroTitle'));
   const titleRef = useFitHeading<HTMLHeadingElement>(title, { min: 30, phoneRatio: 0.7 });
   const statsRef = useSharedStatSize(t('stat1Value'));
@@ -214,21 +220,19 @@ function Hero() {
         <h1 id="hero-title" ref={titleRef} aria-label={title}>
           <BlurTitle text={title} />
         </h1>
-        <p className="lede">{t('heroLede')}</p>
         <div className="actions">
           <a className="btn btn-lg btn-primary" href={href} {...ink}>
             {t('tryDemo')}
             <span className="arrow" aria-hidden="true" />
           </a>
-          <a className="btn btn-lg btn-ghost" href={`${href}&audience=family`} {...ink}>
-            {t('forFamilies')}
+          <a className="btn btn-lg btn-ghost" href={familyLink} {...ink}>
+            {t('familyCta')}
           </a>
         </div>
         <p className="safety">
           <b>{tc('disclaimerLead')}</b>
           {t('heroSafetyRest')}
         </p>
-        <p className="demo-note">{t('demoNote')}</p>
         <ul className="stats" ref={statsRef}>
           {STAT_KEYS.map(([valueKey, labelKey, citeIndex]) => {
             const cite = STAT_CITES[citeIndex]!;
@@ -260,7 +264,6 @@ function Problem() {
     <section className="band" id="problem" aria-labelledby="problem-title">
       <div className="wrap">
         <H2 id="problem-title" text={t('problemTitle')} />
-        <p className="dek">{t('problemDek')}</p>
         <figure className="proof">
           <div className="proof-frame">
             <img
@@ -275,13 +278,7 @@ function Problem() {
           <figcaption>
             {t('proofCaption')}
             {locale === 'zh' || locale === 'ja' ? '' : ' '}
-            {DEMO_LABEL}.
-            {locale !== 'en' && (
-              <>
-                {' '}
-                <span className="terms-note">{tc('medicalTermsNote')}</span>
-              </>
-            )}
+            <span data-demo-notice>{tc('demoCaseLabel', { id: DEMO_SOURCE_ID })}</span>
           </figcaption>
         </figure>
       </div>
@@ -303,17 +300,15 @@ function HowItWorks() {
     <section className="band" id="how" aria-labelledby="how-title">
       <div className="wrap">
         <H2 id="how-title" text={t('howTitle')} />
-        <p className="dek">{t('howDek')}</p>
         <div className="how">
           <ol className="steps">
-            {STEP_KEYS.map(([titleKey, bodyKey], i) => (
+            {STEP_KEYS.map(([titleKey], i) => (
               <li className="step" key={titleKey}>
                 <span className="step-n" aria-hidden="true">
                   {String(i + 1).padStart(2, '0')}
                 </span>
                 <div>
                   <h3>{t(titleKey)}</h3>
-                  <p>{t(bodyKey)}</p>
                 </div>
               </li>
             ))}
@@ -341,7 +336,6 @@ function Evidence() {
     <section className="band" id="evidence" aria-labelledby="evidence-title">
       <div className="wrap">
         <H2 id="evidence-title" text={t('evidenceTitle')} />
-        <p className="dek">{t('evidenceDek')}</p>
         <ul className="studies">
           {STUDY_KEYS.map(([claimKey, detailKey], i) => {
             const cite = STUDY_CITES[i]!;
@@ -379,7 +373,6 @@ function Closing() {
       <div className="wrap closing-in">
         <div>
           <H2 id="closing-title" text={t('closingTitle')} />
-          <p className="dek">{t('closingDek')}</p>
         </div>
         <a className="btn btn-lg btn-primary" href={href} {...ink}>
           {t('tryDemo')}
@@ -411,7 +404,7 @@ function Footer() {
           <li>{ORPHANET_ATTRIBUTION}</li>
           <li>{CLINICAL_TRIALS_ATTRIBUTION}</li>
           <li>
-            {DEMO_LABEL}. {PHENOPACKET_STORE_ATTRIBUTION}
+            {PHENOPACKET_STORE_ATTRIBUTION}
           </li>
         </ul>
         <p className="foot-meta">

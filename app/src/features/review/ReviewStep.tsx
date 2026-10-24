@@ -10,7 +10,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { LIMITS, type HpoId, type TermRef } from '../../shared/contract';
 import { findDemoCase, PRIMARY_DEMO_CASE_ID } from '../../shared/mocks';
+import { useAudience } from '../../shared/audience';
 import { useT } from '../../shared/i18n';
+import audienceMessages from '../../shared/i18n/messages/audience';
 import review from '../../shared/i18n/messages/review';
 import { termCounts, useCase, useCaseActions } from '../../shared/store';
 import {
@@ -54,6 +56,9 @@ export function ReviewStep() {
   const announce = useAnnounce();
   const online = useOnlineStatus();
   const t = useT(review);
+  // Family mode (T30a) has no matches step: the button leads to the questions.
+  const { isFamily } = useAudience();
+  const ta = useT(audienceMessages);
   const statusWord = (status: PresenceStatus) => t(statusWordKey(status));
 
   const [activeId, setActiveId] = useState<HpoId | null>(null);
@@ -202,13 +207,6 @@ export function ReviewStep() {
 
   // ---- Review --------------------------------------------------------------
   const extraction = meta.extraction;
-  const sourceLine = extraction
-    ? extraction.model === 'demo-prepared'
-      ? t('sourceDemo')
-      : extraction.model === 'offline-mock'
-        ? null
-        : t('sourceModel', { model: extraction.model })
-    : null;
   const warnings = extraction?.warnings ?? [];
   const hasNotes = caseObject.notes.trim().length > 0;
 
@@ -255,15 +253,6 @@ export function ReviewStep() {
         <div className={styles.listCol}>
           <header className={styles.listHead}>
             <h2 className={styles.listTitle}>{t('featuresFound')}</h2>
-            <p className={styles.summary}>
-              {rich(t(counts.removed > 0 ? 'summaryWithRemoved' : 'summary'), {
-                observed: <span className="num">{counts.observed}</span>,
-                excluded: <span className="num">{counts.excluded}</span>,
-                removed: <span className="num">{counts.removed}</span>,
-                sep: <span aria-hidden="true"> · </span>,
-              })}
-            </p>
-            {sourceLine && <p className={styles.source}>{sourceLine}</p>}
           </header>
 
           <div className={styles.groups} data-testid="term-list">
@@ -273,9 +262,6 @@ export function ReviewStep() {
                 {t('present')}
                 <span className={styles.groupCount}>{present.length}</span>
               </h3>
-              <p className={styles.groupNote}>
-                {t('presentNote')}
-              </p>
               {present.length > 0 ? (
                 <ul className={styles.rows}>{rows(present)}</ul>
               ) : (
@@ -289,9 +275,6 @@ export function ReviewStep() {
                 {t('notPresent')}
                 <span className={styles.groupCount}>{absent.length}</span>
               </h3>
-              <p className={styles.groupNote}>
-                {t('absentNote')}
-              </p>
               {absent.length > 0 ? (
                 <ul className={styles.rows}>{rows(absent)}</ul>
               ) : (
@@ -399,12 +382,12 @@ export function ReviewStep() {
           </div>
           <Button
             className={styles.cta}
-            onClick={() => goToStep('matches')}
+            onClick={() => goToStep(isFamily ? 'questions' : 'matches')}
             disabled={counts.observed === 0}
             data-testid="see-matches"
             iconEnd={<Icon name="arrowRight" size={16} />}
           >
-            {t('seeMatches')}
+            {isFamily ? ta('seeQuestions') : t('seeMatches')}
           </Button>
         </div>
       </div>

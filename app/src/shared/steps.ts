@@ -23,6 +23,16 @@ export const STEPS: readonly StepDef[] = [
   { id: 'brief', showsResults: true },
 ];
 
+/**
+ * Family mode (T30a) has no matches step: notes, features, questions to ask
+ * your doctor, notes for my specialist. The matches route redirects to questions.
+ */
+export const FAMILY_STEPS: readonly StepDef[] = STEPS.filter((s) => s.id !== 'matches');
+
+export function stepsFor(audience: 'clinician' | 'family'): readonly StepDef[] {
+  return audience === 'family' ? FAMILY_STEPS : STEPS;
+}
+
 export const DEFAULT_STEP: StepId = 'notes';
 
 export function stepHref(step: StepId): string {

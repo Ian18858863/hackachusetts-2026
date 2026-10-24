@@ -1,17 +1,25 @@
-/* Top bar (T35): page colour, a hairline under it, nothing else. */
+/* Header from final.html: 72px, no bar colour, no border. */
 .bar {
   background: var(--bg);
   border-bottom: 1px solid var(--hair);
 }
 
+/*
+ * Row 1: brand, step links, "Prepare brief". Row 2: the compact utility row
+ * (demo chip, audience switch, language). Row 1 keeps its 72px height; the
+ * utility row tucks into the space under row 1's 44px controls, so the page
+ * moves down by about 30px only.
+ */
 .inner {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
-  grid-template-areas: 'brand steps end lang';
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: var(--topbar-h) auto;
+  grid-template-areas:
+    'brand steps end'
+    'utility utility utility';
   align-items: center;
   column-gap: var(--s-6);
   max-width: var(--content-max);
-  min-height: var(--topbar-h);
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
@@ -62,43 +70,88 @@
   margin-left: var(--s-4);
 }
 
-/* Language switcher: last in the bar; on phones it moves to the end of the steps row. */
-.lang {
-  grid-area: lang;
-  justify-self: end;
-}
-
 .end {
   grid-area: end;
   display: flex;
   align-items: center;
-  gap: var(--s-4);
 }
 
+/*
+ * Compact controls: each keeps a 44px tap height, but draws only a 32px
+ * outline (see AudienceSwitch and LanguageSwitcher), so the row reads small.
+ * The negative top margin pulls it into row 1's empty band below the 44px
+ * controls; hit areas still do not overlap.
+ */
+.utility {
+  grid-area: utility;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0 var(--s-3);
+  min-width: 0;
+  margin-top: calc((var(--tap-min) - var(--topbar-h)) / 2);
+}
+
+.chipWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+}
+
+/* The one demo notice: a quiet chip; its popover holds the provenance. */
 .chip {
-  padding: 6px 12px;
+  padding: 4px 10px;
+  border: 0;
   border-radius: var(--r-pill);
   background: var(--surface);
   color: var(--ink-2);
+  font: inherit;
   font-size: var(--t-xs);
+  line-height: 1.4;
   white-space: nowrap;
+  cursor: pointer;
+}
+
+.chip:hover {
+  color: var(--ink);
+}
+
+.chipPop {
+  position: absolute;
+  top: calc(100% - 4px);
+  right: 0;
+  z-index: var(--z-pop);
+  display: grid;
+  gap: var(--s-1);
+  width: max-content;
+  max-width: min(22rem, calc(100vw - 2 * var(--gutter)));
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-s);
+  background: var(--bg);
+  box-shadow: var(--shadow-pop);
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+  line-height: var(--leading-snug);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-fast) var(--ease), visibility var(--dur-fast);
+  pointer-events: none;
+}
+
+.chipPopTitle {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.chipWrap[data-open] .chipPop {
+  opacity: 1;
+  visibility: visible;
 }
 
 .narrow {
   display: none;
-}
-
-/*
- * 901–1120px wide, at any height (short laptops and also e.g. a 1024×768
- * tablet, on purpose): one row stays, with tighter gaps and no demo chip in
- * the header, so the page keeps its height above the fold. The demo case is
- * still labelled in every step's intro (StepHeader kicker and demo label).
- */
-/* The demo chip only shows when the bar has room; every step labels the demo case in its intro. */
-@media (max-width: 1599px) {
-  .chip {
-    display: none;
-  }
 }
 
 @media (min-width: 901px) and (max-width: 1120px) {
@@ -109,36 +162,33 @@
   .steps {
     margin-left: 0;
   }
-
-  .chip {
-    display: none;
-  }
 }
 
 /* Tablet: the steps move to their own row under the brand. */
 @media (max-width: 900px) {
   .inner {
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto;
     grid-template-areas:
-      'brand end lang'
-      'steps steps steps';
+      'brand end'
+      'steps steps'
+      'utility utility';
     padding-top: var(--s-3);
   }
 
   .steps {
     margin-left: 0;
   }
+
+  .utility {
+    margin-top: 0;
+  }
 }
 
 @media (max-width: 600px) {
   .inner {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      'brand end'
-      'steps lang';
     column-gap: var(--s-3);
-    row-gap: var(--s-2);
-    padding-block: var(--s-2);
+    padding-top: var(--s-2);
   }
 
   .name {
@@ -148,7 +198,6 @@
     font-size: 1.0625rem;
   }
 
-  .chip,
   .wide {
     display: none;
   }

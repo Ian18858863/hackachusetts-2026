@@ -57,7 +57,7 @@ export default defineMessages(
       reviewFeatures: '核对特征',
       rankingFirstOne: '正在先对 {n} 个已出现的特征进行排序',
       rankingFirstOther: '正在先对 {n} 个已出现的特征进行排序',
-      tooFewTitle: '可能匹配不足，无法比较',
+      tooFewTitle: '可能匹配不足以比较',
       tooFewDesc: '问题需要至少两个可能匹配才能加以区分。从症状描述中补充更多特征可能会有帮助。',
       seeMatches: '查看可能匹配',
       finding: '正在查找最能区分前 {n} 个可能匹配的特征',
