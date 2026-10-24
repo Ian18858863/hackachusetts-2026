@@ -62,6 +62,19 @@
   cursor: pointer;
 }
 
+/*
+ * Touch: the pill keeps its look (track 44 px, option 36 px), but the hidden
+ * radio grows into the track padding above and below, so each option is a
+ * full 44 px tall hit area. Sideways it stays inside its own option, so the
+ * two options never overlap.
+ */
+@media (pointer: coarse) {
+  .input {
+    inset: calc(-1 * var(--space-1)) 0;
+    height: auto;
+  }
+}
+
 .option:has(.input:checked) {
   background: var(--color-surface);
   color: var(--color-accent-text);

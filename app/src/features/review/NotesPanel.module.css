@@ -110,12 +110,20 @@
   transform: scale(1.12);
 }
 
-/* Bigger hit area on touch without changing the text flow. */
+/*
+ * Bigger hit area on touch without changing the text flow or the look: an
+ * invisible square, centred on the number, at least --tap-min on each side
+ * whatever the border width or the number of digits.
+ */
 @media (pointer: coarse) {
   .footnote::before {
     content: '';
     position: absolute;
-    inset: calc(-1 * var(--space-3));
+    left: 50%;
+    top: 50%;
+    width: max(100%, var(--tap-min));
+    height: max(100%, var(--tap-min));
+    transform: translate(-50%, -50%);
   }
 }
 
