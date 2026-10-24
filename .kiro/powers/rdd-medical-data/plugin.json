@@ -1,0 +1,40 @@
+{
+  "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
+  "name": "rdd-medical-data",
+  "version": "0.1.0",
+  "description": "Project medical-data rules for engine/ and functions/, taken from docs/CONTRACT.md sections 9, 10 and 13: upstream services (JAX HPO, Monarch, Orphadata, PubCaseFinder, ClinicalTrials.gov, Workers AI) with exact endpoints, timeouts, caching and licence credits; verbatim attribution and safety text; how to record and label demo-cache fixtures.",
+  "author": {
+    "name": "Ian's Kiro agent (Hackachusetts 2026 team)"
+  },
+  "keywords": [
+    "upstream",
+    "endpoint",
+    "timeout",
+    "cache",
+    "licence",
+    "license",
+    "attribution",
+    "credit",
+    "disclaimer",
+    "safety text",
+    "HPO",
+    "JAX",
+    "ontology.jax.org",
+    "annotation",
+    "frequency",
+    "frequencies",
+    "Monarch",
+    "semsim",
+    "Orphanet",
+    "Orphadata",
+    "PubCaseFinder",
+    "ClinicalTrials.gov",
+    "trials",
+    "OMIM",
+    "Workers AI",
+    "demo cache",
+    "demo fixture",
+    "phenopacket-store",
+    "dataVersions"
+  ]
+}
