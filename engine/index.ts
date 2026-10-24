@@ -20,6 +20,10 @@ export { rankCandidatesWithReport } from "./rank";
 export type { CandidateEnrichment, EnrichmentReport, RankWithReport } from "./rank";
 export type { FetchStatus } from "./annotations";
 export { nextQuestions } from "./questions";
+// Not in contract section 6: same questions plus a report of which annotation
+// calls and hierarchy checks ran, and the subrequest count.
+export { nextQuestionsWithReport } from "./questions";
+export type { NextQuestionsReport, NextQuestionsWithReport, HierarchyReport, QuestionsCandidateReport } from "./questions";
 export { searchTrials } from "./trials";
 
 // Contract section 6: pure functions
@@ -51,7 +55,7 @@ export const ENGINE_STATUS = {
   groundTerms: "implemented",
   searchTerms: "implemented",
   rankCandidates: "implemented",
-  nextQuestions: "placeholder",
+  nextQuestions: "implemented",
   searchTrials: "placeholder",
   buildBrief: "placeholder",
   toPhenopacket: "implemented",

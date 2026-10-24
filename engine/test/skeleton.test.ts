@@ -41,9 +41,6 @@ describe("engine/index.ts exports", () => {
   });
 
   it("placeholders throw NotImplementedError instead of returning analysis", async () => {
-    await expect(
-      engine.nextQuestions({ observed: ["HP:0001166"], candidates: ["ORPHA:558", "OMIM:154700"] }, deps),
-    ).rejects.toBeInstanceOf(engine.NotImplementedError);
     await expect(engine.searchTrials({ condition: "Marfan syndrome" }, deps)).rejects.toBeInstanceOf(
       engine.NotImplementedError,
     );
