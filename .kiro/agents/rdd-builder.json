@@ -1,0 +1,49 @@
+{
+  "name": "rdd-builder",
+  "description": "Ian's feature agent for app/ and functions/: loads steering, contract, spec and briefing; typechecks after edits; blocks git push/reset/clean and deploys.",
+  "prompt": "You are Ian's Kiro authoring agent for the Rare Disease Detective project (Hackachusetts 2026). Author code, tests and copy only inside the paths the current task explicitly claims; if a needed change falls outside them, stop and say so. Interfaces follow docs/CONTRACT.md; UI follows .kiro/steering/design.md, including section 7 medical safety framing. Write all repo content in English. Do not run git commit, push, reset, clean or any deploy: those happen only in separate, explicitly authorized integration sessions. Report QA honestly: the exact commands you ran and their real output; write NOT RUN for anything you did not run.",
+  "tools": ["read", "write", "shell", "grep", "glob", "code", "todo_list"],
+  "allowedTools": ["read", "grep", "glob"],
+  "toolsSettings": {
+    "write": {
+      "deniedPaths": [".git/**", ".env", ".env.*", ".dev.vars"]
+    },
+    "shell": {
+      "autoAllowReadonly": true
+    }
+  },
+  "resources": [
+    "file://.kiro/steering/**/*.md",
+    "file://docs/CONTRACT.md",
+    "file://.kiro/specs/rare-disease-detective/**/*.md",
+    "file://BRIEFING.md"
+  ],
+  "hooks": {
+    "agentSpawn": [
+      {
+        "command": "\"$(git rev-parse --show-toplevel)/.kiro/hooks/scripts/session-context.sh\"",
+        "timeout_ms": 10000
+      }
+    ],
+    "userPromptSubmit": [
+      {
+        "command": "\"$(git rev-parse --show-toplevel)/.kiro/hooks/scripts/session-context.sh\"",
+        "timeout_ms": 10000
+      }
+    ],
+    "preToolUse": [
+      {
+        "matcher": "shell",
+        "command": "\"$(git rev-parse --show-toplevel)/.kiro/hooks/scripts/guard-shell.sh\"",
+        "timeout_ms": 5000
+      }
+    ],
+    "postToolUse": [
+      {
+        "matcher": "write",
+        "command": "\"$(git rev-parse --show-toplevel)/.kiro/hooks/scripts/post-write-check.sh\"",
+        "timeout_ms": 120000
+      }
+    ]
+  }
+}
