@@ -30,3 +30,4 @@ Judges score how deeply and strategically we used Kiro. Log every meaningful use
 
 | Time | Who | Kiro feature | What it did for us |
 |---|---|---|---|
+| 10:58 | Ian | Steering | `design.md`: one shared design method and interaction atlas, so all three agents build in the same visual language |
