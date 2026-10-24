@@ -7,7 +7,11 @@
  * The same component renders the on-screen preview and the print copy.
  */
 import type { Brief, BriefFeature, Candidate, Question } from '../../shared/contract';
-import { OFFLINE_MOCK_LABEL, PRODUCT_NAME } from '../../shared/text';
+import { PRODUCT_NAME } from '../../shared/text';
+import { fillTemplate } from '../../components/ui/fillTemplate';
+import { useLocale, useT } from '../../shared/i18n';
+import briefMessages from '../../shared/i18n/messages/brief';
+import common from '../../shared/i18n/messages/common';
 import { Icon } from '../../shared/ui';
 import styles from './BriefDocument.module.css';
 import { candidateIds, formatDateTime, frequencyText, overlapWords, versionPairs } from './format';
@@ -24,6 +28,9 @@ export interface BriefDocumentProps {
 export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: BriefDocumentProps) {
   const { patientSummary: summary, features } = brief;
   const id = (name: string) => `${idPrefix}-${name}`;
+  const t = useT(briefMessages);
+  const tc = useT(common);
+  const { locale } = useLocale();
 
   return (
     <article className={styles.doc} aria-labelledby={id('title')}>
@@ -31,7 +38,9 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
         <div className={styles.topLine}>
           <p className={styles.brand}>{PRODUCT_NAME}</p>
           <p className={styles.generated}>
-            Generated <time dateTime={brief.generatedAt}>{formatDateTime(brief.generatedAt)}</time>
+            {fillTemplate(t('generated'), {
+              time: <time dateTime={brief.generatedAt}>{formatDateTime(brief.generatedAt, locale)}</time>,
+            })}
           </p>
         </div>
         <div className={styles.titleRow}>
@@ -41,18 +50,18 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
         <dl className={styles.summary}>
           {summary.ageText && (
             <div>
-              <dt>Age</dt>
+              <dt>{t('age')}</dt>
               <dd>{summary.ageText}</dd>
             </div>
           )}
           <div>
-            <dt>Features</dt>
+            <dt>{t('features')}</dt>
             <dd>
-              {features.observed.length} present, {features.excluded.length} not present
+              {t('featureCounts', { present: features.observed.length, absent: features.excluded.length })}
             </dd>
           </div>
           <div>
-            <dt>Possible matches</dt>
+            <dt>{t('possibleMatches')}</dt>
             <dd>{brief.candidates.length}</dd>
           </div>
         </dl>
@@ -61,16 +70,23 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
           <div className={styles.demo}>
             <Icon name="flask" size={14} />
             <p>
-              <strong>Demo data, not a real patient.</strong>
+              <strong>{t('demoNotReal')}</strong>
               {/* Contract section 13 label, verbatim from the server; no made-up fallback text. */}
               {summary.demo && summary.demoLabel && <> {summary.demoLabel}.</>}
-              {offlineMock && <> {OFFLINE_MOCK_LABEL}: frequencies and comparison conditions are illustrative.</>}
+              {offlineMock && <> {t('offlineMockNote', { label: tc('demoDataOffline') })}</>}
             </p>
           </div>
         )}
         <p className={styles.disclaimer}>
           <Icon name="info" size={16} />
-          <span>{brief.disclaimer}</span>
+          {/* The server's sentence (contract section 13); other languages show the faithful translation first. */}
+          {locale === 'en' ? (
+            <span>{brief.disclaimer}</span>
+          ) : (
+            <span>
+              {tc('disclaimer')} <span lang="en">{brief.disclaimer}</span>
+            </span>
+          )}
         </p>
         {summary.notesExcerpt && (
           <blockquote className={styles.excerpt}>
@@ -81,18 +97,18 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
 
       <section className={styles.section} aria-labelledby={id('features')}>
         <h3 id={id('features')} className={styles.heading}>
-          Features
+          {t('features')}
         </h3>
-        <FeatureTable caption="Present" rows={features.observed} />
-        {features.excluded.length > 0 && <FeatureTable caption="Not present" rows={features.excluded} />}
+        <FeatureTable caption={t('present')} rows={features.observed} />
+        {features.excluded.length > 0 && <FeatureTable caption={t('notPresent')} rows={features.excluded} />}
       </section>
 
       <section className={styles.section} aria-labelledby={id('matches')}>
         <h3 id={id('matches')} className={styles.heading}>
-          Possible matches to discuss
+          {t('matchesHeading')}
         </h3>
         {brief.candidates.length === 0 ? (
-          <p className={styles.none}>No possible matches were found for these features.</p>
+          <p className={styles.none}>{t('noMatches')}</p>
         ) : (
           <ol className={styles.candidates}>
             {brief.candidates.map((c) => (
@@ -107,7 +123,7 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
         )}
         {brief.candidates.some((c) => c.rank <= DETAILED_CANDIDATES && c.matched.some((m) => m.via === 'ancestor')) && (
           <p className={styles.printNote}>
-            † Matched through a broader HPO term; the on-screen brief names the term.
+            {t('broaderNote')}
           </p>
         )}
       </section>
@@ -115,7 +131,7 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
       {brief.questions.length > 0 && (
         <section className={styles.section} aria-labelledby={id('questions')}>
           <h3 id={id('questions')} className={styles.heading}>
-            Questions to ask
+            {t('questionsHeading')}
           </h3>
           <ol className={styles.questions}>
             {brief.questions.map((q) => (
@@ -130,13 +146,13 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
           {brief.specialists.length > 0 && (
             <section className={styles.section} aria-labelledby={id('specialists')}>
               <h3 id={id('specialists')} className={styles.heading}>
-                Specialists to consider
+                {t('specialistsHeading')}
               </h3>
               <ul className={styles.plainList}>
                 {brief.specialists.map((s) => (
                   <li key={s.specialty}>
                     <span className={styles.strong}>{s.specialty}</span>
-                    <span className={styles.muted}> · because of {s.becauseOf.join(', ')}</span>
+                    <span className={styles.muted}> · {t('becauseOf', { list: s.becauseOf.join(', ') })}</span>
                   </li>
                 ))}
               </ul>
@@ -145,7 +161,7 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
           {brief.testsToAsk.length > 0 && (
             <section className={styles.section} aria-labelledby={id('tests')}>
               <h3 id={id('tests')} className={styles.heading}>
-                Tests to ask about
+                {t('testsHeading')}
               </h3>
               <ul className={styles.plainList}>
                 {brief.testsToAsk.map((t) => (
@@ -159,8 +175,8 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
 
       <footer className={styles.footer}>
         <p className={styles.versions}>
-          <span className={styles.footLabel}>Data versions</span>{' '}
-          {versionPairs(brief.dataVersions).map(([name, value], i) => (
+          <span className={styles.footLabel}>{t('dataVersions')}</span>{' '}
+          {versionPairs(brief.dataVersions, t, locale).map(([name, value], i) => (
             <span key={name}>
               {i > 0 && ' · '}
               {name} <span className={styles.nums}>{value}</span>
@@ -173,8 +189,10 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
           ))}
         </ul>
         <p className={styles.fileRef}>
-          {PRODUCT_NAME} v0.1 · Phenopacket file <span className={styles.code}>{phenopacketId}</span> (GA4GH Phenopacket v2; features
-          only, no diagnosis)
+          {fillTemplate(t('fileRef'), {
+            product: PRODUCT_NAME,
+            id: <span className={styles.code}>{phenopacketId}</span>,
+          })}
         </p>
       </footer>
     </article>
@@ -182,6 +200,7 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
 }
 
 function FeatureTable({ caption, rows }: { caption: string; rows: BriefFeature[] }) {
+  const t = useT(briefMessages);
   return (
     <table className={styles.table}>
       <caption className={styles.caption}>
@@ -189,10 +208,10 @@ function FeatureTable({ caption, rows }: { caption: string; rows: BriefFeature[]
       </caption>
       <thead>
         <tr>
-          <th scope="col">In the notes</th>
-          <th scope="col">HPO term</th>
+          <th scope="col">{t('colInNotes')}</th>
+          <th scope="col">{t('colHpoTerm')}</th>
           <th scope="col" className={styles.idCol}>
-            HPO ID
+            {t('colHpoId')}
           </th>
         </tr>
       </thead>
@@ -200,7 +219,7 @@ function FeatureTable({ caption, rows }: { caption: string; rows: BriefFeature[]
         {rows.map((f) => (
           <tr key={f.id}>
             <td className={styles.quote}>
-              {f.quote ? `“${f.quote}”` : <span className={styles.muted}>Added by hand</span>}
+              {f.quote ? t('quoted', { quote: f.quote }) : <span className={styles.muted}>{t('addedByHand')}</span>}
             </td>
             <td className={styles.term}>{f.label}</td>
             <td className={`${styles.code} ${styles.idCol}`}>{f.id}</td>
@@ -227,6 +246,7 @@ function CandidateEntry({
   detailed: boolean;
   genesListedInTests: boolean;
 }) {
+  const t = useT(briefMessages);
   const observedTotal = c.matched.length + c.unmatched.length;
   // Placeholder candidates in the offline mock link nowhere useful.
   const links = c.diseaseId.startsWith('MOCK:') ? [] : [
@@ -242,9 +262,9 @@ function CandidateEntry({
       </span>
       <div className={styles.candidateBody}>
         <p className={styles.candidateHead}>
-          <span className="sr-only">Rank {c.rank}: </span>
+          <span className="sr-only">{t('rankSr', { rank: c.rank })}</span>
           <span className={styles.candidateName}>{c.name}</span>
-          <span className={styles.overlap}>{overlapWords(c.overlap)}</span>
+          <span className={styles.overlap}>{overlapWords(c.overlap, t)}</span>
           <span className={styles.ids}>
             {candidateIds(c).join(' · ')}
             {links.map((l) => (
@@ -252,7 +272,7 @@ function CandidateEntry({
                 {' · '}
                 <a href={l.href} target="_blank" rel="noopener noreferrer" className={styles.sourceLink}>
                   {l.text}
-                  <span className="sr-only"> (opens in a new tab)</span>
+                  <span className="sr-only">{t('opensNewTab')}</span>
                 </a>
               </span>
             ))}
@@ -260,8 +280,8 @@ function CandidateEntry({
         </p>
         <p className={styles.evidence}>
           <span className={styles.evidenceLabel}>
-            Matches {c.matched.length} of {observedTotal} {observedTotal === 1 ? 'feature' : 'features'}
-            {detailed && c.matched.length > 0 ? ':' : ''}
+            {t(observedTotal === 1 ? 'matchesOne' : 'matchesMany', { matched: c.matched.length, total: observedTotal })}
+            {detailed && c.matched.length > 0 ? t('listColon') : ''}
           </span>{' '}
           {!detailed
             ? null
@@ -273,37 +293,37 @@ function CandidateEntry({
                     <>
                       <span className={`${styles.muted} ${styles.via}`}>
                         {' '}
-                        (via {m.ancestor?.label ?? 'a broader term'}, listed as {m.diseaseTerm.label})
+                        {t('via', { ancestor: m.ancestor?.label ?? t('broaderTerm'), term: m.diseaseTerm.label })}
                       </span>
                       <span className={styles.viaMark} aria-hidden="true">
                         †
                       </span>
                     </>
                   )}
-                  <span className={styles.freq}> {frequencyText(m.frequency)}</span>
+                  <span className={styles.freq}> {frequencyText(m.frequency, t)}</span>
                 </span>
               ))}
         </p>
         {c.contradicted.length > 0 && (
           <p className={styles.evidence}>
-            <span className={styles.evidenceLabel}>Not present here, but usual in this condition:</span>{' '}
+            <span className={styles.evidenceLabel}>{t('contradictedLabel')}</span>{' '}
             {c.contradicted.map((f, i) => (
               <span key={f.term.id}>
                 {i > 0 && '; '}
                 {f.term.label}
-                <span className={styles.freq}> {frequencyText(f.frequency)}</span>
+                <span className={styles.freq}> {frequencyText(f.frequency, t)}</span>
               </span>
             ))}
           </p>
         )}
         {detailed && c.notReported.length > 0 && (
           <p className={`${styles.evidence} ${c.rank > 1 ? styles.screenOnly : ''}`}>
-            <span className={styles.evidenceLabel}>Not mentioned, frequent in this condition:</span>{' '}
+            <span className={styles.evidenceLabel}>{t('notReportedLabel')}</span>{' '}
             {c.notReported.map((f, i) => (
               <span key={f.term.id}>
                 {i > 0 && '; '}
                 {f.term.label}
-                <span className={styles.freq}> {frequencyText(f.frequency)}</span>
+                <span className={styles.freq}> {frequencyText(f.frequency, t)}</span>
               </span>
             ))}
           </p>
@@ -311,7 +331,7 @@ function CandidateEntry({
         {/* On paper the genes appear once, in "Tests to ask about" (same top-3 genes, contract 7.7). */}
         {detailed && c.genes.length > 0 && (
           <p className={`${styles.evidence} ${genesListedInTests ? styles.screenOnly : ''}`}>
-            <span className={styles.evidenceLabel}>Genes in HPO annotations:</span>{' '}
+            <span className={styles.evidenceLabel}>{t('genesLabel')}</span>{' '}
             {c.genes.map((g) => g.symbol).join(', ')}
           </p>
         )}

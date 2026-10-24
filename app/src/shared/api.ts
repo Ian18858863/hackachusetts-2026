@@ -21,6 +21,9 @@
  *   without a backend).
  */
 import { useSyncExternalStore } from 'react';
+import type { MessageKey } from './i18n/define';
+import { DEFAULT_LOCALE, parseLocale } from './i18n/locales';
+import apiMessages from './i18n/messages/api';
 import {
   LIMITS,
   type ApiError,
@@ -145,7 +148,7 @@ export function toApiRequestError(error: unknown, endpoint: Endpoint | 'health')
   if (error instanceof ApiRequestError) return error;
   return new ApiRequestError({
     code: 'INTERNAL',
-    message: 'Something went wrong in the app. Your work is kept; try again.',
+    message: apiText('internal'),
     retryable: true,
     status: null,
     endpoint,
@@ -153,12 +156,23 @@ export function toApiRequestError(error: unknown, endpoint: Endpoint | 'health')
 }
 
 const CLIENT_MESSAGES = {
-  TIMEOUT: 'The server did not answer in time. Your notes and terms are kept; try again.',
-  OFFLINE: 'You are offline. Your case is saved in this browser; reconnect to continue.',
-  UNREACHABLE: 'The server could not be reached. Your notes and terms are kept; try again.',
-  BAD_RESPONSE: 'The server sent an answer the app could not read. Your work is kept; try again.',
-  ABORTED: 'The request was cancelled.',
-} as const;
+  TIMEOUT: 'timeout',
+  OFFLINE: 'offline',
+  UNREACHABLE: 'unreachable',
+  BAD_RESPONSE: 'badResponse',
+  ABORTED: 'aborted',
+} as const satisfies Record<string, MessageKey<typeof apiMessages>>;
+
+/**
+ * App-written error text in the UI language. Not a hook: reads the locale the
+ * I18nProvider puts on <html data-locale> (English if none). Messages from an
+ * /api/* error response are passed through as returned.
+ */
+function apiText(key: MessageKey<typeof apiMessages>): string {
+  const locale =
+    (typeof document !== 'undefined' && parseLocale(document.documentElement.dataset.locale)) || DEFAULT_LOCALE;
+  return apiMessages[locale][key];
+}
 
 function clientError(
   code: keyof typeof CLIENT_MESSAGES,
@@ -167,7 +181,7 @@ function clientError(
 ): ApiRequestError {
   return new ApiRequestError({
     code,
-    message: CLIENT_MESSAGES[code],
+    message: apiText(CLIENT_MESSAGES[code]),
     retryable: code !== 'ABORTED',
     status,
     endpoint,
@@ -371,11 +385,11 @@ function hasArray(key: string) {
 /** POST /api/extract. Send caseId with a demo narrative to get its prepared extraction. */
 export function extract(req: ExtractRequest, options?: RequestOptions): Promise<ApiResult<ExtractResponse>> {
   if (req.text.trim().length === 0) {
-    return Promise.reject(invalid('extract', 'Please add some text first.'));
+    return Promise.reject(invalid('extract', apiText('emptyText')));
   }
   if (req.text.length > LIMITS.notesMaxChars) {
     return Promise.reject(
-      invalid('extract', 'Text is too long. The limit is 8,000 characters.', 'TEXT_TOO_LONG'),
+      invalid('extract', apiText('textTooLong'), 'TEXT_TOO_LONG'),
     );
   }
   return request(
@@ -395,7 +409,7 @@ export function extract(req: ExtractRequest, options?: RequestOptions): Promise<
 export function searchTerms(query: TermsQuery, options?: RequestOptions): Promise<ApiResult<TermsResponse>> {
   const q = query.q.trim();
   if (q.length < LIMITS.termsQueryMin || q.length > LIMITS.termsQueryMax) {
-    return Promise.reject(invalid('terms', 'Type between 2 and 100 characters to search.'));
+    return Promise.reject(invalid('terms', apiText('termsLength')));
   }
   const params = new URLSearchParams({ q });
   if (query.limit !== undefined) params.set('limit', String(query.limit));
@@ -414,7 +428,7 @@ export function searchTerms(query: TermsQuery, options?: RequestOptions): Promis
 /** POST /api/rank. Pass a signal and abort it when a newer re-rank starts. */
 export function rank(req: RankRequest, options?: RequestOptions): Promise<ApiResult<RankResponse>> {
   if (req.observed.length === 0) {
-    return Promise.reject(invalid('rank', 'Keep at least one feature as present to look for matches.'));
+    return Promise.reject(invalid('rank', apiText('rankNoObserved')));
   }
   return request(
     {
@@ -435,7 +449,7 @@ export function nextQuestions(
   options?: RequestOptions,
 ): Promise<ApiResult<NextQuestionsResponse>> {
   if (req.candidates.length < LIMITS.questionsCandidatesMin) {
-    return Promise.reject(invalid('nextQuestions', 'At least two possible matches are needed to compare.'));
+    return Promise.reject(invalid('nextQuestions', apiText('questionsTooFew')));
   }
   return request(
     {

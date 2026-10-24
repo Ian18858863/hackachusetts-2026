@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react';
+import { useT } from '../../shared/i18n';
+import apiMessages from '../../shared/i18n/messages/api';
 import { Icon, type IconName } from './Icon';
 import styles from './StatePanel.module.css';
 
@@ -28,6 +30,7 @@ export function StatePanel({
   compact = false,
   className,
 }: StatePanelProps) {
+  const t = useT(apiMessages);
   const Heading = `h${titleLevel}` as const;
   return (
     <div
@@ -45,7 +48,7 @@ export function StatePanel({
       {actions && <div className={styles.actions}>{actions}</div>}
       {details && (
         <details className={styles.details}>
-          <summary>Technical details</summary>
+          <summary>{t('technicalDetails')}</summary>
           <div className={styles.detailsBody}>{details}</div>
         </details>
       )}

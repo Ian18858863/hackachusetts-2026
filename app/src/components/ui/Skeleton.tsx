@@ -1,4 +1,6 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { useT } from '../../shared/i18n';
+import apiMessages from '../../shared/i18n/messages/api';
 import styles from './Skeleton.module.css';
 
 type Size = number | string;
@@ -39,7 +41,7 @@ export function SkeletonText({ lines = 3, className }: { lines?: number; classNa
  * when the real content arrives.
  */
 export function SkeletonGroup({
-  label = 'Loading',
+  label,
   children,
   className,
 }: {
@@ -47,9 +49,10 @@ export function SkeletonGroup({
   children: ReactNode;
   className?: string;
 }) {
+  const t = useT(apiMessages);
   return (
     <div className={[styles.group, className].filter(Boolean).join(' ')} role="status" aria-busy="true">
-      <span className="sr-only">{label}</span>
+      <span className="sr-only">{label ?? t('loading')}</span>
       {children}
     </div>
   );

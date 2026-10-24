@@ -1,4 +1,12 @@
-/** Display helpers for ClinicalTrials.gov values (contract section 5, Trial). */
+/**
+ * Display helpers for ClinicalTrials.gov values (contract section 5, Trial).
+ * Phase names stay in English like the registry; only the app's own words are translated.
+ */
+import { intlLocale } from '../../components/ui/fillTemplate';
+import type { FormatVars, Locale, MessageKey } from '../../shared/i18n';
+import type trialsMessages from '../../shared/i18n/messages/trials';
+
+type TrialsT = (key: MessageKey<typeof trialsMessages>, vars?: FormatVars) => string;
 
 const PHASE_NAMES: Record<string, string> = {
   EARLY_PHASE1: 'Early phase 1',
@@ -10,18 +18,18 @@ const PHASE_NAMES: Record<string, string> = {
 };
 
 /** ["PHASE1", "PHASE2"] → "Phase 1 and 2"; [] → "Phase not listed". */
-export function formatPhases(phases: readonly string[]): string {
-  if (phases.length === 0) return 'Phase not listed';
+export function formatPhases(phases: readonly string[], t: TrialsT): string {
+  if (phases.length === 0) return t('phaseNotListed');
   const numbered = phases.map((p) => /^PHASE(\d)$/.exec(p)?.[1]);
   if (phases.length > 1 && numbered.every(Boolean)) return `Phase ${numbered.join(' and ')}`;
   return phases.map((p) => PHASE_NAMES[p] ?? p).join(', ');
 }
 
 /** First `max` items, then "and N more" so a registry with 300 conditions stays one line. */
-export function shortList(items: readonly string[], max: number): string {
-  if (items.length === 0) return 'Not listed';
+export function shortList(items: readonly string[], max: number, t: TrialsT): string {
+  if (items.length === 0) return t('notListed');
   if (items.length <= max) return items.join(', ');
-  return `${items.slice(0, max).join(', ')} and ${items.length - max} more`;
+  return t('andMore', { list: items.slice(0, max).join(', '), count: items.length - max });
 }
 
 /** The ClinicalTrials.gov search page for recruiting studies on a condition. */
@@ -31,8 +39,8 @@ export function trialsSearchUrl(condition: string): string {
 }
 
 /** "2026-10-24T16:43:12.246Z" → "Oct 24, 2026". */
-export function formatDate(iso: string): string {
+export function formatDate(iso: string, locale: Locale): string {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return iso;
-  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  return date.toLocaleDateString(intlLocale(locale), { month: 'short', day: 'numeric', year: 'numeric' });
 }

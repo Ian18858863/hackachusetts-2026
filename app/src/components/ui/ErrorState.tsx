@@ -1,4 +1,7 @@
 import type { ReactNode } from 'react';
+import { useT } from '../../shared/i18n';
+import apiMessages from '../../shared/i18n/messages/api';
+import common from '../../shared/i18n/messages/common';
 import { Button } from './Button';
 import { Icon } from './Icon';
 import { StatePanel } from './StatePanel';
@@ -21,20 +24,22 @@ export type ErrorStateProps = {
 };
 
 export function ErrorState({
-  title = 'Something went wrong',
-  description = 'Please try again. If it keeps happening, reload the page.',
+  title,
+  description,
   onRetry,
-  retryLabel = 'Try again',
+  retryLabel,
   retrying = false,
   announce = true,
   ...rest
 }: ErrorStateProps) {
+  const tc = useT(common);
+  const ta = useT(apiMessages);
   return (
     <StatePanel
       tone="danger"
       icon="alert"
-      title={title}
-      description={description}
+      title={title ?? tc('errGeneric')}
+      description={description === undefined ? ta('errorDescription') : description}
       role={announce ? 'alert' : 'status'}
       actions={
         onRetry && (
@@ -44,7 +49,7 @@ export function ErrorState({
             loading={retrying}
             iconStart={<Icon name="refresh" size={16} />}
           >
-            {retryLabel}
+            {retryLabel ?? tc('tryAgain')}
           </Button>
         )
       }

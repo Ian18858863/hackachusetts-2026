@@ -27,6 +27,9 @@ import {
   SkeletonText,
   useAnnounce,
 } from '../../shared/ui';
+import { fillTemplate } from '../../components/ui/fillTemplate';
+import { useLocale, useT } from '../../shared/i18n';
+import trialsMessages from '../../shared/i18n/messages/trials';
 import { formatDate, formatPhases, shortList, trialsSearchUrl } from './format';
 import styles from './TrialsPanel.module.css';
 
@@ -55,6 +58,7 @@ export function TrialsPanel() {
   const { caseObject } = useCase();
   const { selectCandidate } = useCaseActions();
   const headingId = useId();
+  const t = useT(trialsMessages);
 
   const choices = (caseObject.lastRanking?.response.candidates ?? []).filter(isRealCondition).slice(0, MAX_CHOICES);
   const candidate = choices.find((c) => c.diseaseId === caseObject.selectedCandidateId) ?? choices[0] ?? null;
@@ -64,12 +68,12 @@ export function TrialsPanel() {
       <header className={styles.header}>
         <div className={styles.heading}>
           <h2 id={headingId} className={styles.title}>
-            Recruiting studies
+            {t('heading')}
           </h2>
           <p className={styles.lede}>
             {candidate
-              ? 'Studies looking for participants now. Ask the doctor whether any could be relevant.'
-              : 'Studies looking for participants now, for a possible match.'}
+              ? t('ledeWithCandidate')
+              : t('ledeNoCandidate')}
           </p>
         </div>
         {choices.length > 1 && candidate && (
@@ -88,8 +92,8 @@ export function TrialsPanel() {
           compact
           icon="trial"
           titleLevel={3}
-          title="Studies appear after matching"
-          description="Once there are possible matches, this shows up to five recruiting studies from ClinicalTrials.gov for one of them."
+          title={t('beforeMatchTitle')}
+          description={t('beforeMatchDescription')}
         />
       )}
 
@@ -108,9 +112,10 @@ function CandidateChooser({
   onSelect: (diseaseId: string) => void;
 }) {
   const name = useId();
+  const t = useT(trialsMessages);
   return (
     <fieldset className={styles.chooser}>
-      <legend className={styles.chooserLegend}>Show studies for</legend>
+      <legend className={styles.chooserLegend}>{t('chooserLegend')}</legend>
       <div className={styles.options}>
         {choices.map((c) => (
           <label key={c.diseaseId} className={styles.option}>
@@ -134,6 +139,8 @@ function TrialsForCandidate({ candidate, canChooseOther }: { candidate: Candidat
   const [state, setState] = useState<State>({ status: 'loading' });
   const [attempt, setAttempt] = useState(0);
   const announce = useAnnounce();
+  const t = useT(trialsMessages);
+  const { locale } = useLocale();
 
   useEffect(() => {
     const controller = new AbortController();
@@ -145,8 +152,8 @@ function TrialsForCandidate({ candidate, canChooseOther }: { candidate: Candidat
         const n = result.data.studies.length;
         announce(
           n === 0
-            ? `No recruiting studies found for ${candidate.name}`
-            : `${n} recruiting ${n === 1 ? 'study' : 'studies'} for ${candidate.name}`,
+            ? t('announceNone', { name: candidate.name })
+            : t(n === 1 ? 'announceOne' : 'announceMany', { count: n, name: candidate.name }),
         );
       },
       (error: unknown) => {
@@ -156,13 +163,14 @@ function TrialsForCandidate({ candidate, canChooseOther }: { candidate: Candidat
     );
     return () => controller.abort();
     // The candidate object is replaced on every re-rank; only what is sent matters.
+    // `t` is left out on purpose: switching language must not search again.
   }, [candidate.diseaseId, candidate.mondoId, candidate.name, attempt, announce]);
 
   const retry = useCallback(() => setAttempt((n) => n + 1), []);
 
   if (state.status === 'loading') {
     return (
-      <LoadingPanel step={`Looking for recruiting studies on ${candidate.name}`}>
+      <LoadingPanel step={t('loading', { name: candidate.name })}>
         <ul className={styles.list} aria-hidden="true">
           {[0, 1, 2].map((i) => (
             <li key={i} className={`${styles.study} ${styles.studySkeleton}`}>
@@ -191,12 +199,13 @@ function TrialsForCandidate({ candidate, canChooseOther }: { candidate: Candidat
       <div className={styles.summary}>
         <p className={styles.count}>
           {studies.length === 0 ? (
-            <>No recruiting studies listed for {candidate.name}</>
+            <>{t('noneListed', { name: candidate.name })}</>
           ) : (
             <>
-              <span className={styles.countNumber}>{studies.length}</span> of{' '}
-              <span className={styles.countNumber}>{total}</span> recruiting {total === 1 ? 'study' : 'studies'}{' '}
-              for {candidate.name}
+              {fillTemplate(t(total === 1 ? 'countOne' : 'countMany', { name: candidate.name }), {
+                shown: <span className={styles.countNumber}>{studies.length}</span>,
+                total: <span className={styles.countNumber}>{total}</span>,
+              })}
             </>
           )}
         </p>
@@ -208,17 +217,19 @@ function TrialsForCandidate({ candidate, canChooseOther }: { candidate: Candidat
           compact
           icon="trial"
           titleLevel={3}
-          title="No recruiting studies found"
+          title={t('noneTitle')}
           description={
             <>
-              ClinicalTrials.gov lists no study recruiting now under this name.
-              {canChooseOther && ' Another possible match above may have studies.'} Studies may also be listed
-              under a related name; you can{' '}
-              <a href={searchUrl} target="_blank" rel="noopener noreferrer">
-                search ClinicalTrials.gov for {candidate.name}
-                <span className="sr-only"> (opens in a new tab)</span>
-              </a>
-              .
+              {t('noneLead')}
+              {canChooseOther && t('noneOther')}
+              {fillTemplate(t('noneSearch'), {
+                link: (
+                  <a href={searchUrl} target="_blank" rel="noopener noreferrer">
+                    {t('noneSearchLink', { name: candidate.name })}
+                    <span className="sr-only">{t('opensNewTab')}</span>
+                  </a>
+                ),
+              })}
             </>
           }
         />
@@ -233,11 +244,11 @@ function TrialsForCandidate({ candidate, canChooseOther }: { candidate: Candidat
       {studies.length > 0 && (
         <p className={styles.more}>
           <a href={searchUrl} target="_blank" rel="noopener noreferrer" className={styles.moreLink}>
-            {total > studies.length ? 'See all recruiting studies' : 'Search'} on ClinicalTrials.gov
+            {total > studies.length ? t('seeAll') : t('searchMore')}
             <Icon name="external" size={14} />
-            <span className="sr-only"> (opens in a new tab)</span>
+            <span className="sr-only">{t('opensNewTab')}</span>
           </a>
-          <span className={styles.fetched}>Checked {formatDate(data.fetchedAt)}</span>
+          <span className={styles.fetched}>{t('checked', { date: formatDate(data.fetchedAt, locale) })}</span>
         </p>
       )}
     </div>
@@ -245,37 +256,38 @@ function TrialsForCandidate({ candidate, canChooseOther }: { candidate: Candidat
 }
 
 function StudyRow({ study }: { study: Trial }) {
+  const t = useT(trialsMessages);
   return (
     <li className={styles.study} data-testid={`trial-${study.nctId}`}>
       <h3 className={styles.studyTitle}>
         <a href={study.url} target="_blank" rel="noopener noreferrer" className={styles.studyLink}>
           {study.title}
           <Icon name="external" size={14} className={styles.externalIcon} />
-          <span className="sr-only"> (opens ClinicalTrials.gov in a new tab)</span>
+          <span className="sr-only">{t('opensCtgov')}</span>
         </a>
       </h3>
       <dl className={styles.facts}>
         <div className={styles.fact}>
-          <dt>Status</dt>
+          <dt>{t('status')}</dt>
           <dd className={styles.status}>
             <Icon name="check" size={14} />
             Recruiting
           </dd>
         </div>
         <div className={styles.fact}>
-          <dt>Phase</dt>
-          <dd>{formatPhases(study.phases)}</dd>
+          <dt>{t('phase')}</dt>
+          <dd>{formatPhases(study.phases, t)}</dd>
         </div>
         <div className={styles.fact}>
-          <dt>Countries</dt>
-          <dd>{shortList(study.countries, 4)}</dd>
+          <dt>{t('countries')}</dt>
+          <dd>{shortList(study.countries, 4, t)}</dd>
         </div>
         <div className={`${styles.fact} ${styles.factWide}`}>
-          <dt>Conditions</dt>
-          <dd>{shortList(study.conditions, 3)}</dd>
+          <dt>{t('conditions')}</dt>
+          <dd>{shortList(study.conditions, 3, t)}</dd>
         </div>
         <div className={styles.fact}>
-          <dt>Study ID</dt>
+          <dt>{t('studyId')}</dt>
           <dd className={styles.code}>{study.nctId}</dd>
         </div>
       </dl>

@@ -13,6 +13,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { api, isAbortError, toApiRequestError, type ApiRequestError, type DataOrigin } from '../../shared/api';
 import { LIMITS, type BriefResponse, type CaseObject } from '../../shared/contract';
+import { useT } from '../../shared/i18n';
+import briefMessages from '../../shared/i18n/messages/brief';
 import { currentRankRequest, isRankingStale, useCase, useCaseActions } from '../../shared/store';
 
 export type BriefPhase = 'empty' | 'reading' | 'ranking' | 'questions' | 'building' | 'ready' | 'error';
@@ -56,6 +58,7 @@ function questionsOutdated(c: CaseObject): boolean {
 export function useBrief(): BriefState {
   const { caseObject: c, extractStatus } = useCase();
   const { setRanking, setQuestions } = useCaseActions();
+  const t = useT(briefMessages);
   const [attempt, setAttempt] = useState(0);
   /** The failed request, the attempt and the case it failed for: a new attempt or a changed case clears it. */
   const [error, setError] = useState<{ error: ApiRequestError; attempt: number; key: string } | null>(null);
@@ -161,17 +164,17 @@ export function useBrief(): BriefState {
   if (blocked) phase = 'error';
   else if (!hasObserved && extractStatus.state === 'loading') {
     phase = 'reading';
-    stepLabel = 'Reading the notes';
+    stepLabel = t('readingNotes');
   } else if (!hasObserved) phase = 'empty';
   else if (needsRank) {
     phase = 'ranking';
-    stepLabel = `Matching ${observedCount} ${observedCount === 1 ? 'feature' : 'features'}`;
+    stepLabel = t(observedCount === 1 ? 'matchingOne' : 'matchingMany', { count: observedCount });
   } else if (needsQuestions) {
     phase = 'questions';
-    stepLabel = 'Choosing questions that tell the matches apart';
+    stepLabel = t('choosingQuestions');
   } else if (result?.key !== briefKey) {
     phase = 'building';
-    stepLabel = 'Building the brief';
+    stepLabel = t('buildingBrief');
   } else phase = 'ready';
 
   const questionsSkipped =

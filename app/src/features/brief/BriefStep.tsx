@@ -22,6 +22,10 @@ import {
   useAnnounce,
 } from '../../shared/ui';
 import { TrialsPanel } from '../trials';
+import { fillTemplate } from '../../components/ui/fillTemplate';
+import { useT } from '../../shared/i18n';
+import briefMessages from '../../shared/i18n/messages/brief';
+import common from '../../shared/i18n/messages/common';
 import { BriefDocument } from './BriefDocument';
 import styles from './BriefStep.module.css';
 import { fileSafe, isoDay } from './format';
@@ -51,14 +55,15 @@ export function BriefStep() {
   const state = useBrief();
   const announce = useAnnounce();
   const announced = useRef<BriefResponse | null>(null);
+  const t = useT(briefMessages);
 
   const data = state.result?.data ?? null;
 
   useEffect(() => {
     if (state.phase !== 'ready' || !data || announced.current === data) return;
     announced.current = data;
-    announce(`Brief ready with ${data.brief.candidates.length} possible matches`);
-  }, [state.phase, data, announce]);
+    announce(t('announceReady', { count: data.brief.candidates.length }));
+  }, [state.phase, data, announce, t]);
 
   if (state.phase === 'empty') {
     const hasNotes = caseObject.notes.trim().length > 0;
@@ -66,15 +71,15 @@ export function BriefStep() {
       <EmptyState
         icon="document"
         titleLevel={2}
-        title="The brief needs at least one feature"
-        description="Keep at least one feature as present. The brief then lists the features, the possible matches with their evidence and the questions to ask."
+        title={t('emptyTitle')}
+        description={t('emptyDescription')}
         action={
           <Button
             variant="primary"
             iconEnd={<Icon name="arrowRight" size={16} />}
             onClick={() => goToStep(hasNotes ? 'features' : 'notes')}
           >
-            {hasNotes ? 'Check the features' : 'Add notes'}
+            {hasNotes ? t('checkFeatures') : t('addNotes')}
           </Button>
         }
       />
@@ -86,7 +91,7 @@ export function BriefStep() {
       return <ApiErrorState error={state.error} onRetry={state.retry} />;
     }
     // Same frame as the finished step (toolbar, document, studies), so nothing moves when it arrives.
-    const step = state.stepLabel || 'Building the brief';
+    const step = state.stepLabel || t('buildingBrief');
     return (
       <div className={styles.step}>
         <Toolbar>
@@ -130,6 +135,8 @@ function BriefReady({
 }) {
   const { caseObject } = useCase();
   const announce = useAnnounce();
+  const t = useT(briefMessages);
+  const tc = useT(common);
   const previewId = useId();
   const [saved, setSaved] = useState<string | null>(null);
   const fileName = phenopacketFileName(data.phenopacket);
@@ -154,21 +161,21 @@ function BriefReady({
   const print = useCallback(() => {
     // Chrome and Safari suggest the document title as the PDF file name.
     const previous = document.title;
-    const who = caseObject.demo ? caseObject.demo.caseId : 'case';
-    document.title = `Specialist brief ${who} ${isoDay(data.brief.generatedAt)}`.trim();
+    const who = caseObject.demo ? caseObject.demo.caseId : t('printTitleCase');
+    document.title = t('printTitle', { who, day: isoDay(data.brief.generatedAt) }).trim();
     const restore = () => {
       document.title = previous;
       window.removeEventListener('afterprint', restore);
     };
     window.addEventListener('afterprint', restore);
     window.print();
-  }, [caseObject.demo, data.brief.generatedAt]);
+  }, [caseObject.demo, data.brief.generatedAt, t]);
 
   const exportPhenopacket = useCallback(() => {
     downloadJson(fileName, data.phenopacket);
     setSaved(fileName);
-    announce(`Phenopacket saved as ${fileName}`);
-  }, [announce, data.phenopacket, fileName]);
+    announce(t('announceSaved', { file: fileName }));
+  }, [announce, data.phenopacket, fileName, t]);
 
   return (
     <div className={styles.step}>
@@ -176,20 +183,20 @@ function BriefReady({
           {busy ? (
             <span className={styles.updating}>
               <Spinner size={14} />
-              {state.stepLabel || 'Updating the brief'}
+              {state.stepLabel || t('updatingBrief')}
             </span>
           ) : locked ? (
             <span className={styles.outdated}>
               <Icon name="alert" size={16} />
-              Out of date: this brief does not match the current features yet
+              {t('outOfDate')}
             </span>
           ) : saved ? (
             <span className={styles.saved}>
               <Icon name="check" size={16} />
-              Saved <span className={styles.file}>{saved}</span>
+              {fillTemplate(t('savedFile'), { file: <span className={styles.file}>{saved}</span> })}
             </span>
           ) : (
-            <>Fits one A4 or US Letter page. In the print dialog, choose Save as PDF.</>
+            <>{t('printHint')}</>
           )}
       </Toolbar>
 
@@ -199,9 +206,9 @@ function BriefReady({
       {state.questionsSkipped && (
         <p className={styles.note}>
           <Icon name="info" size={16} />
-          <span>Questions to ask could not be loaded right now, so this brief leaves them out.</span>
+          <span>{t('questionsSkipped')}</span>
           <Button variant="ghost" size="sm" onClick={state.retry}>
-            Try again
+            {tc('tryAgain')}
           </Button>
         </p>
       )}
@@ -242,6 +249,7 @@ function Toolbar({
   disabled?: boolean;
   children: ReactNode;
 }) {
+  const t = useT(briefMessages);
   return (
     <div className={styles.toolbar}>
       <div className={styles.actions}>
@@ -252,7 +260,7 @@ function Toolbar({
           disabled={disabled || !onPrint}
           iconStart={<Icon name="document" size={18} />}
         >
-          Print or save as PDF
+          {t('printButton')}
         </Button>
         <Button
           variant="secondary"
@@ -261,7 +269,7 @@ function Toolbar({
           disabled={disabled || !onExport}
           iconStart={<Icon name="list" size={18} />}
         >
-          Export phenopacket
+          {t('exportButton')}
         </Button>
       </div>
       <p className={styles.hint} role="status">
