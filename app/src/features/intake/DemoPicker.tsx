@@ -1,6 +1,7 @@
 import { useId, useRef, useState, type Ref } from 'react';
 import { DEMO_CASES } from '../../shared/mocks';
 import { useT } from '../../shared/i18n';
+import common from '../../shared/i18n/messages/common';
 import intake from '../../shared/i18n/messages/intake';
 import { Button, Icon } from '../../shared/ui';
 import styles from './DemoPicker.module.css';
@@ -31,6 +32,7 @@ export function DemoPicker({
   headingRef?: Ref<HTMLHeadingElement>;
 }) {
   const t = useT(intake);
+  const tc = useT(common);
   const headingId = useId();
   const [pending, setPending] = useState<string | null>(null);
   const confirmRef = useRef<HTMLButtonElement>(null);
@@ -51,9 +53,6 @@ export function DemoPicker({
         <h2 id={headingId} className={styles.title} ref={headingRef} tabIndex={-1}>
           {t('pickerTitle')}
         </h2>
-        <p className={styles.note}>
-          {t('pickerNote')}
-        </p>
       </div>
 
       {disabledReason && (
@@ -83,14 +82,10 @@ export function DemoPicker({
               >
                 <span className={styles.optionMain}>
                   <span className={styles.optionTitle}>
-                    {demo.title}
+                    {tc(`demoTitle_${demo.caseId}` as Parameters<typeof tc>[0])}
                     {index === 0 && <span className={styles.tag}>{t('startHere')}</span>}
                   </span>
                   <span id={`${headingId}-${demo.caseId}`} className={styles.optionMeta}>
-                    <span className={styles.demoLabel}>
-                      <Icon name="flask" size={14} />
-                      <span>{demo.label}</span>
-                    </span>
                     <span className={styles.counts}>
                       {t('demoCounts', { present, absent })}
                     </span>

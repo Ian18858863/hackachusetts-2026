@@ -30,7 +30,6 @@ export function NotesPanel({
   const bodyId = useId();
   const [expanded, setExpanded] = useState(false);
   const segments = segmentNotes(notes, items);
-  const linked = segments.filter((s) => s.kind === 'quote').length;
 
   return (
     <section className={styles.panel} aria-labelledby={headingId}>
@@ -38,9 +37,6 @@ export function NotesPanel({
         <h2 id={headingId} className={styles.title}>
           {t('yourNotes')}
         </h2>
-        <p className={styles.meta}>
-          {t(linked === 1 ? 'linkedOne' : 'linkedOther', { count: linked })}
-        </p>
       </header>
 
       <div
@@ -106,17 +102,6 @@ export function NotesPanel({
         <span>{expanded ? t('showLess') : t('showAll')}</span>
         <Icon name="chevronRight" size={16} className={styles.chevron} />
       </button>
-
-      <p className={styles.legend}>
-        <span className={styles.legendItem}>
-          <span className={styles.legendSwatch} data-status="observed" aria-hidden="true" />
-          {t('present')}
-        </span>
-        <span className={styles.legendItem}>
-          <span className={styles.legendSwatch} data-status="excluded" aria-hidden="true" />
-          {t('notPresent')}
-        </span>
-      </p>
     </section>
   );
 }

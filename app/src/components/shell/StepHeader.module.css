@@ -10,11 +10,6 @@
   color: var(--ink-3);
 }
 
-.kicker b {
-  color: var(--ink);
-  font-weight: 600;
-}
-
 .title {
   font-family: var(--f-display);
   font-size: var(--text-display);
@@ -27,10 +22,11 @@
   animation: sharpen var(--dur-sharpen) var(--ease) both;
 }
 
-.lede {
-  max-width: var(--measure);
-  margin-top: var(--s-4);
-  font-size: var(--t-md);
+/* The section 13 safety line: once per result step, body size, calm. */
+.safety {
+  max-width: var(--measure-wide);
+  margin-top: var(--s-3);
+  font-size: var(--t-base);
   line-height: var(--lh-text);
   color: var(--ink-2);
 }
@@ -65,10 +61,8 @@
     line-height: var(--leading-snug);
   }
 
-  .lede {
-    max-width: var(--measure-wide);
-    margin-top: var(--s-3);
-    font-size: var(--t-base);
+  .safety {
+    margin-top: var(--s-2);
   }
 
   .labels {
@@ -81,26 +75,10 @@
     line-height: 1.12;
   }
 
-  .lede {
-    font-size: var(--t-base);
-  }
 
   .labels {
     margin-top: var(--s-4);
   }
-}
-
-/* Family mode (T30a): the top line on every family step. Calm, body size, no alarm colour. */
-.familyBanner {
-  max-width: var(--measure);
-  margin-bottom: var(--s-4);
-  padding: var(--s-3) var(--s-4);
-  border-left: 3px solid var(--ink);
-  border-radius: var(--radius-xs);
-  background: var(--surface);
-  font-size: var(--t-md);
-  line-height: var(--lh-text);
-  color: var(--ink);
 }
 
 .familyLead {

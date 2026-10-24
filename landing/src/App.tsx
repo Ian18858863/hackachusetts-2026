@@ -2,7 +2,7 @@ import { useEffect, type ChangeEvent } from 'react';
 import {
   BENCHMARK_URL,
   CLINICAL_TRIALS_ATTRIBUTION,
-  DEMO_LABEL,
+  DEMO_SOURCE_ID,
   HPO_VERSION,
   MONARCH_ATTRIBUTION,
   ORPHANET_ATTRIBUTION,
@@ -115,7 +115,6 @@ function Hero() {
             {t('kickerRest')}
           </p>
           <h1 id="hero-title">{t('heroTitle')}</h1>
-          <p className="lede">{t('heroLede')}</p>
           <p className="safety">
             <b>{tc('disclaimerLead')}</b>
             {t('heroSafetyRest')}
@@ -131,7 +130,6 @@ function Hero() {
               {t('familyCta')}
             </a>
           </div>
-          <p className="demo-note">{t('demoNote')}</p>
         </div>
 
         <figure className="proof">
@@ -148,13 +146,7 @@ function Hero() {
           <figcaption>
             {t('proofCaption')}
             {locale === 'zh' || locale === 'ja' ? '' : ' '}
-            {DEMO_LABEL}.
-            {locale !== 'en' && (
-              <>
-                {' '}
-                <span className="terms-note">{tc('medicalTermsNote')}</span>
-              </>
-            )}
+            <span data-demo-notice>{tc('demoCaseLabel', { id: DEMO_SOURCE_ID })}</span>
           </figcaption>
         </figure>
       </div>
@@ -174,7 +166,6 @@ function Problem() {
     <section className="band" id="problem" aria-labelledby="problem-title">
       <div className="wrap">
         <h2 id="problem-title">{t('problemTitle')}</h2>
-        <p className="dek">{t('problemDek')}</p>
         <ul className="stats">
           {STAT_KEYS.map(([valueKey, labelKey], i) => {
             const cite = STAT_CITES[i]!;
@@ -211,18 +202,15 @@ function HowItWorks() {
     <section className="band" id="how" aria-labelledby="how-title">
       <div className="wrap">
         <h2 id="how-title">{t('howTitle')}</h2>
-        <p className="dek">{t('howDek')}</p>
-        <p className="dek">{t('howFamily')}</p>
         <div className="how">
           <ol className="steps">
-            {STEP_KEYS.map(([titleKey, bodyKey], i) => (
+            {STEP_KEYS.map(([titleKey], i) => (
               <li className="step" key={titleKey}>
                 <span className="step-n" aria-hidden="true">
                   {i + 1}
                 </span>
                 <div>
                   <h3>{t(titleKey)}</h3>
-                  <p>{t(bodyKey)}</p>
                 </div>
               </li>
             ))}
@@ -250,7 +238,6 @@ function Evidence() {
     <section className="band" id="evidence" aria-labelledby="evidence-title">
       <div className="wrap">
         <h2 id="evidence-title">{t('evidenceTitle')}</h2>
-        <p className="dek">{t('evidenceDek')}</p>
         <ul className="studies">
           {STUDY_KEYS.map(([claimKey, detailKey], i) => {
             const cite = STUDY_CITES[i]!;
@@ -288,7 +275,6 @@ function Closing() {
       <div className="wrap closing-in">
         <div>
           <h2 id="closing-title">{t('closingTitle')}</h2>
-          <p className="dek">{t('closingDek')}</p>
         </div>
         <a className="btn btn-lg" href={href}>
           {t('tryDemo')}
@@ -319,7 +305,7 @@ function Footer() {
           <li>{ORPHANET_ATTRIBUTION}</li>
           <li>{CLINICAL_TRIALS_ATTRIBUTION}</li>
           <li>
-            {DEMO_LABEL}. {PHENOPACKET_STORE_ATTRIBUTION}
+            {PHENOPACKET_STORE_ATTRIBUTION}
           </li>
         </ul>
         <p className="foot-meta">

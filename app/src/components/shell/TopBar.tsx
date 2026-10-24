@@ -1,4 +1,6 @@
+import { useId } from 'react';
 import { useT } from '../../shared/i18n';
+import common from '../../shared/i18n/messages/common';
 import shell from '../../shared/i18n/messages/shell';
 import { termCounts, useCase } from '../../shared/store';
 import { stepHref, type StepId } from '../../shared/steps';
@@ -15,6 +17,10 @@ import styles from './TopBar.module.css';
  * whitespace separates it. The demo chip, the audience switch and the
  * language select sit in one compact utility row under it, so nothing can
  * cover the step links at any width or in any language.
+ *
+ * The demo chip is the app's one demo notice (T34): its popover carries the
+ * demo case title and the provenance (contract section 13, localized from
+ * v0.1.6; the phenopacket-store id stays verbatim).
  */
 export function TopBar({ current }: { current: StepId | null }) {
   const { caseObject } = useCase();
@@ -46,11 +52,30 @@ export function TopBar({ current }: { current: StepId | null }) {
           </div>
         )}
         <div className={styles.utility}>
-          {caseObject.demo && <span className={styles.chip}>{t('demoChip')}</span>}
+          {caseObject.demo && <DemoChip caseId={caseObject.demo.caseId} sourceId={caseObject.demo.sourcePhenopacketId} />}
           <AudienceSwitch />
           <LanguageSwitcher />
         </div>
       </div>
     </header>
+  );
+}
+
+function DemoChip({ caseId, sourceId }: { caseId: string; sourceId: string }) {
+  const t = useT(shell);
+  const tc = useT(common);
+  const popId = useId();
+  const titleKey = `demoTitle_${caseId}` as Parameters<typeof tc>[0];
+  const title = tc(titleKey);
+  return (
+    <span className={styles.chipWrap}>
+      <button type="button" className={styles.chip} aria-describedby={popId} data-demo-notice data-testid="demo-chip">
+        {t('demoChip')}
+      </button>
+      <span id={popId} role="tooltip" className={styles.chipPop}>
+        {title !== titleKey && <span className={styles.chipPopTitle}>{title}</span>}
+        <span>{tc('demoCaseLabel', { id: sourceId })}</span>
+      </span>
+    </span>
   );
 }

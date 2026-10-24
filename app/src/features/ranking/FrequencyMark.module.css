@@ -162,3 +162,27 @@
 .dot[data-size='strip'][data-level='none'] {
   width: var(--s-3);
 }
+
+/* T32b: evidence that could not be loaded. A dotted ring, told apart from the
+   solid "not listed" ring and the dash; the word beside it carries the meaning. */
+.missingRing {
+  display: inline-block;
+  flex: none;
+  width: var(--s-3);
+  height: var(--s-3);
+  border: 1.5px dotted var(--mark-none);
+  border-radius: 50%;
+}
+
+.mark[data-kind='quiet'] .word,
+.mark[data-kind='missing'] .word {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
+.dot[data-level='missing'] {
+  width: var(--d2);
+  height: var(--d2);
+  background: transparent;
+  border: 1.5px dotted var(--mark-none);
+}

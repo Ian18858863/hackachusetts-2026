@@ -71,7 +71,10 @@
 }
 
 .leadRank,
-.leadName {
+.leadName,
+.leadOverlap,
+.leadScore,
+.leadHead .incomplete {
   grid-column: 1 / -1;
 }
 
@@ -107,7 +110,7 @@
 }
 
 .leadOverlap {
-  margin-top: var(--s-2);
+  margin-top: 0;
   font-size: var(--t-md);
   color: var(--ink-2);
 }
@@ -118,9 +121,13 @@
   font-weight: var(--weight-semibold);
 }
 
+/* T34: the count sits under the name, one baseline row, then the overlap word. */
 .leadScore {
-  padding-bottom: var(--s-1);
-  text-align: right;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--s-3);
+  margin-top: var(--s-3);
 }
 
 .leadScore b {
@@ -140,8 +147,7 @@
 
 .leadScore small {
   display: block;
-  margin-top: var(--s-1);
-  font-size: var(--t-xs);
+  font-size: var(--t-sm);
   color: var(--ink-3);
 }
 
@@ -1239,4 +1245,28 @@
   .skeletonLead {
     padding: var(--s-5) var(--s-4);
   }
+}
+
+/* T32b: one compact state line on a candidate with incomplete evidence. */
+.incomplete {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0 var(--s-1);
+  margin-top: var(--s-3);
+  font-size: var(--t-sm);
+  color: var(--ink-2);
+}
+
+.incompleteRetry {
+  min-height: var(--tap-min);
+  padding: 0 var(--s-1);
+  border: 0;
+  background: none;
+  color: var(--accent);
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
 }

@@ -8,7 +8,6 @@
 import { useEffect, useId, useRef, useState, type ChangeEvent, type FormEvent } from 'react';
 import type { ApiRequestError } from '../../shared/api';
 import { LIMITS } from '../../shared/contract';
-import { findDemoCase } from '../../shared/mocks';
 import { useCase, useCaseActions } from '../../shared/store';
 import { useT } from '../../shared/i18n';
 import common from '../../shared/i18n/messages/common';
@@ -67,7 +66,6 @@ export function IntakeStep() {
   const t = useT(intake);
 
   const fieldId = useId();
-  const hintId = `${fieldId}-hint`;
   const countId = `${fieldId}-count`;
   const problemId = `${fieldId}-problem`;
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -158,31 +156,17 @@ export function IntakeStep() {
     }
   };
 
-  const describedBy = [hintId, countId, problem ? problemId : null].filter(Boolean).join(' ');
-  const demoTitle = findDemoCase(caseObject.demo?.caseId)?.title;
+  const describedBy = [countId, problem ? problemId : null].filter(Boolean).join(' ');
 
   return (
     <div className={styles.intake}>
-      <p className={styles.promise}>
-        {t('promise')}
-      </p>
-
       <form className={styles.form} onSubmit={submit} noValidate>
         <div className={styles.field} data-invalid={problem?.kind === 'empty' || isOver || undefined}>
           <div className={styles.labelRow}>
             <label htmlFor={fieldId} className={styles.label}>
               {t('fieldLabel')}
             </label>
-            {demoTitle && <span className={styles.loaded}>{t('demoLoaded', { title: demoTitle.toLowerCase() })}</span>}
           </div>
-          {demoTitle && (
-            <p className={styles.demoPrecision} data-testid="demo-precision-note">
-              {t('demoPrecision')}
-            </p>
-          )}
-          <p id={hintId} className={styles.hint}>
-            {t('fieldHint')}
-          </p>
           <textarea
             ref={textareaRef}
             id={fieldId}
@@ -230,11 +214,7 @@ export function IntakeStep() {
             </Button>
           )}
           <p className={styles.actionNote} aria-live="polite">
-            {!online
-              ? t('noteOffline')
-              : busy
-                ? t('noteBusy')
-                : t('noteIdle')}
+            {!online ? t('noteOffline') : busy ? t('noteBusy') : null}
           </p>
         </div>
       </form>

@@ -6,12 +6,15 @@
  *
  * The same component renders the on-screen preview and the print copy.
  */
-import type { Brief, BriefFeature, Candidate, Question } from '../../shared/contract';
+import type { Brief, BriefFeature, Candidate, FrequencyInfo, Question } from '../../shared/contract';
 import { PRODUCT_NAME } from '../../shared/text';
 import { fillTemplate } from '../../components/ui/fillTemplate';
 import { useLocale, useT } from '../../shared/i18n';
 import briefMessages from '../../shared/i18n/messages/brief';
 import common from '../../shared/i18n/messages/common';
+import rankingMessages from '../../shared/i18n/messages/ranking';
+import shellMessages from '../../shared/i18n/messages/shell';
+import { frequencyState } from '../ranking/format';
 import { Icon } from '../../shared/ui';
 import styles from './BriefDocument.module.css';
 import { candidateIds, formatDateTime, frequencyText, overlapWords, versionPairs } from './format';
@@ -30,6 +33,7 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
   const id = (name: string) => `${idPrefix}-${name}`;
   const t = useT(briefMessages);
   const tc = useT(common);
+  const ts = useT(shellMessages);
   const { locale } = useLocale();
 
   return (
@@ -45,7 +49,8 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
         </div>
         <div className={styles.titleRow}>
         <h2 id={id('title')} className={styles.title}>
-          {brief.title}
+          {/* The server's English title; other languages show the app's own step title (T34). */}
+          {locale === 'en' ? brief.title : ts('briefTitle')}
         </h2>
         <dl className={styles.summary}>
           {summary.ageText && (
@@ -67,26 +72,20 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
         </dl>
         </div>
         {(summary.demo || offlineMock) && (
-          <div className={styles.demo}>
+          // The one demo line of the printed brief (T34); localized per contract section 13 v0.1.6,
+          // the phenopacket-store id verbatim.
+          <p className={styles.demo} data-demo-notice>
             <Icon name="flask" size={14} />
-            <p>
-              <strong>{t('demoNotReal')}</strong>
-              {/* Contract section 13 label, verbatim from the server; no made-up fallback text. */}
-              {summary.demo && summary.demoLabel && <> {summary.demoLabel}.</>}
+            <span>
+              {summary.demo && demoLine(summary.demoLabel, tc)}
               {offlineMock && <> {t('offlineMockNote', { label: tc('demoDataOffline') })}</>}
-            </p>
-          </div>
+            </span>
+          </p>
         )}
         <p className={styles.disclaimer}>
           <Icon name="info" size={16} />
-          {/* The server's sentence (contract section 13); other languages show the faithful translation first. */}
-          {locale === 'en' ? (
-            <span>{brief.disclaimer}</span>
-          ) : (
-            <span>
-              {tc('disclaimer')} <span lang="en">{brief.disclaimer}</span>
-            </span>
-          )}
+          {/* Contract section 13: English is the verbatim sentence; other languages its faithful translation. */}
+          <span>{locale === 'en' ? brief.disclaimer : tc('disclaimer')}</span>
         </p>
         {summary.notesExcerpt && (
           <blockquote className={styles.excerpt}>
@@ -255,6 +254,12 @@ function CandidateEntry({
   genesListedInTests: boolean;
 }) {
   const t = useT(briefMessages);
+  const tc = useT(common);
+  const tr = useT(rankingMessages);
+  const { locale } = useLocale();
+  // The matches view's band words, lower case inside the sentence where the script has case.
+  const band = (label: NonNullable<FrequencyInfo['label']>) =>
+    frequencyState({ label, source: '' }, tr).word.toLocaleLowerCase(locale);
   const observedTotal = c.matched.length + c.unmatched.length;
   // Counted like Step 3 (contract 7.4 step 8): exact matches in the headline, broader-term matches separately.
   const exact = c.matched.filter((m) => m.via === 'exact').length;
@@ -313,7 +318,7 @@ function CandidateEntry({
                       </span>
                     </>
                   )}
-                  <span className={styles.freq}> {frequencyText(m.frequency, t)}</span>
+                  <span className={styles.freq}> {frequencyText(m.frequency, t, band, c.evidenceComplete === false, tc('evidenceCouldNotLoad'))}</span>
                 </span>
               ))}
         </p>
@@ -324,7 +329,7 @@ function CandidateEntry({
               <span key={f.term.id}>
                 {i > 0 && '; '}
                 {f.term.label}
-                <span className={styles.freq}> {frequencyText(f.frequency, t)}</span>
+                <span className={styles.freq}> {frequencyText(f.frequency, t, band)}</span>
               </span>
             ))}
           </p>
@@ -336,7 +341,7 @@ function CandidateEntry({
               <span key={f.term.id}>
                 {i > 0 && '; '}
                 {f.term.label}
-                <span className={styles.freq}> {frequencyText(f.frequency, t)}</span>
+                <span className={styles.freq}> {frequencyText(f.frequency, t, band)}</span>
               </span>
             ))}
           </p>
@@ -363,4 +368,10 @@ function QuestionEntry({ question: q }: { question: Question }) {
       </p>
     </li>
   );
+}
+
+/** The localized demo provenance line; the phenopacket-store id is read from the server's verbatim label. */
+function demoLine(serverLabel: string | undefined, tc: (key: 'demoCaseLabel', vars: { id: string }) => string): string {
+  const id = serverLabel ? /phenopacket-store\s+([^\s)]+)/.exec(serverLabel)?.[1] : undefined;
+  return id ? tc('demoCaseLabel', { id }) : (serverLabel ?? '');
 }

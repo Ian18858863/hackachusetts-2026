@@ -26,7 +26,7 @@ import { LeadCandidate } from './LeadCandidate';
 import { OtherCandidates } from './OtherCandidates';
 import { indexFeatures } from './evidence';
 import { formatDateTime, formatTime, pick, sourceName, versionEntries, type RankingT } from './format';
-import type { EnterRows } from './parts';
+import { RetryRankContext, type EnterRows } from './parts';
 import { changeFor, evidenceKeys, rankDelta, type RankingChange } from './rankingChange';
 import styles from './ranking.module.css';
 import { useAutoRank, type AutoRank } from './useAutoRank';
@@ -87,6 +87,7 @@ export function RankingStep() {
           {auto.phase === 'error' && auto.error && (
             <ApiErrorState error={auto.error} onRetry={auto.rankNow} compact titleLevel={3} />
           )}
+          <RetryRankContext.Provider value={auto.refresh}>
           <Results
             ranking={ranking}
             features={features}
@@ -94,6 +95,7 @@ export function RankingStep() {
             onSelect={selectCandidate}
             {...link}
           />
+          </RetryRankContext.Provider>
           <FeatureSummary
             observed={features.observed}
             excluded={features.excluded}
@@ -341,7 +343,6 @@ function RankingSources({ ranking }: { ranking: CaseRanking }) {
           <dd>{formatDateTime(response.dataVersions.fetchedAt, locale)}</dd>
         </div>
       </dl>
-      <p className={styles.sourcesScope}>{t('scopeNote')}</p>
     </section>
   );
 }
@@ -351,7 +352,6 @@ function NextStep({ onNext }: { onNext(): void }) {
   const t = useT(rankingMessages);
   return (
     <div className={styles.next}>
-      <p className={styles.nextHint}>{t('nextHint')}</p>
       <Button
         className={styles.nextCta}
         onClick={onNext}

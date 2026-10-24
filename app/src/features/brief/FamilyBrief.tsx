@@ -181,7 +181,7 @@ function FamilyBriefReady({ data, state }: { data: BriefResponse; state: ReturnT
             {fillTemplate(tb('savedFile'), { file: <span className={styles.file}>{saved}</span> })}
           </span>
         ) : (
-          <>{tb('printHint')}</>
+          null
         )}
       </Toolbar>
 
@@ -225,7 +225,6 @@ function FamilyDocument({
 }) {
   const t = useT(audienceMessages);
   const tc = useT(common);
-  const tb = useT(briefMessages);
   const { locale } = useLocale();
   const id = (name: string) => `${idPrefix}-${name}`;
   const { brief } = data;
@@ -256,12 +255,11 @@ function FamilyDocument({
           {t('briefTitle')}
         </h2>
         {brief.patientSummary.demo && brief.patientSummary.demoLabel && (
-          <div className={doc.demo}>
+          // The one demo line of the printed notes (T34), localized per contract section 13 v0.1.6.
+          <p className={doc.demo} data-demo-notice>
             <Icon name="flask" size={14} />
-            <p>
-              <strong>{tb('demoNotReal')}</strong> {brief.patientSummary.demoLabel}.
-            </p>
-          </div>
+            <span>{familyDemoLine(brief.patientSummary.demoLabel, tc)}</span>
+          </p>
         )}
         {/* Contract section 13 v0.1.5 (family mode only): the lead sentence verbatim, then the family banner. */}
         <p className={doc.disclaimer}>
@@ -311,8 +309,6 @@ function FamilyDocument({
       </section>
 
       <footer className={family.foot}>
-        <p>{t('phenopacketNote')}</p>
-        <p>{tc('medicalTermsNote')}</p>
         {credits.map((c) => (
           <p key={c} lang="en">
             {c}
@@ -396,4 +392,10 @@ function Toolbar({
       </p>
     </div>
   );
+}
+
+/** The localized demo provenance line; the phenopacket-store id is read from the server's verbatim label. */
+function familyDemoLine(serverLabel: string, tc: (key: 'demoCaseLabel', vars: { id: string }) => string): string {
+  const id = /phenopacket-store\s+([^\s)]+)/.exec(serverLabel)?.[1];
+  return id ? tc('demoCaseLabel', { id }) : serverLabel;
 }

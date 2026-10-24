@@ -38,6 +38,8 @@ export interface AutoRank {
   request: CaseRanking['request'];
   /** Skip the pause, or retry after an error. */
   rankNow(): void;
+  /** Re-run the current ranking even when it is up to date. */
+  refresh(): void;
 }
 
 interface RunState {
@@ -129,7 +131,13 @@ export function useAutoRank(): AutoRank {
     setNonce((n) => n + 1);
   }, []);
 
+  // Re-run the current ranking even when it is up to date (T32b retry for incomplete evidence).
+  const refresh = useCallback(() => {
+    if (canRank) void send(request, key);
+  }, [canRank, request, key, send]);
+
   let phase: RankPhase = 'idle';
+  if (!needed && run.phase === 'loading' && run.key === key) phase = 'loading';
   if (needed) {
     if (!online) phase = 'offline';
     else if (failedHere) phase = 'error';
@@ -144,5 +152,6 @@ export function useAutoRank(): AutoRank {
     canRank,
     request,
     rankNow,
+    refresh,
   };
 }

@@ -1,6 +1,6 @@
 /**
  * Display helpers for ClinicalTrials.gov values (contract section 5, Trial).
- * Phase names stay in English like the registry; only the app's own words are translated.
+ * Phase and status words are translated (T34); registry text (titles, conditions, countries) stays as published.
  */
 import { intlLocale } from '../../components/ui/fillTemplate';
 import type { FormatVars, Locale, MessageKey } from '../../shared/i18n';
@@ -8,21 +8,24 @@ import type trialsMessages from '../../shared/i18n/messages/trials';
 
 type TrialsT = (key: MessageKey<typeof trialsMessages>, vars?: FormatVars) => string;
 
-const PHASE_NAMES: Record<string, string> = {
-  EARLY_PHASE1: 'Early phase 1',
-  PHASE1: 'Phase 1',
-  PHASE2: 'Phase 2',
-  PHASE3: 'Phase 3',
-  PHASE4: 'Phase 4',
-  NA: 'Not applicable',
-};
+const PHASE_KEYS = {
+  EARLY_PHASE1: 'phaseEarly1',
+  NA: 'phaseNotApplicable',
+} as const satisfies Record<string, MessageKey<typeof trialsMessages>>;
 
 /** ["PHASE1", "PHASE2"] → "Phase 1 and 2"; [] → "Phase not listed". */
 export function formatPhases(phases: readonly string[], t: TrialsT): string {
   if (phases.length === 0) return t('phaseNotListed');
   const numbered = phases.map((p) => /^PHASE(\d)$/.exec(p)?.[1]);
   if (phases.length > 1 && numbered.every(Boolean)) return t('phaseNumbers', { list: numbered.join(t('phaseJoin')) });
-  return phases.map((p) => PHASE_NAMES[p] ?? p).join(', ');
+  return phases
+    .map((p) => {
+      const n = /^PHASE(\d)$/.exec(p)?.[1];
+      if (n) return t('phaseNumbers', { list: n });
+      const key = PHASE_KEYS[p as keyof typeof PHASE_KEYS];
+      return key ? t(key) : p;
+    })
+    .join(t('listSep'));
 }
 
 /** First `max` items, then "and N more" so a registry with 300 conditions stays one line. */

@@ -180,7 +180,6 @@ function FamilyQuestionsBody() {
         ))}
       </ol>
 
-      <p className={styles.footnote}>{t('footnote')}</p>
     </div>
   );
 }
@@ -200,7 +199,6 @@ function FamilyQuestionItem({
   onAnswer(status: 'observed' | 'excluded'): void;
   onUndo(): void;
 }) {
-  const t = useT(audienceMessages);
   const tq = useT(questionsMessages);
   const titleId = `family-question-${q.hpoId.replace(':', '-')}`;
   const answered = status === 'observed' || status === 'excluded';
@@ -236,10 +234,6 @@ function FamilyQuestionItem({
         <h2 id={titleId} className={styles.question}>
           {q.question}
         </h2>
-        <p className={styles.why}>
-          <span className={styles.whyLabel}>{t('reasonLabel')}</span>
-          {t('reason')}
-        </p>
         <div className={styles.answers} role="group" aria-label={tq('answerLabel', { question: q.question })}>
           {answered ? (
             <>
@@ -284,7 +278,6 @@ function FamilyQuestionItem({
               >
                 {tq('no')}
               </Button>
-              <span className={styles.answerHint}>{tq('answerHint')}</span>
             </>
           )}
         </div>

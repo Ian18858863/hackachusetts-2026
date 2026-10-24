@@ -347,6 +347,13 @@
 :root:lang(ko) {
   --tracking-display: normal;
   --tracking-tight: normal;
+  /* One clean sans system for CJK (T34): display and text both use the CJK
+     sans stack, no serif fallback to Songti or Mincho. Display text uses the
+     system CJK sans (real 400/500/600, so the 500 headings are not faux);
+     body text keeps Source Sans 3 (loaded 400 and 600) for Latin runs. */
+  --f-cjk-serif: var(--f-cjk-sans);
+  --f-display: var(--f-cjk-sans), system-ui, sans-serif; /* the system CJK sans has real 400, 500 and 600 */
+  --f-text: 'Source Sans 3', var(--f-cjk-sans), system-ui, sans-serif;
 }
 
 :lang(zh) :is(h1, h2, h3, h4),

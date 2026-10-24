@@ -83,9 +83,6 @@
   display: flex;
   align-items: flex-start;
   gap: var(--space-2);
-  padding: var(--space-2) var(--space-3);
-  border-radius: var(--radius-sm);
-  background: var(--color-surface-sunken);
   font-size: var(--text-xs);
   line-height: var(--leading-snug);
   color: var(--color-text-muted);
@@ -702,5 +699,12 @@
 
   .doc a {
     text-decoration: none;
+  }
+}
+
+/* T34: on screen the top bar chip is the one demo notice; the printed page keeps this line. */
+@media screen {
+  .demo[data-demo-notice] {
+    display: none;
   }
 }

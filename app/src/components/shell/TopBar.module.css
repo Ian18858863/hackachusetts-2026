@@ -92,14 +92,62 @@
   margin-top: calc((var(--tap-min) - var(--topbar-h)) / 2);
 }
 
+.chipWrap {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap-min);
+}
+
+/* The one demo notice: a quiet chip; its popover holds the provenance. */
 .chip {
   padding: 4px 10px;
+  border: 0;
   border-radius: var(--r-pill);
   background: var(--surface);
   color: var(--ink-2);
+  font: inherit;
   font-size: var(--t-xs);
   line-height: 1.4;
   white-space: nowrap;
+  cursor: help;
+}
+
+.chip:hover {
+  color: var(--ink);
+}
+
+.chipPop {
+  position: absolute;
+  top: calc(100% - 4px);
+  right: 0;
+  z-index: var(--z-pop);
+  display: grid;
+  gap: var(--s-1);
+  width: max-content;
+  max-width: min(22rem, calc(100vw - 2 * var(--gutter)));
+  padding: var(--s-3) var(--s-4);
+  border-radius: var(--r-s);
+  background: var(--bg);
+  box-shadow: var(--shadow-pop);
+  color: var(--ink-2);
+  font-size: var(--t-xs);
+  line-height: var(--leading-snug);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity var(--dur-fast) var(--ease), visibility var(--dur-fast);
+  pointer-events: none;
+}
+
+.chipPopTitle {
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.chipWrap:hover .chipPop,
+.chip:focus + .chipPop {
+  opacity: 1;
+  visibility: visible;
 }
 
 .narrow {
@@ -147,8 +195,6 @@
     font-size: 1.25rem;
   }
 
-  /* The step header's kicker already says "demo case, not a real patient". */
-  .chip,
   .wide {
     display: none;
   }

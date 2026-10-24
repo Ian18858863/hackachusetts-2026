@@ -258,7 +258,6 @@ function QuestionsBody() {
         ))}
       </ol>
 
-      <p className={styles.footnote}>{t('footnote')}</p>
     </div>
   );
 }
@@ -363,7 +362,6 @@ function QuestionItem({
               <Button variant="secondary" onClick={() => answerWith('excluded')} data-testid={`answer-no-${q.hpoId}`}>
                 {t('no')}
               </Button>
-              <span className={styles.answerHint}>{t('answerHint')}</span>
             </>
           )}
         </div>

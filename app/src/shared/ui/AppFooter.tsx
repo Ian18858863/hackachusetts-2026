@@ -1,24 +1,20 @@
 import { useAudience } from '../audience';
-import { useLocale, useT } from '../i18n';
-import common from '../i18n/messages/common';
+import { useT } from '../i18n';
 import shell from '../i18n/messages/shell';
 import { useCase } from '../store';
 import { ATTRIBUTION, hpoAttribution } from '../text';
-import { Disclaimer } from './Disclaimer';
 import styles from './AppFooter.module.css';
 
 const HPO_URL = 'https://hpo.jax.org';
 
 /**
- * Footer with the safety line and the credits required by contract section 13.
+ * Footer with the credits required by contract section 13.
  * The HPO sentence is always shown; other credits appear only when their data
  * is on screen (Monarch and Orphanet with a ranking, phenopacket-store with a
  * demo case). The trials view shows the ClinicalTrials.gov credit itself.
  */
 export function AppFooter() {
   const { caseObject, meta } = useCase();
-  const { locale } = useLocale();
-  const tc = useT(common);
   const ts = useT(shell);
   const { isFamily } = useAudience();
   const candidates = caseObject.lastRanking?.response.candidates ?? [];
@@ -39,11 +35,7 @@ export function AppFooter() {
   return (
     <footer className={styles.footer}>
       <div className={styles.inner}>
-        <p className={styles.safety}>
-          <Disclaimer inline />
-        </p>
-        {/* Licence lines below stay in English (contract section 13), so other languages say why. */}
-        {locale !== 'en' && <p>{tc('medicalTermsNote')}</p>}
+        {/* The section 13 safety line sits once in each result step's header (T34); licence lines stay in English. */}
         <ul className={styles.credits} aria-label={ts('creditsLabel')}>
           <li>
             {hpoBefore}

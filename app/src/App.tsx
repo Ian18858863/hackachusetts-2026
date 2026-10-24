@@ -14,6 +14,7 @@ import { useDemoParam } from './lib/useDemoParam';
 import { useHashRoute } from './lib/useHashRoute';
 import { AudienceProvider, useAudience } from './shared/audience';
 import { I18nProvider, useT } from './shared/i18n';
+import common from './shared/i18n/messages/common';
 import shell from './shared/i18n/messages/shell';
 import { stepFromRoute, type StepId } from './shared/steps';
 import { CaseProvider } from './shared/store';
@@ -74,6 +75,13 @@ function Shell() {
   useEffect(() => {
     if (isFamily && routed === 'matches') window.location.replace('#/questions');
   }, [isFamily, routed]);
+
+  // The tab title follows the language and the audience; family mode never says "possible matches" (T34).
+  const tc = useT(common);
+  const appTitle = tc(isFamily ? 'appTitleFamily' : 'appTitleClinician');
+  useEffect(() => {
+    document.title = appTitle;
+  }, [appTitle]);
 
   const mainRef = useRef<HTMLElement>(null);
   const previousKey = useRef(viewKey);

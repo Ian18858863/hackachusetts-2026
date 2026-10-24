@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import type { FrequencyInfo } from '../../shared/contract';
 import { useT } from '../../shared/i18n';
+import common from '../../shared/i18n/messages/common';
 import ranking from '../../shared/i18n/messages/ranking';
 import styles from './FrequencyMark.module.css';
 import { GLYPH_DOTS, frequencyState, type FrequencyState } from './format';
@@ -31,6 +32,7 @@ export function FrequencyMark({
   delay = 0,
   showRaw = false,
   quietUnknown = false,
+  missing = false,
   className,
 }: {
   frequency: FrequencyInfo | null | undefined;
@@ -41,17 +43,31 @@ export function FrequencyMark({
   showRaw?: boolean;
   /** Show an unlisted frequency (label null, or null on a matched row) as one quiet ring. */
   quietUnknown?: boolean;
+  /** The candidate's evidence is incomplete (T32b): a null frequency reads "Could not be loaded". */
+  missing?: boolean;
   className?: string;
 }) {
   const t = useT(ranking);
+  const tc = useT(common);
+  if (missing && frequency == null) {
+    return (
+      <span className={[styles.mark, className].filter(Boolean).join(' ')} data-kind="missing">
+        <span className={styles.glyph} aria-hidden="true">
+          <span className={styles.missingRing} />
+        </span>
+        <span className={styles.word}>{tc('evidenceCouldNotLoad')}</span>
+      </span>
+    );
+  }
   const state = frequencyState(frequency, t, noneWord);
   if (quietUnknown && state.kind !== 'band') {
+    // A quiet ring and a quiet word: the state reads at a glance, no legend needed.
     return (
-      <span className={[styles.mark, className].filter(Boolean).join(' ')} data-kind="quiet" title={state.word}>
+      <span className={[styles.mark, className].filter(Boolean).join(' ')} data-kind="quiet">
         <span className={styles.glyph} aria-hidden="true">
           <span className={styles.ring} />
         </span>
-        <span className="sr-only">{state.word}</span>
+        <span className={styles.word}>{state.word}</span>
       </span>
     );
   }
@@ -103,13 +119,16 @@ export function BandDot({
   frequency,
   tone = 'neutral',
   size = 'matrix',
+  missing = false,
 }: {
   frequency: FrequencyInfo | null | undefined;
   tone?: MarkTone;
   size?: 'matrix' | 'strip';
+  /** Matched, but the frequency could not be loaded (T32b). */
+  missing?: boolean;
 }) {
   const t = useT(ranking);
   const state = frequencyState(frequency, t);
-  const level = state.kind === 'band' ? state.dots : state.kind === 'none' ? 'none' : 'unknown';
+  const level = missing ? 'missing' : state.kind === 'band' ? state.dots : state.kind === 'none' ? 'none' : 'unknown';
   return <i className={styles.dot} data-level={level} data-tone={tone} data-size={size} aria-hidden="true" />;
 }

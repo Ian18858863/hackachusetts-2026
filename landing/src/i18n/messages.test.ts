@@ -84,7 +84,8 @@ test('English landing copy keeps the verbatim evaluation sentence', () => {
 });
 
 test('audience positioning (T30b): English copy and the two entry links', () => {
-  assert.equal(landing.en.heroTitle, 'A specialist-ready brief in minutes, not a diagnosis in years.');
+  // T34 (Ian's rules 1 and 2): short, no trailing punctuation.
+  assert.equal(landing.en.heroTitle, 'A specialist-ready brief in minutes');
   assert.equal(landing.en.kickerLead + landing.en.kickerRest, 'For clinicians and genetic counselors · families can prepare their notes');
   assert.equal(landing.en.tryDemo, 'Try the demo case');
   assert.equal(landing.en.familyCta, 'For families: prepare notes for your doctor');

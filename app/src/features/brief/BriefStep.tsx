@@ -189,7 +189,7 @@ function BriefReady({
               {fillTemplate(t('savedFile'), { file: <span className={styles.file}>{saved}</span> })}
             </span>
           ) : (
-            <>{t('printHint')}</>
+            null
           )}
       </Toolbar>
 

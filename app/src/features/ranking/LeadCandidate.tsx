@@ -2,7 +2,6 @@ import type { MouseEvent } from 'react';
 import type { Candidate } from '../../shared/contract';
 import { useT } from '../../shared/i18n';
 import ranking from '../../shared/i18n/messages/ranking';
-import { NotListedRing } from './FrequencyMark';
 import { broaderText, matchCounts, patientRows, type FeatureIndex } from './evidence';
 import { OVERLAP_KEY, pick } from './format';
 import {
@@ -10,7 +9,9 @@ import {
   CandidateLinks,
   DeltaBadge,
   EvidenceGroups,
+  IncompleteNote,
   PatientRows,
+  isIncomplete,
   StudiesButton,
   type EnterRows,
   type LinkProps,
@@ -48,14 +49,7 @@ export function LeadCandidate({
   const { exact, broader } = matchCounts(c);
   const broaderLine = broaderText(broader, t);
   const n = observedCount;
-  const coverage =
-    exact === n && n > 0
-      ? t(pick(n, 'leadAllOne', 'leadAllOther'), { n })
-      : broaderLine && exact < n
-        ? t(pick(n, 'leadSomeBroaderOne', 'leadSomeBroaderOther'), { exact, n, broader })
-        : t(pick(n, 'leadSomeOne', 'leadSomeOther'), { exact, n });
   const contradicted = c.contradicted.length;
-  const anyNotListed = rows.some((r) => r.evidence && !r.evidence.frequency?.label);
 
   return (
     <article
@@ -76,32 +70,28 @@ export function LeadCandidate({
           <span className="sr-only">{t('srRank', { n: c.rank })}</span>
           {c.name}
         </h2>
-        <p className={styles.leadOverlap}>
-          <b>{t('overlapSentence', { label: t(OVERLAP_KEY[c.overlap]) })}</b>
-          {coverage}
-          {contradicted > 0 && t(pick(contradicted, 'leadContradictedOne', 'leadContradictedOther'), { n: contradicted })}
-        </p>
-        <p className={styles.leadScore}>
+        <p className={styles.leadScore} data-lead-score>
           <b className="num">
-            {exact} <span>{t('scoreOf', { n: observedCount })}</span>
+            {exact} <span>{t('scoreOf', { n })}</span>
           </b>
           <small>{t('scoreSmall')}</small>
-          {broaderLine && <small className={styles.leadBroader}>{broaderLine}</small>}
         </p>
+        <p className={styles.leadOverlap}>
+          <b>{t(OVERLAP_KEY[c.overlap])}</b>
+          {broaderLine && <span> · {broaderLine}</span>}
+          {contradicted > 0 && (
+            <span> · {t(pick(contradicted, 'altContradictedOne', 'altContradictedOther'), { n: contradicted }).trim()}</span>
+          )}
+        </p>
+        <IncompleteNote candidate={c} />
       </div>
 
       <p className={styles.evHead} aria-hidden="true">
         <span>{t('featuresDescribed')}</span>
         <span>{t('howOftenIn', { name: c.name })}</span>
       </p>
-      {anyNotListed && (
-        <p className={styles.evKey}>
-          <NotListedRing />
-          <span>{t('freqNotListedKey')}</span>
-        </p>
-      )}
       <ul className={styles.evidence} data-testid={`candidate-evidence-${c.rank}`} aria-label={t('evidenceFor', { name: c.name })}>
-        <PatientRows rows={rows} tone="accent" idPrefix="lead" enter={enter} {...link} />
+        <PatientRows rows={rows} tone="accent" idPrefix="lead" enter={enter} incomplete={isIncomplete(c)} {...link} />
       </ul>
       <EvidenceGroups
         candidate={c}
@@ -114,7 +104,6 @@ export function LeadCandidate({
       />
 
       <div className={styles.leadFoot}>
-        <p className={styles.hint}>{t('leadHint')}</p>
         <p className={styles.leadLinks}>
           <a href="#compare" onClick={jumpToCompare}>
             {t('compareSideBySide')}

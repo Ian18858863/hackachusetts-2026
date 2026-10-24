@@ -18,13 +18,22 @@ export function overlapWords(label: OverlapLabel, t: BriefT): string {
 
 /**
  * "very frequent", "very frequent, 112/140", or "frequency not listed" (Requirement 3.7).
- * The band is the HPO frequency term label and stays in English.
+ * `bandWord` gives the localized band word (the same words as the matches view);
+ * `missing` (T32b: the candidate's evidence is incomplete) turns a null frequency
+ * into "could not be loaded" instead of "frequency not listed".
  */
-export function frequencyText(frequency: FrequencyInfo | null | undefined, t: BriefT): string {
+export function frequencyText(
+  frequency: FrequencyInfo | null | undefined,
+  t: BriefT,
+  bandWord: (label: NonNullable<FrequencyInfo['label']>) => string,
+  missing = false,
+  missingWord = '',
+): string {
+  if (!frequency && missing) return missingWord;
   if (!frequency || !frequency.label) {
     return frequency?.raw ? t('frequencyRaw', { raw: frequency.raw }) : t('frequencyNotListed');
   }
-  const band = frequency.label.toLowerCase();
+  const band = bandWord(frequency.label);
   return frequency.raw ? `${band}, ${frequency.raw}` : band;
 }
 

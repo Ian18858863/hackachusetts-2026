@@ -138,11 +138,13 @@ a:hover { text-decoration-thickness: 2px; }
 
 /* ---- hero ------------------------------------------------------------------ */
 .hero { padding: var(--s-8) 0 var(--s-9); }
-.hero-in { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: var(--s-7); align-items: start; }
+.hero-in { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: var(--s-7); align-items: start; }
 .hero-copy { padding-top: var(--s-5); }
 .kicker { margin-bottom: var(--s-3); font-size: var(--t-sm); color: var(--ink-3); }
 .kicker b { color: var(--ink); }
 .hero h1 { font-size: var(--t-2xl); letter-spacing: -0.012em; }
+/* T34: the hero headline stays on one line on desktop in every locale. */
+@media (min-width: 1101px) { .hero h1 { font-size: 2.375rem; white-space: nowrap; } :lang(es) .hero h1, :lang(fr) .hero h1 { font-size: 2rem; } }
 .lede { margin-top: var(--s-4); max-width: 46ch; font-size: var(--t-md); color: var(--ink-2); }
 .safety { margin-top: var(--s-2); max-width: 62ch; font-size: var(--t-md); color: var(--ink-2); }
 .safety b { color: var(--ink); }
@@ -311,4 +313,14 @@ a:hover { text-decoration-thickness: 2px; }
 :lang(ja) :is(h1, h2, h3, h4, .stat-value),
 :lang(ko) :is(h1, h2, h3, h4, .stat-value) {
   letter-spacing: normal;
+}
+
+/* One clean sans system for CJK (T34): display and text both use the CJK sans
+   stack, no serif fallback to Songti or Mincho. Same rule as the app's tokens.css. */
+:root:lang(zh),
+:root:lang(ja),
+:root:lang(ko) {
+  --f-cjk-serif: var(--f-cjk-sans);
+  --f-display: var(--f-cjk-sans), system-ui, sans-serif; /* the system CJK sans has real 400, 500 and 600 */
+  --f-text: "Source Sans 3", var(--f-cjk-sans), system-ui, sans-serif;
 }

@@ -1,6 +1,7 @@
-import type { CSSProperties, ReactNode } from 'react';
+import { createContext, useContext, type CSSProperties, type ReactNode } from 'react';
 import type { Candidate, DiseaseFeature, HpoId } from '../../shared/contract';
 import { useT } from '../../shared/i18n';
+import common from '../../shared/i18n/messages/common';
 import ranking from '../../shared/i18n/messages/ranking';
 import { Button, Icon } from '../../shared/ui';
 import { FrequencyMark, type MarkTone } from './FrequencyMark';
@@ -14,6 +15,34 @@ export type EnterRows = 'all' | Set<string> | null;
 
 export function isEntering(enter: EnterRows, key: string): boolean {
   return enter === 'all' || (enter instanceof Set && enter.has(key));
+}
+
+/** Re-runs the ranking; used by the "Some evidence could not be loaded" control (T32b). */
+export const RetryRankContext = createContext<(() => void) | null>(null);
+
+/** evidenceComplete absent means complete (contract note for T32b). */
+export function isIncomplete(c: Candidate): boolean {
+  return c.evidenceComplete === false;
+}
+
+/** One compact state line with a retry, on a candidate whose evidence is incomplete. */
+export function IncompleteNote({ candidate }: { candidate: Candidate }) {
+  const tc = useT(common);
+  const retry = useContext(RetryRankContext);
+  if (!isIncomplete(candidate)) return null;
+  return (
+    <p className={styles.incomplete} data-testid={`evidence-incomplete-${candidate.rank}`}>
+      <span>{tc('evidenceIncomplete')}</span>
+      {retry && (
+        <>
+          <span aria-hidden="true"> · </span>
+          <button type="button" className={styles.incompleteRetry} onClick={retry}>
+            {tc('tryAgain')}
+          </button>
+        </>
+      )}
+    </p>
+  );
 }
 
 export interface LinkProps {
@@ -102,6 +131,7 @@ export function PatientRows({
   idPrefix,
   enter,
   enterOffset = 0,
+  incomplete = false,
   ...link
 }: {
   rows: PatientRow[];
@@ -109,6 +139,7 @@ export function PatientRows({
   idPrefix: string;
   enter: EnterRows;
   enterOffset?: number;
+  incomplete?: boolean;
 } & LinkProps) {
   const t = useT(ranking);
   return (
@@ -130,6 +161,7 @@ export function PatientRows({
                   frequency={row.evidence.frequency}
                   noneWord={t('freqNotListed')}
                   quietUnknown
+                  missing={incomplete}
                   tone={tone}
                   animate={entering}
                   delay={enterOffset + i}
