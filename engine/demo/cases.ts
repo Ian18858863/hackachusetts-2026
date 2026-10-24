@@ -34,7 +34,40 @@ function term(
   return { hpoId, label, quote, start, end, negated, confidence: "high", grounding: "exact-id" };
 }
 
-// 9.1 Source: notebooks/DMD/phenopackets/PMID_38054185_Case_presentation.json
+// 9.1 Source: notebooks/NPC1/phenopackets/PMID_27900365_patient.json
+// (male, 54 years, HPO 2025-11-24). Expected diagnosis OMIM:257220.
+// Primary demo case since contract v0.1.1. The source has no excluded terms:
+// the negated Headache (HP:0002315) was added for the demo and is NOT part of
+// the source phenopacket. Narrative and offsets copied verbatim from CONTRACT.md 9.1.
+const NPC1_ID = "PMID_27900365_patient";
+const demoNpc1: DemoCase = {
+  caseId: "demo-npc1",
+  title: "Man, 54 years: forgetfulness, unsteady walking, large liver and spleen",
+  label: demoLabel(NPC1_ID),
+  sourcePhenopacketId: NPC1_ID,
+  narrative:
+    "I am a 54-year-old man. My mother says I stayed yellow for a long time as a newborn. Since I was 18 I have become more and more forgetful, I find it hard to concentrate, my speech is slurred, and I fall a lot. In middle age my thinking slowly got worse and my walking became unsteady and clumsy. A doctor noticed that when I flick my eyes upward they stop short. A scan found a large liver and a large spleen. A tissue sample showed cells swollen with fat, and a lab test found my cells are slow to process cholesterol. I do not get headaches.",
+  expectedDiagnosis: { id: "OMIM:257220", label: "Niemann-Pick disease, type C1" },
+  extraction: [
+    term("HP:0006579", "Prolonged neonatal jaundice", "stayed yellow for a long time as a newborn", 41, 83),
+    term("HP:0007017", "Progressive forgetfulness", "more and more forgetful", 114, 137),
+    term("HP:0031987", "Diminished ability to concentrate", "hard to concentrate", 149, 168),
+    term("HP:0001260", "Dysarthria", "my speech is slurred", 170, 190),
+    term("HP:0002527", "Falls", "I fall a lot", 196, 208),
+    term("HP:0001268", "Mental deterioration", "my thinking slowly got worse", 224, 252),
+    term("HP:0001251", "Ataxia", "my walking became unsteady and clumsy", 257, 294),
+    term("HP:0031833", "Hypometric upward saccades", "when I flick my eyes upward they stop short", 318, 361),
+    term("HP:0002240", "Hepatomegaly", "a large liver", 376, 389),
+    term("HP:0001744", "Splenomegaly", "a large spleen", 394, 408),
+    term("HP:0003651", "Foam cells", "cells swollen with fat", 433, 455),
+    term("HP:0003349", "Low cholesterol esterification rate", "my cells are slow to process cholesterol", 478, 518),
+    term("HP:0002315", "Headache", "I do not get headaches", 520, 542, true),
+  ],
+  recordedAt: PREPARED_AT,
+};
+
+// 9.2 Source: notebooks/DMD/phenopackets/PMID_38054185_Case_presentation.json
+// Kept as a harder case since contract v0.1.1 (Monarch ranks Duchenne low).
 // (male, 4 years, HPO 2026-06-23). Expected diagnosis OMIM:310200.
 // The source has no excluded terms: the negated Seizure (HP:0001250) was added
 // for the demo and is NOT part of the source phenopacket.
@@ -65,7 +98,7 @@ const demoDmd: DemoCase = {
   recordedAt: PREPARED_AT,
 };
 
-// 9.2 Source: notebooks/FBN1/phenopackets/PMID_10756346_Patient_B55.json
+// 9.3 Source: notebooks/FBN1/phenopackets/PMID_10756346_Patient_B55.json
 // (male, 40 years, HPO 2025-10-22). Expected diagnosis OMIM:154700.
 const MARFAN_ID = "PMID_10756346_Patient_B55";
 const demoMarfan: DemoCase = {
@@ -92,7 +125,7 @@ const demoMarfan: DemoCase = {
   recordedAt: PREPARED_AT,
 };
 
-// 9.3 Source: notebooks/KMT2D/phenopackets/PMID_24739679_patient_K1.json
+// 9.4 Source: notebooks/KMT2D/phenopackets/PMID_24739679_patient_K1.json
 // (male, 11 months, HPO 2025-11-24). Expected diagnosis OMIM:147920.
 const KABUKI_ID = "PMID_24739679_patient_K1";
 const demoKabuki: DemoCase = {
@@ -124,7 +157,7 @@ const demoKabuki: DemoCase = {
   recordedAt: PREPARED_AT,
 };
 
-// 9.4 Source: notebooks/NIPBL/phenopackets/PMID_20358602_Patient_C10.json
+// 9.5 Source: notebooks/NIPBL/phenopackets/PMID_20358602_Patient_C10.json
 // (male, 6 years, HPO 2025-10-22). Expected diagnosis OMIM:122470.
 const CDLS_ID = "PMID_20358602_Patient_C10";
 const demoCdls: DemoCase = {
@@ -151,13 +184,19 @@ const demoCdls: DemoCase = {
   recordedAt: PREPARED_AT,
 };
 
-/** Demo picker order (CONTRACT.md 9): demo-dmd first. */
-export const DEMO_CASES: readonly DemoCase[] = [demoDmd, demoMarfan, demoKabuki, demoCdls];
+/** Demo picker order (CONTRACT.md 9, v0.1.1): demo-npc1 first, then demo-dmd. */
+export const DEMO_CASES: readonly DemoCase[] = [demoNpc1, demoDmd, demoMarfan, demoKabuki, demoCdls];
 
 /** Source details for attribution and tests. Not part of the contract types. */
 export const DEMO_SOURCES: Readonly<
   Record<string, { path: string; licence: "BSD-3-Clause"; sourceHpoVersion: string; addedNegations: HpoId[] }>
 > = {
+  "demo-npc1": {
+    path: "notebooks/NPC1/phenopackets/PMID_27900365_patient.json",
+    licence: "BSD-3-Clause",
+    sourceHpoVersion: "2025-11-24",
+    addedNegations: ["HP:0002315"],
+  },
   "demo-dmd": {
     path: "notebooks/DMD/phenopackets/PMID_38054185_Case_presentation.json",
     licence: "BSD-3-Clause",

@@ -28,6 +28,12 @@ const deps: EngineDeps = {
   },
 };
 
+describe("HPO_VERSION", () => {
+  it("is exported as the verified release 2026-09-01", () => {
+    expect(engine.HPO_VERSION).toBe("2026-09-01");
+  });
+});
+
 describe("engine/index.ts exports", () => {
   it("exports every section 6 function", () => {
     for (const name of SECTION_6) expect(typeof engine[name], name).toBe("function");
@@ -35,9 +41,6 @@ describe("engine/index.ts exports", () => {
   });
 
   it("placeholders throw NotImplementedError instead of returning analysis", async () => {
-    await expect(engine.rankCandidates({ observed: ["HP:0001166"] }, deps)).rejects.toBeInstanceOf(
-      engine.NotImplementedError,
-    );
     await expect(
       engine.nextQuestions({ observed: ["HP:0001166"], candidates: ["ORPHA:558", "OMIM:154700"] }, deps),
     ).rejects.toBeInstanceOf(engine.NotImplementedError);

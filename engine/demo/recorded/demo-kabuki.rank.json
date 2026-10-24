@@ -1,0 +1,1766 @@
+{
+  "kind": "rank",
+  "format": 2,
+  "caseId": "demo-kabuki",
+  "key": "HP:0000400,HP:0000431,HP:0000437,HP:0000592,HP:0000637,HP:0001212,HP:0001252,HP:0001263,HP:0002553,HP:0004322,HP:0005338,HP:0007655,HP:0011626,HP:0040019|HP:0000365,HP:0001250|5",
+  "request": {
+    "observed": [
+      "HP:0000400",
+      "HP:0000431",
+      "HP:0000437",
+      "HP:0000592",
+      "HP:0000637",
+      "HP:0001212",
+      "HP:0001252",
+      "HP:0001263",
+      "HP:0002553",
+      "HP:0004322",
+      "HP:0005338",
+      "HP:0007655",
+      "HP:0011626",
+      "HP:0040019"
+    ],
+    "excluded": [
+      "HP:0000365",
+      "HP:0001250"
+    ],
+    "limit": 5
+  },
+  "snapshot": true,
+  "recordedAt": "2026-10-24T17:12:59.482Z",
+  "recordedWith": "engine/scripts/record-demo.mjs format 1 (rankCandidates, live upstream calls); metadata relabelled 2026-10-24, response unchanged",
+  "providers": {
+    "monarchSemsim": "ok",
+    "hpoAnnotation": "not-captured",
+    "orphadata": "not-captured"
+  },
+  "enrichment": null,
+  "note": "Format 1 recording: per-call outcomes for JAX annotations and Orphadata were not captured. Monarch is ok because a ranking was returned. The response below is the original recording, unchanged.",
+  "inferredFromResponse": {
+    "basis": "Counted from the stored response only (candidate sources and links). Not observed per-call outcomes: format 1 did not record them, so failed, not-found and unusable calls cannot be told apart.",
+    "candidates": 5,
+    "candidatesListingHpoAnnotations": 5,
+    "candidatesListingOrphadata": 2,
+    "candidatesWithoutOrphanetId": 3
+  },
+  "overlapRule": "contract v0.1: all matches / observed (recorded before v0.1.2; labels kept as recorded)",
+  "response": {
+    "version": "0.1",
+    "source": "live",
+    "candidates": [
+      {
+        "rank": 1,
+        "diseaseId": "OMIM:614202",
+        "mondoId": "MONDO:0013624",
+        "name": "Rafiq syndrome",
+        "overlap": "strong",
+        "score": 13.429339306816757,
+        "matched": [
+          {
+            "patientTerm": {
+              "id": "HP:0000400",
+              "label": "Macrotia"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000400",
+              "label": "Macrotia"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:614202",
+              "raw": "7/7"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000431",
+              "label": "Wide nasal bridge"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000431",
+              "label": "Wide nasal bridge"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:614202",
+              "raw": "12/19"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000437",
+              "label": "Depressed nasal tip"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000414",
+              "label": "Bulbous nose"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:614202",
+              "raw": "7/12"
+            },
+            "ancestor": {
+              "id": "HP:0000436",
+              "label": "Abnormal nasal tip morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000637",
+              "label": "Long palpebral fissure"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000494",
+              "label": "Downslanted palpebral fissures"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Very frequent",
+              "source": "OMIM:614202",
+              "raw": "14/17"
+            },
+            "ancestor": {
+              "id": "HP:0008050",
+              "label": "Abnormality of the palpebral fissures"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0001252",
+              "label": "Hypotonia"
+            },
+            "diseaseTerm": {
+              "id": "HP:0001252",
+              "label": "Hypotonia"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:614202",
+              "raw": "15/19"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0001263",
+              "label": "Global developmental delay"
+            },
+            "diseaseTerm": {
+              "id": "HP:0001263",
+              "label": "Global developmental delay"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:614202",
+              "raw": "24/24"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0002553",
+              "label": "Highly arched eyebrow"
+            },
+            "diseaseTerm": {
+              "id": "HP:0002553",
+              "label": "Highly arched eyebrow"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:614202",
+              "raw": "2/10"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0004322",
+              "label": "Short stature"
+            },
+            "diseaseTerm": {
+              "id": "HP:0004322",
+              "label": "Short stature"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:614202",
+              "raw": "3/12"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0005338",
+              "label": "Sparse lateral eyebrow"
+            },
+            "diseaseTerm": {
+              "id": "HP:0005338",
+              "label": "Sparse lateral eyebrow"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:614202",
+              "raw": "7/12"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0007655",
+              "label": "Eversion of lateral third of lower eyelids"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000494",
+              "label": "Downslanted palpebral fissures"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Very frequent",
+              "source": "OMIM:614202",
+              "raw": "14/17"
+            },
+            "ancestor": {
+              "id": "HP:0000492",
+              "label": "Abnormal eyelid morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0040019",
+              "label": "Finger clinodactyly"
+            },
+            "diseaseTerm": {
+              "id": "HP:0004209",
+              "label": "Clinodactyly of the 5th finger"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:614202",
+              "raw": "1/7"
+            },
+            "ancestor": {
+              "id": "HP:0040019",
+              "label": "Finger clinodactyly"
+            }
+          }
+        ],
+        "unmatched": [
+          {
+            "id": "HP:0000592",
+            "label": "Blue sclerae"
+          },
+          {
+            "id": "HP:0001212",
+            "label": "Prominent fingertip pads"
+          },
+          {
+            "id": "HP:0011626",
+            "label": "Scimitar anomaly"
+          }
+        ],
+        "notReported": [
+          {
+            "term": {
+              "id": "HP:0001249",
+              "label": "Intellectual disability"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:614202",
+              "raw": "16/16"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0001270",
+              "label": "Motor delay"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:614202",
+              "raw": "7/7"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0002342",
+              "label": "Moderate intellectual disability"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:614202",
+              "raw": "12/12"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000219",
+              "label": "Thin upper lip vermilion"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:614202",
+              "raw": "13/19"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000256",
+              "label": "Macrocephaly"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:614202",
+              "raw": "8/12"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000268",
+              "label": "Dolichocephaly"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:614202",
+              "raw": "7/20"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000307",
+              "label": "Pointed chin"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:614202",
+              "raw": "5/9"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000316",
+              "label": "Hypertelorism"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:614202",
+              "raw": "11/17"
+            }
+          }
+        ],
+        "contradicted": [],
+        "categories": [
+          "Breast",
+          "Connective tissue",
+          "Ear",
+          "Eye",
+          "Growth",
+          "Head and neck",
+          "Inheritance",
+          "Limbs",
+          "Musculature",
+          "Nervous System",
+          "Other",
+          "Skin, Hair, and Nails"
+        ],
+        "genes": [
+          {
+            "id": "NCBIGene:11253",
+            "symbol": "MAN1B1"
+          }
+        ],
+        "links": {
+          "monarch": "https://monarchinitiative.org/MONDO:0013624",
+          "omim": "https://omim.org/entry/614202"
+        },
+        "sources": [
+          "monarch-semsim",
+          "hpo-annotations"
+        ]
+      },
+      {
+        "rank": 2,
+        "diseaseId": "OMIM:617412",
+        "mondoId": "MONDO:0044311",
+        "name": "brachycephaly, trichomegaly, and developmental delay",
+        "overlap": "strong",
+        "score": 13.039946613041415,
+        "matched": [
+          {
+            "patientTerm": {
+              "id": "HP:0000400",
+              "label": "Macrotia"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000369",
+              "label": "Low-set ears"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617412",
+              "raw": "1/2"
+            },
+            "ancestor": {
+              "id": "HP:0000377",
+              "label": "Abnormal pinna morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000431",
+              "label": "Wide nasal bridge"
+            },
+            "diseaseTerm": {
+              "id": "HP:0005280",
+              "label": "Depressed nasal bridge"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:617412",
+              "raw": "2/2"
+            },
+            "ancestor": {
+              "id": "HP:0000422",
+              "label": "Abnormal nasal bridge morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000592",
+              "label": "Blue sclerae"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000592",
+              "label": "Blue sclerae"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617412",
+              "raw": "1/2"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000637",
+              "label": "Long palpebral fissure"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000286",
+              "label": "Epicanthus"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:617412",
+              "raw": "2/2"
+            },
+            "ancestor": {
+              "id": "HP:0000492",
+              "label": "Abnormal eyelid morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0001212",
+              "label": "Prominent fingertip pads"
+            },
+            "diseaseTerm": {
+              "id": "HP:0001212",
+              "label": "Prominent fingertip pads"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:617412",
+              "raw": "2/2"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0001252",
+              "label": "Hypotonia"
+            },
+            "diseaseTerm": {
+              "id": "HP:0001290",
+              "label": "Generalized hypotonia"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": null,
+              "source": "OMIM:617412"
+            },
+            "ancestor": {
+              "id": "HP:0001252",
+              "label": "Hypotonia"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0001263",
+              "label": "Global developmental delay"
+            },
+            "diseaseTerm": {
+              "id": "HP:0001270",
+              "label": "Motor delay"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617412",
+              "raw": "1/2"
+            },
+            "ancestor": {
+              "id": "HP:0012758",
+              "label": "Neurodevelopmental delay"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0002553",
+              "label": "Highly arched eyebrow"
+            },
+            "diseaseTerm": {
+              "id": "HP:0002553",
+              "label": "Highly arched eyebrow"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617412",
+              "raw": "1/2"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0004322",
+              "label": "Short stature"
+            },
+            "diseaseTerm": {
+              "id": "HP:0004322",
+              "label": "Short stature"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617412",
+              "raw": "1/2"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0005338",
+              "label": "Sparse lateral eyebrow"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000574",
+              "label": "Thick eyebrow"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617412",
+              "raw": "1/2"
+            },
+            "ancestor": {
+              "id": "HP:0000534",
+              "label": "Abnormal eyebrow morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0007655",
+              "label": "Eversion of lateral third of lower eyelids"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000286",
+              "label": "Epicanthus"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:617412",
+              "raw": "2/2"
+            },
+            "ancestor": {
+              "id": "HP:0000492",
+              "label": "Abnormal eyelid morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0040019",
+              "label": "Finger clinodactyly"
+            },
+            "diseaseTerm": {
+              "id": "HP:0001212",
+              "label": "Prominent fingertip pads"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:617412",
+              "raw": "2/2"
+            },
+            "ancestor": {
+              "id": "HP:0001167",
+              "label": "Abnormal finger morphology"
+            }
+          }
+        ],
+        "unmatched": [
+          {
+            "id": "HP:0000437",
+            "label": "Depressed nasal tip"
+          },
+          {
+            "id": "HP:0011626",
+            "label": "Scimitar anomaly"
+          }
+        ],
+        "notReported": [
+          {
+            "term": {
+              "id": "HP:0000252",
+              "label": "Microcephaly"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:617412",
+              "raw": "2/2"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000527",
+              "label": "Long eyelashes"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:617412",
+              "raw": "2/2"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000954",
+              "label": "Single transverse palmar crease"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:617412",
+              "raw": "2/2"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000176",
+              "label": "Submucous cleft hard palate"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617412",
+              "raw": "1/2"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000179",
+              "label": "Thick lower lip vermilion"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617412",
+              "raw": "1/2"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000193",
+              "label": "Bifid uvula"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617412",
+              "raw": "1/2"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000194",
+              "label": "Open mouth"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617412",
+              "raw": "1/2"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000218",
+              "label": "High palate"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617412",
+              "raw": "1/2"
+            }
+          }
+        ],
+        "contradicted": [],
+        "categories": [
+          "Ear",
+          "Eye",
+          "Growth",
+          "Head and neck",
+          "Inheritance",
+          "Limbs",
+          "Musculature",
+          "Nervous System",
+          "Skin, Hair, and Nails"
+        ],
+        "genes": [
+          {
+            "id": "NCBIGene:6228",
+            "symbol": "RPS23"
+          }
+        ],
+        "links": {
+          "monarch": "https://monarchinitiative.org/MONDO:0044311",
+          "omim": "https://omim.org/entry/617412"
+        },
+        "sources": [
+          "monarch-semsim",
+          "hpo-annotations"
+        ]
+      },
+      {
+        "rank": 3,
+        "diseaseId": "OMIM:618147",
+        "mondoId": "MONDO:0029143",
+        "name": "intellectual developmental disorder with hypertelorism and distinctive facies",
+        "overlap": "strong",
+        "score": 12.805034872090776,
+        "matched": [
+          {
+            "patientTerm": {
+              "id": "HP:0000400",
+              "label": "Macrotia"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000358",
+              "label": "Posteriorly rotated ears"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            },
+            "ancestor": {
+              "id": "HP:0000377",
+              "label": "Abnormal pinna morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000431",
+              "label": "Wide nasal bridge"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000431",
+              "label": "Wide nasal bridge"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": null,
+              "source": "OMIM:618147"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000437",
+              "label": "Depressed nasal tip"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000455",
+              "label": "Broad nasal tip"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            },
+            "ancestor": {
+              "id": "HP:0000436",
+              "label": "Abnormal nasal tip morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000637",
+              "label": "Long palpebral fissure"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000637",
+              "label": "Long palpebral fissure"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0001212",
+              "label": "Prominent fingertip pads"
+            },
+            "diseaseTerm": {
+              "id": "HP:0001182",
+              "label": "Tapered finger"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:618147",
+              "raw": "1/4"
+            },
+            "ancestor": {
+              "id": "HP:0001167",
+              "label": "Abnormal finger morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0001263",
+              "label": "Global developmental delay"
+            },
+            "diseaseTerm": {
+              "id": "HP:0001263",
+              "label": "Global developmental delay"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0002553",
+              "label": "Highly arched eyebrow"
+            },
+            "diseaseTerm": {
+              "id": "HP:0045074",
+              "label": "Thin eyebrow"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            },
+            "ancestor": {
+              "id": "HP:0000534",
+              "label": "Abnormal eyebrow morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0005338",
+              "label": "Sparse lateral eyebrow"
+            },
+            "diseaseTerm": {
+              "id": "HP:0045074",
+              "label": "Thin eyebrow"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            },
+            "ancestor": {
+              "id": "HP:0100840",
+              "label": "Aplasia/Hypoplasia of the eyebrow"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0007655",
+              "label": "Eversion of lateral third of lower eyelids"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000637",
+              "label": "Long palpebral fissure"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            },
+            "ancestor": {
+              "id": "HP:0000492",
+              "label": "Abnormal eyelid morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0040019",
+              "label": "Finger clinodactyly"
+            },
+            "diseaseTerm": {
+              "id": "HP:0004209",
+              "label": "Clinodactyly of the 5th finger"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:618147",
+              "raw": "1/4"
+            },
+            "ancestor": {
+              "id": "HP:0040019",
+              "label": "Finger clinodactyly"
+            }
+          }
+        ],
+        "unmatched": [
+          {
+            "id": "HP:0000592",
+            "label": "Blue sclerae"
+          },
+          {
+            "id": "HP:0001252",
+            "label": "Hypotonia"
+          },
+          {
+            "id": "HP:0004322",
+            "label": "Short stature"
+          },
+          {
+            "id": "HP:0011626",
+            "label": "Scimitar anomaly"
+          }
+        ],
+        "notReported": [
+          {
+            "term": {
+              "id": "HP:0000219",
+              "label": "Thin upper lip vermilion"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000316",
+              "label": "Hypertelorism"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000369",
+              "label": "Low-set ears"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000750",
+              "label": "Delayed speech and language development"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0002194",
+              "label": "Delayed gross motor development"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0009928",
+              "label": "Thick nasal alae"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0010862",
+              "label": "Delayed fine motor development"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "4/4"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0012434",
+              "label": "Delayed early-childhood social milestone development"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:618147",
+              "raw": "3/3"
+            }
+          }
+        ],
+        "contradicted": [],
+        "categories": [
+          "Ear",
+          "Eye",
+          "Head and neck",
+          "Inheritance",
+          "Limbs",
+          "Nervous System"
+        ],
+        "genes": [
+          {
+            "id": "NCBIGene:8812",
+            "symbol": "CCNK"
+          }
+        ],
+        "links": {
+          "monarch": "https://monarchinitiative.org/MONDO:0029143",
+          "omim": "https://omim.org/entry/618147"
+        },
+        "sources": [
+          "monarch-semsim",
+          "hpo-annotations"
+        ]
+      },
+      {
+        "rank": 4,
+        "diseaseId": "ORPHA:686482",
+        "mondoId": "MONDO:0060596",
+        "name": "BPTF-related intellectual disability-facial dysmorphism-skeletal anomalies syndrome",
+        "overlap": "strong",
+        "score": 12.664854140261742,
+        "matched": [
+          {
+            "patientTerm": {
+              "id": "HP:0000431",
+              "label": "Wide nasal bridge"
+            },
+            "diseaseTerm": {
+              "id": "HP:0033142",
+              "label": "Long nasal bridge"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:617755",
+              "raw": "2/10"
+            },
+            "ancestor": {
+              "id": "HP:0000422",
+              "label": "Abnormal nasal bridge morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000437",
+              "label": "Depressed nasal tip"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000455",
+              "label": "Broad nasal tip"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:617755",
+              "raw": "1/10"
+            },
+            "ancestor": {
+              "id": "HP:0000436",
+              "label": "Abnormal nasal tip morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000637",
+              "label": "Long palpebral fissure"
+            },
+            "diseaseTerm": {
+              "id": "HP:0012745",
+              "label": "Short palpebral fissure"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:617755",
+              "raw": "2/10"
+            },
+            "ancestor": {
+              "id": "HP:0200007",
+              "label": "Abnormal size of the palpebral fissures"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0001252",
+              "label": "Hypotonia"
+            },
+            "diseaseTerm": {
+              "id": "HP:0001290",
+              "label": "Generalized hypotonia"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617755",
+              "raw": "5/10"
+            },
+            "ancestor": {
+              "id": "HP:0001252",
+              "label": "Hypotonia"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0001263",
+              "label": "Global developmental delay"
+            },
+            "diseaseTerm": {
+              "id": "HP:0001263",
+              "label": "Global developmental delay"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:617755",
+              "raw": "10/10"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0002553",
+              "label": "Highly arched eyebrow"
+            },
+            "diseaseTerm": {
+              "id": "HP:0011229",
+              "label": "Broad eyebrow"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:617755",
+              "raw": "2/10"
+            },
+            "ancestor": {
+              "id": "HP:0000534",
+              "label": "Abnormal eyebrow morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0004322",
+              "label": "Short stature"
+            },
+            "diseaseTerm": {
+              "id": "HP:0004322",
+              "label": "Short stature"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617755",
+              "raw": "4/10"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0005338",
+              "label": "Sparse lateral eyebrow"
+            },
+            "diseaseTerm": {
+              "id": "HP:0011229",
+              "label": "Broad eyebrow"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:617755",
+              "raw": "2/10"
+            },
+            "ancestor": {
+              "id": "HP:0000534",
+              "label": "Abnormal eyebrow morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0007655",
+              "label": "Eversion of lateral third of lower eyelids"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000286",
+              "label": "Epicanthus"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:617755",
+              "raw": "1/10"
+            },
+            "ancestor": {
+              "id": "HP:0000492",
+              "label": "Abnormal eyelid morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0040019",
+              "label": "Finger clinodactyly"
+            },
+            "diseaseTerm": {
+              "id": "HP:0004209",
+              "label": "Clinodactyly of the 5th finger"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617755",
+              "raw": "3/10"
+            },
+            "ancestor": {
+              "id": "HP:0040019",
+              "label": "Finger clinodactyly"
+            }
+          }
+        ],
+        "unmatched": [
+          {
+            "id": "HP:0000400",
+            "label": "Macrotia"
+          },
+          {
+            "id": "HP:0000592",
+            "label": "Blue sclerae"
+          },
+          {
+            "id": "HP:0001212",
+            "label": "Prominent fingertip pads"
+          },
+          {
+            "id": "HP:0011626",
+            "label": "Scimitar anomaly"
+          }
+        ],
+        "notReported": [
+          {
+            "term": {
+              "id": "HP:0000750",
+              "label": "Delayed speech and language development"
+            },
+            "frequency": {
+              "label": "Obligate",
+              "source": "OMIM:617755",
+              "raw": "10/10"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0001270",
+              "label": "Motor delay"
+            },
+            "frequency": {
+              "label": "Very frequent",
+              "source": "OMIM:617755",
+              "raw": "8/10"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000252",
+              "label": "Microcephaly"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617755",
+              "raw": "7/9"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000347",
+              "label": "Micrognathia"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617755",
+              "raw": "3/10"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000448",
+              "label": "Prominent nose"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617755",
+              "raw": "7/10"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0002500",
+              "label": "Abnormal cerebral white matter morphology"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617755",
+              "raw": "3/10"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0010055",
+              "label": "Broad hallux"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:617755",
+              "raw": "5/10"
+            }
+          }
+        ],
+        "contradicted": [],
+        "categories": [
+          "Eye",
+          "Growth",
+          "Head and neck",
+          "Inheritance",
+          "Limbs",
+          "Musculature",
+          "Nervous System"
+        ],
+        "genes": [
+          {
+            "id": "NCBIGene:2186",
+            "symbol": "BPTF"
+          }
+        ],
+        "links": {
+          "monarch": "https://monarchinitiative.org/MONDO:0060596",
+          "orphanet": "https://www.orpha.net/en/disease/detail/686482",
+          "omim": "https://omim.org/entry/617755"
+        },
+        "sources": [
+          "monarch-semsim",
+          "hpo-annotations",
+          "orphadata"
+        ]
+      },
+      {
+        "rank": 5,
+        "diseaseId": "ORPHA:199318",
+        "mondoId": "MONDO:0012774",
+        "name": "15q13.3 microdeletion syndrome",
+        "overlap": "strong",
+        "score": 12.60287380265526,
+        "matched": [
+          {
+            "patientTerm": {
+              "id": "HP:0000400",
+              "label": "Macrotia"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000400",
+              "label": "Macrotia"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Occasional",
+              "source": "ORPHA:199318"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000431",
+              "label": "Wide nasal bridge"
+            },
+            "diseaseTerm": {
+              "id": "HP:0005274",
+              "label": "Prominent nasal tip"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "ORPHA:199318"
+            },
+            "ancestor": {
+              "id": "HP:0005105",
+              "label": "Abnormal nasal morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000437",
+              "label": "Depressed nasal tip"
+            },
+            "diseaseTerm": {
+              "id": "HP:0005274",
+              "label": "Prominent nasal tip"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "ORPHA:199318"
+            },
+            "ancestor": {
+              "id": "HP:0000436",
+              "label": "Abnormal nasal tip morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000592",
+              "label": "Blue sclerae"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000316",
+              "label": "Hypertelorism"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:612001",
+              "raw": "3/19"
+            },
+            "ancestor": {
+              "id": "HP:0012372",
+              "label": "Abnormal eye morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0000637",
+              "label": "Long palpebral fissure"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000494",
+              "label": "Downslanted palpebral fissures"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "ORPHA:199318"
+            },
+            "ancestor": {
+              "id": "HP:0008050",
+              "label": "Abnormality of the palpebral fissures"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0001252",
+              "label": "Hypotonia"
+            },
+            "diseaseTerm": {
+              "id": "HP:0001252",
+              "label": "Hypotonia"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Occasional",
+              "source": "ORPHA:199318"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0001263",
+              "label": "Global developmental delay"
+            },
+            "diseaseTerm": {
+              "id": "HP:0001263",
+              "label": "Global developmental delay"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Frequent",
+              "source": "ORPHA:199318"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0002553",
+              "label": "Highly arched eyebrow"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000664",
+              "label": "Synophrys"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:612001",
+              "raw": "3/19"
+            },
+            "ancestor": {
+              "id": "HP:0000534",
+              "label": "Abnormal eyebrow morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0004322",
+              "label": "Short stature"
+            },
+            "diseaseTerm": {
+              "id": "HP:0004322",
+              "label": "Short stature"
+            },
+            "via": "exact",
+            "frequency": {
+              "label": "Occasional",
+              "source": "ORPHA:199318"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0005338",
+              "label": "Sparse lateral eyebrow"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000664",
+              "label": "Synophrys"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "OMIM:612001",
+              "raw": "3/19"
+            },
+            "ancestor": {
+              "id": "HP:0000534",
+              "label": "Abnormal eyebrow morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0007655",
+              "label": "Eversion of lateral third of lower eyelids"
+            },
+            "diseaseTerm": {
+              "id": "HP:0000286",
+              "label": "Epicanthus"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "ORPHA:199318"
+            },
+            "ancestor": {
+              "id": "HP:0000492",
+              "label": "Abnormal eyelid morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0011626",
+              "label": "Scimitar anomaly"
+            },
+            "diseaseTerm": {
+              "id": "HP:0030680",
+              "label": "Abnormal cardiovascular system morphology"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "ORPHA:199318"
+            },
+            "ancestor": {
+              "id": "HP:0030680",
+              "label": "Abnormal cardiovascular system morphology"
+            }
+          },
+          {
+            "patientTerm": {
+              "id": "HP:0040019",
+              "label": "Finger clinodactyly"
+            },
+            "diseaseTerm": {
+              "id": "HP:0004209",
+              "label": "Clinodactyly of the 5th finger"
+            },
+            "via": "ancestor",
+            "frequency": {
+              "label": "Occasional",
+              "source": "ORPHA:199318"
+            },
+            "ancestor": {
+              "id": "HP:0040019",
+              "label": "Finger clinodactyly"
+            }
+          }
+        ],
+        "unmatched": [
+          {
+            "id": "HP:0001212",
+            "label": "Prominent fingertip pads"
+          }
+        ],
+        "notReported": [
+          {
+            "term": {
+              "id": "HP:0000377",
+              "label": "Abnormal pinna morphology"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:612001",
+              "raw": "6/19"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0000708",
+              "label": "Atypical behavior"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:612001",
+              "raw": "10/19"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0001249",
+              "label": "Intellectual disability"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "ORPHA:199318"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0001999",
+              "label": "Abnormal facial shape"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:612001"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0002342",
+              "label": "Moderate intellectual disability"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:612001",
+              "raw": "6/17"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0003829",
+              "label": "Typified by incomplete penetrance"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:612001",
+              "raw": "50%"
+            }
+          },
+          {
+            "term": {
+              "id": "HP:0008050",
+              "label": "Abnormality of the palpebral fissures"
+            },
+            "frequency": {
+              "label": "Frequent",
+              "source": "OMIM:612001",
+              "raw": "7/19"
+            }
+          }
+        ],
+        "contradicted": [],
+        "categories": [
+          "Cardiovascular",
+          "Ear",
+          "Eye",
+          "Growth",
+          "Head and neck",
+          "Inheritance",
+          "Limbs",
+          "Musculature",
+          "Nervous System",
+          "Skin, Hair, and Nails"
+        ],
+        "genes": [
+          {
+            "id": "NCBIGene:1139",
+            "symbol": "CHRNA7"
+          },
+          {
+            "id": "NCBIGene:51621",
+            "symbol": "KLF13"
+          }
+        ],
+        "links": {
+          "monarch": "https://monarchinitiative.org/MONDO:0012774",
+          "orphanet": "https://www.orpha.net/en/disease/detail/199318",
+          "omim": "https://omim.org/entry/612001"
+        },
+        "sources": [
+          "monarch-semsim",
+          "hpo-annotations",
+          "orphadata"
+        ]
+      }
+    ],
+    "dataVersions": {
+      "hpo": "unknown",
+      "monarch": "v3 API",
+      "fetchedAt": "2026-10-24T17:12:59.482Z",
+      "orphanet": "2026-06-23"
+    }
+  }
+}

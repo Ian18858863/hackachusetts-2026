@@ -10,7 +10,7 @@ export const DEFAULT_TIMEOUTS_MS: Readonly<Record<UpstreamName, number>> = {
   hpoSearch: 2000,
   hpoTerm: 2000,
   hpoAnnotation: 3000,
-  monarchSemsim: 8000,
+  monarchSemsim: 10000, // contract v0.1.2 (was 8 s)
   orphadata: 2000,
   pubCaseFinder: 6000,
   clinicalTrials: 6000,

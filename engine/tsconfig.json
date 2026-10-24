@@ -19,7 +19,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
-    "exactOptionalPropertyTypes": true
+    "exactOptionalPropertyTypes": true,
+    "resolveJsonModule": true
   },
   "include": ["*.ts", "data/**/*.ts", "demo/**/*.ts"]
 }

@@ -40,10 +40,18 @@ export function demoRankKey(observed: HpoId[], excluded: HpoId[], limit: number)
   return `${sortedUnique(observed).join(",")}|${sortedUnique(excluded).join(",")}|${limit}`;
 }
 
-/** Recorded /api/rank response for a demoRankKey, or undefined (cache miss). */
+/**
+ * Recorded /api/rank response for a demoRankKey, or undefined (cache miss).
+ * Returned with source "demo" and dataVersions.demoCache = the recording date;
+ * the original dataVersions (including fetchedAt) are kept.
+ */
 export function getDemoRanking(key: string): RankResponse | undefined {
   const hit = Object.hasOwn(RECORDED_RANKINGS, key) ? RECORDED_RANKINGS[key] : undefined;
-  return hit ? structuredClone(hit) : undefined;
+  if (!hit) return undefined;
+  const response = structuredClone(hit.response);
+  response.source = "demo";
+  response.dataVersions.demoCache = hit.recordedAt.slice(0, 10);
+  return response;
 }
 
 /** Recorded /api/next-questions response for a demoRankKey, or undefined (cache miss). */

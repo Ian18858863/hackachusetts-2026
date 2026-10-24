@@ -191,7 +191,7 @@ describe("groundTerms: inputs, upstream and runtime", () => {
   it("reports dataVersions from the injected clock", async () => {
     const { deps } = mockHpo();
     const r = await groundTerms(TEXT, [], deps);
-    expect(r.dataVersions).toEqual({ hpo: "unknown", fetchedAt: "2026-10-24T16:30:00.000Z" });
+    expect(r.dataVersions).toEqual({ hpo: "2026-09-01", fetchedAt: "2026-10-24T16:30:00.000Z" });
   });
 });
 

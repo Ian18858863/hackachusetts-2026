@@ -8,12 +8,30 @@ import type { DataVersions, EngineDeps, FrequencyLabel, HpoId, HpoTerm } from ".
 const JAX_BASE = "https://ontology.jax.org/api/hp";
 
 /**
- * HPO release reported in dataVersions.hpo. The JAX API does not expose the
- * release it serves (checked 2026-10-24: no version field in term or search
- * JSON, /api/hp/version is 404), so this stays "unknown" until open question 6
- * is decided.
+ * HPO release reported in dataVersions.hpo (open question 6).
+ *
+ * latest obophenotype release as of 2026-10-24, served via the JAX ontology
+ * API; checked by the GitHub releases API.
+ *
+ * Evidence, 2026-10-24 14:43-14:44 ET:
+ * - GET https://api.github.com/repos/obophenotype/human-phenotype-ontology/releases/latest
+ *   -> tag v2026-09-01, "2026-09-01 Release", published 2026-09-03T06:08:39Z,
+ *   not a draft or prerelease.
+ * - Its release notes list 69 HPO terms added in that release (e.g.
+ *   HP:6001509, HP:6001524). GET https://ontology.jax.org/api/hp/terms/{id}
+ *   returned 200 with a name for all 69, so JAX serves at least v2026-09-01;
+ *   with no later release published, that is v2026-09-01.
+ *
+ * Limitation: this is indirect. The JAX API itself has no version field
+ * (term and search JSON, response headers) and /api/hp/version, /api/version,
+ * /api/hp/info, /api/hp/release and /api/hp/metadata answer 404, so JAX could
+ * in principle serve an unreleased build newer than v2026-09-01. Re-check
+ * when a newer HPO release appears.
+ *
+ * Recordings in engine/demo/recorded/ were made before this check and keep
+ * the "unknown" they were recorded with.
  */
-export const HPO_VERSION = "unknown";
+export const HPO_VERSION = "2026-09-01";
 
 export const HPO_ID_RE = /^HP:\d{7}$/;
 
