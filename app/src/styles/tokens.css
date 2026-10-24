@@ -151,8 +151,10 @@
 
   --color-focus: var(--focus);
   --color-overlay: rgb(20 22 27 / 0.4);
-  --color-skeleton: var(--skeleton);
-  --color-skeleton-shine: var(--skeleton-shine);
+  /* Loading blocks are non-text UI: #c5c8ce is 1.68:1 on --bg and 1.55:1 on --surface (T38), so a
+     loading list reads as loading on white. --skeleton itself stays, it also feeds other tokens. */
+  --color-skeleton: #c5c8ce;
+  --color-skeleton-shine: #dde0e5;
   --color-highlight: var(--accent-soft);
 
   --color-fill-primary: var(--ink-hover);
