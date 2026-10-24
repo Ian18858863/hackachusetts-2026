@@ -53,8 +53,8 @@ function toTrial(study: unknown): Trial | null {
 
 interface SearchResult {
   relevant: Trial[];
-  /** Upstream count minus the studies dropped as irrelevant on the fetched page (an estimate). */
-  relevantTotal: number;
+  /** ClinicalTrials.gov totalCount for this query, unchanged (contract section 7.6: the upstream count). */
+  upstreamTotal: number;
 }
 
 /** One ClinicalTrials.gov call, filtered to studies whose conditions match `diseaseName`. */
@@ -73,7 +73,7 @@ async function searchOnce(cond: string, diseaseName: string, deps: FallbackDeps)
   const relevant = all.filter((t) => isRelevantStudy(diseaseName, t.conditions));
   const upstreamTotal =
     typeof body.totalCount === "number" && Number.isFinite(body.totalCount) ? body.totalCount : all.length;
-  return { relevant, relevantTotal: Math.max(relevant.length, upstreamTotal - (all.length - relevant.length)) };
+  return { relevant, upstreamTotal };
 }
 
 /**
@@ -85,8 +85,7 @@ async function searchOnce(cond: string, diseaseName: string, deps: FallbackDeps)
  * Example (2026-10-24): "Niemann-Pick disease, type C1" returned only an
  * Alzheimer's study that matched the drug name NPC-1; it is filtered out and
  * "Niemann-Pick disease type C" supplies the relevant studies.
- * The contract has no per-study query field, so `query.condition` echoes the
- * broader search when it was used.
+ * `query.condition` always echoes the requested condition (contract section 7.6).
  */
 export async function fallbackSearchTrials(
   req: { condition: string; ids: string[] },
@@ -95,8 +94,7 @@ export async function fallbackSearchTrials(
   const now = deps.now ?? (() => new Date());
   const exact = await searchOnce(req.condition, req.condition, deps);
   let studies = exact.relevant.slice(0, PAGE_SIZE);
-  let total = exact.relevantTotal;
-  let usedCondition = req.condition;
+  let total = exact.upstreamTotal;
 
   const broader = studies.length < MIN_RELEVANT ? broaderCondition(req.condition) : null;
   if (broader !== null) {
@@ -104,9 +102,12 @@ export async function fallbackSearchTrials(
     const seen = new Set(studies.map((t) => t.nctId));
     const added = wide.relevant.filter((t) => !seen.has(t.nctId));
     if (added.length > 0) {
+      // `total` is the upstream count of the query whose results are shown.
+      // Only broader results shown: the broader query's count. Both queries
+      // contribute: the exact query's count, since the two counts overlap and
+      // cannot be added.
+      if (studies.length === 0) total = wide.upstreamTotal;
       studies = [...studies, ...added].slice(0, PAGE_SIZE);
-      total = Math.max(studies.length, wide.relevantTotal, exact.relevantTotal);
-      usedCondition = broader;
     }
   }
 
@@ -115,7 +116,7 @@ export async function fallbackSearchTrials(
     version: "0.1",
     source: "live",
     studies,
-    query: { condition: usedCondition, ids: req.ids, status: "RECRUITING" },
+    query: { condition: req.condition, ids: req.ids, status: "RECRUITING" },
     total,
     fetchedAt,
     dataVersions: { fetchedAt },

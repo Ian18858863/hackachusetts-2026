@@ -30,11 +30,20 @@ export function distinctiveWords(name: string): Set<string> {
   return new Set(words);
 }
 
-/** True when at least one listed condition shares a distinctive word with the disease name. */
+/**
+ * True when at least one listed condition contains ALL distinctive words of the
+ * disease name. One shared word is not enough: "pick" alone would accept Pick
+ * disease (frontotemporal dementia) for Niemann-Pick, and "dystrophy" alone
+ * would accept Becker or limb-girdle studies for Duchenne.
+ * A name with no distinctive words cannot be checked, so every study is kept.
+ */
 export function isRelevantStudy(diseaseName: string, conditions: string[]): boolean {
   const wanted = distinctiveWords(diseaseName);
-  if (wanted.size === 0) return false;
-  return conditions.some((c) => [...distinctiveWords(c)].some((w) => wanted.has(w)));
+  if (wanted.size === 0) return true;
+  return conditions.some((c) => {
+    const have = distinctiveWords(c);
+    return [...wanted].every((w) => have.has(w));
+  });
 }
 
 /**
