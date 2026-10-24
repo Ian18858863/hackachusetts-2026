@@ -1,4 +1,8 @@
 // TEMPORARY recorded demo cache for demo-npc1 (T18e), Ian-owned fallback layer.
+// Since T18q it also holds one /api/rank recording each for demo-marfan and
+// demo-cdls (recorded 2026-10-24T20:00Z UTC from production, engine path),
+// because the engine records rankings only for demo-npc1, demo-dmd and
+// demo-kabuki and a Monarch timeout otherwise returned 504 for those two.
 //
 // One real /api/rank response for the exact demo-npc1 term set of
 // docs/CONTRACT.md section 9.1 (12 observed ids, excluded HP:0002315, limit 5),
@@ -1846,9 +1850,2564 @@ function normalizeCondition(condition: string): string {
   return condition.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
+/** demo-marfan request as the app sends it: non-negated / negated ids of the engine's prepared extraction (engine/demo/cases.ts), limit 5. */
+const MARFAN_OBSERVED: readonly HpoId[] = ["HP:0001166","HP:0000218","HP:0001065","HP:0001083","HP:0000268","HP:0000278","HP:0000490","HP:0012499","HP:0004959"];
+const MARFAN_EXCLUDED: readonly HpoId[] = ["HP:0002107","HP:0002650"];
+
+/** Recorded POST /api/rank response for demo-marfan (T18q): production https://hackachusetts-2026.pages.dev (6c89a84), HTTP 200, source "live", X-RDD-Path: engine; recorded at 2026-10-24T20:00Z UTC (body fetchedAt 2026-10-24T19:57:58.178Z, a Workers cache hit). Pasted unchanged. */
+const RECORDED_RANK_MARFAN: RankResponse = {
+  "version": "0.1",
+  "source": "live",
+  "candidates": [
+    {
+      "rank": 1,
+      "diseaseId": "OMIM:614816",
+      "mondoId": "MONDO:0013897",
+      "name": "Loeys-Dietz syndrome 4",
+      "overlap": "partial",
+      "score": 14.425018751127952,
+      "matched": [
+        {
+          "patientTerm": {
+            "id": "HP:0000218",
+            "label": "High palate"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000218",
+            "label": "High palate"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:614816",
+            "raw": "44/73"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0000268",
+            "label": "Dolichocephaly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000268",
+            "label": "Dolichocephaly"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:614816",
+            "raw": "1/3"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0000278",
+            "label": "Retrognathia"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000278",
+            "label": "Retrognathia"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:614816",
+            "raw": "13/28"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0000490",
+            "label": "Deeply set eye"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000490",
+            "label": "Deeply set eye"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Excluded",
+            "source": "OMIM:614816",
+            "raw": "0/13"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001065",
+            "label": "Striae distensae"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001065",
+            "label": "Striae distensae"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:614816",
+            "raw": "24/70"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001083",
+            "label": "Ectopia lentis"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001083",
+            "label": "Ectopia lentis"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Excluded",
+            "source": "OMIM:614816",
+            "raw": "0/27"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001166",
+            "label": "Arachnodactyly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001166",
+            "label": "Arachnodactyly"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:614816",
+            "raw": "35/66"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0004959",
+            "label": "Descending thoracic aorta aneurysm"
+          },
+          "diseaseTerm": {
+            "id": "HP:0002616",
+            "label": "Aortic root aneurysm"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Very frequent",
+            "source": "OMIM:614816",
+            "raw": "23/25"
+          },
+          "ancestor": {
+            "id": "HP:0012727",
+            "label": "Thoracic aortic aneurysm"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0012499",
+            "label": "Descending aortic dissection"
+          },
+          "diseaseTerm": {
+            "id": "HP:0002647",
+            "label": "Aortic dissection"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Occasional",
+            "source": "OMIM:614816",
+            "raw": "9/60"
+          },
+          "ancestor": {
+            "id": "HP:0002647",
+            "label": "Aortic dissection"
+          }
+        }
+      ],
+      "unmatched": [],
+      "notReported": [
+        {
+          "term": {
+            "id": "HP:0000006",
+            "label": "Autosomal dominant inheritance"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:614816",
+            "raw": "20/20"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000193",
+            "label": "Bifid uvula"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:614816",
+            "raw": "3/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0004970",
+            "label": "Ascending tubular aorta aneurysm"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:614816",
+            "raw": "3/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0012532",
+            "label": "Chronic pain"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:614816",
+            "raw": "2/2"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000023",
+            "label": "Inguinal hernia"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:614816",
+            "raw": "26/42"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000098",
+            "label": "Tall stature"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:614816",
+            "raw": "33/59"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000494",
+            "label": "Downslanted palpebral fissures"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:614816",
+            "raw": "10/28"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000766",
+            "label": "Abnormal sternum morphology"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:614816",
+            "raw": "16/31"
+          }
+        }
+      ],
+      "contradicted": [
+        {
+          "term": {
+            "id": "HP:0002650",
+            "label": "Scoliosis"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:614816",
+            "raw": "25/74"
+          }
+        }
+      ],
+      "categories": [
+        "Blood and blood-forming tissues",
+        "Cardiovascular",
+        "Connective tissue",
+        "Constitutional Symptom",
+        "Digestive System",
+        "Eye",
+        "Growth",
+        "Head and neck",
+        "Inheritance",
+        "Limbs",
+        "Nervous System",
+        "Other",
+        "Respiratory System",
+        "Skeletal system",
+        "Skin, Hair, and Nails"
+      ],
+      "genes": [
+        {
+          "id": "NCBIGene:7042",
+          "symbol": "TGFB2"
+        }
+      ],
+      "links": {
+        "monarch": "https://monarchinitiative.org/MONDO:0013897",
+        "omim": "https://omim.org/entry/614816"
+      },
+      "sources": [
+        "monarch-semsim",
+        "hpo-annotations"
+      ]
+    },
+    {
+      "rank": 2,
+      "diseaseId": "ORPHA:622925",
+      "mondoId": "MONDO:0010515",
+      "name": "X-linked severe syndromic thoracic aortic aneurysm and dissection",
+      "overlap": "strong",
+      "score": 13.666337147635847,
+      "matched": [
+        {
+          "patientTerm": {
+            "id": "HP:0000218",
+            "label": "High palate"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000218",
+            "label": "High palate"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:300989",
+            "raw": "2/5"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0000268",
+            "label": "Dolichocephaly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000268",
+            "label": "Dolichocephaly"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:300989",
+            "raw": "4/7"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0000278",
+            "label": "Retrognathia"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000272",
+            "label": "Malar flattening"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Very frequent",
+            "source": "OMIM:300989",
+            "raw": "7/8"
+          },
+          "ancestor": {
+            "id": "HP:0011821",
+            "label": "Abnormal facial skeleton morphology"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0000490",
+            "label": "Deeply set eye"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000316",
+            "label": "Hypertelorism"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:300989",
+            "raw": "8/11"
+          },
+          "ancestor": {
+            "id": "HP:0100886",
+            "label": "Abnormality of globe location"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001065",
+            "label": "Striae distensae"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001065",
+            "label": "Striae distensae"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:300989",
+            "raw": "4/9"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001083",
+            "label": "Ectopia lentis"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000316",
+            "label": "Hypertelorism"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:300989",
+            "raw": "8/11"
+          },
+          "ancestor": {
+            "id": "HP:0012372",
+            "label": "Abnormal eye morphology"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001166",
+            "label": "Arachnodactyly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001166",
+            "label": "Arachnodactyly"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:300989",
+            "raw": "4/10"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0004959",
+            "label": "Descending thoracic aorta aneurysm"
+          },
+          "diseaseTerm": {
+            "id": "HP:0002616",
+            "label": "Aortic root aneurysm"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Very frequent",
+            "source": "OMIM:300989",
+            "raw": "13/15"
+          },
+          "ancestor": {
+            "id": "HP:0012727",
+            "label": "Thoracic aortic aneurysm"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0012499",
+            "label": "Descending aortic dissection"
+          },
+          "diseaseTerm": {
+            "id": "HP:0002647",
+            "label": "Aortic dissection"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Occasional",
+            "source": "OMIM:300989",
+            "raw": "3/14"
+          },
+          "ancestor": {
+            "id": "HP:0002647",
+            "label": "Aortic dissection"
+          }
+        }
+      ],
+      "unmatched": [],
+      "notReported": [
+        {
+          "term": {
+            "id": "HP:0002119",
+            "label": "Ventriculomegaly"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:300989",
+            "raw": "3/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0004482",
+            "label": "Relative macrocephaly"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:300989",
+            "raw": "3/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000494",
+            "label": "Downslanted palpebral fissures"
+          },
+          "frequency": {
+            "label": "Very frequent",
+            "source": "OMIM:300989",
+            "raw": "6/7"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0001382",
+            "label": "Joint hypermobility"
+          },
+          "frequency": {
+            "label": "Very frequent",
+            "source": "OMIM:300989",
+            "raw": "8/10"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000212",
+            "label": "Gingival overgrowth"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:300989",
+            "raw": "2/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000520",
+            "label": "Proptosis"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:300989",
+            "raw": "5/8"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000766",
+            "label": "Abnormal sternum morphology"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:300989",
+            "raw": "4/10"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000998",
+            "label": "Hypertrichosis"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:300989",
+            "raw": "2/3"
+          }
+        }
+      ],
+      "contradicted": [],
+      "categories": [
+        "Blood and blood-forming tissues",
+        "Cardiovascular",
+        "Connective tissue",
+        "Eye",
+        "Growth",
+        "Head and neck",
+        "Inheritance",
+        "Limbs",
+        "Nervous System",
+        "Other",
+        "Skeletal system",
+        "Skin, Hair, and Nails"
+      ],
+      "genes": [
+        {
+          "id": "NCBIGene:633",
+          "symbol": "BGN"
+        }
+      ],
+      "links": {
+        "monarch": "https://monarchinitiative.org/MONDO:0010515",
+        "orphanet": "https://www.orpha.net/en/disease/detail/622925",
+        "omim": "https://omim.org/entry/300989"
+      },
+      "sources": [
+        "monarch-semsim",
+        "hpo-annotations",
+        "orphadata"
+      ]
+    },
+    {
+      "rank": 3,
+      "diseaseId": "ORPHA:99715",
+      "mondoId": "MONDO:0011431",
+      "name": "MASS syndrome",
+      "overlap": "partial",
+      "score": 13.504668784549956,
+      "matched": [
+        {
+          "patientTerm": {
+            "id": "HP:0000268",
+            "label": "Dolichocephaly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000768",
+            "label": "Pectus carinatum"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Occasional",
+            "source": "OMIM:604308",
+            "raw": "1/4"
+          },
+          "ancestor": {
+            "id": "HP:0009121",
+            "label": "Abnormal axial skeleton morphology"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0000278",
+            "label": "Retrognathia"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000768",
+            "label": "Pectus carinatum"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Occasional",
+            "source": "OMIM:604308",
+            "raw": "1/4"
+          },
+          "ancestor": {
+            "id": "HP:0009121",
+            "label": "Abnormal axial skeleton morphology"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0000490",
+            "label": "Deeply set eye"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001083",
+            "label": "Ectopia lentis"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Excluded",
+            "source": "OMIM:604308",
+            "raw": "0/3"
+          },
+          "ancestor": {
+            "id": "HP:0012372",
+            "label": "Abnormal eye morphology"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001065",
+            "label": "Striae distensae"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001065",
+            "label": "Striae distensae"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:604308",
+            "raw": "5/7"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001083",
+            "label": "Ectopia lentis"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001083",
+            "label": "Ectopia lentis"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Excluded",
+            "source": "OMIM:604308",
+            "raw": "0/3"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001166",
+            "label": "Arachnodactyly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001166",
+            "label": "Arachnodactyly"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:604308",
+            "raw": "4/4"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0004959",
+            "label": "Descending thoracic aorta aneurysm"
+          },
+          "diseaseTerm": {
+            "id": "HP:0004942",
+            "label": "Aortic aneurysm"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:604308",
+            "raw": "7/7"
+          },
+          "ancestor": {
+            "id": "HP:0004942",
+            "label": "Aortic aneurysm"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0012499",
+            "label": "Descending aortic dissection"
+          },
+          "diseaseTerm": {
+            "id": "HP:0004933",
+            "label": "Ascending aortic dissection"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Excluded",
+            "source": "OMIM:604308",
+            "raw": "0/7"
+          },
+          "ancestor": {
+            "id": "HP:0002647",
+            "label": "Aortic dissection"
+          }
+        }
+      ],
+      "unmatched": [
+        {
+          "id": "HP:0000218",
+          "label": "High palate"
+        }
+      ],
+      "notReported": [
+        {
+          "term": {
+            "id": "HP:0001519",
+            "label": "Disproportionate tall stature"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:604308",
+            "raw": "3/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0001634",
+            "label": "Mitral valve prolapse"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:604308",
+            "raw": "3/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0100775",
+            "label": "Dural ectasia"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:604308",
+            "raw": "3/4"
+          }
+        }
+      ],
+      "contradicted": [],
+      "categories": [
+        "Cardiovascular",
+        "Eye",
+        "Growth",
+        "Inheritance",
+        "Limbs",
+        "Nervous System",
+        "Skeletal system",
+        "Skin, Hair, and Nails"
+      ],
+      "genes": [
+        {
+          "id": "NCBIGene:2200",
+          "symbol": "FBN1"
+        }
+      ],
+      "links": {
+        "monarch": "https://monarchinitiative.org/MONDO:0011431",
+        "orphanet": "https://www.orpha.net/en/disease/detail/99715",
+        "omim": "https://omim.org/entry/604308"
+      },
+      "sources": [
+        "monarch-semsim",
+        "hpo-annotations",
+        "orphadata"
+      ]
+    },
+    {
+      "rank": 4,
+      "diseaseId": "OMIM:129600",
+      "mondoId": "MONDO:0007514",
+      "name": "ectopia lentis 1, isolated, autosomal dominant",
+      "overlap": "strong",
+      "score": 13.155902476703044,
+      "matched": [
+        {
+          "patientTerm": {
+            "id": "HP:0000218",
+            "label": "High palate"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000218",
+            "label": "High palate"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Occasional",
+            "source": "OMIM:129600",
+            "raw": "4/37"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0000268",
+            "label": "Dolichocephaly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000767",
+            "label": "Pectus excavatum"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Occasional",
+            "source": "OMIM:129600",
+            "raw": "3/37"
+          },
+          "ancestor": {
+            "id": "HP:0009121",
+            "label": "Abnormal axial skeleton morphology"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0000278",
+            "label": "Retrognathia"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000767",
+            "label": "Pectus excavatum"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Occasional",
+            "source": "OMIM:129600",
+            "raw": "3/37"
+          },
+          "ancestor": {
+            "id": "HP:0009121",
+            "label": "Abnormal axial skeleton morphology"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001065",
+            "label": "Striae distensae"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001065",
+            "label": "Striae distensae"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Occasional",
+            "source": "OMIM:129600",
+            "raw": "6/29"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001083",
+            "label": "Ectopia lentis"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001083",
+            "label": "Ectopia lentis"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Very frequent",
+            "source": "OMIM:129600",
+            "raw": "51/57"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001166",
+            "label": "Arachnodactyly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001166",
+            "label": "Arachnodactyly"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Occasional",
+            "source": "OMIM:129600",
+            "raw": "4/37"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0004959",
+            "label": "Descending thoracic aorta aneurysm"
+          },
+          "diseaseTerm": {
+            "id": "HP:0002616",
+            "label": "Aortic root aneurysm"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Excluded",
+            "source": "OMIM:129600",
+            "raw": "0/44"
+          },
+          "ancestor": {
+            "id": "HP:0012727",
+            "label": "Thoracic aortic aneurysm"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0012499",
+            "label": "Descending aortic dissection"
+          },
+          "diseaseTerm": {
+            "id": "HP:0002616",
+            "label": "Aortic root aneurysm"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Excluded",
+            "source": "OMIM:129600",
+            "raw": "0/44"
+          },
+          "ancestor": {
+            "id": "HP:0001679",
+            "label": "Abnormal aortic morphology"
+          }
+        }
+      ],
+      "unmatched": [
+        {
+          "id": "HP:0000490",
+          "label": "Deeply set eye"
+        }
+      ],
+      "notReported": [
+        {
+          "term": {
+            "id": "HP:0000006",
+            "label": "Autosomal dominant inheritance"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:129600",
+            "raw": "20/20"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000594",
+            "label": "Shallow anterior chamber"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:129600",
+            "raw": "6/6"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0003581",
+            "label": "Adult onset"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:129600",
+            "raw": "5/5"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0030961",
+            "label": "Microspherophakia"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:129600",
+            "raw": "6/6"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000545",
+            "label": "Myopia"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:129600",
+            "raw": "30/38"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0003596",
+            "label": "Middle age onset"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:129600",
+            "raw": "5/7"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0011463",
+            "label": "Childhood onset"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:129600",
+            "raw": "6/8"
+          }
+        }
+      ],
+      "contradicted": [],
+      "categories": [
+        "Cardiovascular",
+        "Clinical course",
+        "Eye",
+        "Growth",
+        "Head and neck",
+        "Inheritance",
+        "Limbs",
+        "Other",
+        "Skeletal system",
+        "Skin, Hair, and Nails"
+      ],
+      "genes": [
+        {
+          "id": "NCBIGene:2200",
+          "symbol": "FBN1"
+        }
+      ],
+      "links": {
+        "monarch": "https://monarchinitiative.org/MONDO:0007514",
+        "omim": "https://omim.org/entry/129600"
+      },
+      "sources": [
+        "monarch-semsim",
+        "hpo-annotations"
+      ]
+    },
+    {
+      "rank": 5,
+      "diseaseId": "ORPHA:300382",
+      "mondoId": "MONDO:0014831",
+      "name": "Progeroid and marfanoid aspect-lipodystrophy syndrome",
+      "overlap": "strong",
+      "score": 13.019466399093128,
+      "matched": [
+        {
+          "patientTerm": {
+            "id": "HP:0000218",
+            "label": "High palate"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000218",
+            "label": "High palate"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0000268",
+            "label": "Dolichocephaly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0030799",
+            "label": "Scaphocephaly"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": null,
+            "source": "OMIM:616914"
+          },
+          "ancestor": {
+            "id": "HP:0000268",
+            "label": "Dolichocephaly"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0000278",
+            "label": "Retrognathia"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000278",
+            "label": "Retrognathia"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "2/2"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0000490",
+            "label": "Deeply set eye"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000490",
+            "label": "Deeply set eye"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001065",
+            "label": "Striae distensae"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000995",
+            "label": "Melanocytic nevus"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          },
+          "ancestor": {
+            "id": "HP:0011355",
+            "label": "Localized skin lesion"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001083",
+            "label": "Ectopia lentis"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001083",
+            "label": "Ectopia lentis"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001166",
+            "label": "Arachnodactyly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001166",
+            "label": "Arachnodactyly"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0004959",
+            "label": "Descending thoracic aorta aneurysm"
+          },
+          "diseaseTerm": {
+            "id": "HP:0002616",
+            "label": "Aortic root aneurysm"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          },
+          "ancestor": {
+            "id": "HP:0012727",
+            "label": "Thoracic aortic aneurysm"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0012499",
+            "label": "Descending aortic dissection"
+          },
+          "diseaseTerm": {
+            "id": "HP:0002616",
+            "label": "Aortic root aneurysm"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          },
+          "ancestor": {
+            "id": "HP:0001679",
+            "label": "Abnormal aortic morphology"
+          }
+        }
+      ],
+      "unmatched": [],
+      "notReported": [
+        {
+          "term": {
+            "id": "HP:0000098",
+            "label": "Tall stature"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000238",
+            "label": "Hydrocephalus"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000256",
+            "label": "Macrocephaly"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000325",
+            "label": "Triangular face"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000337",
+            "label": "Broad forehead"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000418",
+            "label": "Narrow nasal ridge"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000426",
+            "label": "Prominent nasal bridge"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000460",
+            "label": "Narrow nose"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:616914",
+            "raw": "1/1"
+          }
+        }
+      ],
+      "contradicted": [],
+      "categories": [
+        "Blood and blood-forming tissues",
+        "Cardiovascular",
+        "Connective tissue",
+        "Digestive System",
+        "Eye",
+        "Growth",
+        "Head and neck",
+        "Inheritance",
+        "Limbs",
+        "Musculature",
+        "Nervous System",
+        "Prenatal and Birth",
+        "Skeletal system",
+        "Skin, Hair, and Nails"
+      ],
+      "genes": [
+        {
+          "id": "NCBIGene:2200",
+          "symbol": "FBN1"
+        }
+      ],
+      "links": {
+        "monarch": "https://monarchinitiative.org/MONDO:0014831",
+        "orphanet": "https://www.orpha.net/en/disease/detail/300382",
+        "omim": "https://omim.org/entry/616914"
+      },
+      "sources": [
+        "monarch-semsim",
+        "hpo-annotations",
+        "orphadata"
+      ]
+    }
+  ],
+  "dataVersions": {
+    "hpo": "2026-09-01",
+    "monarch": "v3 API",
+    "fetchedAt": "2026-10-24T19:57:58.178Z",
+    "orphanet": "2026-06-23"
+  }
+};
+
+/** demo-cdls request as the app sends it: non-negated / negated ids of the engine's prepared extraction (engine/demo/cases.ts), limit 5. */
+const CDLS_OBSERVED: readonly HpoId[] = ["HP:0001511","HP:0008897","HP:0001263","HP:0001249","HP:0001007","HP:0000028","HP:0001159","HP:0001156","HP:0030148"];
+const CDLS_EXCLUDED: readonly HpoId[] = ["HP:0001250","HP:0011968"];
+
+/** Recorded POST /api/rank response for demo-cdls (T18q): production https://hackachusetts-2026.pages.dev (6c89a84), HTTP 200, source "live", X-RDD-Path: engine; recorded at 2026-10-24T20:00Z UTC (body fetchedAt 2026-10-24T19:58:02.307Z, a Workers cache hit). Pasted unchanged. */
+const RECORDED_RANK_CDLS: RankResponse = {
+  "version": "0.1",
+  "source": "live",
+  "candidates": [
+    {
+      "rank": 1,
+      "diseaseId": "ORPHA:96175",
+      "mondoId": "MONDO:0019906",
+      "name": "Ring chromosome 11 syndrome",
+      "overlap": "strong",
+      "score": 12.49753645201336,
+      "matched": [
+        {
+          "patientTerm": {
+            "id": "HP:0000028",
+            "label": "Cryptorchidism"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000028",
+            "label": "Cryptorchidism"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Occasional",
+            "source": "ORPHA:96175"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001007",
+            "label": "Hirsutism"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001007",
+            "label": "Hirsutism"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Occasional",
+            "source": "ORPHA:96175"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001159",
+            "label": "Syndactyly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0030084",
+            "label": "Clinodactyly"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Occasional",
+            "source": "ORPHA:96175"
+          },
+          "ancestor": {
+            "id": "HP:0011297",
+            "label": "Abnormal digit morphology"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001249",
+            "label": "Intellectual disability"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001249",
+            "label": "Intellectual disability"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:96175"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001263",
+            "label": "Global developmental delay"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001263",
+            "label": "Global developmental delay"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:96175"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001511",
+            "label": "Intrauterine growth retardation"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001511",
+            "label": "Intrauterine growth retardation"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Occasional",
+            "source": "ORPHA:96175"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0008897",
+            "label": "Postnatal growth retardation"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001510",
+            "label": "Growth delay"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Occasional",
+            "source": "ORPHA:96175"
+          },
+          "ancestor": {
+            "id": "HP:0001510",
+            "label": "Growth delay"
+          }
+        }
+      ],
+      "unmatched": [
+        {
+          "id": "HP:0001156",
+          "label": "Brachydactyly"
+        },
+        {
+          "id": "HP:0030148",
+          "label": "Heart murmur"
+        }
+      ],
+      "notReported": [
+        {
+          "term": {
+            "id": "HP:0000252",
+            "label": "Microcephaly"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:96175"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000271",
+            "label": "Abnormality of the face"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:96175"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000957",
+            "label": "Cafe-au-lait spot"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:96175"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0004322",
+            "label": "Short stature"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:96175"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0004325",
+            "label": "Decreased body weight"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:96175"
+          }
+        }
+      ],
+      "contradicted": [],
+      "categories": [
+        "Cardiovascular",
+        "Endocrine",
+        "Genitourinary system",
+        "Growth",
+        "Head and neck",
+        "Limbs",
+        "Neoplasm",
+        "Nervous System",
+        "Skin, Hair, and Nails"
+      ],
+      "genes": [],
+      "links": {
+        "monarch": "https://monarchinitiative.org/MONDO:0019906",
+        "orphanet": "https://www.orpha.net/en/disease/detail/96175"
+      },
+      "sources": [
+        "monarch-semsim",
+        "hpo-annotations",
+        "orphadata"
+      ]
+    },
+    {
+      "rank": 2,
+      "diseaseId": "ORPHA:1867",
+      "mondoId": "MONDO:0010540",
+      "name": "Hereditary bullous dystrophy, macular type",
+      "overlap": "strong",
+      "score": 12.331898875931753,
+      "matched": [
+        {
+          "patientTerm": {
+            "id": "HP:0000028",
+            "label": "Cryptorchidism"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000028",
+            "label": "Cryptorchidism"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Occasional",
+            "source": "ORPHA:1867"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001007",
+            "label": "Hirsutism"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001596",
+            "label": "Alopecia"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:1867"
+          },
+          "ancestor": {
+            "id": "HP:0011362",
+            "label": "Abnormal hair quantity"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001156",
+            "label": "Brachydactyly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0009381",
+            "label": "Short finger"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:1867"
+          },
+          "ancestor": {
+            "id": "HP:0011927",
+            "label": "Short digit"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001159",
+            "label": "Syndactyly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001182",
+            "label": "Tapered finger"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:1867"
+          },
+          "ancestor": {
+            "id": "HP:0011297",
+            "label": "Abnormal digit morphology"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001249",
+            "label": "Intellectual disability"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001249",
+            "label": "Intellectual disability"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": null,
+            "source": "OMIM:302000"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001263",
+            "label": "Global developmental delay"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001249",
+            "label": "Intellectual disability"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": null,
+            "source": "OMIM:302000"
+          },
+          "ancestor": {
+            "id": "HP:0012759",
+            "label": "Neurodevelopmental abnormality"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001511",
+            "label": "Intrauterine growth retardation"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001510",
+            "label": "Growth delay"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Occasional",
+            "source": "ORPHA:1867"
+          },
+          "ancestor": {
+            "id": "HP:0001510",
+            "label": "Growth delay"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0008897",
+            "label": "Postnatal growth retardation"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001510",
+            "label": "Growth delay"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Occasional",
+            "source": "ORPHA:1867"
+          },
+          "ancestor": {
+            "id": "HP:0001510",
+            "label": "Growth delay"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0030148",
+            "label": "Heart murmur"
+          },
+          "diseaseTerm": {
+            "id": "HP:0030148",
+            "label": "Heart murmur"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Occasional",
+            "source": "ORPHA:1867"
+          }
+        }
+      ],
+      "unmatched": [],
+      "notReported": [
+        {
+          "term": {
+            "id": "HP:0000252",
+            "label": "Microcephaly"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:1867"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000953",
+            "label": "Hyperpigmentation of the skin"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:1867"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0001063",
+            "label": "Acrocyanosis"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:1867"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0001256",
+            "label": "Mild intellectual disability"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:1867"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0002090",
+            "label": "Pneumonia"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:1867"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0004322",
+            "label": "Short stature"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:1867"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0005590",
+            "label": "Spotty hypopigmentation"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:1867"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0007957",
+            "label": "Corneal opacity"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:1867"
+          }
+        }
+      ],
+      "contradicted": [],
+      "categories": [
+        "Cardiovascular",
+        "Clinical course",
+        "Eye",
+        "Genitourinary system",
+        "Growth",
+        "Head and neck",
+        "Immunology",
+        "Inheritance",
+        "Limbs",
+        "Nervous System",
+        "Skin, Hair, and Nails"
+      ],
+      "genes": [],
+      "links": {
+        "monarch": "https://monarchinitiative.org/MONDO:0010540",
+        "orphanet": "https://www.orpha.net/en/disease/detail/1867",
+        "omim": "https://omim.org/entry/302000"
+      },
+      "sources": [
+        "monarch-semsim",
+        "hpo-annotations",
+        "orphadata"
+      ]
+    },
+    {
+      "rank": 3,
+      "diseaseId": "ORPHA:261483",
+      "mondoId": "MONDO:0010467",
+      "name": "Xq27.3q28 duplication syndrome",
+      "overlap": "partial",
+      "score": 11.853935113793593,
+      "matched": [
+        {
+          "patientTerm": {
+            "id": "HP:0000028",
+            "label": "Cryptorchidism"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000028",
+            "label": "Cryptorchidism"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Very frequent",
+            "source": "ORPHA:261483"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001007",
+            "label": "Hirsutism"
+          },
+          "diseaseTerm": {
+            "id": "HP:0002231",
+            "label": "Sparse body hair"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:261483"
+          },
+          "ancestor": {
+            "id": "HP:0011362",
+            "label": "Abnormal hair quantity"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001159",
+            "label": "Syndactyly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001773",
+            "label": "Short foot"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Very frequent",
+            "source": "ORPHA:261483"
+          },
+          "ancestor": {
+            "id": "HP:0002813",
+            "label": "Abnormal limb bone morphology"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001249",
+            "label": "Intellectual disability"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001256",
+            "label": "Mild intellectual disability"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Very frequent",
+            "source": "ORPHA:261483"
+          },
+          "ancestor": {
+            "id": "HP:0001249",
+            "label": "Intellectual disability"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001263",
+            "label": "Global developmental delay"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001263",
+            "label": "Global developmental delay"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Very frequent",
+            "source": "ORPHA:261483"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001511",
+            "label": "Intrauterine growth retardation"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001511",
+            "label": "Intrauterine growth retardation"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:261483"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0008897",
+            "label": "Postnatal growth retardation"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001511",
+            "label": "Intrauterine growth retardation"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Frequent",
+            "source": "ORPHA:261483"
+          },
+          "ancestor": {
+            "id": "HP:0001510",
+            "label": "Growth delay"
+          }
+        }
+      ],
+      "unmatched": [
+        {
+          "id": "HP:0001156",
+          "label": "Brachydactyly"
+        },
+        {
+          "id": "HP:0030148",
+          "label": "Heart murmur"
+        }
+      ],
+      "notReported": [
+        {
+          "term": {
+            "id": "HP:0000837",
+            "label": "Increased circulating gonadotropin level"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:300869",
+            "raw": "3/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0001328",
+            "label": "Specific learning disability"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:300869",
+            "raw": "3/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0040171",
+            "label": "Decreased serum testosterone concentration"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:300869",
+            "raw": "3/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000135",
+            "label": "Hypogonadism"
+          },
+          "frequency": {
+            "label": "Very frequent",
+            "source": "ORPHA:261483"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000233",
+            "label": "Thin vermilion border"
+          },
+          "frequency": {
+            "label": "Very frequent",
+            "source": "ORPHA:261483"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000414",
+            "label": "Bulbous nose"
+          },
+          "frequency": {
+            "label": "Very frequent",
+            "source": "ORPHA:261483"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000490",
+            "label": "Deeply set eye"
+          },
+          "frequency": {
+            "label": "Very frequent",
+            "source": "ORPHA:261483"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0001508",
+            "label": "Failure to thrive"
+          },
+          "frequency": {
+            "label": "Very frequent",
+            "source": "ORPHA:261483"
+          }
+        }
+      ],
+      "contradicted": [],
+      "categories": [
+        "Breast",
+        "Endocrine",
+        "Eye",
+        "Genitourinary system",
+        "Growth",
+        "Head and neck",
+        "Inheritance",
+        "Limbs",
+        "Musculature",
+        "Nervous System",
+        "Other",
+        "Skin, Hair, and Nails"
+      ],
+      "genes": [
+        {
+          "id": "NCBIGene:2332",
+          "symbol": "FMR1"
+        }
+      ],
+      "links": {
+        "monarch": "https://monarchinitiative.org/MONDO:0010467",
+        "orphanet": "https://www.orpha.net/en/disease/detail/261483",
+        "omim": "https://omim.org/entry/300869"
+      },
+      "sources": [
+        "monarch-semsim",
+        "hpo-annotations",
+        "orphadata"
+      ]
+    },
+    {
+      "rank": 4,
+      "diseaseId": "OMIM:241000",
+      "mondoId": "MONDO:0009418",
+      "name": "hypogonadism with low-grade mental deficiency and microcephaly",
+      "overlap": "weak",
+      "score": 11.704976370080251,
+      "matched": [
+        {
+          "patientTerm": {
+            "id": "HP:0001159",
+            "label": "Syndactyly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001159",
+            "label": "Syndactyly"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": null,
+            "source": "OMIM:241000"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001249",
+            "label": "Intellectual disability"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001249",
+            "label": "Intellectual disability"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": null,
+            "source": "OMIM:241000"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001263",
+            "label": "Global developmental delay"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001249",
+            "label": "Intellectual disability"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": null,
+            "source": "OMIM:241000"
+          },
+          "ancestor": {
+            "id": "HP:0012759",
+            "label": "Neurodevelopmental abnormality"
+          }
+        }
+      ],
+      "unmatched": [
+        {
+          "id": "HP:0000028",
+          "label": "Cryptorchidism"
+        },
+        {
+          "id": "HP:0001007",
+          "label": "Hirsutism"
+        },
+        {
+          "id": "HP:0001156",
+          "label": "Brachydactyly"
+        },
+        {
+          "id": "HP:0001511",
+          "label": "Intrauterine growth retardation"
+        },
+        {
+          "id": "HP:0008897",
+          "label": "Postnatal growth retardation"
+        },
+        {
+          "id": "HP:0030148",
+          "label": "Heart murmur"
+        }
+      ],
+      "notReported": [],
+      "contradicted": [],
+      "categories": [
+        "Endocrine",
+        "Genitourinary system",
+        "Head and neck",
+        "Inheritance",
+        "Limbs",
+        "Nervous System"
+      ],
+      "genes": [],
+      "links": {
+        "monarch": "https://monarchinitiative.org/MONDO:0009418",
+        "omim": "https://omim.org/entry/241000"
+      },
+      "sources": [
+        "monarch-semsim",
+        "hpo-annotations"
+      ]
+    },
+    {
+      "rank": 5,
+      "diseaseId": "OMIM:620062",
+      "mondoId": "MONDO:0100217",
+      "name": "developmental delay with short stature, dysmorphic facial features, and sparse hair 2",
+      "overlap": "partial",
+      "score": 11.523565391062927,
+      "matched": [
+        {
+          "patientTerm": {
+            "id": "HP:0000028",
+            "label": "Cryptorchidism"
+          },
+          "diseaseTerm": {
+            "id": "HP:0000034",
+            "label": "Hydrocele testis"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:620062",
+            "raw": "1/3"
+          },
+          "ancestor": {
+            "id": "HP:0000035",
+            "label": "Abnormal testis morphology"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001007",
+            "label": "Hirsutism"
+          },
+          "diseaseTerm": {
+            "id": "HP:0002209",
+            "label": "Sparse scalp hair"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:620062",
+            "raw": "3/3"
+          },
+          "ancestor": {
+            "id": "HP:0011362",
+            "label": "Abnormal hair quantity"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001156",
+            "label": "Brachydactyly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001156",
+            "label": "Brachydactyly"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:620062",
+            "raw": "1/3"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001159",
+            "label": "Syndactyly"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001156",
+            "label": "Brachydactyly"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:620062",
+            "raw": "1/3"
+          },
+          "ancestor": {
+            "id": "HP:0011297",
+            "label": "Abnormal digit morphology"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001249",
+            "label": "Intellectual disability"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001263",
+            "label": "Global developmental delay"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:620062",
+            "raw": "3/3"
+          },
+          "ancestor": {
+            "id": "HP:0012759",
+            "label": "Neurodevelopmental abnormality"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001263",
+            "label": "Global developmental delay"
+          },
+          "diseaseTerm": {
+            "id": "HP:0001263",
+            "label": "Global developmental delay"
+          },
+          "via": "exact",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:620062",
+            "raw": "3/3"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0001511",
+            "label": "Intrauterine growth retardation"
+          },
+          "diseaseTerm": {
+            "id": "HP:0004322",
+            "label": "Short stature"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:620062",
+            "raw": "3/3"
+          },
+          "ancestor": {
+            "id": "HP:0001510",
+            "label": "Growth delay"
+          }
+        },
+        {
+          "patientTerm": {
+            "id": "HP:0008897",
+            "label": "Postnatal growth retardation"
+          },
+          "diseaseTerm": {
+            "id": "HP:0004322",
+            "label": "Short stature"
+          },
+          "via": "ancestor",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:620062",
+            "raw": "3/3"
+          },
+          "ancestor": {
+            "id": "HP:0001510",
+            "label": "Growth delay"
+          }
+        }
+      ],
+      "unmatched": [
+        {
+          "id": "HP:0030148",
+          "label": "Heart murmur"
+        }
+      ],
+      "notReported": [
+        {
+          "term": {
+            "id": "HP:0000369",
+            "label": "Low-set ears"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:620062",
+            "raw": "3/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0002194",
+            "label": "Delayed gross motor development"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:620062",
+            "raw": "3/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0003593",
+            "label": "Infantile onset"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:620062",
+            "raw": "3/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0011220",
+            "label": "Prominent forehead"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:620062",
+            "raw": "3/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0012413",
+            "label": "Notched primary central incisor"
+          },
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:620062",
+            "raw": "1/1"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000252",
+            "label": "Microcephaly"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:620062",
+            "raw": "2/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000256",
+            "label": "Macrocephaly"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:620062",
+            "raw": "1/3"
+          }
+        },
+        {
+          "term": {
+            "id": "HP:0000954",
+            "label": "Single transverse palmar crease"
+          },
+          "frequency": {
+            "label": "Frequent",
+            "source": "OMIM:620062",
+            "raw": "1/3"
+          }
+        }
+      ],
+      "contradicted": [],
+      "categories": [
+        "Cardiovascular",
+        "Clinical course",
+        "Ear",
+        "Genitourinary system",
+        "Growth",
+        "Head and neck",
+        "Inheritance",
+        "Limbs",
+        "Nervous System"
+      ],
+      "genes": [
+        {
+          "id": "NCBIGene:1802",
+          "symbol": "DPH2"
+        }
+      ],
+      "links": {
+        "monarch": "https://monarchinitiative.org/MONDO:0100217",
+        "omim": "https://omim.org/entry/620062"
+      },
+      "sources": [
+        "monarch-semsim",
+        "hpo-annotations"
+      ]
+    }
+  ],
+  "dataVersions": {
+    "hpo": "2026-09-01",
+    "monarch": "v3 API",
+    "fetchedAt": "2026-10-24T19:58:02.307Z",
+    "orphanet": "2026-06-23"
+  }
+};
+
+/**
+ * Recorded rankings by demoRankKey (T18q): demo-npc1 (T18l), demo-marfan and
+ * demo-cdls. The engine records demo-dmd and demo-kabuki (engine/demo/recorded/)
+ * and is asked first.
+ */
+const RECORDED_RANKINGS: ReadonlyMap<string, RankResponse> = new Map([
+  [RANK_KEY, RECORDED_RANK],
+  [demoRankKey([...MARFAN_OBSERVED], [...MARFAN_EXCLUDED], 5), RECORDED_RANK_MARFAN],
+  [demoRankKey([...CDLS_OBSERVED], [...CDLS_EXCLUDED], 5), RECORDED_RANK_CDLS],
+]);
+
 /** Recorded ranking for an exact demoRankKey, else undefined. Returns a copy. */
 export function getFallbackDemoRanking(key: string): RankResponse | undefined {
-  return key === RANK_KEY ? structuredClone(RECORDED_RANK) : undefined;
+  const hit = RECORDED_RANKINGS.get(key);
+  return hit ? structuredClone(hit) : undefined;
 }
 
 /**
