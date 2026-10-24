@@ -1,6 +1,6 @@
 {
   "source": "https://ontology.jax.org/api/hp/terms/{id}",
-  "fetchedAt": "2026-10-24T22:41:27.096Z",
+  "fetchedAt": "2026-10-24T22:44:53.638Z",
   "latestGithubReleaseAtFetch": "v2026-09-01",
   "releaseNote": "The JAX ontology API does not state which HPO release it serves; latestGithubReleaseAtFetch is context only.",
   "attribution": "This product uses the Human Phenotype Ontology. Find out more at https://hpo.jax.org",
@@ -54,6 +54,16 @@
         "Increased body height",
         "Increased linear growth",
         "Tall stature"
+      ]
+    },
+    "HP:0000121": {
+      "requestedId": "HP:0000121",
+      "found": true,
+      "id": "HP:0000121",
+      "name": "Nephrocalcinosis",
+      "synonyms": [
+        "Too much calcium deposited in kidneys",
+        "Increased calcium level in kidney"
       ]
     },
     "HP:0000225": {
@@ -152,6 +162,15 @@
         "Eyelid ptosis",
         "Palpebral ptosis",
         "Eye drop"
+      ]
+    },
+    "HP:0000531": {
+      "requestedId": "HP:0000531",
+      "found": true,
+      "id": "HP:0000531",
+      "name": "Corneal crystals",
+      "synonyms": [
+        "Corneal deposits"
       ]
     },
     "HP:0000592": {
@@ -327,6 +346,16 @@
         "Sweating",
         "Sweating profusely",
         "Sweating, increased"
+      ]
+    },
+    "HP:0001053": {
+      "requestedId": "HP:0001053",
+      "found": true,
+      "id": "HP:0001053",
+      "name": "Hypopigmented skin patches",
+      "synonyms": [
+        "Patchy loss of skin color",
+        "Patchy loss of skin colour"
       ]
     },
     "HP:0001250": {
