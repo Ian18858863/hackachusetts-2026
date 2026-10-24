@@ -26,6 +26,6 @@ Engine constants live in `engine/text.ts` (owner: Jerry); the app and landing re
 
 ## How to apply
 
-1. `<hpo>` is the HPO version from the response's `dataVersions`; `<id>` is the source phenopacket id of the demo case. Fill placeholders, change nothing else.
+1. `<hpo>` is the HPO version from the response's `dataVersions`; `<id>` is the source phenopacket id of the demo case. Fill placeholders, change nothing else. The `hpo` value may be `"unknown"`; see `docs/CONTRACT.md` open question 6. Never invent a version.
 2. A credit appears whenever data from that source appears, including responses served from the demo cache.
 3. The licence column in the `rdd-upstream-services` skill says which credit belongs to which upstream.

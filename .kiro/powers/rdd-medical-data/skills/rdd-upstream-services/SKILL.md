@@ -32,4 +32,4 @@ Source: `docs/CONTRACT.md` section 10, copied verbatim. If the contract changes,
 1. Use only the endpoints in the table. Do not add an upstream that is not in the contract; propose it through the contract change process instead.
 2. Take the timeout and cache lifetime from the same row as the endpoint you call.
 3. When an upstream's data reaches the user, show its credit line from the `rdd-attribution-text` skill in this power.
-4. No API keys are needed or stored for any of these services. Never put a key in code, fixtures or logs.
+4. Workers AI needs no key (contract table above). Never put an API key in code, fixtures or logs.

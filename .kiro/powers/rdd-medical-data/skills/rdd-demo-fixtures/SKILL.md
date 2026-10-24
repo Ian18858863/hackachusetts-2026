@@ -9,6 +9,8 @@ Source: `docs/CONTRACT.md` section 9 (rules only). The narratives, expected diag
 
 ## Rules (verbatim from the contract)
 
+In the quoted rules below, "Offsets below" refers to the offset tables in `docs/CONTRACT.md` sections 9.1 to 9.4, which this skill does not copy.
+
 - Derived from [phenopacket-store](https://github.com/monarch-initiative/phenopacket-store) (BSD-3). Each narrative was written by Ian's Kiro on 2026-10-24 from the HPO terms of the named phenopacket. Not real patients; some excluded terms from the source are left out to keep the text short. Order in the demo picker: `demo-dmd` (primary), `demo-marfan`, `demo-kabuki`, `demo-cdls`.
 - UI label, verbatim: `Demo case (synthetic narrative from phenopacket-store <id>)`.
 - Owners: Jerry owns the demo cache under `engine/demo/**` (narrative text, prepared extraction, recorded upstream responses for the prepared term set). Ian owns the demo narratives' UI (picker, labels).
