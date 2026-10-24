@@ -1,0 +1,458 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Option B · Instrument · Rare Disease Detective art direction</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+/* ------------------------------------------------------------------
+   Option B: Instrument. Cool white, one sans family plus mono,
+   an evidence matrix with frequency ranges. Static specimen, demo data.
+   ------------------------------------------------------------------ */
+:root {
+  --bg: #F6F7F8;
+  --surface: #FFFFFF;
+  --ink: #10151B;
+  --ink-2: #3E4752;
+  --ink-3: #5B6571;
+  --grid: #E2E5E9;
+  --grid-strong: #C3C9D0;
+  --bar-track: #E7EAED;
+  --head-bg: #10151B;
+  --head-ink: #E9EDF1;
+  --head-ink-2: #A9B2BC;
+  --accent: #0B6B69;
+  --accent-hover: #08524F;
+  --accent-tint: #E3EFEE;
+  --accent-col: #F1F7F6;
+  --on-accent: #FFFFFF;
+
+  --font-text: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SF Mono", Menlo, monospace;
+  --t-2xs: 0.75rem;   /* 12 */
+  --t-xs: 0.8125rem;  /* 13 */
+  --t-sm: 0.875rem;   /* 14 */
+  --t-base: 1rem;     /* 16 */
+  --t-md: 1.125rem;   /* 18 */
+  --t-lg: 1.375rem;   /* 22 */
+  --t-xl: 1.75rem;    /* 28 */
+  --t-2xl: 2.1875rem; /* 35 */
+
+  --s-1: 4px; --s-2: 8px; --s-3: 12px; --s-4: 16px; --s-5: 24px;
+  --s-6: 32px; --s-7: 48px; --s-8: 64px;
+
+  --radius-s: 4px; --radius-m: 6px; --radius-pill: 999px;
+  --shadow-1: 0 1px 2px rgba(16, 21, 27, 0.06), 0 0 0 1px rgba(16, 21, 27, 0.06);
+
+  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --dur-fast: 160ms;
+  --dur-base: 220ms;
+  --dur-proof: 480ms;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0; background: var(--bg); color: var(--ink);
+  font: 400 var(--t-base)/1.5 var(--font-text);
+  font-variant-numeric: tabular-nums;
+  -webkit-font-smoothing: antialiased;
+}
+h1, h2, h3, p, ol, ul { margin: 0; }
+ol, ul { padding: 0; list-style: none; }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
+.mono { font-family: var(--font-mono); font-size: 0.92em; letter-spacing: 0; }
+
+.specimen-bar {
+  background: var(--head-bg); color: var(--head-ink-2);
+  font-size: var(--t-2xs); padding: 6px var(--s-5); text-align: center;
+  border-bottom: 1px solid #252C35;
+}
+.specimen-bar strong { color: var(--head-ink); font-weight: 500; }
+
+.wrap { max-width: 1248px; margin: 0 auto; padding: 0 var(--s-5); }
+
+/* ---------- masthead ---------- */
+.masthead { background: var(--head-bg); color: var(--head-ink); }
+.masthead .wrap { display: flex; align-items: center; gap: var(--s-6); min-height: 60px; }
+.wordmark { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: var(--t-base); text-decoration: none; white-space: nowrap; letter-spacing: -0.005em; }
+.wordmark svg { width: 20px; height: 20px; }
+.steps { display: flex; gap: 2px; margin-right: auto; background: #1B222B; border-radius: var(--radius-m); padding: 3px; }
+.steps a {
+  font-size: var(--t-xs); color: var(--head-ink-2); text-decoration: none;
+  padding: 6px 12px; border-radius: var(--radius-s); white-space: nowrap;
+  display: inline-flex; gap: 8px; align-items: center;
+  transition: color var(--dur-fast) var(--ease), background-color var(--dur-fast) var(--ease);
+}
+.steps a .txt-short { display: none; }
+.steps a .mono { font-size: var(--t-2xs); opacity: 0.8; }
+.steps a:hover { color: var(--head-ink); }
+.steps a[aria-current="step"] { background: #2C3540; color: #FFFFFF; font-weight: 500; }
+.demo-tag {
+  font: 500 var(--t-2xs)/1 var(--font-mono); letter-spacing: 0.04em; text-transform: uppercase;
+  color: var(--head-ink); border: 1px solid #47515D; border-radius: var(--radius-s); padding: 6px 8px; white-space: nowrap;
+}
+.btn {
+  font: 500 var(--t-sm)/1 var(--font-text);
+  min-height: 40px; padding: 0 var(--s-4);
+  border-radius: var(--radius-s); border: 0;
+  background: #FFFFFF; color: var(--ink);
+  display: inline-flex; align-items: center; gap: var(--s-2); cursor: pointer; white-space: nowrap;
+  position: relative;
+  transition: background-color var(--dur-fast) var(--ease);
+}
+.btn::after { content: ""; position: absolute; inset: -2px 0; }
+.btn:hover { background: #DDE3E8; }
+.btn:focus-visible { outline-color: #7FD3CF; }
+.btn svg { width: 16px; height: 16px; }
+.btn .short { display: none; }
+
+/* ---------- page ---------- */
+.page {
+  display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--s-6);
+  padding-top: var(--s-6); padding-bottom: var(--s-8);
+}
+.left { grid-column: 1 / span 4; }
+.right { grid-column: 5 / span 8; }
+
+.label {
+  font: 500 var(--t-2xs)/1.3 var(--font-mono); letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-3);
+}
+.panel { background: var(--surface); border-radius: var(--radius-m); box-shadow: var(--shadow-1); }
+
+/* notes */
+.notes-panel { padding: var(--s-4) var(--s-5) var(--s-5); }
+.notes-panel header { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-3); padding-bottom: var(--s-3); border-bottom: 1px solid var(--grid); }
+.notes-panel header p { font-size: var(--t-xs); color: var(--ink-3); }
+.notes { margin-top: var(--s-3); font-size: var(--t-base); line-height: 1.65; color: var(--ink); }
+.src {
+  background: transparent; color: inherit;
+  border-bottom: 1.5px solid var(--grid-strong);
+  transition: background-color var(--dur-base) var(--ease), border-color var(--dur-base) var(--ease);
+}
+.src .tag {
+  font: 500 10.5px/1 var(--font-mono); color: var(--accent);
+  vertical-align: 0.35em; margin-left: 2px;
+}
+.src.pending { border-bottom-style: dashed; }
+.src.pending .tag { color: var(--ink-3); }
+
+.terms-panel { margin-top: var(--s-4); }
+.terms-panel header { display: flex; justify-content: space-between; align-items: baseline; padding: var(--s-4) var(--s-5) var(--s-2); }
+.terms-panel header p:last-child { font-size: var(--t-xs); color: var(--ink-3); }
+.term {
+  display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 0 var(--s-3); align-items: center;
+  padding: 7px var(--s-5); border-top: 1px solid var(--grid);
+  transition: background-color var(--dur-base) var(--ease);
+}
+.term .tag { font: 500 var(--t-2xs)/1 var(--font-mono); color: var(--accent); }
+.term .name { font-size: var(--t-sm); font-weight: 500; line-height: 1.3; }
+.term .id { font: 400 var(--t-2xs)/1.4 var(--font-mono); color: var(--ink-3); }
+.check {
+  width: 20px; height: 20px; border-radius: var(--radius-s); background: var(--accent); color: #fff;
+  display: grid; place-items: center; position: relative; border: 0; padding: 0; cursor: pointer;
+}
+.check::after { content: ""; position: absolute; inset: -12px; }
+.check svg { width: 12px; height: 12px; }
+.term.is-pending .tag { color: var(--ink-3); }
+.term.is-pending .check { background: transparent; box-shadow: inset 0 0 0 1.5px #848D98; }
+.term.is-pending .name { color: var(--ink-2); }
+.term .pending-note { font-size: var(--t-2xs); color: var(--ink-3); font-weight: 400; }
+
+/* ---------- matches ---------- */
+.right-head { display: flex; justify-content: space-between; align-items: baseline; gap: var(--s-5); }
+.right-head h1 { font-size: 1.875rem; font-weight: 500; line-height: 1.1; letter-spacing: -0.02em; margin-top: 6px; }
+.right-head .meta { font-size: var(--t-xs); color: var(--ink-3); text-align: right; white-space: nowrap; }
+.safety {
+  margin-top: var(--s-3); display: flex; gap: var(--s-2); align-items: flex-start;
+  font-size: var(--t-base); color: var(--ink-2);
+}
+.safety svg { width: 18px; height: 18px; flex: none; margin-top: 3px; color: var(--ink-3); }
+
+.matrix { margin-top: var(--s-5); overflow: hidden; }
+.mx-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) repeat(3, minmax(0, 1fr));
+  border-top: 1px solid var(--grid);
+  transition: background-color var(--dur-base) var(--ease);
+}
+.mx-head { border-top: 0; }
+.mx-head > div { padding: var(--s-3) var(--s-3) var(--s-3); }
+.mx-head .corner { padding-left: var(--s-4); }
+.mx-head .corner { display: flex; flex-direction: column; justify-content: flex-end; gap: 6px; }
+.mx-head .corner p { font-size: var(--t-2xs); color: var(--ink-3); line-height: 1.4; }
+.cand { border-left: 1px solid var(--grid); }
+.cand .rank { font: 500 var(--t-2xs)/1 var(--font-mono); color: var(--ink-3); letter-spacing: 0.04em; }
+.cand h3 { font-size: var(--t-base); font-weight: 600; line-height: 1.25; margin-top: 6px; letter-spacing: -0.005em; }
+.cand .code { display: inline-block; margin-top: 4px; font: 400 var(--t-2xs)/1.3 var(--font-mono); color: var(--ink-3); text-underline-offset: 3px; text-decoration-color: var(--grid-strong); }
+.cand .ov { margin-top: var(--s-2); font-size: var(--t-xs); color: var(--ink-2); display: flex; align-items: center; gap: 6px; }
+.cand .ov b { font-weight: 600; color: var(--ink); }
+.tally { display: inline-flex; gap: 2px; }
+.tally i { width: 6px; height: 6px; border-radius: 1px; background: var(--accent); }
+.tally i.off { background: transparent; box-shadow: inset 0 0 0 1px var(--grid-strong); }
+.c1 { background: var(--accent-col); }
+.mx-head .c1 .rank { color: var(--accent); }
+
+.feat { padding: 8px var(--s-4); }
+.feat .name { font-size: var(--t-sm); font-weight: 500; line-height: 1.3; display: flex; gap: 8px; align-items: baseline; }
+.feat .name .tag { font: 500 var(--t-2xs)/1 var(--font-mono); color: var(--accent); flex: none; width: 22px; }
+.feat .sub { font-size: var(--t-2xs); color: var(--ink-3); line-height: 1.4; margin-top: 2px; padding-left: 30px; }
+.feat .sub .mono { color: var(--ink-3); }
+
+.cell { border-left: 1px solid var(--grid); padding: 8px var(--s-3); display: flex; flex-direction: column; justify-content: center; gap: 6px; }
+.bar { position: relative; height: 8px; border-radius: 2px; background: var(--bar-track); overflow: hidden; }
+.bar b {
+  position: absolute; top: 0; bottom: 0; left: var(--lo); right: calc(100% - var(--hi));
+  background: var(--accent); border-radius: 2px;
+  transform-origin: 0 50%;
+  animation: gather var(--dur-proof) var(--ease) both;
+}
+.cell .val { display: flex; justify-content: space-between; gap: 6px; font-size: var(--t-2xs); color: var(--ink-2); line-height: 1.2; }
+.cell .val .mono { color: var(--ink); }
+.cell.none .bar { background: repeating-linear-gradient(90deg, var(--grid-strong) 0 3px, transparent 3px 6px); height: 2px; margin: 3px 0; opacity: 0.9; }
+.cell.none .val { color: var(--ink-3); }
+
+.mx-row:nth-child(2) .bar b { animation-delay: 0ms; }
+.mx-row:nth-child(3) .bar b { animation-delay: 50ms; }
+.mx-row:nth-child(4) .bar b { animation-delay: 100ms; }
+.mx-row:nth-child(5) .bar b { animation-delay: 150ms; }
+.mx-row:nth-child(6) .bar b { animation-delay: 200ms; }
+.mx-row:nth-child(7) .bar b { animation-delay: 250ms; }
+.mx-row:nth-child(8) .bar b { animation-delay: 300ms; }
+
+.scale { display: flex; justify-content: space-between; gap: var(--s-4); flex-wrap: wrap; padding: var(--s-3) var(--s-4); border-top: 1px solid var(--grid); font-size: var(--t-2xs); color: var(--ink-3); }
+.scale .key { display: inline-flex; align-items: center; gap: 8px; }
+.scale .key .bar { width: 64px; display: inline-block; }
+.scale .key .bar b { animation: none; }
+
+.next { margin-top: var(--s-4); display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: var(--s-4); align-items: baseline; padding: var(--s-4) var(--s-5); }
+.next p.q { font-size: var(--t-base); font-weight: 500; }
+.next p.q span { font-weight: 400; color: var(--ink-2); }
+.next a { font-size: var(--t-sm); font-weight: 500; color: var(--accent); text-underline-offset: 3px; white-space: nowrap; }
+
+/* linked state */
+.src.is-linked { background: var(--accent-tint); border-bottom-color: var(--accent); }
+.term.is-linked, .mx-row.is-linked { background: var(--accent-tint); }
+.mx-row.is-linked .c1 { background: transparent; }
+.page:has([data-t]:hover) .is-linked { background: transparent; }
+.page:has([data-t]:hover) .src.is-linked { border-bottom-color: var(--grid-strong); }
+.page:has([data-t]:hover) .mx-row.is-linked .c1 { background: var(--accent-col); }
+.page:has([data-t="1"]:hover) [data-t="1"], .page:has([data-t="2"]:hover) [data-t="2"],
+.page:has([data-t="3"]:hover) [data-t="3"], .page:has([data-t="4"]:hover) [data-t="4"],
+.page:has([data-t="5"]:hover) [data-t="5"], .page:has([data-t="6"]:hover) [data-t="6"],
+.page:has([data-t="7"]:hover) [data-t="7"], .page:has([data-t="8"]:hover) [data-t="8"] { background: var(--accent-tint) !important; border-bottom-color: var(--accent) !important; }
+
+/* footer */
+.foot { border-top: 1px solid var(--grid-strong); background: var(--surface); }
+.foot .wrap { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: var(--s-6); padding-top: var(--s-5); padding-bottom: var(--s-7); }
+.foot .safe { grid-column: 1 / span 4; font-size: var(--t-base); }
+.foot .attr { grid-column: 5 / span 8; font-size: var(--t-xs); color: var(--ink-2); line-height: 1.6; }
+.foot .attr p + p { margin-top: var(--s-2); }
+
+@keyframes gather { from { transform: scaleX(0); opacity: 0.2; } to { transform: none; opacity: 1; } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+/* laptop */
+@media (max-width: 1180px) {
+  .steps a .txt-long { display: none; }
+  .steps a .txt-short { display: inline; }
+  .right { grid-column: 1 / -1; grid-row: 1; }
+  .left { grid-column: 1 / -1; grid-row: 2; margin-top: var(--s-6); display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--s-5); align-items: start; }
+  .terms-panel { margin-top: 0; }
+  .right-head .meta { display: none; }
+  .right-head h1 { font-size: var(--t-xl); }
+}
+@media (max-width: 1000px) {
+  .steps { display: none; }
+  .wordmark { margin-right: auto; }
+}
+
+/* phone */
+@media (max-width: 760px) {
+  .wrap { padding: 0 var(--s-4); }
+  .specimen-bar { text-align: left; padding: 6px var(--s-4); }
+  .masthead .wrap { gap: var(--s-3); min-height: 56px; }
+  .demo-tag { display: none; }
+  .btn { min-height: 44px; }
+  .btn .long { display: none; }
+  .btn .short { display: inline; }
+  .page { display: flex; flex-direction: column; padding-top: var(--s-5); }
+  .right { order: 1; }
+  .left { order: 2; margin-top: var(--s-6); display: block; }
+  .terms-panel { margin-top: var(--s-4); }
+  .right-head h1 { font-size: var(--t-xl); }
+  .phone-meta { display: block !important; }
+  .matrix { margin-left: calc(-1 * var(--s-4)); margin-right: calc(-1 * var(--s-4)); border-radius: 0; }
+  .mx-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .mx-head .corner { display: none; }
+  .mx-head > div { padding: var(--s-3) var(--s-3) var(--s-3); }
+  .mx-head .cand:nth-child(2) { border-left: 0; }
+  .cand h3 { font-size: var(--t-xs); }
+  .cand .code { display: none; }
+  .cand .ov { flex-direction: column; align-items: flex-start; gap: 4px; }
+  .feat { grid-column: 1 / -1; padding: 10px var(--s-4) 2px; }
+  .feat .sub .hp-label { display: none; }
+  .cell { border-left: 0; padding: 6px var(--s-3) 12px; }
+  .cell:nth-child(2) { padding-left: var(--s-4); }
+  .cell:nth-child(4) { padding-right: var(--s-4); }
+  .cell.c1 { background: transparent; }
+  .mx-head .c1 { background: var(--accent-col); }
+  .cell .val { flex-direction: column; gap: 2px; }
+  .next { grid-template-columns: minmax(0, 1fr); gap: var(--s-2); }
+  .next .label { display: block; }
+  .foot .wrap { display: block; }
+  .foot .attr { margin-top: var(--s-4); }
+}
+.phone-meta { display: none; font-size: var(--t-xs); color: var(--ink-3); }
+</style>
+</head>
+<body>
+
+<div class="specimen-bar"><strong>Specimen B · Instrument.</strong> Static art-direction mock for Ian's review. Demo patient and illustrative frequencies only.</div>
+
+<header class="masthead">
+  <div class="wrap">
+    <a class="wordmark" href="#">
+      <svg viewBox="0 0 20 20" fill="none" aria-hidden="true"><rect x="1" y="1" width="18" height="18" rx="4" stroke="#7FD3CF" stroke-width="1.5"/><path d="M5 13h2.5M5 10h5M5 7h10" stroke="#E9EDF1" stroke-width="1.5" stroke-linecap="round"/></svg>
+      Rare Disease Detective
+    </a>
+    <nav class="steps" aria-label="Steps">
+      <a href="#"><span class="mono">1</span>Notes</a>
+      <a href="#"><span class="mono">2</span>Features</a>
+      <a href="#" aria-current="step"><span class="mono">3</span>Possible matches</a>
+      <a href="#"><span class="mono">4</span><span class="txt-long">What to check next</span><span class="txt-short">Next</span></a>
+      <a href="#"><span class="mono">5</span>Brief</a>
+    </nav>
+    <span class="demo-tag">Demo patient</span>
+    <button class="btn" type="button"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><path d="M4 1.75h5.5L12.25 4.5v9.75H4z"/><path d="M6.5 8h3.5M6.5 10.5h3.5"/></svg><span class="long">Prepare brief</span><span class="short">Brief</span></button>
+  </div>
+</header>
+
+<main class="wrap page">
+
+  <section class="left" aria-label="Source notes and features">
+    <div class="panel notes-panel">
+      <header>
+        <p class="label">Source notes</p>
+        <p>Leo, 6 · demo patient · parent</p>
+      </header>
+      <p class="notes">
+        <mark class="src" data-t="1">Leo started walking late, at about 18 months.<span class="tag">01</span></mark>
+        Since he turned four <mark class="src" data-t="2">he falls a lot, sometimes several times a day.<span class="tag">02</span></mark>
+        <mark class="src" data-t="3">He can't climb stairs without holding the rail,<span class="tag">03</span></mark>
+        and <mark class="src" data-t="4">to get up from the floor he pushes on his knees with his hands.<span class="tag">04</span></mark>
+        <mark class="src is-linked" data-t="5">His calves look big and feel hard compared with his thighs.<span class="tag">05</span></mark>
+        At his last check-up <mark class="src" data-t="6">a blood test showed a very high CK.<span class="tag">06</span></mark>
+        <mark class="src" data-t="7">He tires quickly at the playground<span class="tag">07</span></mark> and asks to be carried home.
+        <mark class="src pending" data-t="8">His teacher says he sometimes walks on his toes.<span class="tag">08</span></mark>
+      </p>
+    </div>
+
+    <div class="panel terms-panel">
+      <header><p class="label">Features · 7 of 8 confirmed</p><p>HPO terms</p></header>
+      <ul>
+        <li class="term" data-t="1"><span class="tag">01</span><span><span class="name">Delayed ability to walk</span><br><span class="id">HP:0031936</span></span><button class="check" type="button" aria-label="Confirmed. Remove Delayed ability to walk"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></button></li>
+        <li class="term" data-t="2"><span class="tag">02</span><span><span class="name">Frequent falls</span><br><span class="id">HP:0002359</span></span><button class="check" type="button" aria-label="Confirmed. Remove Frequent falls"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></button></li>
+        <li class="term" data-t="3"><span class="tag">03</span><span><span class="name">Proximal muscle weakness</span><br><span class="id">HP:0003701</span></span><button class="check" type="button" aria-label="Confirmed. Remove Proximal muscle weakness"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></button></li>
+        <li class="term" data-t="4"><span class="tag">04</span><span><span class="name">Gowers sign</span><br><span class="id">HP:0003391</span></span><button class="check" type="button" aria-label="Confirmed. Remove Gowers sign"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></button></li>
+        <li class="term is-linked" data-t="5"><span class="tag">05</span><span><span class="name">Calf muscle pseudohypertrophy</span><br><span class="id">HP:0003707</span></span><button class="check" type="button" aria-label="Confirmed. Remove Calf muscle pseudohypertrophy"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></button></li>
+        <li class="term" data-t="6"><span class="tag">06</span><span><span class="name">Elevated circulating creatine kinase concentration</span><br><span class="id">HP:0003236</span></span><button class="check" type="button" aria-label="Confirmed. Remove Elevated circulating creatine kinase concentration"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></button></li>
+        <li class="term" data-t="7"><span class="tag">07</span><span><span class="name">Exercise intolerance</span><br><span class="id">HP:0003546</span></span><button class="check" type="button" aria-label="Confirmed. Remove Exercise intolerance"><svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="1.75" aria-hidden="true"><path d="M2.5 6.2l2.3 2.3 4.7-5"/></svg></button></li>
+        <li class="term is-pending" data-t="8"><span class="tag">08</span><span><span class="name">Toe walking</span> <span class="pending-note">· needs your check</span><br><span class="id">HP:0040083</span></span><button class="check" type="button" aria-label="Not confirmed. Confirm Toe walking"></button></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="right" aria-labelledby="mx-h">
+    <p class="phone-meta">Leo, 6 · demo patient · step 3 of 5</p>
+    <div class="right-head">
+      <div>
+        <p class="label">Ranked by phenotype overlap</p>
+        <h1 id="mx-h">Possible matches to discuss with a doctor</h1>
+      </div>
+      <p class="meta">7 features · Monarch semsim</p>
+    </div>
+    <p class="safety"><svg viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="9" cy="9" r="7.25"/><path d="M9 8v4.5M9 5.5v.01" stroke-linecap="round"/></svg>Decision support, not a diagnosis. Only a clinician can confirm a condition.</p>
+
+    <div class="panel matrix" role="table" aria-label="Evidence for each possible match" aria-live="polite">
+      <div class="mx-row mx-head" role="row">
+        <div class="corner" role="columnheader"><p class="label">Leo's features</p><p>Bar shows how often the feature occurs in the condition</p></div>
+        <div class="cand c1" role="columnheader"><p class="rank">01</p><h3>Duchenne muscular dystrophy</h3><a class="code" href="#">ORPHA:98896</a><p class="ov"><span class="tally" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span><b>Strong</b> · 7 of 7</span></p></div>
+        <div class="cand" role="columnheader"><p class="rank">02</p><h3>Becker muscular dystrophy</h3><a class="code" href="#">ORPHA:98895</a><p class="ov"><span class="tally" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></span><span><b>Strong</b> · 7 of 7</span></p></div>
+        <div class="cand" role="columnheader"><p class="rank">03</p><h3>Limb-girdle muscular dystrophy R9</h3><a class="code" href="#">ORPHA:34515</a><p class="ov"><span class="tally" aria-hidden="true"><i class="off"></i><i class="off"></i><i></i><i></i><i></i><i></i><i></i></span><span><b>Partial</b> · 5 of 7</span></p></div>
+      </div>
+
+      <div class="mx-row" role="row" data-t="1">
+        <div class="feat" role="rowheader"><p class="name"><span class="tag">01</span>Delayed ability to walk</p><p class="sub">Walked late · <span class="mono">HP:0031936</span></p></div>
+        <div class="cell c1" role="cell"><span class="bar" style="--lo:30%;--hi:79%"><b></b></span><span class="val">Frequent <span class="mono">30–79%</span></span></div>
+        <div class="cell" role="cell"><span class="bar" style="--lo:5%;--hi:29%"><b></b></span><span class="val">Occasional <span class="mono">5–29%</span></span></div>
+        <div class="cell none" role="cell"><span class="bar"></span><span class="val">Not recorded</span></div>
+      </div>
+      <div class="mx-row" role="row" data-t="2">
+        <div class="feat" role="rowheader"><p class="name"><span class="tag">02</span>Frequent falls</p><p class="sub">Falls often · <span class="mono">HP:0002359</span></p></div>
+        <div class="cell c1" role="cell"><span class="bar" style="--lo:80%;--hi:99%"><b></b></span><span class="val">Very frequent <span class="mono">80–99%</span></span></div>
+        <div class="cell" role="cell"><span class="bar" style="--lo:30%;--hi:79%"><b></b></span><span class="val">Frequent <span class="mono">30–79%</span></span></div>
+        <div class="cell none" role="cell"><span class="bar"></span><span class="val">Not recorded</span></div>
+      </div>
+      <div class="mx-row" role="row" data-t="3">
+        <div class="feat" role="rowheader"><p class="name"><span class="tag">03</span>Proximal muscle weakness</p><p class="sub">Weak hips and thighs · <span class="mono">HP:0003701</span></p></div>
+        <div class="cell c1" role="cell"><span class="bar" style="--lo:80%;--hi:99%"><b></b></span><span class="val">Very frequent <span class="mono">80–99%</span></span></div>
+        <div class="cell" role="cell"><span class="bar" style="--lo:80%;--hi:99%"><b></b></span><span class="val">Very frequent <span class="mono">80–99%</span></span></div>
+        <div class="cell" role="cell"><span class="bar" style="--lo:80%;--hi:99%"><b></b></span><span class="val">Very frequent <span class="mono">80–99%</span></span></div>
+      </div>
+      <div class="mx-row" role="row" data-t="4">
+        <div class="feat" role="rowheader"><p class="name"><span class="tag">04</span>Gowers sign</p><p class="sub">Uses hands to stand up · <span class="mono">HP:0003391</span></p></div>
+        <div class="cell c1" role="cell"><span class="bar" style="--lo:80%;--hi:99%"><b></b></span><span class="val">Very frequent <span class="mono">80–99%</span></span></div>
+        <div class="cell" role="cell"><span class="bar" style="--lo:30%;--hi:79%"><b></b></span><span class="val">Frequent <span class="mono">30–79%</span></span></div>
+        <div class="cell" role="cell"><span class="bar" style="--lo:30%;--hi:79%"><b></b></span><span class="val">Frequent <span class="mono">30–79%</span></span></div>
+      </div>
+      <div class="mx-row is-linked" role="row" data-t="5">
+        <div class="feat" role="rowheader"><p class="name"><span class="tag">05</span>Calf muscle pseudohypertrophy</p><p class="sub">Large firm calves · <span class="mono">HP:0003707</span></p></div>
+        <div class="cell c1" role="cell"><span class="bar" style="--lo:80%;--hi:99%"><b></b></span><span class="val">Very frequent <span class="mono">80–99%</span></span></div>
+        <div class="cell" role="cell"><span class="bar" style="--lo:80%;--hi:99%"><b></b></span><span class="val">Very frequent <span class="mono">80–99%</span></span></div>
+        <div class="cell" role="cell"><span class="bar" style="--lo:30%;--hi:79%"><b></b></span><span class="val">Frequent <span class="mono">30–79%</span></span></div>
+      </div>
+      <div class="mx-row" role="row" data-t="6">
+        <div class="feat" role="rowheader"><p class="name"><span class="tag">06</span>Elevated circulating creatine kinase concentration</p><p class="sub">High CK · <span class="mono">HP:0003236</span></p></div>
+        <div class="cell c1" role="cell"><span class="bar" style="--lo:99%;--hi:100%"><b></b></span><span class="val">Always <span class="mono">100%</span></span></div>
+        <div class="cell" role="cell"><span class="bar" style="--lo:80%;--hi:99%"><b></b></span><span class="val">Very frequent <span class="mono">80–99%</span></span></div>
+        <div class="cell" role="cell"><span class="bar" style="--lo:80%;--hi:99%"><b></b></span><span class="val">Very frequent <span class="mono">80–99%</span></span></div>
+      </div>
+      <div class="mx-row" role="row" data-t="7">
+        <div class="feat" role="rowheader"><p class="name"><span class="tag">07</span>Exercise intolerance</p><p class="sub">Tires quickly · <span class="mono">HP:0003546</span></p></div>
+        <div class="cell c1" role="cell"><span class="bar" style="--lo:30%;--hi:79%"><b></b></span><span class="val">Frequent <span class="mono">30–79%</span></span></div>
+        <div class="cell" role="cell"><span class="bar" style="--lo:30%;--hi:79%"><b></b></span><span class="val">Frequent <span class="mono">30–79%</span></span></div>
+        <div class="cell" role="cell"><span class="bar" style="--lo:30%;--hi:79%"><b></b></span><span class="val">Frequent <span class="mono">30–79%</span></span></div>
+      </div>
+      <div class="scale">
+        <span class="key"><span class="bar" style="--lo:30%;--hi:79%"><b></b></span>HPO frequency band, 0–100% (illustrative in this demo)</span>
+        <span>Order: Monarch semantic similarity · not a probability</span>
+      </div>
+    </div>
+
+    <div class="panel next">
+      <p class="label">Next to ask</p>
+      <p class="q">At what age did walking get harder? <span>The answer best separates matches 01 and 02.</span></p>
+      <a href="#">All questions</a>
+    </div>
+  </section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p class="safe">Rare Disease Detective suggests possible matches to discuss with a doctor. It is decision support, not a diagnosis.</p>
+    <div class="attr">
+      <p>This product uses the Human Phenotype Ontology (HPO). Find out more at <a href="https://hpo.jax.org">hpo.jax.org</a>. HPO release: shown live in the app (placeholder in this specimen). Disease names and ORPHAcodes from Orphanet, CC BY 4.0. Ranking via the Monarch Initiative, which is not intended for diagnosis.</p>
+      <p>Demo patient. Frequencies are illustrative, not taken from the live HPO annotations.</p>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
