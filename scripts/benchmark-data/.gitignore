@@ -1,0 +1,5 @@
+# Upstream response cache for scripts/ranking-benchmark.ts (about 9 MB).
+# Kept local only; see README.md.
+*
+!.gitignore
+!README.md
