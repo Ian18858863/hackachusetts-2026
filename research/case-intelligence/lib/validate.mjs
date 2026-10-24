@@ -40,6 +40,16 @@ function checkCase(c, ctx, errors, warnings) {
   need(Number.isInteger(s.year), 'source.year');
   need(['fulltext', 'html-manual'].includes(s.textAccess), 'source.textAccess');
 
+  // Licence: publicly readable is not the same as open-access licensed.
+  const acc = s.access;
+  if (!acc?.classification) push(errors, 'ACCESS_UNCHECKED', id, 'source.access is missing; run check-access --fix');
+  else if (acc.classification !== 'oa-cc') {
+    if (c.split === 'dev') push(errors, 'DEV_NOT_OPEN_ACCESS', id, `development cases must be open-access licensed; this one is ${acc.classification}`);
+    const ex = s.accessException;
+    if (!ex?.reason || !ex?.decision) push(errors, 'ACCESS_EXCEPTION_UNDOCUMENTED', id, `${acc.classification} source needs source.accessException with reason and decision`);
+    else push(warnings, 'ACCESS_EXCEPTION', id, `${acc.classification}: ${ex.decision.split(':')[0]}; human confirmation ${ex.humanConfirmation ?? 'not recorded'}`);
+  }
+
   const d = c.diagnosis ?? {};
   need(d.name, 'diagnosis.name');
   need(/^MONDO:\d{7}$/.test(d.mondo ?? ''), 'diagnosis.mondo');

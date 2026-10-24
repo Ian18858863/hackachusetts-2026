@@ -10,7 +10,23 @@
     "journal": "American journal of medical genetics. Part A",
     "year": 2025,
     "patient": "Single patient (15-year-old boy)",
-    "textAccess": "fulltext"
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "author-manuscript",
+      "license": null,
+      "inPmcOpenSet": true,
+      "manuscriptId": "NIHMS2024171",
+      "statement": "This file is available for text mining. It may also be used consistent with the principles of fair use under the copyright law.",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    },
+    "accessException": {
+      "reason": "NIH author manuscript (NIHMS2024171). PMC states the file is available for text mining and may be used under fair use; it is not under a Creative Commons licence.",
+      "decision": "Kept in the held-out split: the held-out set is defined as the 10 T33 cases and has already been scored once, so replacing the case would rewrite the evaluation history. Flagged as an exception to the open-access requirement.",
+      "use": "Only short quotes (at most 30 words) for verification and a paraphrased note; article text is not stored in the repository or redistributed.",
+      "eligibleForDevelopment": false,
+      "humanConfirmation": "pending (Peter)"
+    }
   },
   "diagnosis": {
     "name": "Friedreich ataxia",

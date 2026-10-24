@@ -10,7 +10,16 @@
     "journal": "Frontiers in endocrinology",
     "year": 2018,
     "patient": "Single patient (15-month-old boy)",
-    "textAccess": "fulltext"
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "Copyright © 2018 Sanjad, Aoun, Yammine, Bassyouni and Karam. 2018 Sanjad, Aoun, Yammine, Bassyouni and Karam https://creativecommons.org/licenses/by/4.0/ This is an open-access article distributed und",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
   },
   "diagnosis": {
     "name": "Williams syndrome",

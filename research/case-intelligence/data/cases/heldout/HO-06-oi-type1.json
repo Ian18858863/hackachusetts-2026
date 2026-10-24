@@ -10,7 +10,16 @@
     "journal": "Journal of investigative medicine high impact case reports",
     "year": 2025,
     "patient": "Single patient",
-    "textAccess": "fulltext"
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY-NC",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© 2025 American Federation for Medical Research 2025 American Federation for Medical Research https://creativecommons.org/licenses/by-nc/4.0/ This article is distributed under the terms of the Creativ",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
   },
   "diagnosis": {
     "name": "osteogenesis imperfecta type 1",

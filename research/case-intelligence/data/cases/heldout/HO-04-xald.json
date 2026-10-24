@@ -10,13 +10,34 @@
     "journal": "American journal of translational research",
     "year": 2025,
     "patient": "Single patient (38-year-old man)",
-    "textAccess": "html-manual"
+    "textAccess": "html-manual",
+    "access": {
+      "classification": "free-to-read",
+      "license": null,
+      "inPmcOpenSet": false,
+      "manuscriptId": null,
+      "statement": "AJTR Copyright © 2025 2025",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    },
+    "accessException": {
+      "reason": "Publisher copyright (\"AJTR Copyright © 2025\"); not in the PMC open-access set and no Creative Commons licence. Free to read on PMC only.",
+      "decision": "Kept in the held-out split: the held-out set is defined as the 10 T33 cases and has already been scored once, so replacing the case would rewrite the evaluation history. Flagged as an exception to the open-access requirement.",
+      "use": "Only short quotes (at most 30 words) for verification and a paraphrased note; article text is not stored in the repository or redistributed.",
+      "eligibleForDevelopment": false,
+      "humanConfirmation": "pending (Peter)"
+    }
   },
   "diagnosis": {
     "name": "X-linked adrenoleukodystrophy (adult myelopathy presentation)",
     "mondo": "MONDO:0018544",
-    "acceptedIds": ["MONDO:0018544", "MONDO:0015339"],
-    "genes": ["ABCD1"],
+    "acceptedIds": [
+      "MONDO:0018544",
+      "MONDO:0015339"
+    ],
+    "genes": [
+      "ABCD1"
+    ],
     "confirmation": {
       "method": "genetic+biochemical",
       "summary": "Raised plasma VLCFA ratios and a novel hemizygous ABCD1 c.356dupC found by Sanger sequencing.",
@@ -32,17 +53,80 @@
     "author": "T33 hand-off (assistant-written from the article; not the patient's words)"
   },
   "phenotypes": [
-    { "hpoId": "HP:0001324", "label": "Muscle weakness", "origin": "T33", "t33Label": "Muscle weakness", "evidence": "initially manifested as rigidity and weakness in both legs since 1998", "inNote": true, "notePhrase": "My legs have grown stiffer and weaker" },
-    { "hpoId": "HP:0002061", "label": "Lower limb spasticity", "origin": "T33", "t33Label": "Lower limb spasticity", "evidence": "a persistent increase in cogwheel muscle tone in both lower limbs", "inNote": true, "notePhrase": "My legs have grown stiffer" },
-    { "hpoId": "HP:0001288", "label": "Gait disturbance", "origin": "T33", "t33Label": "Gait disturbance", "evidence": "a 20-year history of progressively worsening gait disturbances", "inNote": true, "notePhrase": "walking only felt awkward" },
-    { "hpoId": "HP:0002136", "label": "Broad-based gait", "origin": "T33", "t33Label": "Broad-based gait", "evidence": "spastic paraparesis accompanied by a wide-based spastic gait", "inNote": true, "notePhrase": "walking with my feet far apart" },
-    { "hpoId": "HP:0033748", "label": "Hypoesthesia", "origin": "T38", "evidence": "Numbness in the lower limbs was reported by the patient in 2003", "inNote": true, "notePhrase": "my legs felt numb" },
-    { "hpoId": "HP:0001260", "label": "Dysarthria", "origin": "T33", "t33Label": "Dysarthria", "evidence": "Neurological examination revealed impaired cognitive function, mild dysarthria, and spastic paraparesis", "inNote": true, "notePhrase": "some of my words were harder to understand" },
-    { "hpoId": "HP:0003394", "label": "Muscle spasm", "origin": "T38", "evidence": "Additional manifestations included asynodia, muscle cramps, and psychiatric conditions", "inNote": true, "notePhrase": "muscle cramps", "comment": "HPO lists 'muscle cramps' as a synonym of Muscle spasm." },
-    { "hpoId": "HP:0001347", "label": "Hyperreflexia", "origin": "T33", "t33Label": "Hyperreflexia", "evidence": "Deep tendon reflexes were diffusely brisk, with a bilateral Achilles clonus and a positive Babinski sign", "inNote": false, "comment": "Examination finding; not in the note." }
+    {
+      "hpoId": "HP:0001324",
+      "label": "Muscle weakness",
+      "origin": "T33",
+      "t33Label": "Muscle weakness",
+      "evidence": "initially manifested as rigidity and weakness in both legs since 1998",
+      "inNote": true,
+      "notePhrase": "My legs have grown stiffer and weaker"
+    },
+    {
+      "hpoId": "HP:0002061",
+      "label": "Lower limb spasticity",
+      "origin": "T33",
+      "t33Label": "Lower limb spasticity",
+      "evidence": "a persistent increase in cogwheel muscle tone in both lower limbs",
+      "inNote": true,
+      "notePhrase": "My legs have grown stiffer"
+    },
+    {
+      "hpoId": "HP:0001288",
+      "label": "Gait disturbance",
+      "origin": "T33",
+      "t33Label": "Gait disturbance",
+      "evidence": "a 20-year history of progressively worsening gait disturbances",
+      "inNote": true,
+      "notePhrase": "walking only felt awkward"
+    },
+    {
+      "hpoId": "HP:0002136",
+      "label": "Broad-based gait",
+      "origin": "T33",
+      "t33Label": "Broad-based gait",
+      "evidence": "spastic paraparesis accompanied by a wide-based spastic gait",
+      "inNote": true,
+      "notePhrase": "walking with my feet far apart"
+    },
+    {
+      "hpoId": "HP:0033748",
+      "label": "Hypoesthesia",
+      "origin": "T38",
+      "evidence": "Numbness in the lower limbs was reported by the patient in 2003",
+      "inNote": true,
+      "notePhrase": "my legs felt numb"
+    },
+    {
+      "hpoId": "HP:0001260",
+      "label": "Dysarthria",
+      "origin": "T33",
+      "t33Label": "Dysarthria",
+      "evidence": "Neurological examination revealed impaired cognitive function, mild dysarthria, and spastic paraparesis",
+      "inNote": true,
+      "notePhrase": "some of my words were harder to understand"
+    },
+    {
+      "hpoId": "HP:0003394",
+      "label": "Muscle spasm",
+      "origin": "T38",
+      "evidence": "Additional manifestations included asynodia, muscle cramps, and psychiatric conditions",
+      "inNote": true,
+      "notePhrase": "muscle cramps",
+      "comment": "HPO lists 'muscle cramps' as a synonym of Muscle spasm."
+    },
+    {
+      "hpoId": "HP:0001347",
+      "label": "Hyperreflexia",
+      "origin": "T33",
+      "t33Label": "Hyperreflexia",
+      "evidence": "Deep tendon reflexes were diffusely brisk, with a bilateral Achilles clonus and a positive Babinski sign",
+      "inNote": false,
+      "comment": "Examination finding; not in the note."
+    }
   ],
   "uncertainty": [
-    "Europe PMC does not list this article as open access and NCBI does not allow automated full-text download. Quotes were checked by reading the public PMC page on 2026-10-24 and cannot be re-checked by verify-sources.",
+    "The article is not open-access licensed (see source.accessException), and NCBI does not allow automated full-text download. Quotes were checked by reading the public PMC page on 2026-10-24 and cannot be re-checked by verify-sources.",
     "The note mentions mood changes and bathroom control; the article reports anxiety, depression, apathy and sphincter dysfunction, but these are not coded here because the note's wording is too general to pick one HPO term."
   ]
 }

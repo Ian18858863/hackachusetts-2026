@@ -10,7 +10,16 @@
     "journal": "BMC nephrology",
     "year": 2017,
     "patient": "Single patient (12-year-old boy)",
-    "textAccess": "fulltext"
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© The Author(s). 2017 https://creativecommons.org/licenses/by/4.0/ Open Access This article is distributed under the terms of the Creative Commons Attribution 4.0 International License ( http://creati",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
   },
   "diagnosis": {
     "name": "juvenile nephropathic cystinosis",

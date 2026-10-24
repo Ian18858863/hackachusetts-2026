@@ -22,7 +22,7 @@ function makeCase(over = {}) {
     caseId: 'DEV-01',
     split: 'dev',
     _file: 'cases/dev/DEV-01-x.json',
-    source: { pmcid: 'PMC1000001', pmid: '1', doi: null, url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC1000001/', title: 'T', journal: 'J', year: 2020, textAccess: 'fulltext' },
+    source: { pmcid: 'PMC1000001', pmid: '1', doi: null, url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC1000001/', title: 'T', journal: 'J', year: 2020, textAccess: 'fulltext', access: { classification: 'oa-cc', license: 'CC BY' } },
     diagnosis: {
       name: 'Examplar syndrome', mondo: 'MONDO:0000001', acceptedIds: ['MONDO:0000001'], genes: ['EXM1'],
       confirmation: { method: 'genetic', summary: 'variant', evidence: ['a pathogenic EXM1 variant was found'] },
@@ -40,7 +40,7 @@ function makeCase(over = {}) {
 function heldCase(over = {}) {
   return makeCase({
     caseId: 'HO-01', split: 'heldout', _file: 'cases/heldout/HO-01-y.json',
-    source: { pmcid: 'PMC2000002', pmid: '2', doi: null, url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2000002/', title: 'U', journal: 'J', year: 2021, textAccess: 'fulltext' },
+    source: { pmcid: 'PMC2000002', pmid: '2', doi: null, url: 'https://pmc.ncbi.nlm.nih.gov/articles/PMC2000002/', title: 'U', journal: 'J', year: 2021, textAccess: 'fulltext', access: { classification: 'oa-cc', license: 'CC BY' } },
     diagnosis: {
       name: 'Fictivus disease', mondo: 'MONDO:0000002', acceptedIds: ['MONDO:0000002'], genes: ['FCT2'],
       confirmation: { method: 'genetic', summary: 'variant', evidence: ['a FCT2 variant'] },
@@ -188,6 +188,29 @@ test('rejected entries need a reason and a known code', () => {
   const r = codes(run({ dict: dictionary([goodEntry()], [rej]) }));
   assert.ok(r.includes('REJECT_NO_REASON'));
   assert.ok(r.includes('REJECT_CODE'));
+});
+
+test('a case without a licence check is an error', () => {
+  const c = makeCase();
+  delete c.source.access;
+  assert.ok(codes(run({ cases: [c, heldCase()] })).includes('ACCESS_UNCHECKED'));
+});
+
+test('a free-to-read held-out source needs a documented exception', () => {
+  const h = heldCase();
+  h.source.access = { classification: 'free-to-read', license: null };
+  assert.ok(codes(run({ cases: [makeCase(), h] })).includes('ACCESS_EXCEPTION_UNDOCUMENTED'));
+  h.source.accessException = { reason: 'publisher copyright', decision: 'Kept: history', humanConfirmation: 'pending' };
+  const r = run({ cases: [makeCase(), h] });
+  assert.deepEqual(r.errors, []);
+  assert.ok(r.warnings.some((w) => w.code === 'ACCESS_EXCEPTION'));
+});
+
+test('development cases must be open-access licensed even with an exception', () => {
+  const c = makeCase();
+  c.source.access = { classification: 'author-manuscript', license: null };
+  c.source.accessException = { reason: 'x', decision: 'y' };
+  assert.ok(codes(run({ cases: [c, heldCase()] })).includes('DEV_NOT_OPEN_ACCESS'));
 });
 
 test('the committed dataset passes validation with 10 held-out cases', async () => {

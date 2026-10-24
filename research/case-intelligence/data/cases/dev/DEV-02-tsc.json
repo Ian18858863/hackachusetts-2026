@@ -10,7 +10,16 @@
     "journal": "Molecular brain",
     "year": 2016,
     "patient": "Single patient (boy)",
-    "textAccess": "fulltext"
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© Hwang et al. 2016 https://creativecommons.org/licenses/by/4.0/ Open Access This article is distributed under the terms of the Creative Commons Attribution 4.0 International License ( http://creative",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
   },
   "diagnosis": {
     "name": "tuberous sclerosis 2",

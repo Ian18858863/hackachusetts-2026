@@ -10,7 +10,16 @@
     "journal": "Frontiers in neurology",
     "year": 2019,
     "patient": "Single patient (60-year-old man)",
-    "textAccess": "fulltext"
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "Copyright © 2019 Chen, Zhu, Hao, Feng and Zhang. 2019 Chen, Zhu, Hao, Feng and Zhang https://creativecommons.org/licenses/by/4.0/ This is an open-access article distributed under the terms of the Crea",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
   },
   "diagnosis": {
     "name": "phenylketonuria",

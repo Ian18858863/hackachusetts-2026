@@ -10,7 +10,16 @@
     "journal": "BMC pediatrics",
     "year": 2026,
     "patient": "Single patient (17-month-old boy at presentation)",
-    "textAccess": "fulltext"
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY-NC-ND",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© The Author(s) 2026 2026 https://creativecommons.org/licenses/by-nc-nd/4.0/ Open Access This article is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International Lic",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
   },
   "diagnosis": {
     "name": "Sotos syndrome",

@@ -10,13 +10,26 @@
     "journal": "Molecular genetics and metabolism reports",
     "year": 2023,
     "patient": "Single patient (followed from infancy to about 15 years)",
-    "textAccess": "fulltext"
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY-NC-ND",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© 2023 The Author(s) 2023 https://creativecommons.org/licenses/by-nc-nd/4.0/ This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
   },
   "diagnosis": {
     "name": "glycogen storage disease II (late-onset Pompe disease)",
     "mondo": "MONDO:0009290",
-    "acceptedIds": ["MONDO:0009290"],
-    "genes": ["GAA"],
+    "acceptedIds": [
+      "MONDO:0009290"
+    ],
+    "genes": [
+      "GAA"
+    ],
     "confirmation": {
       "method": "genetic+enzyme+biopsy",
       "summary": "Muscle biopsy, enzyme analysis and GAA sequencing (c.525delT and c.-32-13T>G) at 9 months.",
@@ -32,15 +45,86 @@
     "author": "T33 hand-off (assistant-written from the article; not the parent's words)"
   },
   "phenotypes": [
-    { "hpoId": "HP:0001324", "label": "Muscle weakness", "origin": "T33", "t33Label": "Muscle weakness", "evidence": "due to worsening muscle weakness and motor delay", "inNote": true, "notePhrase": "the muscles seemed weak" },
-    { "hpoId": "HP:0001270", "label": "Motor delay", "origin": "T33", "t33Label": "Motor delay", "evidence": "due to worsening muscle weakness and motor delay", "inNote": true, "notePhrase": "slow to learn to move and walk" },
-    { "hpoId": "HP:0002136", "label": "Broad-based gait", "origin": "T33", "t33Label": "Broad-based gait", "evidence": "began taking a few independent steps with a broad-based gait and exaggerated lumbar lordosis", "inNote": true, "notePhrase": "the feet were set far apart" },
-    { "hpoId": "HP:0003307", "label": "Hyperlordosis", "origin": "T33", "t33Label": "Hyperlordosis", "evidence": "began taking a few independent steps with a broad-based gait and exaggerated lumbar lordosis", "inNote": true, "notePhrase": "the lower back curved more than expected" },
-    { "hpoId": "HP:0003551", "label": "Difficulty climbing stairs", "origin": "T38", "evidence": "a deterioration in his ability to climb stairs", "inNote": true, "notePhrase": "climbing stairs kept taking extra effort" },
-    { "hpoId": "HP:0002650", "label": "Scoliosis", "origin": "T33", "t33Label": "Scoliosis", "evidence": "the patient underwent spinal fusion with rod insertion due to significant scoliosis", "inNote": true, "notePhrase": "a sideways curve in the back" },
-    { "hpoId": "HP:0001288", "label": "Gait disturbance", "origin": "T33", "t33Label": "Gait disturbance", "evidence": "Worsening gait and balance, decreased endurance, and increased weakness were observed in clinic", "inNote": true, "notePhrase": "balance was worse" },
-    { "hpoId": "HP:0002527", "label": "Falls", "origin": "T38", "evidence": "a very unsteady gait with shoulders and arms flailing and a fall at 1 min and 45 s into the test", "inNote": true, "notePhrase": "falls were happening", "comment": "The article reports one fall during a walk test; the note's plural 'falls' is stronger than the source." },
-    { "hpoId": "HP:0002014", "label": "Diarrhea", "origin": "T33", "t33Label": "Diarrhea", "evidence": "gastrointestinal symptoms of intermittent diarrhea and feeling of bladder and bowel urgency after eating", "inNote": false, "comment": "Supported by the article but not mentioned in the note." }
+    {
+      "hpoId": "HP:0001324",
+      "label": "Muscle weakness",
+      "origin": "T33",
+      "t33Label": "Muscle weakness",
+      "evidence": "due to worsening muscle weakness and motor delay",
+      "inNote": true,
+      "notePhrase": "the muscles seemed weak"
+    },
+    {
+      "hpoId": "HP:0001270",
+      "label": "Motor delay",
+      "origin": "T33",
+      "t33Label": "Motor delay",
+      "evidence": "due to worsening muscle weakness and motor delay",
+      "inNote": true,
+      "notePhrase": "slow to learn to move and walk"
+    },
+    {
+      "hpoId": "HP:0002136",
+      "label": "Broad-based gait",
+      "origin": "T33",
+      "t33Label": "Broad-based gait",
+      "evidence": "began taking a few independent steps with a broad-based gait and exaggerated lumbar lordosis",
+      "inNote": true,
+      "notePhrase": "the feet were set far apart"
+    },
+    {
+      "hpoId": "HP:0003307",
+      "label": "Hyperlordosis",
+      "origin": "T33",
+      "t33Label": "Hyperlordosis",
+      "evidence": "began taking a few independent steps with a broad-based gait and exaggerated lumbar lordosis",
+      "inNote": true,
+      "notePhrase": "the lower back curved more than expected"
+    },
+    {
+      "hpoId": "HP:0003551",
+      "label": "Difficulty climbing stairs",
+      "origin": "T38",
+      "evidence": "a deterioration in his ability to climb stairs",
+      "inNote": true,
+      "notePhrase": "climbing stairs kept taking extra effort"
+    },
+    {
+      "hpoId": "HP:0002650",
+      "label": "Scoliosis",
+      "origin": "T33",
+      "t33Label": "Scoliosis",
+      "evidence": "the patient underwent spinal fusion with rod insertion due to significant scoliosis",
+      "inNote": true,
+      "notePhrase": "a sideways curve in the back"
+    },
+    {
+      "hpoId": "HP:0001288",
+      "label": "Gait disturbance",
+      "origin": "T33",
+      "t33Label": "Gait disturbance",
+      "evidence": "Worsening gait and balance, decreased endurance, and increased weakness were observed in clinic",
+      "inNote": true,
+      "notePhrase": "balance was worse"
+    },
+    {
+      "hpoId": "HP:0002527",
+      "label": "Falls",
+      "origin": "T38",
+      "evidence": "a very unsteady gait with shoulders and arms flailing and a fall at 1 min and 45 s into the test",
+      "inNote": true,
+      "notePhrase": "falls were happening",
+      "comment": "The article reports one fall during a walk test; the note's plural 'falls' is stronger than the source."
+    },
+    {
+      "hpoId": "HP:0002014",
+      "label": "Diarrhea",
+      "origin": "T33",
+      "t33Label": "Diarrhea",
+      "evidence": "gastrointestinal symptoms of intermittent diarrhea and feeling of bladder and bowel urgency after eating",
+      "inNote": false,
+      "comment": "Supported by the article but not mentioned in the note."
+    }
   ],
   "uncertainty": [
     "The note says 'falls were happening'; the article documents a single fall in a six-minute walk test."

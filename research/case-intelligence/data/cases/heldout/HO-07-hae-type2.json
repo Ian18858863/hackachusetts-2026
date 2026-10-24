@@ -10,7 +10,16 @@
     "journal": "Allergy, asthma & immunology research",
     "year": 2017,
     "patient": "Single patient (24-year-old woman)",
-    "textAccess": "fulltext"
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY-NC",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "Copyright © 2016 The Korean Academy of Asthma, Allergy and Clinical Immunology &#8226; The Korean Academy of Pediatric Allergy and Respiratory Disease 2016 https://creativecommons.org/licenses/by-nc/4",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
   },
   "diagnosis": {
     "name": "hereditary angioedema type 2",
