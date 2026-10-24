@@ -1,0 +1,747 @@
+{
+  "startedAt": "2026-10-24T18:36:12.296Z",
+  "sizes": {
+    "1440x900": {
+      "demoLoadMs": 526,
+      "notes": {
+        "readyMs": 3,
+        "facts": {
+          "hash": "#/notes",
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "scrollHeight": 1941,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "Describe what you have noticed"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": false,
+          "trialsCredit": false,
+          "orphanetCredit": false,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 3,
+          "maxScrollWidth": 1440,
+          "clientWidth": 1440,
+          "scrollX": 0
+        },
+        "cls": [],
+        "axe": {
+          "violations": [],
+          "incompleteContrast": 1
+        },
+        "consoleErrors": []
+      },
+      "features": {
+        "readyMs": 3,
+        "facts": {
+          "hash": "#/features",
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "scrollHeight": 2576,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "Check the features we found"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": false,
+          "trialsCredit": false,
+          "orphanetCredit": false,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 4,
+          "maxScrollWidth": 1440,
+          "clientWidth": 1440,
+          "scrollX": 0
+        },
+        "cls": [],
+        "axe": {
+          "violations": [],
+          "incompleteContrast": 2
+        },
+        "consoleErrors": []
+      },
+      "matches": {
+        "readyMs": 256,
+        "facts": {
+          "hash": "#/matches",
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "scrollHeight": 5417,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "Possible matches to discuss"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": true,
+          "trialsCredit": true,
+          "orphanetCredit": true,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 8,
+          "maxScrollWidth": 1440,
+          "clientWidth": 1440,
+          "scrollX": 0
+        },
+        "cls": [
+          {
+            "v": 0.0008061680169753086,
+            "t": 4557,
+            "src": "DIV._end_ce6u8_64"
+          }
+        ],
+        "axe": {
+          "violations": [
+            {
+              "id": "heading-order",
+              "impact": "moderate",
+              "help": "Heading levels should only increase by one",
+              "nodes": [
+                {
+                  "target": "._lead_10t7p_58 > ._group_10t7p_336 > h4",
+                  "summary": "Fix any of the following:\n  Heading order invalid"
+                }
+              ]
+            },
+            {
+              "id": "landmark-complementary-is-top-level",
+              "impact": "moderate",
+              "help": "Aside should not be contained in another landmark",
+              "nodes": [
+                {
+                  "target": "._others_10t7p_450",
+                  "summary": "Fix any of the following:\n  The complementary landmark is contained in another landmark."
+                },
+                {
+                  "target": "._notes_10t7p_841",
+                  "summary": "Fix any of the following:\n  The complementary landmark is contained in another landmark."
+                }
+              ]
+            }
+          ],
+          "incompleteContrast": 57
+        },
+        "consoleErrors": []
+      },
+      "questions": {
+        "readyMs": 3,
+        "facts": {
+          "hash": "#/questions",
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "scrollHeight": 3225,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "What to check next"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": true,
+          "trialsCredit": false,
+          "orphanetCredit": true,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 5,
+          "maxScrollWidth": 1440,
+          "clientWidth": 1440,
+          "scrollX": 0
+        },
+        "cls": [],
+        "axe": {
+          "violations": [],
+          "incompleteContrast": 0
+        },
+        "consoleErrors": []
+      },
+      "brief": {
+        "readyMs": 257,
+        "facts": {
+          "hash": "#/brief",
+          "scrollWidth": 1440,
+          "clientWidth": 1440,
+          "scrollHeight": 5114,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "Specialist brief"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": true,
+          "trialsCredit": true,
+          "orphanetCredit": true,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 8,
+          "maxScrollWidth": 1440,
+          "clientWidth": 1440,
+          "scrollX": 0
+        },
+        "cls": [
+          {
+            "v": 0.0008061680169753086,
+            "t": 9435,
+            "src": "DIV._end_ce6u8_64"
+          }
+        ],
+        "axe": {
+          "violations": [],
+          "incompleteContrast": 0
+        },
+        "consoleErrors": []
+      }
+    },
+    "1000x600": {
+      "demoLoadMs": 524,
+      "notes": {
+        "readyMs": 2,
+        "facts": {
+          "hash": "#/notes",
+          "scrollWidth": 1000,
+          "clientWidth": 1000,
+          "scrollHeight": 1859,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "Describe what you have noticed"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": false,
+          "trialsCredit": false,
+          "orphanetCredit": false,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 4,
+          "maxScrollWidth": 1000,
+          "clientWidth": 1000,
+          "scrollX": 0
+        },
+        "cls": [],
+        "axe": {
+          "violations": [],
+          "incompleteContrast": 1
+        },
+        "consoleErrors": []
+      },
+      "features": {
+        "readyMs": 6,
+        "facts": {
+          "hash": "#/features",
+          "scrollWidth": 1000,
+          "clientWidth": 1000,
+          "scrollHeight": 2536,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "Check the features we found"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": false,
+          "trialsCredit": false,
+          "orphanetCredit": false,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 6,
+          "maxScrollWidth": 1000,
+          "clientWidth": 1000,
+          "scrollX": 0
+        },
+        "cls": [],
+        "axe": {
+          "violations": [],
+          "incompleteContrast": 3
+        },
+        "consoleErrors": []
+      },
+      "matches": {
+        "readyMs": 254,
+        "facts": {
+          "hash": "#/matches",
+          "scrollWidth": 1000,
+          "clientWidth": 1000,
+          "scrollHeight": 7752,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "Possible matches to discuss"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": true,
+          "trialsCredit": true,
+          "orphanetCredit": true,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 17,
+          "maxScrollWidth": 1000,
+          "clientWidth": 1000,
+          "scrollX": 0
+        },
+        "cls": [],
+        "axe": {
+          "violations": [
+            {
+              "id": "heading-order",
+              "impact": "moderate",
+              "help": "Heading levels should only increase by one",
+              "nodes": [
+                {
+                  "target": "._lead_10t7p_58 > ._group_10t7p_336 > h4",
+                  "summary": "Fix any of the following:\n  Heading order invalid"
+                }
+              ]
+            },
+            {
+              "id": "landmark-complementary-is-top-level",
+              "impact": "moderate",
+              "help": "Aside should not be contained in another landmark",
+              "nodes": [
+                {
+                  "target": "._others_10t7p_450",
+                  "summary": "Fix any of the following:\n  The complementary landmark is contained in another landmark."
+                },
+                {
+                  "target": "._notes_10t7p_841",
+                  "summary": "Fix any of the following:\n  The complementary landmark is contained in another landmark."
+                }
+              ]
+            }
+          ],
+          "incompleteContrast": 57
+        },
+        "consoleErrors": []
+      },
+      "questions": {
+        "readyMs": 2,
+        "facts": {
+          "hash": "#/questions",
+          "scrollWidth": 1000,
+          "clientWidth": 1000,
+          "scrollHeight": 4352,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "What to check next"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": true,
+          "trialsCredit": false,
+          "orphanetCredit": true,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 10,
+          "maxScrollWidth": 1000,
+          "clientWidth": 1000,
+          "scrollX": 0
+        },
+        "cls": [],
+        "axe": {
+          "violations": [],
+          "incompleteContrast": 0
+        },
+        "consoleErrors": []
+      },
+      "brief": {
+        "readyMs": 256,
+        "facts": {
+          "hash": "#/brief",
+          "scrollWidth": 1000,
+          "clientWidth": 1000,
+          "scrollHeight": 5000,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "Specialist brief"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": true,
+          "trialsCredit": true,
+          "orphanetCredit": true,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 11,
+          "maxScrollWidth": 1000,
+          "clientWidth": 1000,
+          "scrollX": 0
+        },
+        "cls": [],
+        "axe": {
+          "violations": [],
+          "incompleteContrast": 0
+        },
+        "consoleErrors": []
+      }
+    },
+    "375x812": {
+      "demoLoadMs": 525,
+      "notes": {
+        "readyMs": 3,
+        "facts": {
+          "hash": "#/notes",
+          "scrollWidth": 375,
+          "clientWidth": 375,
+          "scrollHeight": 2468,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "Describe what you have noticed"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": false,
+          "trialsCredit": false,
+          "orphanetCredit": false,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 4,
+          "maxScrollWidth": 375,
+          "clientWidth": 375,
+          "scrollX": 0
+        },
+        "cls": [],
+        "axe": {
+          "violations": [],
+          "incompleteContrast": 3
+        },
+        "consoleErrors": []
+      },
+      "features": {
+        "readyMs": 3,
+        "facts": {
+          "hash": "#/features",
+          "scrollWidth": 375,
+          "clientWidth": 375,
+          "scrollHeight": 3948,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "Check the features we found"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": false,
+          "trialsCredit": false,
+          "orphanetCredit": false,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 7,
+          "maxScrollWidth": 375,
+          "clientWidth": 375,
+          "scrollX": 0
+        },
+        "cls": [],
+        "axe": {
+          "violations": [],
+          "incompleteContrast": 9
+        },
+        "consoleErrors": []
+      },
+      "matches": {
+        "readyMs": 255,
+        "facts": {
+          "hash": "#/matches",
+          "scrollWidth": 375,
+          "clientWidth": 375,
+          "scrollHeight": 9074,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "Possible matches to discuss"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": true,
+          "trialsCredit": true,
+          "orphanetCredit": true,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 14,
+          "maxScrollWidth": 375,
+          "clientWidth": 375,
+          "scrollX": 0
+        },
+        "cls": [],
+        "axe": {
+          "violations": [
+            {
+              "id": "heading-order",
+              "impact": "moderate",
+              "help": "Heading levels should only increase by one",
+              "nodes": [
+                {
+                  "target": "._lead_10t7p_58 > ._group_10t7p_336 > h4",
+                  "summary": "Fix any of the following:\n  Heading order invalid"
+                }
+              ]
+            },
+            {
+              "id": "landmark-complementary-is-top-level",
+              "impact": "moderate",
+              "help": "Aside should not be contained in another landmark",
+              "nodes": [
+                {
+                  "target": "._others_10t7p_450",
+                  "summary": "Fix any of the following:\n  The complementary landmark is contained in another landmark."
+                },
+                {
+                  "target": "._notes_10t7p_841",
+                  "summary": "Fix any of the following:\n  The complementary landmark is contained in another landmark."
+                }
+              ]
+            }
+          ],
+          "incompleteContrast": 61
+        },
+        "consoleErrors": []
+      },
+      "questions": {
+        "readyMs": 3,
+        "facts": {
+          "hash": "#/questions",
+          "scrollWidth": 375,
+          "clientWidth": 375,
+          "scrollHeight": 5157,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "What to check next"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": true,
+          "trialsCredit": false,
+          "orphanetCredit": true,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 8,
+          "maxScrollWidth": 375,
+          "clientWidth": 375,
+          "scrollX": 0
+        },
+        "cls": [],
+        "axe": {
+          "violations": [],
+          "incompleteContrast": 1
+        },
+        "consoleErrors": []
+      },
+      "brief": {
+        "readyMs": 256,
+        "facts": {
+          "hash": "#/brief",
+          "scrollWidth": 375,
+          "clientWidth": 375,
+          "scrollHeight": 8154,
+          "horizontalScroll": false,
+          "overflowingElements": [],
+          "h1Count": 1,
+          "h1Visible": 1,
+          "h1Text": [
+            "Specialist brief"
+          ],
+          "disclaimer": true,
+          "hpoAttribution": "This product uses the Human Phenotype Ontology (version unknown)",
+          "demoLabel": "Demo case (synthetic narrative from phenopacket-store PMID_27900365_patient)",
+          "monarchCredit": true,
+          "trialsCredit": true,
+          "orphanetCredit": true,
+          "phenopacketStoreCredit": true,
+          "percentSigns": []
+        },
+        "scroll": {
+          "steps": 13,
+          "maxScrollWidth": 375,
+          "clientWidth": 375,
+          "scrollX": 0
+        },
+        "cls": [],
+        "axe": {
+          "violations": [],
+          "incompleteContrast": 1
+        },
+        "consoleErrors": []
+      }
+    }
+  },
+  "reducedMotion": {
+    "notes": {
+      "mq": true,
+      "early": [],
+      "late": [],
+      "textLen": 1835,
+      "h1": [
+        "Describe what you have noticed"
+      ],
+      "disclaimer": true
+    },
+    "features": {
+      "mq": true,
+      "early": [],
+      "late": [],
+      "textLen": 3410,
+      "h1": [
+        "Check the features we found"
+      ],
+      "disclaimer": true
+    },
+    "matches": {
+      "mq": true,
+      "early": [],
+      "late": [],
+      "textLen": 11326,
+      "h1": [
+        "Possible matches to discuss"
+      ],
+      "disclaimer": true
+    },
+    "questions": {
+      "mq": true,
+      "early": [],
+      "late": [],
+      "textLen": 4700,
+      "h1": [
+        "What to check next"
+      ],
+      "disclaimer": true
+    },
+    "brief": {
+      "mq": true,
+      "early": [],
+      "late": [],
+      "textLen": 10482,
+      "h1": [
+        "Specialist brief"
+      ],
+      "disclaimer": true
+    }
+  },
+  "motionNoPref": {
+    "notes": {
+      "early": 4,
+      "earlyNames": [
+        "color",
+        "_dissolve_14ktn_1",
+        "_sharpen_eg9b8_1"
+      ],
+      "textLen": 1835
+    },
+    "features": {
+      "early": 4,
+      "earlyNames": [
+        "color",
+        "_dissolve_14ktn_1",
+        "_sharpen_eg9b8_1"
+      ],
+      "textLen": 3410
+    },
+    "matches": {
+      "early": 4,
+      "earlyNames": [
+        "color",
+        "_dissolve_14ktn_1",
+        "_sharpen_eg9b8_1"
+      ],
+      "textLen": 11326
+    },
+    "questions": {
+      "early": 4,
+      "earlyNames": [
+        "color",
+        "_dissolve_14ktn_1",
+        "_sharpen_eg9b8_1"
+      ],
+      "textLen": 4700
+    },
+    "brief": {
+      "early": 4,
+      "earlyNames": [
+        "color",
+        "_dissolve_14ktn_1",
+        "_sharpen_eg9b8_1"
+      ],
+      "textLen": 10482
+    }
+  },
+  "finishedAt": "2026-10-24T18:37:06.435Z"
+}

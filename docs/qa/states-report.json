@@ -1,0 +1,113 @@
+{
+  "empty-features": {
+    "text": "Step 2 of 5\n\nCheck the features we found\n\nEach feature links to the words it came from. Keep, remove or mark it as not present.\n\nNo notes yet\n\nStart by describing what you have noticed, open a demo patient, or add features by hand below.\n\nWrite the notes\nTry a demo patient\nAdd a feature\n\nMissing something? Search the Human Phenotype Ontology in plain words, for example “long fingers” or “falls often”.\n\nSearch for a feature\nAdd as\nAdd the chosen feature as\nPresent\nNot present",
+    "h1": [
+      "Check the features we found"
+    ]
+  },
+  "empty-matches": {
+    "text": "Step 3 of 5\n\nPossible matches to discuss\n\nDecision support, not a diagnosis. These are possible matches to discuss with a doctor. Ranked by how well the features overlap, with the evidence behind each match.\n\nNo present features to match yet\n\nPossible matches appear here once at least one feature is kept as present.\n\nReview the features\nRecruiting studies\n\nStudies looking for participants now, for a possible match.\n\nStudies appear after matching\n\nOnce there are possible matches, this shows up to five recruiting studies from ClinicalTrials.gov for one of them.\n\nTrial data from ClinicalTrials.go",
+    "h1": [
+      "Possible matches to discuss"
+    ]
+  },
+  "empty-brief": {
+    "text": "Step 5 of 5\n\nSpecialist brief\n\nDecision support, not a diagnosis. These are possible matches to discuss with a doctor. One page to print or save as PDF, plus a standard file a genetics clinic can use.\n\nThe brief needs at least one feature\n\nKeep at least one feature as present. The brief then lists the features, the possible matches with their evidence and the questions to ask.\n\nAdd notes",
+    "h1": [
+      "Specialist brief"
+    ]
+  },
+  "loading-extract": {
+    "text": "Find the features | undefined"
+  },
+  "error-422": {
+    "apiCalls": [
+      {
+        "url": "/api/extract",
+        "status": 422
+      }
+    ],
+    "textKept": 85,
+    "problem": "No features found in these notes\n\nWe could not match any phrase to a medical feature. Try describing what you see in everyday words, such as \"falls a lot\" or \"big calves\", or add features by hand.\n\nAdd features by hand\n\nHTTP 422 · NO_TERMS_FOUND",
+    "text": "Step 1 of 5\n\nDescribe what you have noticed\n\nPaste a symptom history in plain words. No medical vocabulary is needed.\n\nTurn scattered notes into a specialist-ready brief: possible conditions to discuss with a doctor, each with the evidence behind it.\n\nSymptom history\n\nWho it is about, their age, and what you have noticed and when. Things that have not happened help too, such as “has never had a seizure”.\n\nYour notes stay in this browser. They are sent only to find the features and are not stored on our server.\n\n7,915 of 8,000 characters left\n\nNo features found in these notes\n\nWe could not match any phrase to a medical feature. Try describing what you see in everyday words, such as \"falls a lot\" or \"big calves\", or add features by hand.\n\nAdd features by hand\n\nHTTP 422 · NO_TERMS_FOUND\n\nFind the features\n\nNext you check each feature against the words it came from.\n\nOR\nTry a demo patient\n\nS"
+  },
+  "loading-matches": {
+    "toggledFalls": true,
+    "busy": true,
+    "text": "Step 3 of 5 · A 54-year-old with worsening memory and unsteady walking · demo case, not a real patient\n\nPossible matches to discuss\n\nDecision support, not a diagnosis. These are possible matches to discuss with a doctor. Ranked by how well the features overlap, with the evidence behind each match.\n\nDemo case (synthetic narrative from phenopacket-store PMID_27900365_patient)\nMatching 11 present features with known conditions\n\nMatching 11 present features with known conditions\n\nRecruiting studies\n\nStudies looking for participants now, for a possible match.\n\nStudies appear after matching\n\nOnce there are possible matches, this shows up to five recruiting studies from ClinicalTrials.gov for one o"
+  },
+  "offline-matches": {
+    "navigatorOnLine": false,
+    "text": "Skip to content\nRare Disease Detective\nNotes\nFeatures\nPossible matches\nWhat to check next\nBrief\nDemo case\nPrepare brief\n\nYou are offline. Your case is saved in this browser. Actions that need the network are paused until you reconnect.\n\nStep 3 of 5 · A 54-year-old with worsening memory and unsteady walking · demo case, not a real patient\n\nPossible matches to discuss\n\nDecision support, not a diagnosis. These are possible matches to discuss with a doctor. Ranked by how well the features overlap, with the evidence behind each match.\n\nDemo case (synthetic narrative from phenopacket-store PMID_27900365_patient)\nRanked at 2:39 PM on 11 present features and 2 not present\n\n1\nClosest overlap\n\nRank 1:\nNiemann-Pick disease, type C1\n\nStrong overlap. 6 of 11 present features appear in this condition, plus 5 through broader terms.\n\n6 of 11\nfeatures described\nplus 5 through broader terms\n\nFeatures desc"
+  },
+  "offline-after-change": {
+    "text": "Step 3 of 5 · A 54-year-old with worsening memory and unsteady walking · demo case, not a real patient\n\nPossible matches to discuss\n\nDecision support, not a diagnosis. These are possible matches to discuss with a doctor. Ranked by how well the features overlap, with the evidence behind each match.\n\nDemo case (synthetic narrative from phenopacket-store PMID_27900365_patient)\nOffline. The ranking updates when you reconnect\n\n1\nClosest overlap\n\nRank 1:\nNiemann-Pick disease, type C1\n\nStrong overlap. 6 of 11 present features appear in this condition, plus 5 through broader terms.\n\n6 of 11\nfeatures described\nplus 5 through broader terms\n\nFeatures described\nHow often in Niemann-Pick disease, type C1\n\nStayed yellow for a long time as a newborn\n, feature\n1\nProlonged neonatal jaundice\nFrequency not listed\n\nFrom the notes\nMy mother says I stayed yellow for a long time as a newborn.\n\nMore and more fo",
+    "storedTerms": 13
+  },
+  "back-online": {
+    "text": "Step 3 of 5 · A 54-year-old with worsening memory and unsteady walking · demo case, not a real patient\n\nPossible matches to discuss\n\nDecision support, not a diagnosis. These are possible matches to discuss with a doctor. Ranked by how well the features overlap, with the evidence behind each match.\n\n"
+  },
+  "error-504-rank": {
+    "intercepted": 1,
+    "text": "Step 3 of 5 · A 54-year-old with worsening memory and unsteady walking · demo case, not a real patient\n\nPossible matches to discuss\n\nDecision support, not a diagnosis. These are possible matches to discuss with a doctor. Ranked by how well the features overlap, with the evidence behind each match.\n\nDemo case (synthetic narrative from phenopacket-store PMID_27900365_patient)\nThese results are for the earlier features\nA data service is slow right now\n\nThe ranking service did not answer within 10 seconds. Your terms are kept; try again.\n\nTry again\nTechnical details\n\n1\nClosest overlap\n\nRank 1:\nNiemann-Pick disease, type C1\n\nStrong overlap. 6 of 12 present features appear in this condition, plus 6 through broader terms.\n\n6 of 12\nfeatures described\nplus 6 through broader terms\n\nFeatures described\nHow often in Niemann-Pick disease, type C1\n\nStayed yellow for a long time as a newborn\n, feature\n1",
+    "tryAgain": [
+      "Try again"
+    ]
+  },
+  "empty-trials": {
+    "chose": "Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome",
+    "text": "Recruiting studies\n\nStudies looking for participants now. Ask the doctor whether any could be relevant.\n\nShow studies for\nNiemann-Pick disease, type C1\nIchthyosis-hepatosplenomegaly-cerebellar degeneration syndrome\nNiemann-Pick disease, type C2\nIsolated neonatal sclerosing cholangitis\nGlutamate-cysteine ligase deficiency\n\nNo recruiting studies listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome\n\nNo recruiting studies found\n\nClinicalTrials.gov lists no study recruiting now under this name. Another possible match above may have studies. Studies may also be listed under a related name; you can search ClinicalTrials.gov for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome\n(opens in a new tab)\n.\n\nTrial data from ClinicalTrials.gov, U.S. National Library of Medicine."
+  },
+  "apiResponses": [
+    {
+      "url": "/api/extract",
+      "status": 422
+    },
+    {
+      "url": "/api/extract",
+      "status": 200
+    },
+    {
+      "url": "/api/rank",
+      "status": 200
+    },
+    {
+      "url": "/api/trials?condition=Niemann-Pick+disease%2C+type+C1&ids=OMIM%3A257220%2CMONDO%3A0009757",
+      "status": 200
+    },
+    {
+      "url": "/api/next-questions",
+      "status": 200
+    },
+    {
+      "url": "/api/rank",
+      "status": 200
+    },
+    {
+      "url": "/api/next-questions",
+      "status": 200
+    },
+    {
+      "url": "/api/trials?condition=Niemann-Pick+disease%2C+type+C1&ids=OMIM%3A257220%2CMONDO%3A0009757",
+      "status": 200
+    },
+    {
+      "url": "/api/rank",
+      "status": 504
+    },
+    {
+      "url": "/api/trials?condition=Niemann-Pick+disease%2C+type+C1&ids=OMIM%3A257220%2CMONDO%3A0009757",
+      "status": 200
+    },
+    {
+      "url": "/api/trials?condition=Ichthyosis-hepatosplenomegaly-cerebellar+degeneration+syndrome&ids=ORPHA%3A2274%2CMONDO%3A0009445",
+      "status": 200
+    }
+  ],
+  "consoleErrors": [
+    "log: Failed to load resource: the server responded with a status of 422 () https://hackachusetts-2026.pages.dev/api/extract",
+    "log: Failed to load resource: net::ERR_INTERNET_DISCONNECTED https://hackachusetts-2026.pages.dev/app/favicon.svg",
+    "log: Failed to load resource: net::ERR_INTERNET_DISCONNECTED https://hackachusetts-2026.pages.dev/app/favicon.svg",
+    "log: Failed to load resource: the server responded with a status of 504 (Gateway Timeout) https://hackachusetts-2026.pages.dev/api/rank"
+  ]
+}

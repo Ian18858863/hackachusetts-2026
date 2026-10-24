@@ -1,0 +1,73 @@
+{
+ "notes": {
+  "total": 15,
+  "small": 3,
+  "groups": {
+   "step-nav-notes \"Notes\" 37x44": 1,
+   "step-nav-brief \"Brief\" 31x44": 1,
+   "a. \"https://hpo.jax.org\" 110x20": 1
+  }
+ },
+ "features": {
+  "total": 64,
+  "small": 44,
+  "groups": {
+   "step-nav-notes \"Notes\" 37x44": 1,
+   "step-nav-brief \"Brief\" 31x44": 1,
+   "button._footnote_#v#_# \"Feature #: Prolonged neonatal \" 24x24": 1,
+   "button._footnote_#v#_# \"Feature #: Progressive forgetf\" 24x24": 1,
+   "button._footnote_#v#_# \"Feature #: Diminished ability \" 24x24": 1,
+   "button._footnote_#v#_# \"Feature #: Dysarthria, present\" 24x24": 1,
+   "button._footnote_#v#_# \"Feature #: Falls, present. Go \" 24x24": 1,
+   "button._footnote_#v#_# \"Feature #: Mental deterioratio\" 24x24": 1,
+   "button._footnote_#v#_# \"Feature #: Ataxia, present. Go\" 24x24": 1,
+   "button._footnote_#v#_# \"Feature #: Hypometric upward s\" 24x24": 1,
+   "button._footnote_#v#_# \"Feature #: Hepatomegaly, prese\" 24x24": 1,
+   "button._footnote_#v#_# \"Feature #: Splenomegaly, pres\" 25x24": 1,
+   "button._footnote_#v#_# \"Feature #: Foam cells, presen\" 25x24": 1,
+   "button._footnote_#v#_# \"Feature #: Low cholesterol es\" 25x24": 1,
+   "button._footnote_#v#_# \"Feature #: Headache, not pres\" 25x24": 1,
+   "term-keep-# \"\" 94x36": 13,
+   "term-absent-# \"\" 120x36": 13,
+   "input._option_#j#dm_# \"\" 90x36": 1,
+   "input._option_#j#dm_# \"\" 115x36": 1,
+   "a. \"https://hpo.jax.org\" 110x20": 1
+  }
+ },
+ "matches": {
+  "total": 53,
+  "small": 6,
+  "groups": {
+   "step-nav-notes \"Notes\" 37x44": 1,
+   "step-nav-brief \"Brief\" 31x44": 1,
+   "a._studyLink_mcvon_# \"Evaluation of Biochemical Mark\" 334x43": 1,
+   "a._studyLink_mcvon_# \"A Pivotal Study of N-Acetyl-L-\" 273x43": 1,
+   "a._studyLink_mcvon_# \"Establishment of Genomic and P\" 314x43": 1,
+   "a. \"https://hpo.jax.org\" 110x20": 1
+  }
+ },
+ "questions": {
+  "total": 18,
+  "small": 3,
+  "groups": {
+   "step-nav-notes \"Notes\" 37x44": 1,
+   "step-nav-brief \"Brief\" 31x44": 1,
+   "a. \"https://hpo.jax.org\" 110x20": 1
+  }
+ },
+ "brief": {
+  "total": 33,
+  "small": 19,
+  "groups": {
+   "step-nav-notes \"Notes\" 37x44": 1,
+   "step-nav-brief \"Brief\" 31x44": 1,
+   "a. \"OMIM\n(opens in a new tab)\" 31x18": 5,
+   "a. \"Monarch\n(opens in a new tab)\" 48x18": 5,
+   "a. \"Orphanet\n(opens in a new tab)\" 52x18": 3,
+   "a._studyLink_mcvon_# \"Evaluation of Biochemical Mark\" 334x43": 1,
+   "a._studyLink_mcvon_# \"A Pivotal Study of N-Acetyl-L-\" 273x43": 1,
+   "a._studyLink_mcvon_# \"Establishment of Genomic and P\" 314x43": 1,
+   "a. \"https://hpo.jax.org\" 110x20": 1
+  }
+ }
+}
