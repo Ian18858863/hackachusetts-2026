@@ -25,13 +25,14 @@ export default defineMessages(
     openDemo: 'Open the demo',
     openDemoShort: 'Demo',
 
-    kickerLead: 'For families and clinicians',
-    kickerRest: ' · rare disease decision support',
+    kickerLead: 'For clinicians and genetic counselors',
+    kickerRest: ' · families can prepare their notes',
     heroTitle: 'A specialist-ready brief in minutes, not a diagnosis in years.',
     heroLede: 'Turn years of scattered notes into a specialist-ready brief in minutes.',
     heroSafetyRest: ' Possible matches to discuss with a doctor, each with the evidence behind it.',
     tryDemo: 'Try the demo case',
     howLink: 'How it works',
+    familyCta: 'For families: prepare notes for your doctor',
     demoNote: 'Opens a synthetic demo case with no sign-up. Not a real patient.',
     proofAlt:
       "Screenshot of the app's Possible matches step for a demo case, not a real patient. Rank 1 of 5 possible matches is Niemann-Pick disease, type C1, with strong overlap: 6 of 12 present features described, plus 6 through broader terms. Each feature is listed in plain words with its HPO term and how often it occurs in the condition, for example Frequency not listed.",
@@ -51,6 +52,8 @@ export default defineMessages(
 
     howTitle: 'How it works',
     howDek: 'Five steps from a parent’s notes to something a specialist can check.',
+    howFamily:
+      'In family mode the app never shows disease names; it prepares the notes and the questions for a clinician.',
     step1Title: 'Notes',
     step1Body: 'Paste a symptom history in plain words, or open the demo case.',
     step2Title: 'Features with their source sentence',
@@ -108,13 +111,14 @@ export default defineMessages(
       openDemo: '打开演示',
       openDemoShort: '演示',
 
-      kickerLead: '面向家庭和临床医生',
-      kickerRest: ' · 罕见病决策辅助',
+      kickerLead: '面向临床医生和遗传咨询师',
+      kickerRest: ' · 家庭也可以整理自己的症状描述',
       heroTitle: '几分钟内备好专科医生简报，而不是多年后才等来诊断。',
       heroLede: '把多年零散的症状描述，在几分钟内整理成一份可交给专科医生的简报。',
       heroSafetyRest: '列出可与医生讨论的可能匹配，并附上每一项背后的证据。',
       tryDemo: '试用演示病例',
       howLink: '工作原理',
+      familyCta: '家庭使用：为医生整理症状描述',
       demoNote: '打开一个合成的演示病例，无需注册。并非真实患者。',
       proofAlt:
         '应用“可能匹配”步骤的截图，使用的是演示病例，并非真实患者。5 个可能匹配中排名第 1 的是 Niemann-Pick disease, type C1，重叠程度为 strong：已描述的 12 个存在特征中 6 个直接匹配，另有 6 个通过更宽泛的术语匹配。每个特征都以通俗语言列出，并附有其 HPO 术语以及它在该疾病中的出现频率，例如 Frequency not listed。',
@@ -132,6 +136,7 @@ export default defineMessages(
 
       howTitle: '工作原理',
       howDek: '从家长的症状描述到专科医生可以核查的内容，共五步。',
+      howFamily: '在家庭模式下，应用从不显示疾病名称，只为临床医生整理症状描述和要问的问题。',
       step1Title: '症状描述',
       step1Body: '用日常语言粘贴症状经过，或打开演示病例。',
       step2Title: '特征及其原句',
@@ -187,13 +192,14 @@ export default defineMessages(
       openDemo: 'デモを開く',
       openDemoShort: 'デモ',
 
-      kickerLead: 'ご家族と臨床医のために',
-      kickerRest: ' · 希少疾患の意思決定支援',
+      kickerLead: '臨床医と遺伝カウンセラーのために',
+      kickerRest: ' · ご家族は記録を準備できます',
       heroTitle: '何年もかかる診断ではなく、数分で専門医向けサマリーを。',
       heroLede: '何年分もの散らばった記録を、数分で専門医向けサマリーにまとめます。',
       heroSafetyRest: '医師と相談するための一致候補を、それぞれの根拠とともに示します。',
       tryDemo: 'デモ症例を試す',
       howLink: '仕組み',
+      familyCta: 'ご家族の方へ：医師に渡す記録を準備する',
       demoNote: '登録不要で、合成のデモ症例が開きます。実在の患者ではありません。',
       proofAlt:
         'アプリの「一致候補」ステップのスクリーンショット。デモ症例で、実在の患者ではありません。5 件の一致候補のうち 1 位は Niemann-Pick disease, type C1 で、重なりは strong です。記載された 12 個の特徴のうち 6 個が一致し、さらに 6 個がより広い用語を通じて一致しています。各特徴は平易な言葉で、HPO 用語とその疾患での頻度（例：Frequency not listed）とともに表示されています。',
@@ -213,6 +219,7 @@ export default defineMessages(
 
       howTitle: '仕組み',
       howDek: '保護者の記録から、専門医が確認できる形になるまでの 5 つのステップ。',
+      howFamily: 'ご家族向けモードでは、アプリは疾患名を一切表示せず、臨床医のために記録と質問を準備します。',
       step1Title: '症状の記録',
       step1Body: '症状の経過を普段の言葉で貼り付けるか、デモ症例を開きます。',
       step2Title: '特徴と元の文',
@@ -269,13 +276,14 @@ export default defineMessages(
       openDemo: 'Abrir la demostración',
       openDemoShort: 'Demo',
 
-      kickerLead: 'Para familias y profesionales clínicos',
-      kickerRest: ' · apoyo a la decisión en enfermedades raras',
+      kickerLead: 'Para profesionales clínicos y asesores genéticos',
+      kickerRest: ' · las familias pueden preparar sus notas',
       heroTitle: 'Un resumen para el especialista en minutos, no un diagnóstico en años.',
       heroLede: 'Convierta años de notas dispersas en un resumen para el especialista en minutos.',
       heroSafetyRest: ' Posibles coincidencias para comentar con un médico, cada una con la evidencia que la respalda.',
       tryDemo: 'Probar el caso de demostración',
       howLink: 'Cómo funciona',
+      familyCta: 'Para familias: prepare notas para su médico',
       demoNote: 'Abre un caso de demostración sintético, sin registro. No es un paciente real.',
       proofAlt:
         'Captura de pantalla del paso Possible matches (posibles coincidencias) de la aplicación con un caso de demostración, no un paciente real. La coincidencia 1 de 5 es Niemann-Pick disease, type C1, con solapamiento strong (fuerte): 6 de 12 rasgos presentes descritos, más 6 a través de términos más amplios. Cada rasgo aparece en palabras sencillas con su término HPO y con qué frecuencia se presenta en la enfermedad, por ejemplo Frequency not listed.',
@@ -295,6 +303,8 @@ export default defineMessages(
 
       howTitle: 'Cómo funciona',
       howDek: 'Cinco pasos desde las notas de una madre o un padre hasta algo que un especialista puede comprobar.',
+      howFamily:
+        'En el modo para familias, la aplicación nunca muestra nombres de enfermedades; prepara las notas y las preguntas para un profesional clínico.',
       step1Title: 'Notas',
       step1Body: 'Pegue un historial de síntomas en palabras sencillas o abra el caso de demostración.',
       step2Title: 'Rasgos con su frase de origen',
@@ -352,13 +362,14 @@ export default defineMessages(
       openDemo: '데모 열기',
       openDemoShort: '데모',
 
-      kickerLead: '가족과 임상의를 위한',
-      kickerRest: ' · 희귀질환 의사결정 지원',
+      kickerLead: '임상의와 유전 상담사를 위한',
+      kickerRest: ' · 가족은 기록을 준비할 수 있습니다',
       heroTitle: '몇 년 걸리는 진단이 아니라, 몇 분 만에 전문의용 요약서를.',
       heroLede: '여러 해 동안 흩어진 기록을 몇 분 만에 전문의용 요약서로 정리합니다.',
       heroSafetyRest: ' 의사와 상의할 가능한 일치 항목을 각각의 근거와 함께 보여 줍니다.',
       tryDemo: '데모 사례 사용해 보기',
       howLink: '작동 방식',
+      familyCta: '가족용: 의사에게 전할 기록 준비하기',
       demoNote: '가입 없이 합성 데모 사례가 열립니다. 실제 환자가 아닙니다.',
       proofAlt:
         '데모 사례로 본 앱의 가능한 일치 단계 화면입니다. 실제 환자가 아닙니다. 가능한 일치 5개 중 1위는 Niemann-Pick disease, type C1이며 겹침 정도는 strong입니다. 기술된 특징 12개 중 6개가 일치하고, 6개는 더 넓은 용어를 통해 일치합니다. 각 특징은 쉬운 말로, HPO 용어 및 해당 질환에서 나타나는 빈도(예: Frequency not listed)와 함께 표시됩니다.',
@@ -377,6 +388,7 @@ export default defineMessages(
 
       howTitle: '작동 방식',
       howDek: '부모의 기록에서 전문의가 확인할 수 있는 자료까지, 다섯 단계.',
+      howFamily: '가족 모드에서는 앱이 질환 이름을 전혀 보여 주지 않고, 임상의를 위해 기록과 질문을 준비합니다.',
       step1Title: '증상 기록',
       step1Body: '증상 경과를 일상 언어로 붙여 넣거나 데모 사례를 엽니다.',
       step2Title: '특징과 원래 문장',
@@ -433,13 +445,14 @@ export default defineMessages(
       openDemo: 'Ouvrir la démo',
       openDemoShort: 'Démo',
 
-      kickerLead: 'Pour les familles et les cliniciens',
-      kickerRest: ' · aide à la décision pour les maladies rares',
+      kickerLead: 'Pour les cliniciens et les conseillers en génétique',
+      kickerRest: ' · les familles peuvent préparer leurs notes',
       heroTitle: 'Une synthèse pour le spécialiste en quelques minutes, pas un diagnostic après des années.',
       heroLede: 'Transformez des années de notes éparses en une synthèse pour le spécialiste en quelques minutes.',
       heroSafetyRest: ' Des correspondances possibles à discuter avec un médecin, chacune avec les éléments qui l’appuient.',
       tryDemo: 'Essayer le cas de démonstration',
       howLink: 'Fonctionnement',
+      familyCta: 'Pour les familles : préparer des notes pour votre médecin',
       demoNote: 'Ouvre un cas de démonstration synthétique, sans inscription. Ce n’est pas un vrai patient.',
       proofAlt:
         'Capture d’écran de l’étape Possible matches (correspondances possibles) de l’application, sur un cas de démonstration, pas un vrai patient. La correspondance 1 sur 5 est Niemann-Pick disease, type C1, avec un recoupement strong (fort) : 6 des 12 caractéristiques présentes décrites, plus 6 par des termes plus larges. Chaque caractéristique est indiquée en mots simples avec son terme HPO et sa fréquence dans la maladie, par exemple Frequency not listed.',
@@ -459,6 +472,8 @@ export default defineMessages(
 
       howTitle: 'Fonctionnement',
       howDek: 'Cinq étapes, des notes d’un parent à un document qu’un spécialiste peut vérifier.',
+      howFamily:
+        'En mode famille, l’application n’affiche jamais de noms de maladies ; elle prépare les notes et les questions pour un clinicien.',
       step1Title: 'Notes',
       step1Body: 'Collez un historique des symptômes en mots simples, ou ouvrez le cas de démonstration.',
       step2Title: 'Caractéristiques avec leur phrase source',

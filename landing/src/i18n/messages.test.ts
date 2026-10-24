@@ -17,6 +17,7 @@ import * as appLocales from '../../../app/src/shared/i18n/locales.ts';
 import appCommon from '../../../app/src/shared/i18n/messages/common.ts';
 import landingCommon from './messages/common.ts';
 import landing from './messages/landing.ts';
+import { demoHref, familyHref } from '../content.ts';
 
 type Dict = Record<string, string>;
 type Area = Record<string, Dict>;
@@ -80,4 +81,22 @@ test('English landing copy keeps the verbatim evaluation sentence', () => {
     landing.en.ownResult,
     'On 10 published cases selected by a fixed rule, the correct condition ranked first in 5 and in the top 3 in 6 (our own small evaluation).',
   );
+});
+
+test('audience positioning (T30b): English copy and the two entry links', () => {
+  assert.equal(landing.en.heroTitle, 'A specialist-ready brief in minutes, not a diagnosis in years.');
+  assert.equal(landing.en.kickerLead + landing.en.kickerRest, 'For clinicians and genetic counselors · families can prepare their notes');
+  assert.equal(landing.en.tryDemo, 'Try the demo case');
+  assert.equal(landing.en.familyCta, 'For families: prepare notes for your doctor');
+  assert.equal(
+    landing.en.howFamily,
+    'In family mode the app never shows disease names; it prepares the notes and the questions for a clinician.',
+  );
+  assert.equal(demoHref('en'), '/app/?demo=demo-npc1');
+  assert.equal(familyHref('en'), '/app/?demo=demo-npc1&audience=family');
+  for (const locale of LOCALES) {
+    if (locale === 'en') continue;
+    assert.equal(demoHref(locale), `/app/?demo=demo-npc1&lang=${locale}`);
+    assert.equal(familyHref(locale), `/app/?demo=demo-npc1&audience=family&lang=${locale}`);
+  }
 });

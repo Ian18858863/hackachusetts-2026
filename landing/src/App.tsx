@@ -13,6 +13,7 @@ import {
   STAT_CITES,
   STUDY_CITES,
   demoHref,
+  familyHref,
 } from './content';
 import { LOCALES, LOCALE_META, parseLocale, useLocale, useT } from './i18n';
 import commonMessages from './i18n/messages/common.ts';
@@ -100,6 +101,7 @@ function Hero() {
   const tc = useT(commonMessages);
   const { locale } = useLocale();
   const href = useDemoHref();
+  const familyLink = familyHref(locale);
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="wrap hero-in">
@@ -120,6 +122,9 @@ function Hero() {
             </a>
             <a className="link-quiet" href="#how">
               {t('howLink')}
+            </a>
+            <a className="link-quiet" href={familyLink}>
+              {t('familyCta')}
             </a>
           </div>
           <p className="demo-note">{t('demoNote')}</p>
@@ -203,6 +208,7 @@ function HowItWorks() {
       <div className="wrap">
         <h2 id="how-title">{t('howTitle')}</h2>
         <p className="dek">{t('howDek')}</p>
+        <p className="dek">{t('howFamily')}</p>
         <div className="how">
           <ol className="steps">
             {STEP_KEYS.map(([titleKey, bodyKey], i) => (
