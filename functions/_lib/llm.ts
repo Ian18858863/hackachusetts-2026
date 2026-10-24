@@ -21,6 +21,12 @@ export interface TermProposal {
   /** Suggested HPO label; must still be grounded by the engine. */
   label: string;
   /**
+   * Up to 3 other HPO-style labels that could also fit, most likely first
+   * (T37). Not sent to the engine's matching; used only by
+   * functions/_lib/grounding.ts when the main label is not confirmed.
+   */
+  alternatives?: string[];
+  /**
    * Suggested HPO id in `HP:NNNNNNN` form; may be wrong. The prompt does not
    * ask for ids (in the T17 bake-off most model-suggested ids were wrong), so
    * this is only set if a model volunteers one. Ground by label.
@@ -116,6 +122,9 @@ const MAX_OUTPUT_TOKENS = 4_096;
 const MAX_PHRASE_CHARS = 200;
 const MAX_LABEL_CHARS = 120;
 const HPO_ID_RE = /^HP:\d{7}$/;
+const MAX_ALTERNATIVES = 3;
+/** Anything that looks like an ontology id ("HP:0001250", "OMIM:310200"); never accepted as a label. */
+const ID_LIKE_RE = /\b[A-Za-z]+[:_]\d{3,}\b/;
 
 export const SYSTEM_PROMPT = `You extract patient features from clinical or family notes so they can be matched to the Human Phenotype Ontology (HPO).
 
@@ -129,7 +138,8 @@ List each feature separately, even if two appear in one sentence.
 
 For each feature give:
 - "phrase": the words from the notes that describe it, copied EXACTLY character for character (same spelling, case and punctuation). Copy a short span, usually 2 to 10 words. Never paraphrase, translate, correct or join separate pieces of text.
-- "label": the closest HPO term name in English, using the standard HPO wording (for example "Short stature", "Hearing impairment", "Ptosis"). When the description matches a named clinical sign, use the sign's HPO name.
+- "label": the closest HPO term name in English, using the standard HPO wording (for example "Short stature", "Hearing impairment", "Ptosis"). Use the most specific term the words support, and name the body part when the notes name one (for example "falls a lot" is "Frequent falls", not a general gait term). When the description matches a named clinical sign, use the sign's HPO name.
+- "alternatives": up to 3 other HPO term names in English that could also fit the phrase, most likely first (for example, for "very long, thin fingers" with label "Arachnodactyly": ["Long fingers", "Slender finger"]). Each alternative must name the SAME feature in other HPO wording (a synonym, or a more specific term); never a broader, related or different feature. Use [] if there are none. Only feature names; never ids, diseases or syndromes.
 - "negated": true if the notes say the patient does NOT have the feature (for example "no fever", "hearing is normal" means no hearing impairment); otherwise false.
 - "confidence": "high", "medium" or "low" for how well the label fits the phrase.
 
@@ -138,7 +148,7 @@ Rules:
 - Ignore features of other people (relatives, siblings) unless they are clearly the patient.
 - Ignore age, names and sex on their own.
 - Output strict JSON only, no markdown, no comments, no text before or after, in exactly this shape:
-{"features":[{"phrase":"...","label":"...","negated":false,"confidence":"high"}]}
+{"features":[{"phrase":"...","label":"...","alternatives":["..."],"negated":false,"confidence":"high"}]}
 If there are no features, output {"features":[]}.`;
 
 // ---------------------------------------------------------------------------
@@ -398,7 +408,7 @@ export function validateProposals(
       continue;
     }
     const rawPhrase = typeof item.phrase === "string" ? item.phrase.trim() : "";
-    const label = typeof item.label === "string" ? collapseSpaces(item.label) : "";
+    const label = typeof item.label === "string" ? cleanLabel(item.label) : "";
     const negated = toBoolean(item.negated);
     if (
       !rawPhrase ||
@@ -432,6 +442,8 @@ export function validateProposals(
     };
     const hpoId = typeof item.hpoId === "string" ? item.hpoId.trim().toUpperCase() : "";
     if (HPO_ID_RE.test(hpoId)) proposal.hpoId = hpoId;
+    const alternatives = cleanAlternatives(item.alternatives, label);
+    if (alternatives.length > 0) proposal.alternatives = alternatives;
 
     const key = `${phrase}\u0000${label.toLowerCase()}\u0000${negated}`;
     if (seen.has(key)) {
@@ -459,6 +471,42 @@ function findLooseSpan(text: string, phrase: string): string | null {
   const pattern = tokens.map((t) => escapeRegExp(t).replace(/['\u2018\u2019]/g, "['\u2018\u2019]")).join("\\s+");
   const m = new RegExp(pattern, "i").exec(text);
   return m ? m[0] : null;
+}
+
+/**
+ * Label as a JAX search query: curly quotes and dashes made ASCII, accents
+ * removed, spaces collapsed. Returns "" (malformed) if anything outside
+ * printable ASCII remains or it looks like an id: the JAX search answers 400
+ * to non-ASCII queries such as "Gowers\u2019 sign" (checked 2026-10-24), and
+ * one 400 there fails the whole extraction.
+ */
+function cleanLabel(raw: string): string {
+  const s = collapseSpaces(
+    raw
+      .replace(/[\u2018\u2019\u201b\u2032]/g, "'")
+      .replace(/[\u201c\u201d\u2033]/g, '"')
+      .replace(/[\u2010-\u2015]/g, "-")
+      .normalize("NFKD")
+      .replace(/[\u0300-\u036f]/g, ""),
+  );
+  if (!/^[\x20-\x7e]*$/.test(s) || ID_LIKE_RE.test(s)) return "";
+  return s;
+}
+
+/** Up to 3 cleaned alternative labels, without the main label or repeats; anything else ignored. */
+function cleanAlternatives(raw: unknown, label: string): string[] {
+  if (!Array.isArray(raw)) return [];
+  const out: string[] = [];
+  const seen = new Set([label.toLowerCase()]);
+  for (const v of raw) {
+    if (out.length >= MAX_ALTERNATIVES) break;
+    if (typeof v !== "string") continue;
+    const alt = cleanLabel(v);
+    if (alt.length < 2 || alt.length > MAX_LABEL_CHARS || seen.has(alt.toLowerCase())) continue;
+    seen.add(alt.toLowerCase());
+    out.push(alt);
+  }
+  return out;
 }
 
 function toBoolean(v: unknown): boolean | null {

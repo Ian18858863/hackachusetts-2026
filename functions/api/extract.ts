@@ -6,6 +6,10 @@
 //      narrative exactly -> the prepared extraction, source "demo". No LLM call.
 //   3. Live path: Workers AI proposes phrases and labels (functions/_lib/llm.ts),
 //      the engine grounds them against the HPO API (groundTerms).
+//   3b. Proposals the engine could not confirm are retried by
+//      functions/_lib/grounding.ts (T37): the model's main label, then its
+//      alternative labels, against HPO names and synonyms; at most
+//      SECONDARY_MAX_LOOKUPS extra HPO searches, inside the same 4 s deadline.
 //   4. Zero grounded terms -> 422 NO_TERMS_FOUND.
 // Only the live path is rate-limited per client IP (functions/_lib/rateLimit.ts,
 // T18p): 429 RATE_LIMITED with Retry-After. The demo path is never limited.
@@ -19,6 +23,8 @@
 import { HPO_VERSION, getDemoCase, groundTerms, listDemoCases } from "../../engine/index";
 import type { DataVersions, DemoCase, EngineDeps, ExtractedTerm } from "../../engine/index";
 import { getFallbackDemoCase } from "../_lib/fallback/demoCases";
+import { DEFAULT_MAX_LOOKUPS, recoverUngrounded } from "../_lib/grounding";
+import type { SecondaryStats } from "../_lib/grounding";
 import { LlmError, MAX_TEXT_CHARS, proposeTerms } from "../_lib/llm";
 import type { LlmEnv, ProposeResult } from "../_lib/llm";
 import { checkAndCount, clientIp, extractWindows, rateLimitMessage } from "../_lib/rateLimit";
@@ -46,6 +52,14 @@ const DEMO_MODEL = "demo-prepared";
 const LLM_TIMEOUT_MS = 15_000;
 /** Overall grounding budget from contract section 7.2 (all HPO lookups and searches). */
 const GROUNDING_DEADLINE_MS = 4_000;
+/**
+ * Cap on extra JAX searches made by the secondary grounding (T37). The live
+ * path's subrequests are 1 Workers AI call, the engine's lookups and these;
+ * the Workers free plan allows 50 per invocation.
+ */
+const SECONDARY_MAX_LOOKUPS = DEFAULT_MAX_LOOKUPS; // 12
+/** Below this much time left in the grounding deadline the secondary step is skipped. */
+const SECONDARY_MIN_MS = 300;
 /**
  * HPO release for the prepared demo extraction: the release the engine pins
  * (HPO_VERSION in engine/hpo.ts), so the demo path, the live path and the
@@ -177,12 +191,37 @@ async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promi
     logError("extract.ground", err);
     return engineErrorResponse(err, "Your notes are kept");
   }
+  // ---- 3b. secondary grounding: retry unconfirmed proposals (T37) ----
+  // Never fails the request: any error keeps the engine result as it is.
+  const deadlineAt = groundStarted + GROUNDING_DEADLINE_MS;
+  let secondary: SecondaryStats | null = null;
+  if (deadlineAt - Date.now() >= SECONDARY_MIN_MS) {
+    try {
+      const fetchFn = globalThis.fetch.bind(globalThis);
+      const recovered = await withDeadline(
+        recoverUngrounded(text, proposed.proposals, grounded, {
+          fetch: fetchFn,
+          maxLookups: SECONDARY_MAX_LOOKUPS,
+          deadlineAt,
+          perCallTimeoutMs: Math.min(2_000, Math.max(1, deadlineAt - Date.now())),
+        }),
+        Math.max(1, deadlineAt - Date.now()),
+      );
+      grounded = { ...grounded, terms: recovered.terms, warnings: recovered.warnings };
+      secondary = recovered.stats;
+    } catch (err) {
+      logError("extract.ground2", err);
+    }
+  }
   const groundMs = Date.now() - groundStarted;
 
   // Counts and timings only; never the text.
   console.log(
     `[rdd] extract live model=${proposed.model} llmMs=${proposed.llmMs} groundMs=${groundMs} ` +
-      `proposals=${proposed.proposals.length} terms=${grounded.terms.length} warnings=${grounded.warnings.length}`,
+      `proposals=${proposed.proposals.length} terms=${grounded.terms.length} warnings=${grounded.warnings.length}` +
+      (secondary
+        ? ` retried=${secondary.retried} recovered=${secondary.recovered} lookups=${secondary.lookups}/${SECONDARY_MAX_LOOKUPS} skipped=${secondary.skippedByBudget}`
+        : " secondary=skipped"),
   );
 
   if (grounded.terms.length === 0) {
