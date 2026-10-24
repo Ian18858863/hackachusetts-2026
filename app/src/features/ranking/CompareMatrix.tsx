@@ -1,13 +1,13 @@
 import type { Candidate, FrequencyInfo, HpoId } from '../../shared/contract';
 import { BandDot } from './FrequencyMark';
-import { featureFor, type Feature, type FeatureIndex } from './evidence';
+import { broaderText, featureFor, matchCounts, type Feature, type FeatureIndex } from './evidence';
 import { OVERLAP_TEXT, frequencyState } from './format';
 import type { LinkProps } from './parts';
 import styles from './ranking.module.css';
 
 const MATRIX_CANDIDATES = 3;
 
-type Cell = { matched: false } | { matched: true; frequency: FrequencyInfo | null };
+type Cell = { matched: false } | { matched: true; broader: boolean; frequency: FrequencyInfo | null };
 
 /**
  * "Compare side by side": the B2 dot matrix in the final type. Rows are the
@@ -32,9 +32,12 @@ export function CompareMatrix({
     .sort((a, b) => (a.number ?? Number.MAX_SAFE_INTEGER) - (b.number ?? Number.MAX_SAFE_INTEGER));
   const cell = (c: Candidate, id: HpoId): Cell => {
     const e = c.matched.find((m) => m.patientTerm.id === id);
-    return e ? { matched: true, frequency: e.frequency } : { matched: false };
+    return e ? { matched: true, broader: e.via === 'ancestor', frequency: e.frequency } : { matched: false };
   };
-  const cellWord = (x: Cell) => (x.matched ? frequencyState(x.frequency, 'Frequency not listed').word : 'Not matched');
+  const cellWord = (x: Cell) =>
+    x.matched
+      ? `${frequencyState(x.frequency, 'Frequency not listed').word}${x.broader ? ', through a broader term' : ''}`
+      : 'Not matched';
   const active = features.find((f) => f.id === activeTerm && f.sentence);
 
   return (
@@ -100,7 +103,11 @@ export function CompareMatrix({
                     {top.map((c) => {
                       const x = cell(c, f.id);
                       return (
-                        <td key={c.diseaseId} data-first={c.rank === 1 || undefined}>
+                        <td
+                          key={c.diseaseId}
+                          data-first={c.rank === 1 || undefined}
+                          data-broader={(x.matched && x.broader) || undefined}
+                        >
                           <BandDot
                             frequency={x.matched ? (x.frequency ?? { label: null, source: c.diseaseId }) : null}
                             tone={c.rank === 1 ? 'accent' : 'neutral'}
@@ -115,14 +122,19 @@ export function CompareMatrix({
               <tfoot>
                 <tr>
                   <th scope="row">Features described</th>
-                  {top.map((c) => (
-                    <td key={c.diseaseId} data-first={c.rank === 1 || undefined}>
-                      <b className="num">
-                        {c.matched.length} of {features.length}
-                      </b>
-                      <span>{c.diseaseId}</span>
-                    </td>
-                  ))}
+                  {top.map((c) => {
+                    const { exact, broader } = matchCounts(c);
+                    const line = broaderText(broader);
+                    return (
+                      <td key={c.diseaseId} data-first={c.rank === 1 || undefined}>
+                        <b className="num">
+                          {exact} of {features.length}
+                        </b>
+                        {line && <span className={styles.footBroader}>{line}</span>}
+                        <span>{c.diseaseId}</span>
+                      </td>
+                    );
+                  })}
                 </tr>
               </tfoot>
             </table>
@@ -150,6 +162,10 @@ export function CompareMatrix({
           <div className={styles.legendNote}>
             <h3>Reading the dots</h3>
             <p>How often the feature is reported in people with the condition, from HPO annotations.</p>
+            <p className={styles.legendHint}>
+              “Features described” counts exact matches. A dot with a dotted ring matched only through a broader
+              term, and is counted as “plus N through broader terms”.
+            </p>
             <dl className={styles.legend}>
               {LEGEND.map((l) => (
                 <div key={l.word}>

@@ -145,6 +145,10 @@
   color: var(--ink-3);
 }
 
+.leadScore .leadBroader {
+  margin-top: 0;
+}
+
 .evHead {
   display: flex;
   justify-content: space-between;
@@ -788,6 +792,29 @@
   color: var(--ink);
 }
 
+/* Matched only through a broader term: dotted ring around the dot. */
+.table td[data-broader] > i {
+  outline: var(--border-hair) dotted var(--mark-none);
+  outline-offset: calc(var(--s-1) / 2);
+}
+
+.footBroader {
+  display: block;
+  margin-top: calc(var(--s-1) / 2);
+  color: var(--ink-3);
+}
+
+.table tfoot td > span:last-child {
+  display: block;
+  margin-top: var(--s-1);
+}
+
+.legendHint {
+  margin-top: var(--s-2);
+  font-size: var(--t-xs);
+  color: var(--ink-3);
+}
+
 /* One reserved slot, every sentence stacked in it: no layout shift. */
 .source {
   display: grid;
@@ -1065,6 +1092,7 @@
 
   .leadScore {
     display: flex;
+    flex-wrap: wrap;
     align-items: baseline;
     gap: var(--s-2);
     padding: 0;
@@ -1081,6 +1109,10 @@
 
   .leadScore small {
     margin: 0;
+  }
+
+  .leadScore .leadBroader {
+    flex-basis: 100%;
   }
 
   .evHead {

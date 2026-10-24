@@ -80,3 +80,21 @@ export function viaText(e: Evidence): string | null {
   if (!sameTerm) parts.push(`listed as ${e.diseaseTerm.label}`);
   return capitalise(parts.join(', '));
 }
+
+export interface MatchCounts {
+  /** Matched with the same HPO term the patient has (via "exact"). */
+  exact: number;
+  /** Matched only through a shared broader term (via "ancestor"). */
+  broader: number;
+}
+
+/** Headlines count exact matches; broader-term matches are said separately (T15b). */
+export function matchCounts(c: Candidate): MatchCounts {
+  const exact = c.matched.filter((e) => e.via === 'exact').length;
+  return { exact, broader: c.matched.length - exact };
+}
+
+/** "plus 6 through broader terms", or null when there are none. */
+export function broaderText(broader: number): string | null {
+  return broader > 0 ? `plus ${broader} through broader terms` : null;
+}

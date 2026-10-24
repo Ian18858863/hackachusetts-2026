@@ -2,7 +2,7 @@ import { useRef, useState } from 'react';
 import type { Candidate, RankResponse } from '../../shared/contract';
 import { Icon } from '../../shared/ui';
 import { BandDot } from './FrequencyMark';
-import { patientRows, type FeatureIndex } from './evidence';
+import { broaderText, matchCounts, patientRows, type FeatureIndex } from './evidence';
 import { OVERLAP_TEXT, frequencyState } from './format';
 import {
   CandidateFacts,
@@ -97,6 +97,8 @@ function OtherCandidate({
   const [open, setOpen] = useState(false);
   const rows = patientRows(c, index);
   const regionId = `alt-evidence-${c.rank}`;
+  const { exact, broader } = matchCounts(c);
+  const broaderLine = broaderText(broader);
   const titleId = `alt-title-${c.rank}`;
 
   const stripLabel = `How often the ${observedCount} present features occur in ${c.name}: ${rows
@@ -116,7 +118,8 @@ function OtherCandidate({
         </h3>
       </div>
       <p className={styles.altLine}>
-        <b>{OVERLAP_TEXT[c.overlap]}.</b> {c.matched.length} of {observedCount} described.
+        <b>{OVERLAP_TEXT[c.overlap]}.</b> {exact} of {observedCount} described
+        {broaderLine ? `, ${broaderLine}.` : '.'}
         {c.contradicted.length > 0 && ` ${c.contradicted.length} marked not present usually occur here.`}
       </p>
       {delta.kind !== 'none' && (

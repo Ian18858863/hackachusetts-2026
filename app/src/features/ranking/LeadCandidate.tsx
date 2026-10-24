@@ -1,6 +1,6 @@
 import type { MouseEvent } from 'react';
 import type { Candidate } from '../../shared/contract';
-import { patientRows, type FeatureIndex } from './evidence';
+import { broaderText, matchCounts, patientRows, type FeatureIndex } from './evidence';
 import { OVERLAP_TEXT, plural } from './format';
 import {
   CandidateFacts,
@@ -17,7 +17,8 @@ import styles from './ranking.module.css';
 
 /**
  * The closest overlap in one rounded panel (the proof moment of the approved
- * art direction): the name, "N of M features described", then every present
+ * art direction): the name, "N of M features described" (exact matches; matches
+ * through broader terms on their own quiet line), then every present
  * feature with how often it occurs in this condition, its footnote number
  * and its source sentence. Accent colour lives here and nowhere else.
  */
@@ -40,8 +41,8 @@ export function LeadCandidate({
   onSelect(): void;
 } & LinkProps) {
   const rows = patientRows(c, index);
-  const matched = c.matched.length;
-  const shortName = c.name;
+  const { exact, broader } = matchCounts(c);
+  const broaderLine = broaderText(broader);
 
   return (
     <article
@@ -64,23 +65,25 @@ export function LeadCandidate({
         </h2>
         <p className={styles.leadOverlap}>
           <b>{OVERLAP_TEXT[c.overlap]}.</b>{' '}
-          {matched === observedCount && observedCount > 0
+          {exact === observedCount && observedCount > 0
             ? `All ${plural(observedCount, 'present feature')} appear in this condition.`
-            : `${matched} of ${plural(observedCount, 'present feature')} appear in this condition.`}
+            : `${exact} of ${plural(observedCount, 'present feature')} appear in this condition`}
+          {exact < observedCount && (broaderLine ? `, ${broaderLine}.` : '.')}
           {c.contradicted.length > 0 &&
             ` ${plural(c.contradicted.length, 'feature')} marked not present ${c.contradicted.length === 1 ? 'is' : 'are'} usually present here.`}
         </p>
         <p className={styles.leadScore}>
           <b className="num">
-            {matched} <span>of {observedCount}</span>
+            {exact} <span>of {observedCount}</span>
           </b>
           <small>features described</small>
+          {broaderLine && <small className={styles.leadBroader}>{broaderLine}</small>}
         </p>
       </div>
 
       <p className={styles.evHead} aria-hidden="true">
         <span>Features described</span>
-        <span>How often in {shortName}</span>
+        <span>How often in {c.name}</span>
       </p>
       <ul className={styles.evidence} data-testid={`candidate-evidence-${c.rank}`} aria-label={`Evidence for ${c.name}`}>
         <PatientRows rows={rows} tone="accent" idPrefix="lead" enter={enter} {...link} />
