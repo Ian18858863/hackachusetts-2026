@@ -2,7 +2,7 @@
 //
 // One real /api/rank response for the exact demo-npc1 term set of
 // docs/CONTRACT.md section 9.1 (12 observed ids, excluded HP:0002315, limit 5),
-// the matching /api/next-questions response for its top 3 candidates, and the
+// the matching /api/next-questions response for its top 5 candidates, and the
 // /api/trials response for its top candidate's condition. Re-recorded by Ian's
 // Kiro (T18l) at 2026-10-24T19:20Z UTC from production
 // https://hackachusetts-2026.pages.dev (commit 6c89a84; /api/rank answered with
@@ -30,8 +30,11 @@ export const NPC1_OBSERVED: readonly HpoId[] = ["HP:0001251","HP:0001260","HP:00
 /** demo-npc1 excluded ids (Headache, added for the demo). */
 export const NPC1_EXCLUDED: readonly HpoId[] = ["HP:0002315"];
 const NPC1_LIMIT = 5;
-/** Top 3 candidates of the recorded ranking, as sent to /api/next-questions. */
-const NPC1_QUESTION_CANDIDATES: readonly DiseaseId[] = ["OMIM:257220","ORPHA:2274","OMIM:607625"];
+/**
+ * Top 5 candidates of the recorded ranking, in rank order: exactly what the app
+ * sends to /api/next-questions (LIMITS.questionsCandidatesMax = 5).
+ */
+const NPC1_QUESTION_CANDIDATES: readonly DiseaseId[] = ["OMIM:257220","ORPHA:2274","OMIM:607625","ORPHA:480556","ORPHA:33574"];
 /** Condition of the recorded ranking's top candidate (its name, as the app sends it). */
 const NPC1_TRIALS_CONDITION = "Niemann-Pick disease, type C1";
 
@@ -1517,7 +1520,7 @@ const RECORDED_RANK: RankResponse = {
   }
 };
 
-/** Recorded POST /api/next-questions response for NPC1_QUESTION_CANDIDATES (default limit 5; recorded at 2026-10-24T19:20Z UTC). */
+/** Recorded POST /api/next-questions response for NPC1_QUESTION_CANDIDATES (the five candidates the app sends, limit 5; recorded at 2026-10-24T19:22Z UTC). */
 const RECORDED_QUESTIONS: NextQuestionsResponse = {
   "version": "0.1",
   "source": "live",
@@ -1545,9 +1548,118 @@ const RECORDED_QUESTIONS: NextQuestionsResponse = {
             "label": null,
             "source": "OMIM:607625"
           }
+        },
+        {
+          "diseaseId": "ORPHA:480556",
+          "frequency": null
+        },
+        {
+          "diseaseId": "ORPHA:33574",
+          "frequency": {
+            "label": "Occasional",
+            "source": "ORPHA:33574"
+          }
         }
       ],
-      "why": "Obligate (4/4) in Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; listed without a frequency for Niemann-Pick disease, type C2",
+      "why": "Obligate (4/4) in Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; listed without a frequency for Niemann-Pick disease, type C2; not listed for Isolated neonatal sclerosing cholangitis; Occasional in Glutamate-cysteine ligase deficiency",
+      "score": 1
+    },
+    {
+      "hpoId": "HP:0001399",
+      "label": "Hepatic failure",
+      "question": "Has anyone noticed hepatic failure?",
+      "discriminates": [
+        {
+          "diseaseId": "OMIM:257220",
+          "frequency": null
+        },
+        {
+          "diseaseId": "ORPHA:2274",
+          "frequency": null
+        },
+        {
+          "diseaseId": "OMIM:607625",
+          "frequency": null
+        },
+        {
+          "diseaseId": "ORPHA:480556",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:617394",
+            "raw": "4/4"
+          }
+        },
+        {
+          "diseaseId": "ORPHA:33574",
+          "frequency": null
+        }
+      ],
+      "why": "Not listed for Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; not listed for Niemann-Pick disease, type C2; Obligate (4/4) in Isolated neonatal sclerosing cholangitis; not listed for Glutamate-cysteine ligase deficiency",
+      "score": 1
+    },
+    {
+      "hpoId": "HP:0001409",
+      "label": "Portal hypertension",
+      "question": "Has anyone noticed portal hypertension?",
+      "discriminates": [
+        {
+          "diseaseId": "OMIM:257220",
+          "frequency": null
+        },
+        {
+          "diseaseId": "ORPHA:2274",
+          "frequency": null
+        },
+        {
+          "diseaseId": "OMIM:607625",
+          "frequency": null
+        },
+        {
+          "diseaseId": "ORPHA:480556",
+          "frequency": {
+            "label": "Obligate",
+            "source": "OMIM:617394",
+            "raw": "4/4"
+          }
+        },
+        {
+          "diseaseId": "ORPHA:33574",
+          "frequency": null
+        }
+      ],
+      "why": "Not listed for Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; not listed for Niemann-Pick disease, type C2; Obligate (4/4) in Isolated neonatal sclerosing cholangitis; not listed for Glutamate-cysteine ligase deficiency",
+      "score": 1
+    },
+    {
+      "hpoId": "HP:0001878",
+      "label": "Hemolytic anemia",
+      "question": "Has anyone noticed hemolytic anemia?",
+      "discriminates": [
+        {
+          "diseaseId": "OMIM:257220",
+          "frequency": null
+        },
+        {
+          "diseaseId": "ORPHA:2274",
+          "frequency": null
+        },
+        {
+          "diseaseId": "OMIM:607625",
+          "frequency": null
+        },
+        {
+          "diseaseId": "ORPHA:480556",
+          "frequency": null
+        },
+        {
+          "diseaseId": "ORPHA:33574",
+          "frequency": {
+            "label": "Obligate",
+            "source": "ORPHA:33574"
+          }
+        }
+      ],
+      "why": "Not listed for Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; not listed for Niemann-Pick disease, type C2; not listed for Isolated neonatal sclerosing cholangitis; Obligate in Glutamate-cysteine ligase deficiency",
       "score": 1
     },
     {
@@ -1573,92 +1685,23 @@ const RECORDED_QUESTIONS: NextQuestionsResponse = {
             "label": null,
             "source": "OMIM:607625"
           }
+        },
+        {
+          "diseaseId": "ORPHA:480556",
+          "frequency": null
+        },
+        {
+          "diseaseId": "ORPHA:33574",
+          "frequency": null
         }
       ],
-      "why": "Obligate (4/4) in Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; listed without a frequency for Niemann-Pick disease, type C2",
+      "why": "Obligate (4/4) in Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; listed without a frequency for Niemann-Pick disease, type C2; not listed for Isolated neonatal sclerosing cholangitis; not listed for Glutamate-cysteine ligase deficiency",
       "score": 1
-    },
-    {
-      "hpoId": "HP:0002206",
-      "label": "Pulmonary fibrosis",
-      "question": "Has anyone noticed pulmonary fibrosis?",
-      "discriminates": [
-        {
-          "diseaseId": "OMIM:257220",
-          "frequency": null
-        },
-        {
-          "diseaseId": "ORPHA:2274",
-          "frequency": null
-        },
-        {
-          "diseaseId": "OMIM:607625",
-          "frequency": {
-            "label": "Obligate",
-            "source": "OMIM:607625",
-            "raw": "1/1"
-          }
-        }
-      ],
-      "why": "Not listed for Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; Obligate (1/1) in Niemann-Pick disease, type C2",
-      "score": 1
-    },
-    {
-      "hpoId": "HP:0001250",
-      "label": "Seizure",
-      "question": "Has anyone noticed seizure?",
-      "discriminates": [
-        {
-          "diseaseId": "OMIM:257220",
-          "frequency": {
-            "label": "Very frequent",
-            "source": "OMIM:257220",
-            "raw": "12/14"
-          }
-        },
-        {
-          "diseaseId": "ORPHA:2274",
-          "frequency": null
-        },
-        {
-          "diseaseId": "OMIM:607625",
-          "frequency": {
-            "label": null,
-            "source": "OMIM:607625"
-          }
-        }
-      ],
-      "why": "Very frequent (12/14) in Niemann-Pick disease, type C1; not listed for Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; listed without a frequency for Niemann-Pick disease, type C2",
-      "score": 0.9
-    },
-    {
-      "hpoId": "HP:0001265",
-      "label": "Hyporeflexia",
-      "question": "Has anyone noticed hyporeflexia?",
-      "discriminates": [
-        {
-          "diseaseId": "OMIM:257220",
-          "frequency": null
-        },
-        {
-          "diseaseId": "ORPHA:2274",
-          "frequency": {
-            "label": "Very frequent",
-            "source": "ORPHA:2274"
-          }
-        },
-        {
-          "diseaseId": "OMIM:607625",
-          "frequency": null
-        }
-      ],
-      "why": "Not listed for Niemann-Pick disease, type C1; Very frequent in Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome; not listed for Niemann-Pick disease, type C2",
-      "score": 0.9
     }
   ],
   "dataVersions": {
     "hpo": "2026-09-01",
-    "fetchedAt": "2026-10-24T19:20:27.328Z"
+    "fetchedAt": "2026-10-24T19:22:56.292Z"
   }
 };
 
