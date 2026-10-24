@@ -13,7 +13,8 @@ import styles from './TopBar.module.css';
 export function TopBar({ current }: { current: StepId | null }) {
   const { caseObject } = useCase();
   const { observed } = termCounts(caseObject);
-  const showBrief = observed > 0 && current !== 'brief';
+  // The brief needs a ranking (POST /api/brief requires lastRanking), so the pill waits for one.
+  const showBrief = observed > 0 && caseObject.lastRanking !== null && current !== 'brief';
 
   return (
     <header className={styles.bar}>

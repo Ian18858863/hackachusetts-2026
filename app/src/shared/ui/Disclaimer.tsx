@@ -3,9 +3,10 @@ import styles from './Disclaimer.module.css';
 
 // "Decision support, not a diagnosis." leads in semibold, as in the specimen.
 // The text stays the verbatim contract string; only its first sentence is weighted.
-const SPLIT = DISCLAIMER.indexOf('. ') + 1;
-const LEAD = DISCLAIMER.slice(0, SPLIT);
-const REST = DISCLAIMER.slice(SPLIT);
+// If the marker is ever missing, the whole sentence renders unweighted.
+const MARKER = DISCLAIMER.indexOf('. ');
+const LEAD = MARKER >= 0 ? DISCLAIMER.slice(0, MARKER + 1) : '';
+const REST = MARKER >= 0 ? DISCLAIMER.slice(MARKER + 1) : DISCLAIMER;
 
 /**
  * The safety line from contract section 13, verbatim, in body size.
@@ -16,7 +17,7 @@ const REST = DISCLAIMER.slice(SPLIT);
 export function Disclaimer({ className, inline = false }: { className?: string; inline?: boolean }) {
   const content = (
     <>
-      <strong className={styles.lead}>{LEAD}</strong>
+      {LEAD && <strong className={styles.lead}>{LEAD}</strong>}
       {REST}
     </>
   );

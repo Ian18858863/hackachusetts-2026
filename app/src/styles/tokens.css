@@ -15,6 +15,12 @@
  *   --ink 18.1 / 16.7 · --ink-2 8.9 / 8.2 · --ink-3 6.0 / 5.6 / 5.4
  *   --accent 6.6 / 6.1 / 5.9 · white on --accent 6.6 · white on --ink 18.1
  *   --mark-none 4.0 (control borders, "not recorded" dashes) · focus ring = accent
+ *
+ * Raw values in the compatibility block, measured the same way:
+ *   #2447a3 (--palette-accent-deep): 8.4 on white, white on it 8.4
+ *   #c9d4f0 (--palette-accent-line): 1.5 on white; decorative lines only, never text
+ *   #8f3a2e (--palette-danger): 7.5 on white, 6.9 on --surface
+ *   #6b4a00 (--palette-warning): 8.1 on white, 7.4 on --palette-warning-wash
  */
 
 :root {
@@ -176,7 +182,7 @@
   --tracking-caps: 0.04em;
 
   --weight-regular: 400;
-  --weight-medium: 500; /* Newsreader only; Source Sans 3 resolves to 400 */
+  --weight-medium: 600; /* only 400 and 600 are loaded for Source Sans 3 */
   --weight-semibold: 600;
   --weight-bold: 600; /* no 700 is loaded; avoid faux bold */
 
