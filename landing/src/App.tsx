@@ -249,7 +249,6 @@ function Hero() {
             );
           })}
         </ul>
-        <p className="note">{t('surveyNote')}</p>
       </div>
     </section>
   );

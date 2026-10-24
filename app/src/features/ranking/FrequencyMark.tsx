@@ -61,13 +61,13 @@ export function FrequencyMark({
   }
   const state = frequencyState(frequency, t, noneWord);
   if (quietUnknown && state.kind !== 'band') {
-    // A quiet ring and a quiet word: the state reads at a glance, no legend needed.
+    // Only the quiet ring is visible; the word stays for screen readers and the title tooltip (T33/T34).
     return (
-      <span className={[styles.mark, className].filter(Boolean).join(' ')} data-kind="quiet">
+      <span className={[styles.mark, className].filter(Boolean).join(' ')} data-kind="quiet" title={state.word}>
         <span className={styles.glyph} aria-hidden="true">
           <span className={styles.ring} />
         </span>
-        <span className={styles.word}>{state.word}</span>
+        <span className="sr-only">{state.word}</span>
       </span>
     );
   }
