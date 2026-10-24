@@ -1,0 +1,41 @@
+{
+  "note": "Supplementary PubCaseFinder pass for primary-run failures; not part of the pre-registered primary result.",
+  "rows": [
+    {
+      "case": 11,
+      "ok": false,
+      "error": "HTTP 429",
+      "at": "2026-10-24T21:43:56.155Z"
+    },
+    {
+      "case": 12,
+      "ok": false,
+      "error": "HTTP 429",
+      "at": "2026-10-24T21:44:04.895Z"
+    },
+    {
+      "case": 13,
+      "ok": false,
+      "error": "HTTP 429",
+      "at": "2026-10-24T21:44:13.443Z"
+    },
+    {
+      "case": 14,
+      "ok": false,
+      "error": "HTTP 429",
+      "at": "2026-10-24T21:44:22.001Z"
+    },
+    {
+      "case": 15,
+      "ok": false,
+      "error": "HTTP 429",
+      "at": "2026-10-24T21:44:30.557Z"
+    },
+    {
+      "case": 16,
+      "ok": false,
+      "error": "HTTP 429",
+      "at": "2026-10-24T21:44:39.113Z"
+    }
+  ]
+}
