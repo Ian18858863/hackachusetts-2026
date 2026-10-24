@@ -1,0 +1,46 @@
+/* Two quiet pill buttons in one outline, same height as the language switcher. */
+.group {
+  display: inline-flex;
+  flex: none;
+  align-items: stretch;
+  border-radius: var(--r-pill);
+  background: var(--bg);
+  /* Outline drawn inside so each option keeps the full 44px tap height. */
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+}
+
+.option {
+  min-height: var(--tap-min);
+  padding: 0 12px;
+  border: 0;
+  border-radius: var(--r-pill);
+  background: transparent;
+  color: var(--ink-2);
+  font: inherit;
+  font-size: var(--t-xs);
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.option:hover {
+  color: var(--ink);
+}
+
+.option[aria-pressed='true'] {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+  color: var(--ink);
+  font-weight: 600;
+}
+
+.option:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+@media (max-width: 600px) {
+  .option {
+    padding: 0 10px;
+  }
+}

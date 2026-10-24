@@ -6,7 +6,10 @@
 .inner {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto auto;
-  grid-template-areas: 'brand steps end lang';
+  /* The audience switch (T30a) has its own row, so the first row keeps its original layout. */
+  grid-template-areas:
+    'brand steps end lang'
+    'audience audience audience audience';
   align-items: center;
   column-gap: var(--s-6);
   max-width: var(--content-max);
@@ -67,6 +70,12 @@
   justify-self: end;
 }
 
+.audience {
+  grid-area: audience;
+  justify-self: end;
+  padding-bottom: var(--s-2);
+}
+
 .end {
   grid-area: end;
   display: flex;
@@ -113,7 +122,8 @@
     grid-template-columns: minmax(0, 1fr) auto auto;
     grid-template-areas:
       'brand end lang'
-      'steps steps steps';
+      'steps steps steps'
+      'audience audience audience';
     padding-top: var(--s-3);
   }
 
@@ -127,13 +137,19 @@
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:
       'brand end'
-      'steps lang';
+      'steps lang'
+      'audience audience';
     column-gap: var(--s-3);
     padding-top: var(--s-2);
   }
 
   .name {
     font-size: 1.25rem;
+  }
+
+  .audience {
+    justify-self: start;
+    padding-bottom: var(--s-2);
   }
 
   .chip,

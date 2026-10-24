@@ -8,7 +8,7 @@
  */
 import { useCallback, useEffect, useId, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import type { BriefResponse, Phenopacket } from '../../shared/contract';
+import type { BriefResponse } from '../../shared/contract';
 import { useCase, useCaseActions } from '../../shared/store';
 import {
   ApiErrorState,
@@ -26,30 +26,23 @@ import { fillTemplate } from '../../components/ui/fillTemplate';
 import { useT } from '../../shared/i18n';
 import briefMessages from '../../shared/i18n/messages/brief';
 import common from '../../shared/i18n/messages/common';
+import { useAudience } from '../../shared/audience';
 import { BriefDocument } from './BriefDocument';
+import { downloadJson, phenopacketFileName } from './download';
+import { FamilyBrief } from './FamilyBrief';
 import styles from './BriefStep.module.css';
-import { fileSafe, isoDay } from './format';
+import { isoDay } from './format';
 import { useBrief } from './useBrief';
 
-export function phenopacketFileName(p: Phenopacket): string {
-  return `phenopacket-${fileSafe(p.id)}.json`;
-}
+export { phenopacketFileName };
 
-function downloadJson(fileName: string, value: unknown) {
-  const blob = new Blob([`${JSON.stringify(value, null, 2)}\n`], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = fileName;
-  link.rel = 'noopener';
-  document.body.append(link);
-  link.click();
-  link.remove();
-  // Give the browser a moment to start the download before freeing the blob.
-  window.setTimeout(() => URL.revokeObjectURL(url), 1000);
-}
-
+/** Family mode (T30a) gets "Notes for my specialist"; clinicians get the full brief. */
 export function BriefStep() {
+  const { isFamily } = useAudience();
+  return isFamily ? <FamilyBrief /> : <ClinicianBrief />;
+}
+
+function ClinicianBrief() {
   const { caseObject } = useCase();
   const { goToStep } = useCaseActions();
   const state = useBrief();

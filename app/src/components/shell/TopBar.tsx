@@ -4,6 +4,7 @@ import { termCounts, useCase } from '../../shared/store';
 import { stepHref, type StepId } from '../../shared/steps';
 import { PRODUCT_NAME } from '../../shared/text';
 import { ButtonLink } from '../ui';
+import { AudienceSwitch } from './AudienceSwitch';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import { StepNav } from './StepNav';
 import styles from './TopBar.module.css';
@@ -44,6 +45,7 @@ export function TopBar({ current }: { current: StepId | null }) {
             )}
           </div>
         )}
+        <AudienceSwitch className={styles.audience} />
         <LanguageSwitcher className={styles.lang} />
       </div>
     </header>
