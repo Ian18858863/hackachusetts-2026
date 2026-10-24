@@ -1,4 +1,4 @@
-import { useId } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import { useT } from '../../shared/i18n';
 import common from '../../shared/i18n/messages/common';
 import shell from '../../shared/i18n/messages/shell';
@@ -65,11 +65,37 @@ function DemoChip({ caseId, sourceId }: { caseId: string; sourceId: string }) {
   const t = useT(shell);
   const tc = useT(common);
   const popId = useId();
+  const [open, setOpen] = useState(false);
+  const wrapRef = useRef<HTMLSpanElement>(null);
+  // Tap or click toggles; Escape and a press outside close it (no hover needed on touch).
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
+    };
+    const onDown = (e: PointerEvent) => {
+      if (!wrapRef.current?.contains(e.target as Node)) setOpen(false);
+    };
+    document.addEventListener('keydown', onKey);
+    document.addEventListener('pointerdown', onDown);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('pointerdown', onDown);
+    };
+  }, [open]);
   const titleKey = `demoTitle_${caseId}` as Parameters<typeof tc>[0];
   const title = tc(titleKey);
   return (
-    <span className={styles.chipWrap}>
-      <button type="button" className={styles.chip} aria-describedby={popId} data-demo-notice data-testid="demo-chip">
+    <span className={styles.chipWrap} ref={wrapRef} data-open={open || undefined}>
+      <button
+        type="button"
+        className={styles.chip}
+        aria-describedby={popId}
+        aria-expanded={open}
+        onClick={() => setOpen((v) => !v)}
+        data-demo-notice
+        data-testid="demo-chip"
+      >
         {t('demoChip')}
       </button>
       <span id={popId} role="tooltip" className={styles.chipPop}>

@@ -33,6 +33,12 @@ export function DemoPicker({
 }) {
   const t = useT(intake);
   const tc = useT(common);
+  // Localized title; an unknown case id falls back to the case's own English title (as in TopBar).
+  const demoTitle = (caseId: string, fallback: string) => {
+    const key = `demoTitle_${caseId}` as Parameters<typeof tc>[0];
+    const value = tc(key);
+    return value === key ? fallback : value;
+  };
   const headingId = useId();
   const [pending, setPending] = useState<string | null>(null);
   const confirmRef = useRef<HTMLButtonElement>(null);
@@ -82,7 +88,7 @@ export function DemoPicker({
               >
                 <span className={styles.optionMain}>
                   <span className={styles.optionTitle}>
-                    {tc(`demoTitle_${demo.caseId}` as Parameters<typeof tc>[0])}
+                    {demoTitle(demo.caseId, demo.title)}
                     {index === 0 && <span className={styles.tag}>{t('startHere')}</span>}
                   </span>
                   <span id={`${headingId}-${demo.caseId}`} className={styles.optionMeta}>

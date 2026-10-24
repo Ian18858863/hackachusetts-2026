@@ -309,6 +309,7 @@ function FamilyDocument({
       </section>
 
       <footer className={family.foot}>
+        {locale !== 'en' && <p>{tc('medicalTermsNote')}</p>}
         {credits.map((c) => (
           <p key={c} lang="en">
             {c}

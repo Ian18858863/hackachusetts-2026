@@ -16,6 +16,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { LIMITS, type CaseRanking, type HpoId, type RankResponse } from '../../shared/contract';
 import { useLocale, useT } from '../../shared/i18n';
+import common from '../../shared/i18n/messages/common';
 import rankingMessages from '../../shared/i18n/messages/ranking';
 import { useCase, useCaseActions } from '../../shared/store';
 import { ApiErrorState, Button, EmptyState, Icon, LoadingPanel, Skeleton, Spinner } from '../../shared/ui';
@@ -316,6 +317,7 @@ function countsText(observed: number, excluded: number, t: RankingT): string {
 
 function RankingSources({ ranking }: { ranking: CaseRanking }) {
   const t = useT(rankingMessages);
+  const tc = useT(common);
   const { locale } = useLocale();
   const { response } = ranking;
   const sources = [...new Set(response.candidates.flatMap((c) => c.sources))].map((s) => sourceName(s, t));
@@ -343,6 +345,8 @@ function RankingSources({ ranking }: { ranking: CaseRanking }) {
           <dd>{formatDateTime(response.dataVersions.fetchedAt, locale)}</dd>
         </div>
       </dl>
+      {/* i18n I4.4: one note near the results that medical terms stay in English. */}
+      {locale !== 'en' && <p className={styles.sourcesScope}>{tc('medicalTermsNote')}</p>}
     </section>
   );
 }

@@ -110,7 +110,7 @@
   font-size: var(--t-xs);
   line-height: 1.4;
   white-space: nowrap;
-  cursor: help;
+  cursor: pointer;
 }
 
 .chip:hover {
@@ -144,8 +144,7 @@
   font-weight: 600;
 }
 
-.chipWrap:hover .chipPop,
-.chip:focus + .chipPop {
+.chipWrap[data-open] .chipPop {
   opacity: 1;
   visibility: visible;
 }

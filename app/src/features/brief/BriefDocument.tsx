@@ -85,7 +85,17 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
         <p className={styles.disclaimer}>
           <Icon name="info" size={16} />
           {/* Contract section 13: English is the verbatim sentence; other languages its faithful translation. */}
-          <span>{locale === 'en' ? brief.disclaimer : tc('disclaimer')}</span>
+          {locale === 'en' ? (
+            <span>{brief.disclaimer}</span>
+          ) : (
+            // Clinical document: the translation, then the server's verbatim English sentence once (contract section 13).
+            <span>
+              {tc('disclaimer')}
+              <span lang="en" className={styles.disclaimerEn}>
+                {brief.disclaimer}
+              </span>
+            </span>
+          )}
         </p>
         {summary.notesExcerpt && (
           <blockquote className={styles.excerpt}>
@@ -173,6 +183,7 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
       )}
 
       <footer className={styles.footer}>
+        {locale !== 'en' && <p className={styles.termsNote}>{tc('medicalTermsNote')}</p>}
         <p className={styles.versions}>
           <span className={styles.footLabel}>{t('dataVersions')}</span>{' '}
           {versionPairs(brief.dataVersions, t, locale).map(([name, value], i) => (

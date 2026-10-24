@@ -80,7 +80,7 @@ export function LeadCandidate({
           <b>{t(OVERLAP_KEY[c.overlap])}</b>
           {broaderLine && <span> · {broaderLine}</span>}
           {contradicted > 0 && (
-            <span> · {t(pick(contradicted, 'altContradictedOne', 'altContradictedOther'), { n: contradicted }).trim()}</span>
+            <span> · {t(pick(contradicted, 'contradictedShortOne', 'contradictedShortOther'), { n: contradicted })}</span>
           )}
         </p>
         <IncompleteNote candidate={c} />

@@ -173,7 +173,7 @@ export default defineMessages(
       disclaimerRest: ' 의사와 상의할 가능한 일치 항목입니다.',
       disclaimer: '의사결정 지원이며, 진단이 아닙니다. 의사와 상의할 가능한 일치 항목입니다.',
       medicalTermsNote: '의학 용어는 HPO, Orphanet, ClinicalTrials.gov에서 발표한 대로 영어로 표시됩니다.',
-      demoCaseLabel: '데모 사례(phenopacket-store {id}를 바탕으로 만든 합성 서술)',
+      demoCaseLabel: '데모 사례(phenopacket-store {id} 기반 합성 서술)',
       'demoTitle_demo-npc1': '기억력이 나빠지고 걸음이 불안정한 54세',
       'demoTitle_demo-dmd': '계단 오르기를 힘들어하는 4세',
       'demoTitle_demo-marfan': '손가락이 길고 대동맥이 찢어진 40세',

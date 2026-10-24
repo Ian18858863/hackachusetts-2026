@@ -110,7 +110,7 @@ A parent or clinician pastes a plain-language symptom history. The system extrac
 **User story:** As a judge, I want to see the product working in one click, so that I can evaluate it without setup.
 
 10.1 THE SYSTEM SHALL bundle the five demo cases of contract section 9 (`demo-npc1` first as the primary case, then `demo-dmd`, `demo-marfan`, `demo-kabuki`, `demo-cdls`), each derived from phenopacket-store with at least 6 observed terms and a prepared extraction.
-10.2 WHERE a demo case is loaded THE SYSTEM SHALL show "Demo case (synthetic narrative from phenopacket-store <id>)" near the notes, the results and the exports.
+10.2 WHERE a demo case is loaded THE SYSTEM SHALL make the label "Demo case (synthetic narrative from phenopacket-store <id>)" available from the top-bar demo chip (a popover that opens on tap, click or keyboard) on every screen, and SHALL print it once on the brief; in other locales the label may be translated with the phenopacket-store id verbatim (contract section 13, v0.1.6).
 10.3 WHEN `/api/extract` receives a demo case's exact narrative with its `caseId` THE SYSTEM SHALL return the prepared extraction with `source` "demo".
 10.4 WHILE the Workers AI binding `AI` is missing (for example in some local runs), WHEN non-demo text is submitted THE SYSTEM SHALL return 503 `LLM_UNAVAILABLE`, and the app SHALL offer the demo cases and manual term entry.
 10.5 THE SYSTEM SHALL label every response that came from the demo cache with `source` "demo", and the app SHALL show that label.

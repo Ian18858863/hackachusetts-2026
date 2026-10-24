@@ -80,7 +80,7 @@ export default defineMessages(
     study1Claim: 'LLM plus ontology beats either alone',
     study1Detail:
       'In 424 patients of the Undiagnosed Diseases Network, GPT-4o with the Exomiser ranking tool reached 30% differential accuracy, against 22.4% for GPT-4o and 13.9% for Exomiser on their own.',
-    study2Claim: 'Traceable agents lead the field',
+    study2Claim: 'Agents with ontology tools and traceable evidence lead',
     study2Detail:
       'DeepRare, an LLM agent that calls more than 40 tools and shows its reasoning, ranked the right disease first in 57% of cases on average across HPO-based benchmarks.',
     ownTitle: 'Our own check',
@@ -163,7 +163,7 @@ export default defineMessages(
       study1Claim: 'LLM 与本体结合胜过单独使用',
       study1Detail:
         '在 Undiagnosed Diseases Network 的 424 名患者中，GPT-4o 结合 Exomiser 排序工具的鉴别诊断准确率达到 30%，而 GPT-4o 和 Exomiser 单独使用时分别为 22.4% 和 13.9%。',
-      study2Claim: '可追溯证据的智能体领先',
+      study2Claim: '使用本体工具并给出可追溯证据的智能体领先',
       study2Detail:
         'DeepRare 是一个调用 40 多种工具并展示推理过程的 LLM 智能体，在多个基于 HPO 的基准测试中，平均在 57% 的病例中把正确的疾病排在第一位。',
       ownTitle: '我们自己的检验',
@@ -246,7 +246,7 @@ export default defineMessages(
       study1Claim: 'LLM とオントロジーの併用が単独に勝る',
       study1Detail:
         'Undiagnosed Diseases Network の患者 424 人で、GPT-4o と順位付けツール Exomiser の組み合わせは鑑別診断の正答率 30% に達し、GPT-4o 単独の 22.4%、Exomiser 単独の 13.9% を上回りました。',
-      study2Claim: '根拠を示すエージェントが先頭に',
+      study2Claim: 'オントロジーツールと追跡可能な根拠を持つエージェントが先頭に',
       study2Detail:
         'DeepRare は 40 を超えるツールを呼び出し、推論の過程を示す LLM エージェントで、HPO に基づく複数のベンチマークで、平均 57% の症例で正しい疾患を 1 位に挙げました。',
       ownTitle: '私たち自身による検証',
@@ -331,7 +331,7 @@ export default defineMessages(
       study1Claim: 'LLM y ontología juntos superan a cada uno',
       study1Detail:
         'En 424 pacientes de la Undiagnosed Diseases Network, GPT-4o con la herramienta de clasificación Exomiser alcanzó un 30 % de precisión en el diagnóstico diferencial, frente al 22,4 % de GPT-4o y el 13,9 % de Exomiser por separado.',
-      study2Claim: 'Los agentes trazables encabezan el campo',
+      study2Claim: 'Lideran los agentes con ontología y evidencia trazable',
       study2Detail:
         'DeepRare, un agente LLM que llama a más de 40 herramientas y muestra su razonamiento, situó la enfermedad correcta en primer lugar en el 57 % de los casos de media en las pruebas de referencia basadas en HPO.',
       ownTitle: 'Nuestra propia comprobación',
@@ -412,10 +412,10 @@ export default defineMessages(
 
       evidenceTitle: '왜 온톨로지가 순위를 매기는가',
       evidenceDek: '발표된 연구들은 이 도구가 쓰는 것과 같은 역할 분담을 가리킵니다.',
-      study1Claim: 'LLM과 온톨로지를 함께 쓰면 더 낫습니다',
+      study1Claim: 'LLM과 온톨로지를 함께 쓰면 각각 따로 쓸 때보다 낫습니다',
       study1Detail:
         'Undiagnosed Diseases Network 환자 424명에서 GPT-4o와 순위 도구 Exomiser를 함께 쓴 경우 감별 진단 정확도가 30%였고, GPT-4o 단독은 22.4%, Exomiser 단독은 13.9%였습니다.',
-      study2Claim: '근거를 보여 주는 에이전트가 앞섭니다',
+      study2Claim: '온톨로지 도구와 추적 가능한 근거를 갖춘 에이전트가 앞섭니다',
       study2Detail:
         'DeepRare는 40개가 넘는 도구를 호출하고 추론 과정을 보여 주는 LLM 에이전트로, HPO 기반 벤치마크들에서 평균 57%의 사례에서 올바른 질환을 1위에 올렸습니다.',
       ownTitle: '자체 점검',
@@ -447,7 +447,7 @@ export default defineMessages(
 
       kickerLead: 'Pour les cliniciens et les conseillers en génétique',
       kickerRest: ' · les familles peuvent préparer leurs notes',
-      heroTitle: 'Une synthèse pour le spécialiste en minutes',
+      heroTitle: 'Une synthèse pour le spécialiste en quelques minutes',
       heroLede: 'Transformez des années de notes éparses en une synthèse pour le spécialiste en quelques minutes.',
       heroSafetyRest: ' Des correspondances possibles à discuter avec un médecin, chacune avec les éléments qui l’appuient.',
       tryDemo: 'Essayer le cas de démonstration',
@@ -501,7 +501,7 @@ export default defineMessages(
       study1Claim: 'LLM et ontologie font mieux ensemble',
       study1Detail:
         'Chez 424 patients de l’Undiagnosed Diseases Network, GPT-4o associé à l’outil de classement Exomiser a atteint 30 % de précision du diagnostic différentiel, contre 22,4 % pour GPT-4o et 13,9 % pour Exomiser seuls.',
-      study2Claim: 'Les agents traçables sont en tête',
+      study2Claim: 'Les agents à ontologie et preuves traçables sont en tête',
       study2Detail:
         'DeepRare, un agent LLM qui appelle plus de 40 outils et montre son raisonnement, a classé la bonne maladie en premier dans 57 % des cas en moyenne sur des bancs d’essai fondés sur HPO.',
       ownTitle: 'Notre propre vérification',
