@@ -67,30 +67,31 @@
   }
 }
 
-/* Up to 1120px (beside the brand, or under it on tablet and phone): scroll inside the row, never the page. */
-@media (max-width: 1120px) {
-  .list {
-    overflow-x: auto;
-    overscroll-behavior-x: contain;
-    scrollbar-width: none;
-    /* Room for the focus ring inside the scroll box. */
-    padding: 6px;
-    margin: -6px;
-  }
+/*
+ * At every width the row scrolls inside its own box, never the page, and
+ * never spills over the controls beside it (long labels, e.g. in French).
+ */
+.list {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  scrollbar-width: none;
+  /* Room for the focus ring inside the scroll box. */
+  padding: 6px;
+  margin: -6px;
+  /* Fade the right edge, so a cut label reads as scrollable (only visible when the row overflows). */
+  mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+}
 
-  .list::-webkit-scrollbar {
-    display: none;
-  }
+.item:last-child {
+  padding-right: var(--s-6);
+}
+
+.list::-webkit-scrollbar {
+  display: none;
 }
 
 @media (max-width: 600px) {
   .list {
     gap: var(--s-4);
-    /* Fade the last label when the row is cut, so it reads as scrollable. */
-    mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
-  }
-
-  .item:last-child {
-    padding-right: var(--s-6);
   }
 }

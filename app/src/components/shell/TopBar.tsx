@@ -10,10 +10,11 @@ import { StepNav } from './StepNav';
 import styles from './TopBar.module.css';
 
 /**
- * Header from the approved specimen: brand on the left, the five steps as
- * plain text links, and on the right a quiet demo chip and the black pill
- * that opens the brief, then the language switcher. No bar, no border:
- * whitespace separates it.
+ * Header from the approved specimen: brand on the left, the steps as plain
+ * text links and the black pill that opens the brief. No bar, no border:
+ * whitespace separates it. The demo chip, the audience switch and the
+ * language select sit in one compact utility row under it, so nothing can
+ * cover the step links at any width or in any language.
  */
 export function TopBar({ current }: { current: StepId | null }) {
   const { caseObject } = useCase();
@@ -30,9 +31,8 @@ export function TopBar({ current }: { current: StepId | null }) {
           <span className={styles.name}>{PRODUCT_NAME}</span>
         </a>
         <StepNav current={current} className={styles.steps} />
-        {(caseObject.demo || showBrief) && (
+        {showBrief && (
           <div className={styles.end}>
-            {caseObject.demo && <span className={styles.chip}>{t('demoChip')}</span>}
             {showBrief && (
               <ButtonLink href={stepHref('brief')} aria-label={t('prepareBrief')} data-testid="prepare-brief">
                 <span className={styles.wide} aria-hidden="true">
@@ -45,8 +45,11 @@ export function TopBar({ current }: { current: StepId | null }) {
             )}
           </div>
         )}
-        <AudienceSwitch className={styles.audience} />
-        <LanguageSwitcher className={styles.lang} />
+        <div className={styles.utility}>
+          {caseObject.demo && <span className={styles.chip}>{t('demoChip')}</span>}
+          <AudienceSwitch />
+          <LanguageSwitcher />
+        </div>
       </div>
     </header>
   );

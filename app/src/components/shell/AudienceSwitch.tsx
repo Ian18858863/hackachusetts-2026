@@ -31,7 +31,7 @@ export function AudienceSwitch({ className }: { className?: string }) {
           onClick={() => setAudience(o.value)}
           data-testid={`audience-option-${o.value}`}
         >
-          {t(o.key)}
+          <span className={styles.label}>{t(o.key)}</span>
         </button>
       ))}
     </div>

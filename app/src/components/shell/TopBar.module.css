@@ -3,17 +3,22 @@
   background: var(--bg);
 }
 
+/*
+ * Row 1: brand, step links, "Prepare brief". Row 2: the compact utility row
+ * (demo chip, audience switch, language). Row 1 keeps its 72px height; the
+ * utility row tucks into the space under row 1's 44px controls, so the page
+ * moves down by about 30px only.
+ */
 .inner {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto auto;
-  /* The audience switch (T30a) has its own row, so the first row keeps its original layout. */
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-rows: var(--topbar-h) auto;
   grid-template-areas:
-    'brand steps end lang'
-    'audience audience audience audience';
+    'brand steps end'
+    'utility utility utility';
   align-items: center;
   column-gap: var(--s-6);
   max-width: var(--content-max);
-  min-height: var(--topbar-h);
   margin-inline: auto;
   padding-inline: var(--gutter);
 }
@@ -64,31 +69,36 @@
   margin-left: var(--s-4);
 }
 
-/* Language switcher: last in the bar; on phones it moves to the end of the steps row. */
-.lang {
-  grid-area: lang;
-  justify-self: end;
-}
-
-.audience {
-  grid-area: audience;
-  justify-self: end;
-  padding-bottom: var(--s-2);
-}
-
 .end {
   grid-area: end;
   display: flex;
   align-items: center;
-  gap: var(--s-4);
+}
+
+/*
+ * Compact controls: each keeps a 44px tap height, but draws only a 32px
+ * outline (see AudienceSwitch and LanguageSwitcher), so the row reads small.
+ * The negative top margin pulls it into row 1's empty band below the 44px
+ * controls; hit areas still do not overlap.
+ */
+.utility {
+  grid-area: utility;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0 var(--s-3);
+  min-width: 0;
+  margin-top: calc((var(--tap-min) - var(--topbar-h)) / 2);
 }
 
 .chip {
-  padding: 6px 12px;
+  padding: 4px 10px;
   border-radius: var(--r-pill);
   background: var(--surface);
   color: var(--ink-2);
   font-size: var(--t-xs);
+  line-height: 1.4;
   white-space: nowrap;
 }
 
@@ -96,12 +106,6 @@
   display: none;
 }
 
-/*
- * 901–1120px wide, at any height (short laptops and also e.g. a 1024×768
- * tablet, on purpose): one row stays, with tighter gaps and no demo chip in
- * the header, so the page keeps its height above the fold. The demo case is
- * still labelled in every step's intro (StepHeader kicker and demo label).
- */
 @media (min-width: 901px) and (max-width: 1120px) {
   .inner {
     column-gap: var(--s-5);
@@ -110,35 +114,31 @@
   .steps {
     margin-left: 0;
   }
-
-  .chip {
-    display: none;
-  }
 }
 
 /* Tablet: the steps move to their own row under the brand. */
 @media (max-width: 900px) {
   .inner {
-    grid-template-columns: minmax(0, 1fr) auto auto;
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-rows: auto auto auto;
     grid-template-areas:
-      'brand end lang'
-      'steps steps steps'
-      'audience audience audience';
+      'brand end'
+      'steps steps'
+      'utility utility';
     padding-top: var(--s-3);
   }
 
   .steps {
     margin-left: 0;
   }
+
+  .utility {
+    margin-top: 0;
+  }
 }
 
 @media (max-width: 600px) {
   .inner {
-    grid-template-columns: minmax(0, 1fr) auto;
-    grid-template-areas:
-      'brand end'
-      'steps lang'
-      'audience audience';
     column-gap: var(--s-3);
     padding-top: var(--s-2);
   }
@@ -147,11 +147,7 @@
     font-size: 1.25rem;
   }
 
-  .audience {
-    justify-self: start;
-    padding-bottom: var(--s-2);
-  }
-
+  /* The step header's kicker already says "demo case, not a real patient". */
   .chip,
   .wide {
     display: none;

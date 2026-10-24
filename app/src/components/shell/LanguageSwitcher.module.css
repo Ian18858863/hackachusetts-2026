@@ -1,8 +1,21 @@
-/* Quiet custom-styled native select: same height as the other top bar controls. */
+/* Quiet custom-styled native select: 44px tap height, a compact 32px outline drawn by ::before. */
 .wrap {
   position: relative;
   display: inline-flex;
   flex: none;
+}
+
+.wrap::before {
+  content: '';
+  position: absolute;
+  inset: 6px 0;
+  border: 1px solid var(--color-border-strong);
+  border-radius: var(--r-pill);
+  pointer-events: none;
+}
+
+.wrap:hover::before {
+  background: var(--surface);
 }
 
 /* Chevron drawn in CSS so the control never falls back to the OS look. */
@@ -17,6 +30,7 @@
   border-bottom: 1.5px solid var(--ink-2);
   transform: translateY(-70%) rotate(45deg);
   pointer-events: none;
+  z-index: 2;
 }
 
 .select {
@@ -24,10 +38,12 @@
   min-height: var(--tap-min);
   max-width: 9.5rem;
   padding: 0 32px 0 12px;
-  border: 1px solid var(--color-border-strong);
+  border: 0;
   border-radius: var(--r-pill);
-  background: var(--bg);
+  background: transparent;
   color: var(--ink-2);
+  position: relative;
+  z-index: 1;
   font-size: var(--t-xs);
   line-height: 1;
   text-overflow: ellipsis;
@@ -36,12 +52,11 @@
 
 .select:hover {
   color: var(--ink);
-  background: var(--surface);
 }
 
 .select:focus-visible {
   outline: 2px solid var(--focus);
-  outline-offset: 2px;
+  outline-offset: -4px;
 }
 
 @media (max-width: 600px) {

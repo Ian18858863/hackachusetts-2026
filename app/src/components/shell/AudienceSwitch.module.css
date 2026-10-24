@@ -1,15 +1,26 @@
-/* Two quiet pill buttons in one outline, same height as the language switcher. */
+/*
+ * Two quiet options in one pill. Each option keeps a 44px tap height; the
+ * outline (::before on the group) and the pressed fill (::before on the
+ * option) are drawn at 32px, so the control reads as small as a chip.
+ */
 .group {
+  position: relative;
   display: inline-flex;
   flex: none;
   align-items: stretch;
+}
+
+.group::before {
+  content: '';
+  position: absolute;
+  inset: 6px 0;
+  border: 1px solid var(--color-border-strong);
   border-radius: var(--r-pill);
-  background: var(--bg);
-  /* Outline drawn inside so each option keeps the full 44px tap height. */
-  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+  pointer-events: none;
 }
 
 .option {
+  position: relative;
   min-height: var(--tap-min);
   padding: 0 12px;
   border: 0;
@@ -23,20 +34,36 @@
   cursor: pointer;
 }
 
+.option::before {
+  content: '';
+  position: absolute;
+  inset: 9px 3px;
+  border-radius: var(--r-pill);
+  pointer-events: none;
+}
+
+/* The label sits above the drawn fill. */
+.label {
+  position: relative;
+}
+
 .option:hover {
   color: var(--ink);
 }
 
 .option[aria-pressed='true'] {
-  background: var(--surface);
-  box-shadow: inset 0 0 0 1px var(--color-border-strong);
   color: var(--ink);
   font-weight: 600;
 }
 
+.option[aria-pressed='true']::before {
+  background: var(--surface);
+  box-shadow: inset 0 0 0 1px var(--color-border-strong);
+}
+
 .option:focus-visible {
   outline: 2px solid var(--focus);
-  outline-offset: 2px;
+  outline-offset: -4px;
 }
 
 @media (max-width: 600px) {

@@ -10,7 +10,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { LIMITS, type HpoId, type TermRef } from '../../shared/contract';
 import { findDemoCase, PRIMARY_DEMO_CASE_ID } from '../../shared/mocks';
+import { useAudience } from '../../shared/audience';
 import { useT } from '../../shared/i18n';
+import audienceMessages from '../../shared/i18n/messages/audience';
 import review from '../../shared/i18n/messages/review';
 import { termCounts, useCase, useCaseActions } from '../../shared/store';
 import {
@@ -54,6 +56,9 @@ export function ReviewStep() {
   const announce = useAnnounce();
   const online = useOnlineStatus();
   const t = useT(review);
+  // Family mode (T30a) has no matches step: the button leads to the questions.
+  const { isFamily } = useAudience();
+  const ta = useT(audienceMessages);
   const statusWord = (status: PresenceStatus) => t(statusWordKey(status));
 
   const [activeId, setActiveId] = useState<HpoId | null>(null);
@@ -399,12 +404,12 @@ export function ReviewStep() {
           </div>
           <Button
             className={styles.cta}
-            onClick={() => goToStep('matches')}
+            onClick={() => goToStep(isFamily ? 'questions' : 'matches')}
             disabled={counts.observed === 0}
             data-testid="see-matches"
             iconEnd={<Icon name="arrowRight" size={16} />}
           >
-            {t('seeMatches')}
+            {isFamily ? ta('seeQuestions') : t('seeMatches')}
           </Button>
         </div>
       </div>
