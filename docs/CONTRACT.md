@@ -405,6 +405,8 @@ Total budget 20 s: LLM 15 s, grounding 4 s (HPO term lookup 2 s, label search 2 
 
 Errors: 400, 405, 413, 422, 503 `LLM_UNAVAILABLE` (binding missing), 504 (Workers AI timeout, non-demo text), 502 (Workers AI error).
 
+Also 429 `RATE_LIMITED` (v0.1.3, `retryable: true`, with a `Retry-After` header in seconds): the live LLM path is limited per client IP (`CF-Connecting-IP`) to 10 extractions per minute and 60 per hour in fixed windows, counted approximately in the Workers Cache API (per data centre, not atomic, fails open). The prepared demo extraction (step 2) is never limited.
+
 ### 7.3 GET /api/terms (proposed)
 
 Needed for "add a term by hand" because the app may not call the HPO API directly. Owner: Ian (`functions/api/terms.ts`). Engine: `searchTerms`. Timeout 2 s. Cache 7 days.
@@ -929,6 +931,7 @@ Changelog:
   - `[CONTRACT CHANGE] §7.4 step 5 a broader-term match counts only if the shared ancestor (Monarch match_subsumer) is an HP: term; a non-HP shared ancestor (e.g. UPHENO) does not count and that patient term goes to unmatched (as in engine/rank.ts; the fallback was aligned in T18i); breaking no`.
   - `[CONTRACT CHANGE] §7.4 engine also exports rankCandidatesWithReport (enrichment.complete); /api/rank does not cache a response with incomplete enrichment (T18h); /api/rank is served by the engine since T18k (RDD_ENGINE_PATH_RANK = "engine"); breaking no`.
   - `[CONTRACT CHANGE] §5/§15 open question 6 resolved: dataVersions.hpo is the pinned constant HPO_VERSION in engine/hpo.ts ("2026-09-01"), never "unknown"; /api/brief defaults hpo to it when the ranking's dataVersions has none (T18m); the pin is a label, not checked against the release the JAX API serves; breaking no`.
+  - `[CONTRACT CHANGE] §7.2 POST /api/extract may return 429 RATE_LIMITED (retryable, Retry-After) when one IP exceeds 10 live extractions per minute or 60 per hour; demo-case requests are never limited (T18p); breaking no`.
 
 ## 15. Open questions
 

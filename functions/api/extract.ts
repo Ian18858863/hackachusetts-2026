@@ -7,6 +7,8 @@
 //   3. Live path: Workers AI proposes phrases and labels (functions/_lib/llm.ts),
 //      the engine grounds them against the HPO API (groundTerms).
 //   4. Zero grounded terms -> 422 NO_TERMS_FOUND.
+// Only the live path is rate-limited per client IP (functions/_lib/rateLimit.ts,
+// T18p): 429 RATE_LIMITED with Retry-After. The demo path is never limited.
 // If the AI binding is missing or the LLM / HPO call fails and the text is a
 // bundled demo narrative, the prepared extraction is returned instead
 // (contract section 4 table, design.md error handling).
@@ -19,6 +21,7 @@ import type { DataVersions, DemoCase, EngineDeps, ExtractedTerm } from "../../en
 import { getFallbackDemoCase } from "../_lib/fallback/demoCases";
 import { LlmError, MAX_TEXT_CHARS, proposeTerms } from "../_lib/llm";
 import type { LlmEnv, ProposeResult } from "../_lib/llm";
+import { checkAndCount, clientIp, extractWindows } from "../_lib/rateLimit";
 import {
   CONTRACT_VERSION,
   apiError,
@@ -34,7 +37,8 @@ import {
 } from "../_lib/respond";
 import type { PagesContext } from "../_lib/respond";
 
-type Env = LlmEnv;
+/** RDD_EXTRACT_LIMIT_PER_MIN: optional per-minute limit override (functions/_lib/rateLimit.ts). */
+type Env = LlmEnv & { RDD_EXTRACT_LIMIT_PER_MIN?: string };
 
 /** Model id reported for the prepared demo extraction (contract 7.2 example). */
 const DEMO_MODEL = "demo-prepared";
@@ -124,6 +128,16 @@ async function handlePost({ request, env }: PagesContext<Env>): Promise<Response
     return apiError(
       "LLM_UNAVAILABLE",
       "Live extraction is not available here. Try one of the demo cases, or add terms by hand.",
+    );
+  }
+
+  // Per-IP limit on live LLM calls only (approximate, fails open).
+  const decision = await checkAndCount(defaultCache(), clientIp(request), extractWindows(env));
+  if (decision.limited) {
+    return apiError(
+      "RATE_LIMITED",
+      "Too many requests from this address. Wait a minute and try again, or use a demo case.",
+      { "Retry-After": String(decision.retryAfterSec) },
     );
   }
 
