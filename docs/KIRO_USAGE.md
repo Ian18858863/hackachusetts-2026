@@ -12,7 +12,7 @@ Judges score how deeply and strategically we used Kiro. Log every meaningful use
 - How specs compared with vibe coding:
 
 ## Steering
-- `team.md` keeps three people on separate folders and English output.
+- `team.md` points every agent to BRIEFING.md and keeps output in English.
 
 ## Agent hooks
 -
