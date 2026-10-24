@@ -1,6 +1,6 @@
 # Team Briefing — Hackachusetts 2026 (read this first)
 
-Last updated: 2026-10-24. **v4.5 — T13c–T16 claimed; T12c art direction approved (B1 UI + B2 typography); T13a, T20–T22 and T11f recorded as pushed. Recorded 2026-10-24 ~12:51 ET by Ian's Kiro.** **v4 was approved by all three humans (Ian, Peter, Jerry) in the team chat at ~11:35 ET.** This version preserves the original event rules, topic research, and submission requirements, and adopts the faster 3-person coordination workflow.
+Last updated: 2026-10-24. **v4.6 — functions live (extract with Workers AI, terms, rank, next-questions, trials, brief; deployed `3c99583` at 13:46 ET); demo-npc1 is the primary demo case; T13c, T14, T15, T09b, T10c, T11g recorded as pushed; late claims T09c, T13d, T18a, T18b, T23 recorded honestly. Recorded 2026-10-24 ~13:50 ET by Ian's Kiro.** **v4 was approved by all three humans (Ian, Peter, Jerry) in the team chat at ~11:35 ET.** This version preserves the original event rules, topic research, and submission requirements, and adopts the faster 3-person coordination workflow.
 
 This is the single source of shared **decisions and current task claims**. The companion [`docs/PROTOCOL.md`](docs/PROTOCOL.md) (Assistant × Kiro Agent Collaboration Protocol v4) is the operational handbook for human teammates, their AI Assistants, and Kiro coding Agents.
 
@@ -29,7 +29,7 @@ This is the single source of shared **decisions and current task claims**. The c
 | Our venue | UMass Boston |
 | Team | Ian (`Ian18858863`, repo admin), Qirong Wang (`qirongwangpeter`), Jerry (`lolershark`) |
 | Repo | https://github.com/Ian18858863/hackachusetts-2026 (private now; must be **public** at submission) |
-| Live demo | https://hackachusetts-2026.pages.dev (app at `/app/`; skeleton first deployed 12:02 ET from main `53263d4`; verified 200 on `/`, `/app/`, `/api/health` at 12:03 ET) |
+| Live demo | https://hackachusetts-2026.pages.dev (app at `/app/`; skeleton first deployed 12:02 ET from main `53263d4`; latest deploy `3c99583` at 13:46 ET with functions live: `/api/extract` (Workers AI), `/api/terms`, `/api/rank`, `/api/next-questions`, `/api/trials`, `/api/brief`) |
 | Build window | 11:30 → 18:00. Submission window 18:00–20:00. **Hard deadline 20:00. Our target: submitted by 19:00.** |
 | Judging | Remote, 20:00–23:00. About 50 finalists notified at midnight. Finals Sunday 10/25, 11:00–14:00 at WHOOP HQ |
 | Prizes per track | 1st $3,500 · 2nd $1,000 · 3rd $500. Bonus: Best Use of Kiro (1-year Kiro Pro Max). Top 50 finalists get WHOOP straps |
@@ -158,28 +158,36 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T07 Domain module + approved public datasets | Jerry | `engine/**`, `.kiro/specs/engine/**` (repo-root TypeScript domain engine; runs on Cloudflare Workers, fetch only, no fs; called from `functions/api/*`) | CLAIMED (Jerry) | TBD (Jerry) |
 | T08 Module tests / property-based test use | Jerry | `engine/test/**` (property-based tests with fast-check); record true Kiro usage | CLAIMED (Jerry) | TBD (Jerry) |
 | T09 API contract, mock response examples | Ian + relevant owners approve; **Ian is sole file editor**; Jerry approves the engine interface fields | `docs/CONTRACT.md`, `.kiro/specs/rare-disease-detective/**` | REVIEWING (contract v0.1 draft and spec pushed `f77cc31658296dfe0cbc956c9b180ba7b5262f6e`; pending APPROVE by Jerry and Ian) | 12:25 (v0.1 draft) |
-| T09b Spec progress ticks | Ian | `.kiro/specs/rare-disease-detective/tasks.md` (Ian's Kiro ticks tasks as they ship) | CLAIMED (Ian) | Rolling |
+| T09b Spec progress ticks | Ian | `.kiro/specs/rare-disease-detective/tasks.md` (Ian's Kiro ticks tasks as they ship) | PUSHED (`5508f1a`) | Rolling |
+| T09c demo-npc1 primary demo case | Ian | `docs/CONTRACT.md`, `.kiro/specs/rare-disease-detective/**` | PUSHED (`629c869`); claimed late; recorded 13:50 ET | — |
 | T10 Kiro usage record aggregation + correct early inaccurate entry | Ian/Kiro is sole file editor; all members supply **actual** usage evidence | `docs/KIRO_USAGE.md` | PUSHED (`e4d0c8e83cb41664f0f4cd86902ac4c0a507a03b`); T10b pushed as `ff02d63ca96510976851e6cae8ed78761d88a5dc` | 11:50 |
-| T10c Kiro usage log and AI-development strategy | Ian | `docs/KIRO_USAGE.md`, `docs/reviews/**` (verbatim rdd-reviewer outputs) | CLAIMED (Ian) | 13:20 |
+| T10c Kiro usage log and AI-development strategy | Ian | `docs/KIRO_USAGE.md`, `docs/reviews/**` (verbatim rdd-reviewer outputs) | PUSHED (`9ebf2f5`) | 13:20 |
+| T10d Kiro usage log + reviews update | Ian | `docs/KIRO_USAGE.md`, `docs/reviews/**` | IN_PROGRESS (Ian) | TBD |
 | T11 Team board updates | Ian, or named one-time delegate | `BRIEFING.md`, `docs/PROTOCOL.md` | DONE (`fa0180f`); rolling board updates continue as T11c | 11:45 |
 | T11c Topic decision record + board refresh | Ian | `BRIEFING.md` | PUSHED (`b1804930bc9388dc2a01b0b12405522c053bde1e`) | 12:05 |
 | T11d Topic approval, teammate claims and first deploy on the board | Ian | `BRIEFING.md` | PUSHED (`69fe53d04188ff6f993e9a42475febce2ad13d69`) | 12:15 |
 | T11e LLM decision, contract draft and new Ian tasks on the board | Ian | `BRIEFING.md` | PUSHED (`c46c832`) | 12:25 |
 | T11f Kiro coverage claims on the board | Ian | `BRIEFING.md` | PUSHED (`6b94db7`) | 12:40 |
-| T11g Claim T13c–T16, record pushed Kiro coverage tasks | Ian | `BRIEFING.md` | IN_PROGRESS (Ian) | 12:55 |
+| T11g Claim T13c–T16, record pushed Kiro coverage tasks | Ian | `BRIEFING.md` | PUSHED (`079e559`) | 12:55 |
+| T11h Board refresh: functions live, demo-npc1, late claims | Ian | `BRIEFING.md` | IN_PROGRESS (Ian) | 13:55 |
 | T12 Art direction note | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`8460be2`); Ian picked the white direction (Option B) at ~12:20 ET but judged both options not good enough; refinement continues as T12b | 12:25 |
 | T12b Refined white art direction variants | Ian; Ian picks | `docs/art-direction/**` | PUSHED (`9208298`); Ian picking B1/B2/B3 | 12:45 |
 | T12c Ian-approved art direction | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`e8fe0f8`); approved by Ian 12:33 ET: B1 UI + B2 typography | 12:35 |
 | T13a App foundation: shared contract types, API client, mocks, case store, flow shell | Ian | `app/**` (feature folders are created as stubs and handed to T14–T16) | PUSHED with T13b fixes (`6c1f106`, `87febca`; first-pass rdd-reviewer review, 2 blockers fixed) | 13:10 |
-| T13c Re-theme app shell to approved art direction | Ian | `app/src/styles/**`, `app/src/components/**`, `app/src/shared/ui/**`, `app/src/App.*`, `app/src/main.tsx`, `app/index.html`, app manifests | IN_PROGRESS (Ian) | 13:20 |
-| T14 Notes intake + feature review | Ian | `app/src/features/intake/**`, `app/src/features/review/**` | IN_PROGRESS (Ian) | 13:30 |
-| T15 Possible matches with evidence + what to check next | Ian | `app/src/features/ranking/**`, `app/src/features/questions/**` | IN_PROGRESS (Ian) | 13:40 |
+| T13c Re-theme app shell to approved art direction | Ian | `app/src/styles/**`, `app/src/components/**`, `app/src/shared/ui/**`, `app/src/App.*`, `app/src/main.tsx`, `app/index.html`, app manifests | PUSHED (`fb4b51a`, `b5a976f`, `138e98b`) | 13:20 |
+| T13d demo-npc1 in app mocks | Ian | `app/src/shared/mocks/**` | PUSHED (`52beb1b`); claimed late; recorded 13:50 ET | — |
+| T14 Notes intake + feature review | Ian | `app/src/features/intake/**`, `app/src/features/review/**` | PUSHED (`fdc3ab6`) | 13:30 |
+| T15 Possible matches with evidence + what to check next | Ian | `app/src/features/ranking/**`, `app/src/features/questions/**` | PUSHED (`f2b2bb3`, `2ab5ba6`) | 13:40 |
+| T15b Exact-match headline polish | Ian | `app/src/features/ranking/**` | IN_PROGRESS (Ian) | TBD |
 | T16 Brief + phenopacket export + recruiting trials | Ian | `app/src/features/brief/**`, `app/src/features/trials/**` | IN_PROGRESS (Ian) | 13:40 |
-| T17 Workers AI LLM proposal layer + model bake-off | Ian | `functions/_lib/**` and the `[ai]` binding in `wrangler.toml` (T03 claim extended). `functions/api/extract.ts` follows once Jerry's engine skeleton is on main | DEPLOYED_VERIFIED (`cd1a1a47af9ccd7993909fc76ce718e8ad3a6eaf`, live 12:30 ET; `/api/extract` not yet routed) | 12:50 |
+| T17 Workers AI LLM proposal layer + model bake-off | Ian | `functions/_lib/**` and the `[ai]` binding in `wrangler.toml` (T03 claim extended). `functions/api/extract.ts` now exists (T18a) | DEPLOYED_VERIFIED (`cd1a1a47af9ccd7993909fc76ce718e8ad3a6eaf`, live 12:30 ET; `/api/extract` routed via T18a) | 12:50 |
+| T18a Functions extract, terms, health | Ian | `functions/api/extract.ts`, `functions/api/terms.ts`, `functions/api/health.ts`, `functions/_lib/respond.ts` (plus a 3-line edit to `functions/_lib/llm.ts`) | PUSHED (`cf82644`); claimed late; recorded 13:50 ET | — |
+| T18b Functions rank, next-questions, trials, brief (engine-first fallback; coordinator-approved [CONTRACT CHANGE]) | Ian | `functions/api/rank.ts`, `functions/api/next-questions.ts`, `functions/api/trials.ts`, `functions/api/brief.ts`, `functions/_lib/fallback/**` | DEPLOYED_VERIFIED (`3c99583`, live 13:46 ET incl. live Workers AI extract); claimed late; recorded 13:50 ET | — |
 | T19 Kiro CLI custom agents and safe agent hooks | Ian | `.kiro/agents/**`, `.kiro/hooks/**` | PUSHED (`dd8a0791ef5fcfdcd3621a83df6ec8a42ed675ab`) | 12:25 |
 | T20 Kiro MCP for development | Ian | `.kiro/settings/mcp.json`, `.kiro/agents/rdd-builder.json`, `docs/research/biomcp-checks.md` (Context7 remote MCP server; real doc lookups logged) | PUSHED (`b3dce59`, `d35a18e` biomcp, `0dca96f` reviewer fixes) | 13:00 |
 | T21 Kiro IDE 1.x hooks and steering | Ian | `.kiro/hooks/**`, `.kiro/steering/medical-data.md`, `.kiro/steering/release-check.md` | PUSHED (`6c6ce91`, `68ec5cb`) | 13:05 |
 | T22 Kiro project power `rdd-medical-data` | Ian | `.kiro/powers/rdd-medical-data/**` | PUSHED (`c5f619f`, `47521fa`) | 13:10 |
+| T23 Pre-registered re-rank experiment (research only, not shipped) | Ian | `docs/research/ranking-benchmark.md`, `functions/_lib/rerank.ts` + test (not wired into any endpoint), `scripts/ranking-benchmark.ts`, `scripts/benchmark-data/**` | PUSHED (`4682cdd`); claimed late; recorded 13:50 ET | — |
 
 From 12:35 ET every Ian task diff gets a first-pass review by the read-only Kiro agent rdd-reviewer before the assistant's review.
 
