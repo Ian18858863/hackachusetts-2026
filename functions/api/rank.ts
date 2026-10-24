@@ -18,6 +18,10 @@
 //      caching) and falls back only on NotImplementedError (X-RDD-Path).
 //   4. Monarch failed or timed out -> the recorded demo ranking for this exact
 //      term set if there is one (source "demo"), else 502/504 retryable.
+//   5. Live responses carry candidate.evidenceComplete (additive, T32a): false
+//      when an HPO annotation call for that candidate failed, was unusable or
+//      ran out of budget, so `frequency: null` means "could not be read", not
+//      "not listed". Recorded demo responses have no field (absent = unknown).
 
 import { ENGINE_STATUS, demoRankKey, getDemoRanking, rankCandidatesWithReport } from "../../engine/index";
 import type { RankResponse } from "../../engine/index";
@@ -26,6 +30,7 @@ import { getFallbackDemoRanking } from "../_lib/fallback/demoRecorded";
 import { cacheGetJson, cacheKey, cachePutJson } from "../_lib/fallback/http";
 import type { FallbackDeps } from "../_lib/fallback/http";
 import { fallbackRank } from "../_lib/fallback/rank";
+import type { RankedCandidate } from "../_lib/fallback/rank";
 import { hpoIdList, intInRange, overlapId } from "../_lib/fallback/validate";
 import {
   CONTRACT_VERSION,
@@ -46,6 +51,8 @@ import type { PagesContext } from "../_lib/respond";
 const MAX_BODY_BYTES = 16 * 1024;
 const RANK_TTL_S = 24 * 60 * 60;
 const KEPT = "Your terms are kept";
+const ENGINE_MONARCH_TIMEOUT_MS = 20000;
+const ENGINE_RANK_BUDGET_MS = 25000;
 
 interface CachedRank {
   path: "engine" | "fallback";
@@ -99,8 +106,24 @@ async function handlePost(context: PagesContext<Record<string, unknown>>): Promi
     // The engine reports whether any annotation or Orphadata call lost data
     // (enrichment.complete). Incomplete evidence is served as is, never cached.
     async () => {
-      const { response, enrichment } = await rankCandidatesWithReport({ ...req }, deps);
-      return { body: response, complete: enrichment.complete };
+      // R6.1 (contract 7.4 proposal): Monarch semsim gets 20 s inside a 25 s
+      // rank budget on the engine path. Pages Functions have no wall-clock
+      // limit while awaiting I/O, so the longer wait only costs latency.
+      const engineDeps: FallbackDeps = {
+        ...deps,
+        timeoutsMs: { ...deps.timeoutsMs, monarchSemsim: ENGINE_MONARCH_TIMEOUT_MS },
+        rankBudgetMs: ENGINE_RANK_BUDGET_MS,
+      };
+      const { response, enrichment } = await rankCandidatesWithReport({ ...req }, engineDeps);
+      // Additive field (T32a): evidenceComplete per candidate, from the
+      // engine's report matched by diseaseId. A candidate missing from the
+      // report counts as incomplete, never as "not listed".
+      const byId = new Map(enrichment.candidates.map((c) => [c.diseaseId, c.evidenceComplete]));
+      const candidates: RankedCandidate[] = response.candidates.map((c) => ({
+        ...c,
+        evidenceComplete: byId.get(c.diseaseId) ?? false,
+      }));
+      return { body: { ...response, candidates }, complete: enrichment.complete };
     },
     () => fallbackRank(req, deps),
   );
