@@ -21,7 +21,7 @@ Tasks 1.1 and 1.2 first; 1.3–1.8 can then run in any order.
 - [ ] 1.6 `engine/questions.ts`: `nextQuestions` (frequency-midpoint spread, exclude observed and excluded, template questions, `why` from data). _R5.1–R5.4_
 - [ ] 1.7 `engine/trials.ts`: `searchTrials` (RECRUITING only, max 5, total, url). _R7.1, R7.3_
 - [ ] 1.8 `engine/brief.ts`, `engine/data/specialists.ts`, `engine/text.ts`: `buildBrief`, `toPhenopacket`, `specialistsFor`, disclaimer and attribution strings. _R6.2–R6.6, R8.1, R8.2, R9.1, R9.3_
-- [ ] 1.9 `engine/demo/**`: the four demo cases from contract §9 (`demo-dmd` first, then `demo-marfan`, `demo-kabuki`, `demo-cdls`) (narratives, prepared extractions), then record rank, questions and trials responses for each prepared term set; `listDemoCases`, `getDemoCase`, `demoRankKey`, `getDemoRanking`, `getDemoQuestions`, `getDemoTrials`. Under 400 KB. _R10.1, R10.3, R10.5, R11.2_
+- [ ] 1.9 `engine/demo/**`: the five demo cases from contract §9 (`demo-npc1` first, then `demo-dmd`, `demo-marfan`, `demo-kabuki`, `demo-cdls`) (narratives, prepared extractions), then record rank, questions and trials responses for each prepared term set; `listDemoCases`, `getDemoCase`, `demoRankKey`, `getDemoRanking`, `getDemoQuestions`, `getDemoTrials`. Under 400 KB. _R10.1, R10.3, R10.5, R11.2_
 - [ ] 1.10 `engine/test/**`: unit tests per module with recorded fixtures and mock fetch. _R2, R3, R5, R6_
 - [ ] 1.11 `engine/test/**`: fast-check properties P1–P14 (contract §11). _R2.2, R2.3, R3.6, R3.3, R4.4, R5.3, R6.4, R10.1_
 - [ ] 1.12 `engine/bench/**`: offline benchmark on 50 phenopacket-store cases, results JSON with date and versions, labelled "our own evaluation". _R9.3_
@@ -31,7 +31,7 @@ Tasks 1.1 and 1.2 first; 1.3–1.8 can then run in any order.
 Each function can start against the contract examples and the engine stubs from 1.1, and switch to the real engine as Jerry's tasks land.
 
 - [ ] 2.1 `functions/api/health.ts`: add `version`, `source` and `llm { binding, model }` (exists; small change). _R10.4_
-- [ ] 2.2 `functions/api/extract.ts`: validation (≤ 8,000 chars), demo-case path via `getDemoCase`, 503 `LLM_UNAVAILABLE` when the `AI` binding is missing, Workers AI call `env.AI.run(LLM_MODEL, …)` for `TermProposal[]` with 15 s timeout, `groundTerms`, 422 on zero terms. No note text in logs. _R1.2, R1.5, R2.1–R2.4, R2.8, R2.9, R10.3, R10.4, R11.6_ Part of Ian's T17 claim: add the `[ai]` binding named `AI` to the root `wrangler.toml` and choose the `LLM_MODEL` default by testing the candidate models on the four demo narratives.
+- [ ] 2.2 `functions/api/extract.ts`: validation (≤ 8,000 chars), demo-case path via `getDemoCase`, 503 `LLM_UNAVAILABLE` when the `AI` binding is missing, Workers AI call `env.AI.run(LLM_MODEL, …)` for `TermProposal[]` with 15 s timeout, `groundTerms`, 422 on zero terms. No note text in logs. _R1.2, R1.5, R2.1–R2.4, R2.8, R2.9, R10.3, R10.4, R11.6_ Part of Ian's T17 claim: add the `[ai]` binding named `AI` to the root `wrangler.toml` and choose the `LLM_MODEL` default by testing the candidate models on the five demo narratives.
 - [ ] 2.3 `functions/api/terms.ts`: `searchTerms` proxy, 7-day cache. _R2.7_
 - [ ] 2.4 `functions/api/rank.ts`: validation (id regex, sizes, no id in both lists), `rankCandidates`, demo fallback on 502/504, 24 h cache. _R3.1, R3.6, R11.2, R11.3, R11.6_
 - [ ] 2.5 `functions/api/next-questions.ts`: validation (2–5 candidates), `nextQuestions`, demo fallback. _R5.1, R11.2, R11.3_
@@ -55,7 +55,7 @@ Start with 3.1; the feature folders then run in parallel against contract exampl
 ## Lane 4: landing — Peter (`landing/**`, T04)
 
 - [ ] 4.1 Landing page with the shared tokens and voice, hero showing a true screenshot of the ranking evidence, disclaimer and HPO attribution in the footer. _R8.1, R9.1_
-- [ ] 4.2 Main call to action opens `/app` with a demo case preloaded (agree the URL parameter with Ian, `/app/?demo=demo-dmd`). _R10.6_
+- [ ] 4.2 Main call to action opens `/app` with a demo case preloaded (agree the URL parameter with Ian, `/app/?demo=demo-npc1`). _R10.6_
 
 ## Lane 5: integration and verification — Ian (T03 paths)
 

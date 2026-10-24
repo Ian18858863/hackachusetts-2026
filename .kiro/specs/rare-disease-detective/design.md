@@ -101,7 +101,7 @@ sequenceDiagram
 | `engine/brief.ts` | `buildBrief`, `toPhenopacket`, `specialistsFor` (pure) | §7.7 |
 | `engine/data/specialists.ts` | Small documented organ-system → specialty table | §7.7, open question 4 |
 | `engine/text.ts` | Disclaimer and attribution strings | §13 |
-| `engine/demo/**` | Four demo cases (`demo-dmd` primary, then `demo-marfan`, `demo-kabuki`, `demo-cdls`) and recorded responses, under 400 KB | §9 |
+| `engine/demo/**` | Five demo cases (`demo-npc1` primary, then `demo-dmd`, `demo-marfan`, `demo-kabuki`, `demo-cdls`) and recorded responses, under 400 KB | §9 |
 | `engine/index.ts` | Public exports | §6 |
 
 ### Functions (Ian, `functions/api/*`)
@@ -124,7 +124,7 @@ Feature folders, each claimed separately:
 
 ### Landing (Peter, `landing/**`)
 
-Shares tokens, type, accent and voice with the app. Hero shows the real proof moment (a true screenshot of evidence lining up behind a ranked candidate). Main call to action opens `/app/?demo=demo-dmd` with the primary demo case preloaded (Requirement 10.6).
+Shares tokens, type, accent and voice with the app. Hero shows the real proof moment (a true screenshot of evidence lining up behind a ranked candidate). Main call to action opens `/app/?demo=demo-npc1` with the primary demo case preloaded (Requirement 10.6).
 
 ## Data models
 

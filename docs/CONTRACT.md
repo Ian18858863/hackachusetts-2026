@@ -1,6 +1,6 @@
 # Interface contract: Rare Disease Detective
 
-> **v0.1 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.**
+> **v0.1.1 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.** v0.1.1 is additive (new demo case, primary case changed); see the changelog in section 14.
 > Contract version string in every response: `"0.1"`. Single file editor: Ian's Kiro (T09).
 > Kiro spec that implements this contract: [`.kiro/specs/rare-disease-detective/`](../.kiro/specs/rare-disease-detective/requirements.md).
 > This file is the source of truth for request and response shapes. If the spec and this file disagree, this file wins and the spec gets fixed.
@@ -693,7 +693,7 @@ export interface CaseObject {
 
 ## 9. Demo cases
 
-- Derived from [phenopacket-store](https://github.com/monarch-initiative/phenopacket-store) (BSD-3). Each narrative was written by Ian's Kiro on 2026-10-24 from the HPO terms of the named phenopacket. Not real patients; some excluded terms from the source are left out to keep the text short. Order in the demo picker: `demo-dmd` (primary), `demo-marfan`, `demo-kabuki`, `demo-cdls`.
+- Derived from [phenopacket-store](https://github.com/monarch-initiative/phenopacket-store) (BSD-3). Each narrative was written by Ian's Kiro on 2026-10-24 from the HPO terms of the named phenopacket. Not real patients; some excluded terms from the source are left out to keep the text short. Order in the demo picker: `demo-npc1` (primary), `demo-dmd`, `demo-marfan`, `demo-kabuki`, `demo-cdls`.
 - UI label, verbatim: `Demo case (synthetic narrative from phenopacket-store <id>)`.
 - Owners: Jerry owns the demo cache under `engine/demo/**` (narrative text, prepared extraction, recorded upstream responses for the prepared term set). Ian owns the demo narratives' UI (picker, labels).
 - Offsets below were computed and checked with `text.slice(start, end) === quote`. Jerry's tests must re-check them.
@@ -708,8 +708,36 @@ export interface DemoCase extends DemoCaseSummary {
 }
 ```
 
-### 9.1 `demo-dmd` (primary demo case, listed first)
+### 9.1 `demo-npc1` (primary demo case, listed first)
 
+- Source: `notebooks/NPC1/phenopackets/PMID_27900365_patient.json` (id `PMID_27900365_patient`, male, 54 years, HPO 2025-11-24 in `metaData.resources`). Expected diagnosis: `OMIM:257220` Niemann-Pick disease, type C1.
+- Why primary: in the pre-registered benchmark (`docs/research/ranking-benchmark.md` on branch `ian/t23-rerank`), Monarch semsim ranks `OMIM:257220` #1 for this term set, with "Niemann-Pick disease type C" and "type C2" next, a real clinical differential that contains the source condition.
+- The narrative uses all 12 observed terms of the source. The subject is an adult, so the narrative is in his own voice; the age follows the source (54 years).
+- The source has no excluded terms. The negated term (Headache) was added for the demo so that a "not present" term appears, and it is not part of the source phenopacket. Check on 2026-10-24: `HP:0002315` is not annotated to `OMIM:257220`, `OMIM:607625` (type C2) or `ORPHA:646` (Niemann-Pick disease type C) in `GET https://ontology.jax.org/api/network/annotation/{id}`, so it cannot create a contradiction for these candidates. Seizure, Hearing impairment and Feeding difficulties were rejected because each is annotated to at least one of them.
+- Every id and label below was confirmed with `GET https://ontology.jax.org/api/hp/terms/{id}` on 2026-10-24.
+- Narrative (543 chars):
+
+> I am a 54-year-old man. My mother says I stayed yellow for a long time as a newborn. Since I was 18 I have become more and more forgetful, I find it hard to concentrate, my speech is slurred, and I fall a lot. In middle age my thinking slowly got worse and my walking became unsteady and clumsy. A doctor noticed that when I flick my eyes upward they stop short. A scan found a large liver and a large spleen. A tissue sample showed cells swollen with fat, and a lab test found my cells are slow to process cholesterol. I do not get headaches.
+
+| hpoId | label | quote | start | end | negated |
+|---|---|---|---|---|---|
+| `HP:0006579` | Prolonged neonatal jaundice | "stayed yellow for a long time as a newborn" | 41 | 83 | false |
+| `HP:0007017` | Progressive forgetfulness | "more and more forgetful" | 114 | 137 | false |
+| `HP:0031987` | Diminished ability to concentrate | "hard to concentrate" | 149 | 168 | false |
+| `HP:0001260` | Dysarthria | "my speech is slurred" | 170 | 190 | false |
+| `HP:0002527` | Falls | "I fall a lot" | 196 | 208 | false |
+| `HP:0001268` | Mental deterioration | "my thinking slowly got worse" | 224 | 252 | false |
+| `HP:0001251` | Ataxia | "my walking became unsteady and clumsy" | 257 | 294 | false |
+| `HP:0031833` | Hypometric upward saccades | "when I flick my eyes upward they stop short" | 318 | 361 | false |
+| `HP:0002240` | Hepatomegaly | "a large liver" | 376 | 389 | false |
+| `HP:0001744` | Splenomegaly | "a large spleen" | 394 | 408 | false |
+| `HP:0003651` | Foam cells | "cells swollen with fat" | 433 | 455 | false |
+| `HP:0003349` | Low cholesterol esterification rate | "my cells are slow to process cholesterol" | 478 | 518 | false |
+| `HP:0002315` | Headache | "I do not get headaches" | 520 | 542 | true |
+
+### 9.2 `demo-dmd` (kept as a harder case)
+
+- Kept as a harder case: Monarch ranks Duchenne #40 for its full term set (see `docs/research/ranking-benchmark.md` on branch `ian/t23-rerank`).
 - Source: `notebooks/DMD/phenopackets/PMID_38054185_Case_presentation.json` (id `PMID_38054185_Case_presentation`, male, 4 years, HPO 2026-06-23). It is the only phenopacket under `notebooks/DMD` (checked 2026-10-24). Expected diagnosis: `OMIM:310200` Duchenne muscular dystrophy.
 - The narrative uses all 12 observed terms of the source. The source has no excluded terms; the negated term (Seizure) was added for the demo so that a "not present" term appears, and it is not part of the source phenopacket. The age follows the source (4 years).
 - Every id and label below was confirmed with `GET https://ontology.jax.org/api/hp/terms/{id}` on 2026-10-24.
@@ -733,7 +761,7 @@ export interface DemoCase extends DemoCaseSummary {
 | `HP:0040129` | Abnormal nerve conduction velocity | "a nerve test gave unusual results" | 378 | 411 | false |
 | `HP:0001250` | Seizure | "never had a seizure" | 420 | 439 | true |
 
-### 9.2 `demo-marfan`
+### 9.3 `demo-marfan`
 
 - Source: `notebooks/FBN1/phenopackets/PMID_10756346_Patient_B55.json` (id `PMID_10756346_Patient_B55`, male, 40 years, HPO 2025-10-22). Expected diagnosis: `OMIM:154700` Marfan syndrome.
 - Narrative (566 chars):
@@ -754,7 +782,7 @@ export interface DemoCase extends DemoCaseSummary {
 | `HP:0002107` | Pneumothorax | "never had a collapsed lung" | 513 | 539 | true |
 | `HP:0002650` | Scoliosis | "his spine is straight" | 544 | 565 | true |
 
-### 9.3 `demo-kabuki`
+### 9.4 `demo-kabuki`
 
 - Source: `notebooks/KMT2D/phenopackets/PMID_24739679_patient_K1.json` (id `PMID_24739679_patient_K1`, male, 11 months, HPO 2025-11-24). Expected diagnosis: `OMIM:147920` Kabuki syndrome 1.
 - Narrative (568 chars):
@@ -780,7 +808,7 @@ export interface DemoCase extends DemoCaseSummary {
 | `HP:0001250` | Seizure | "has not had any seizures" | 510 | 534 | true |
 | `HP:0000365` | Hearing impairment | "his hearing test was normal" | 540 | 567 | true |
 
-### 9.4 `demo-cdls`
+### 9.5 `demo-cdls`
 
 - Source: `notebooks/NIPBL/phenopackets/PMID_20358602_Patient_C10.json` (id `PMID_20358602_Patient_C10`, male, 6 years, HPO 2025-10-22). Expected diagnosis: `OMIM:122470` Cornelia de Lange syndrome 1.
 - Narrative (396 chars):
@@ -801,7 +829,7 @@ export interface DemoCase extends DemoCaseSummary {
 | `HP:0001250` | Seizure | "never had a seizure" | 345 | 364 | true |
 | `HP:0011968` | Feeding difficulties | "no trouble feeding" | 377 | 395 | true |
 
-Demo cache contents per case: narrative, prepared extraction, one recorded `/api/rank` response for the prepared term set (limit 5), the matching `/api/next-questions` response, and `/api/trials` for the top candidate. Each recorded payload keeps its original `dataVersions` plus `demoCache`. Target size: four cases, under 400 KB total (open question 5).
+Demo cache contents per case: narrative, prepared extraction, one recorded `/api/rank` response for the prepared term set (limit 5), the matching `/api/next-questions` response, and `/api/trials` for the top candidate. Each recorded payload keeps its original `dataVersions` plus `demoCache`. Target size: five cases, under 400 KB total (open question 5).
 
 ## 10. Upstream services, timeouts and caching
 
@@ -845,7 +873,7 @@ Jerry's fast-check tests in `engine/test/**`, all with mocked `fetch`. Each prop
 ## 12. Offline benchmark (our own evaluation)
 
 - Script in `engine/bench/` (Jerry), run by hand, never in the request path. Results committed as JSON with the date and versions.
-- Sample: 50 phenopacket-store cases (release 0.1.27 or the pinned latest), at most 2 per gene, each with at least 6 observed terms, fixed random seed. The four demo cases are excluded from the sample.
+- Sample: 50 phenopacket-store cases (release 0.1.27 or the pinned latest), at most 2 per gene, each with at least 6 observed terms, fixed random seed. The five demo cases are excluded from the sample.
 - Input: observed and excluded HPO ids straight from the phenopacket (no LLM). This measures ranking, not extraction.
 - Metric: top-1, top-5 and top-10 recall. A hit means the phenopacket's disease id (OMIM) matches a candidate's OMIM xref or its MONDO equivalent.
 - Label on any slide or README: "Our own evaluation on 50 published cases from phenopacket-store, <date>. Not a clinical validation." Note the bias: these published cases may already feed the disease annotations, so results are likely optimistic.
@@ -878,6 +906,7 @@ Use these strings verbatim (engine constants in `engine/text.ts`, Jerry; the app
 Changelog:
 
 - 0.1 (2026-10-24, draft): first version. Same draft, before approval: LLM provider decided (Workers AI binding `AI`), primary demo case `demo-dmd` added.
+- 0.1.1 (2026-10-24, draft): `[CONTRACT CHANGE] §9 new demo case demo-npc1 is the primary case; demo-dmd kept as a harder case; landing CTA is /app/?demo=demo-npc1; breaking no`.
 
 ## 15. Open questions
 
@@ -885,7 +914,7 @@ Changelog:
 2. **ORPHA vs OMIM as primary `diseaseId`** (Jerry). Draft: ORPHA first. Verified 2026-10-24: ORPHA:558 annotations have frequency bands but no genes; OMIM:154700 has FBN1. Draft fetches both.
 3. **PubCaseFinder** (Jerry + Ian). Draft: off in v0.1; maybe a secondary badge later. ~11 MB / ~10 s per call.
 4. **Specialist mapping table** (Jerry). Rows, wording, and whether "Clinical geneticist" is always suggested.
-5. **Demo cache size** (Jerry). Draft: four cases, under 400 KB.
+5. **Demo cache size** (Jerry). Draft: five cases, under 400 KB.
 6. **HPO version source** (Jerry). The JAX API version field is unverified; fallback is a pinned constant checked at build time, or `"unknown"` with `fetchedAt`.
 7. **Ancestor-aware contradictions** (Jerry). v0.1 matches excluded ids exactly.
 8. **Overlap thresholds** (Jerry). 0.6 / 0.3 and one step down per contradiction are a draft.
