@@ -10,7 +10,7 @@
  * refresh after the quiet re-rank.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { HpoId, Question, TermStatus } from '../../shared/contract';
+import { LIMITS, type HpoId, type Question, type TermStatus } from '../../shared/contract';
 import { useT } from '../../shared/i18n';
 import audienceMessages from '../../shared/i18n/messages/audience';
 import questionsMessages from '../../shared/i18n/messages/questions';
@@ -22,7 +22,6 @@ import {
   Icon,
   LoadingPanel,
   Skeleton,
-  SkeletonText,
   Spinner,
   useAnnounce,
 } from '../../shared/ui';
@@ -286,14 +285,15 @@ function FamilyQuestionItem({
   );
 }
 
+/** One row per question the API returns by default, so the list does not grow when it arrives (T38). */
 function FamilySkeleton() {
   return (
-    <div className={styles.skeleton}>
-      {[0, 1, 2].map((i) => (
+    <div className={styles.skeleton} data-testid="family-questions-skeleton">
+      {Array.from({ length: LIMITS.questionsDefaultLimit }, (_, i) => (
         <div key={i} className={`${styles.skeletonItem} ${family.skeletonItem}`}>
           <span className={styles.skeletonMain}>
             <Skeleton width="80%" height="1.4em" />
-            <SkeletonText lines={2} />
+            <Skeleton width="55%" height="1.4em" />
             <Skeleton width="var(--space-32)" height="var(--control-height-md)" radius="md" />
           </span>
         </div>

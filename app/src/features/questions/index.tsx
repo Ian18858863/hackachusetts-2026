@@ -9,7 +9,7 @@
  * (useAutoRank), then the questions refresh.
  */
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { Candidate, DiseaseId, HpoId, Question, TermStatus } from '../../shared/contract';
+import { LIMITS, type Candidate, type DiseaseId, type HpoId, type Question, type TermStatus } from '../../shared/contract';
 import { useT } from '../../shared/i18n';
 import questionsMessages from '../../shared/i18n/messages/questions';
 import rankingMessages from '../../shared/i18n/messages/ranking';
@@ -175,7 +175,7 @@ function QuestionsBody() {
     if (sync.phase !== 'ready') {
       return (
         <LoadingPanel step={t('finding', { n: top.length })}>
-          <QuestionsSkeleton />
+          <QuestionsSkeleton compared={top.length} />
         </LoadingPanel>
       );
     }
@@ -396,10 +396,15 @@ function QuestionItem({
   );
 }
 
-function QuestionsSkeleton() {
+/**
+ * Stands in for the question list at about its final size (T38): one row per
+ * question the API returns by default, and in each row one name-and-frequency
+ * pair per compared candidate, so the page does not grow when the list arrives.
+ */
+function QuestionsSkeleton({ compared = LIMITS.questionsCandidatesMax }: { compared?: number }) {
   return (
-    <div className={styles.skeleton}>
-      {[0, 1, 2].map((i) => (
+    <div className={styles.skeleton} data-testid="questions-skeleton">
+      {Array.from({ length: LIMITS.questionsDefaultLimit }, (_, i) => (
         <div key={i} className={styles.skeletonItem}>
           <span className={styles.skeletonMain}>
             <Skeleton width="80%" height="1.4em" />
@@ -407,7 +412,11 @@ function QuestionsSkeleton() {
             <SkeletonText lines={2} />
             <Skeleton width="var(--space-32)" height="var(--control-height-md)" radius="md" />
           </span>
-          <SkeletonText lines={4} />
+          <span className={styles.skeletonCompare}>
+            {Array.from({ length: Math.max(compared, LIMITS.questionsCandidatesMin) }, (_, j) => (
+              <SkeletonText key={j} lines={2} />
+            ))}
+          </span>
         </div>
       ))}
     </div>
