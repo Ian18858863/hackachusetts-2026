@@ -16,6 +16,10 @@
 //      15 s, the complete features received so far are grounded as usual and
 //      the response carries a warning that some features may be missing.
 //      Only when no complete feature arrived is it 504 UPSTREAM_TIMEOUT.
+//   3d. Proposals still unconfirmed are checked against the lay-language
+//      lexicon (functions/_lib/lexicon.json, T45; empty by default, no
+//      network). Each added term has a verbatim quote, confidence low and a
+//      warning.
 //   4. Zero grounded terms -> 422 NO_TERMS_FOUND, or 504 UPSTREAM_TIMEOUT when
 //      the answer was cut at the deadline (nothing about the notes is known).
 //      A finished answer that is not valid JSON as a whole (output-token cap)
@@ -37,11 +41,13 @@ import type { DataVersions, DemoCase, EngineDeps, ExtractedTerm } from "../../en
 import { getFallbackDemoCase } from "../_lib/fallback/demoCases";
 import {
   DEFAULT_MAX_LOOKUPS,
+  applyLexicon,
   estimateEngineSubrequests,
   recoverUngrounded,
   secondaryLookupCap,
 } from "../_lib/grounding";
-import type { SecondaryStats } from "../_lib/grounding";
+import type { LexiconStats, SecondaryStats } from "../_lib/grounding";
+import { LEXICON } from "../_lib/lexicon";
 import { LlmError, MAX_TEXT_CHARS, llmFailureCode, noGroundedTermsCode, proposeTerms } from "../_lib/llm";
 import type { LlmEnv, ProposeResult } from "../_lib/llm";
 import { checkAndCount, clientIp, extractWindows, rateLimitMessage } from "../_lib/rateLimit";
@@ -249,6 +255,17 @@ async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promi
       logError("extract.ground2", err);
     }
   }
+  // ---- 3d. lay-language lexicon (T45): no network; empty lexicon = no change ----
+  let lexicon: LexiconStats | null = null;
+  if (LEXICON.length > 0) {
+    try {
+      const withLexicon = applyLexicon(text, proposed.proposals, grounded, LEXICON);
+      grounded = { ...grounded, terms: withLexicon.terms, warnings: withLexicon.warnings };
+      lexicon = withLexicon.stats;
+    } catch (err) {
+      logError("extract.lexicon", err);
+    }
+  }
   const groundMs = Date.now() - groundStarted;
 
   // Counts and timings only; never the text.
@@ -263,7 +280,8 @@ async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promi
           `lookups=${secondary.lookups}/${lookupCap} failed=${secondary.failedLookups} ` +
           `skippedBudget=${secondary.skippedByBudget}` +
           (lookupCap < SECONDARY_MAX_LOOKUPS ? " capCutBy=subrequests" : "")
-        : ` secondary=skipped reason=${secondarySkip ?? "none"}`),
+        : ` secondary=skipped reason=${secondarySkip ?? "none"}`) +
+      (lexicon ? ` lexiconChecked=${lexicon.checked} lexiconAdded=${lexicon.added}` : ""),
   );
 
   if (grounded.terms.length === 0) {
