@@ -2,71 +2,125 @@
 inclusion: always
 ---
 
-# How we design and build the interface
+# Design steering: how we choose and build the interface
 
-This is a method, not a template. It distils what worked (and what was rejected) on earlier sites Ian shipped, so every agent on this team starts from the same taste. Each new product has its own subject and its own thing to say, so its look must come from that, not from copying a past site. Keep what serves this product, drop what doesn't, and say which you did.
+> Provenance: re-authored by Kiro on 2026-10-24 from a disclosed draft by Ian's assistant (commit c31e29f).
 
-Ian owns the final visual call. When two good options exist, show both as screenshots and let him pick.
+This is a method, not a template. It fixes the constraints every design choice must meet and the way choices get made. It does not fix colours, fonts or layouts: each product gets its look from what it needs to say. Ian owns the final visual call. When two good options exist, show both as screenshots and let him pick.
 
-## 1. Start from the message, not from components
+## 1. Art direction note first
 
-Before any UI code, answer in a few lines (put it in `docs/ART_DIRECTION.md` and keep it current):
+Before any UI code, write `docs/ART_DIRECTION.md` (one screen, kept current) and get Ian's OK. Changing direction later is expensive.
 
-1. **The promise.** What should a judge understand and feel in the first 5 seconds? One sentence.
-2. **The proof.** What single moment on screen makes that promise believable (a live result, a number, a transformation)? This is the "wow" moment; everything else supports it.
-3. **The mood.** Three words. A serious subject (health, money, civic life) leans toward calm editorial clarity, where the wow comes from insight and data; a playful subject can lean on spectacle.
-4. **One signature interaction.** At most one or two, chosen because they express the idea (see the atlas in section 5). Translate the idea; never copy a site's code or assets.
-5. **Type, colour, motion.** One display face and one text face; a restrained palette with one accent; one motion signature (how things enter, how hover responds).
-
-Get Ian's OK on this before building pages. Changing direction later is expensive.
+1. **Promise.** One sentence a judge should understand within 5 seconds.
+2. **Proof.** The single on-screen moment that makes the promise believable (a live result, a number, a before/after). Everything else supports it.
+3. **Mood.** Three words, derived from the subject and the audience.
+4. **Signature interaction.** One, at most two, chosen because it expresses the idea (see the atlas in section 11).
+5. **Type, colour, motion.** The chosen faces, the accent, the motion signature, each with one line of why.
+6. **Kept and dropped.** Which parts of this steering serve this product and which you are deliberately not applying.
+7. **Approved by Ian:** date, plus the screenshot he picked.
 
 ## 2. Build order
 
-1. **Tokens first**: colour, type scale, spacing, radius, shadow, motion durations and easing as CSS variables. Pages use tokens, never raw values.
-2. **Real content from the start**: real copy, real numbers (with a source), real or realistic demo data. No lorem ipsum; placeholder text hides layout problems.
-3. **The proof moment next**, end to end, then the pages around it. A polished happy path beats many half-finished features.
-4. **Polish pass last**: spacing rhythm, alignment, empty/loading/error states, mobile.
+1. **Tokens** as CSS variables: colour, type scale, spacing, radius, shadow, z-index, motion duration and easing. Components use tokens, never raw values.
+2. **Real content from the start**: real copy, real numbers with a source, realistic demo data. No lorem ipsum; it hides layout problems.
+3. **The proof moment end to end**, then the screens around it. A polished happy path beats many half-built features.
+4. **Polish last**: spacing rhythm, alignment, states (section 8), mobile.
 
-## 3. Taste principles (the essence of past feedback)
+## 3. Taste principles
 
-**Restraint.** Fewer elements, more space, one idea per screen. If in doubt, leave it out. Every element must earn its place; decoration that carries no meaning goes.
+- **Restraint.** One idea per screen, generous space, few elements. Decoration that carries no meaning goes.
+- **Typography carries the design.** Hierarchy comes from size, weight and space before it comes from boxes, borders or colour.
+- **Concrete copy.** A specific claim with a real number beats a slogan. Name things plainly. Every button goes somewhere different; two buttons doing the same thing is a bug.
+- **Motion has a reason** (section 6).
+- **Performance is part of the look.** Jank reads as cheap.
+- **Consistency.** Custom-styled controls (selects, segmented controls, modals, tooltips) so nothing falls back to the OS look. One radius scale, one shadow scale, one spacing scale.
+- **No template look**: purple-to-blue gradients, glassmorphism everywhere, emoji as icons, stock illustration, equal-weight card grids with no hierarchy, a loading screen before first content.
 
-**Typography carries the design.**
-- Headlines fit on one line where possible; shrink the size to fit rather than wrap (allow wrapping only below roughly 22px).
-- No trailing punctuation and no commas inside headlines; buttons, toasts and hints are one short phrase.
-- Emphasise with colour, not by switching to another font mid-headline.
-- Numbers and prices use the same family as headings, at natural width. Never use condensed or expanded faces that make numbers look squeezed.
+Rejected before (calibration, not rules): a crowded first screen overlapping the nav; a loading page before the home page; text bouncing up on every page; cards stretched to fill space; prices in a stretched font; modals with three paragraphs, or so bare they have no identity (aim for logo, one-line purpose, the input, the main action); result panels that resize after appearing; areas that look clickable but aren't, or the reverse.
 
-**Copy is concrete.** Replace slogans with a specific claim and a real number. Every button leads somewhere different; two buttons that do the same thing is a bug. Name things plainly.
+## 4. Layout rhythm and grid
 
-**Motion has a reason.**
-- Prefer subtle reveals (e.g. headline characters going from blurred to sharp, paragraphs fading in) over generic slide-up bounces.
-- Hover feedback responds to the pointer (e.g. a fill that spreads from where the cursor entered and retreats where it left) rather than a fixed bottom-to-top wipe.
-- Page changes dissolve in place.
-- No scroll hijacking: smooth-scroll libraries combined with sticky stacking layers caused stalls and black gaps before. Native scroll first.
-- Ambient 3D/WebGL is decoration: it must not block clicks or scrolling, and it must not stutter.
-- Honour `prefers-reduced-motion` with a static fallback.
+- **Spacing** on a 4px base, used mostly in steps of 8 (8, 16, 24, 32, 48, 64, 96, 128). Larger gaps separate ideas; smaller gaps group them.
+- **Grid**: 12 columns on desktop, 8 on laptop/tablet, 4 on phone, with fixed gutters from the spacing scale. Content max width around 1200px; reading text max 60–75 characters per line.
+- **Hierarchy**: one dominant element per screen. Group by proximity and alignment first, add a container only when grouping fails.
+- **Reserve space.** Anything that loads or changes (results, charts, panels, images) has its final size from the first frame. No layout shift.
+- The proof moment must sit above the fold at 1000×600, not only at 1440×900.
 
-**Performance is part of the look.** Jank reads as cheap. Cap device pixel ratio around 1.5 for canvases, upload textures incrementally, lazy-load heavy media, keep animations frame-rate independent.
+## 5. Typography and colour
 
-**Consistency.** Use custom, styled controls (dropdowns, segmented controls, modals) so nothing falls back to the operating system's look. Same radius, same shadows, same spacing everywhere.
+**Choosing faces.** One display face and one text face, at most; add a monospace only if the product shows codes or IDs (e.g. ontology terms).
+- Pick the display face for voice (what the mood words sound like); pick the text face for long-form screen reading at 16–18px.
+- Both need clear numerals with tabular figures available. Numbers use the heading family at natural width; never condensed or expanded faces that squeeze them.
+- Open licence (e.g. OFL), self-hosted or with `font-display: swap`, only the weights you use.
+- Type scale from one ratio (about 1.2–1.333); body 16px minimum, line-height about 1.5 for text and 1.1–1.2 for headlines.
 
-**Mobile is first-class.** No horizontal page scroll, tap targets at least 44px, modals that move above the on-screen keyboard, tables that scroll inside their own box.
+**Headline rules.**
+- Fit on one line where possible; reduce size rather than wrap (wrapping is fine below roughly 22px and on phone).
+- No trailing punctuation and no commas in headlines. Buttons, toasts and hints are one short phrase.
+- Emphasise with colour or weight, never by switching font mid-headline.
 
-**Avoid the template look**: purple-to-blue gradients, glassmorphism on everything, emoji as icons, stock illustrations, equal-weight card grids with no hierarchy, a loading screen before the first content.
+**Colour.**
+- Neutrals do most of the work. One accent, reserved for the primary action and the proof moment, so it means "look here".
+- Status colours (error, warning, success) are separate from the accent and muted; they appear only when they carry state.
+- One theme done well; no dark mode unless the art direction asks for it.
+- Contrast meets WCAG 2.2 AA: 4.5:1 for body text, 3:1 for large text, icons, control borders and focus rings. Check with a contrast tool, not by eye.
+- Never encode meaning by colour alone; pair it with a label, icon or pattern (matters for charts and match/no-match states).
 
-## 4. Things Ian rejected before (for calibration, not rules)
+## 6. Interaction and motion
 
-- First screen crowded and overlapping the navigation; a loading page before the home page.
-- Text that bounces up from below on every page.
-- Cards stretched to fill space; prices in a stretched font.
-- Modals with three paragraphs of explanation; too-minimal modals with no identity. Aim for a logo, a one-line purpose, the input and the main action.
-- Payment or result panels that resize after they appear. Reserve the final size from the first frame.
-- Decorative areas that look clickable but aren't, or are clickable but shouldn't be.
+- Every animation answers "what does this help the user notice?" If nothing, remove it.
+- Prefer subtle reveals (headline going from blurred to sharp, paragraphs fading in) over generic slide-up bounces.
+- Hover responds to the pointer (e.g. a fill spreading from where the cursor entered) rather than a fixed wipe.
+- Page and view changes dissolve in place. Durations roughly 150–250ms for UI feedback, up to about 600ms for the proof moment; one easing family.
+- **No scroll hijacking.** Native scroll first. Smooth-scroll libraries plus sticky stacking layers caused stalls and black gaps before.
+- Ambient 3D/WebGL is decoration: it never blocks clicks or scrolling and never stutters. Cap canvas device pixel ratio near 1.5, upload textures incrementally, lazy-load heavy media, make animation frame-rate independent, pause when off-screen.
+- `prefers-reduced-motion: reduce` gets a static, complete version: same content, no movement, no autoplay.
 
-## 5. Interaction atlas (references, take the idea not the code)
+## 7. Serious subjects and medical safety framing
 
-Use these to discuss a signature interaction with Ian ("like X, but for our data"). Open the live site to study it. Three tympanus.net demos block automated browsers.
+A serious subject (health, money, civic life) calls for calm, trustworthy, editorial clarity. The wow comes from the moment of insight, not from spectacle. For health products:
+
+- **Never look like a verdict.** Frame results as "possible matches to discuss with a doctor", ranked, never as a single answer. No alarm-red for candidates and no celebratory green for "found it".
+- **"Not a diagnosis" is visible, calm and permanent**: one plain sentence near every result and on every exported document, in body size, not hidden in fine print and not a scary banner.
+- **Show the reasoning.** Each result shows why: which inputs matched, which did not, and how common each is. Traceability is the trust signal.
+- **Show uncertainty honestly.** Use ranks, ranges or plain words ("strong overlap", "partial overlap") unless the number really is a probability. No false precision (no "87.3%" from a similarity score).
+- **Sources next to claims.** Each statistic and each result links to its source and data version (e.g. ontology release). Attribution in the footer as the licence requires.
+- **Demo data is labelled** as demo data wherever it appears. Never real patients.
+- Plain language first, medical term second (term on hover or in a quieter style), so families and clinicians both read it.
+
+## 8. Loading, empty and error states
+
+All three are designed screens, in the product's voice, using the same tokens.
+- **Loading**: a skeleton of the final layout at its final size. For multi-step work longer than about 1s, show the real steps as they happen (e.g. "Matching 6 features"), not a bare spinner.
+- **Empty**: say what this area will show and offer one action, ideally "Try a demo example" with preloaded data.
+- **Error**: say what happened in plain words and what the user can do; keep their input; offer retry. For the demo, every external API has a cached fallback so a live failure never kills the video or the judge's click.
+
+## 9. Responsive and accessibility
+
+| Target | Check at | Notes |
+|---|---|---|
+| Desktop | 1440×900 | Main design size; video recorded here |
+| Laptop | ~1000×600 | Short viewport; proof moment still above the fold |
+| Phone | 375×812 | Single column; first-class, not an afterthought |
+
+- No horizontal page scroll at any size. Wide tables scroll inside their own box.
+- Tap targets at least 44×44px. Modals stay above the on-screen keyboard.
+- Full keyboard path through the happy path, in visual order. Visible focus ring on every interactive element (never `outline: none` without a replacement), meeting 3:1 contrast.
+- Semantic HTML first (buttons are `<button>`, links are `<a>`, one `<h1>` per view, labelled inputs). ARIA only where HTML falls short. Live results announce via `aria-live="polite"`.
+- Images and charts have text alternatives; charts also offer the numbers as text.
+
+## 10. Landing page, app and video
+
+- **The landing page sells the vision; the app proves it.** They share tokens, type, accent, motion signature, logo, nav and voice; a judge should not notice the switch.
+- The landing hero shows the real proof moment (live or a true screenshot), not an abstract illustration.
+- The main call to action opens the app with a demo example preloaded. No sign-up, no setup, no empty first screen for a judge.
+- Judges may only watch the 3-minute video and click the link. The first 7 seconds of both must land the promise: what it is, for whom, and the proof. The end lifts to the bigger vision.
+- Every number on screen is real and sourced, or clearly labelled as demo data. Everything user-facing is in English.
+
+## 11. Interaction atlas: borrow the idea, not the code
+
+Use these to talk about a signature interaction with Ian ("like X, but for our data"). Study the live site, then translate the feeling; never copy code, shaders or assets. The tympanus.net demos block automated browsers (HTTP 403 to scripts on 2026-10-24); open them by hand. The others returned 200 on that date.
 
 | Site | URL | The idea worth borrowing |
 |---|---|---|
@@ -96,19 +150,17 @@ Use these to discuss a signature interaction with Ian ("like X, but for our data
 | 3D Gradient Carousel | https://tympanus.net/Tutorials/3DGradientCarousel/ | Background colour follows the active item |
 | Typatone | https://typatone.com/ | Typing turns into music |
 
-These are mostly portfolio and art sites. For a product, borrow the feeling (tactile, cinematic, responsive) and apply it to the one moment that matters, e.g. the result appearing, data assembling into an answer, or the before/after reveal. The rest of the product stays quiet and usable.
+These are mostly portfolio and art sites. For a product, apply the feeling (tactile, cinematic, responsive) to the one moment that matters: data assembling into an answer, evidence lining up behind a result, a before/after reveal. For a serious subject, choose the calmest reference that still delivers that moment. The rest of the product stays quiet and usable.
 
-## 6. Hackathon specifics
+## 12. Definition of done
 
-- Judges may only watch the 3-minute video and click the live link. The first 7 seconds of both must land the promise; the end should lift to the bigger vision.
-- The landing page sells the vision; the app proves it. Same visual language for both.
-- Every number shown is real and sourced, or clearly labelled as demo data.
-- Everything user-facing is in English.
-
-## 7. Done means
-
-- Screenshots at 1440×900, 1000×600 and 375×812 reviewed by eye.
-- Scrolled top to bottom with no stalls; no console errors.
-- Reduced-motion and keyboard navigation still work.
-- Empty, loading and error states look designed, not default.
-- Note anything not checked (e.g. real iPhone, Safari) instead of claiming it works.
+- [ ] `docs/ART_DIRECTION.md` exists and is approved by Ian.
+- [ ] Screenshots at 1440×900, 1000×600 and 375×812 of landing, proof moment and output, reviewed by eye.
+- [ ] Scrolled top to bottom at each size: no stalls, no layout shift, no horizontal scroll, no console errors.
+- [ ] Happy path completed with keyboard only; focus always visible.
+- [ ] Reduced-motion mode checked; content complete and static.
+- [ ] Contrast checked with a tool for text, accent and focus ring.
+- [ ] Loading, empty and error states triggered on purpose and screenshotted.
+- [ ] Every number has a source or a "demo data" label; safety line present on results and exports.
+- [ ] Live URL works in a private window with no login.
+- [ ] Report what was not checked (e.g. real iPhone, Safari) instead of claiming it works.
