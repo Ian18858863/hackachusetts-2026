@@ -16,12 +16,19 @@
 //      15 s, the complete features received so far are grounded as usual and
 //      the response carries a warning that some features may be missing.
 //      Only when no complete feature arrived is it 504 UPSTREAM_TIMEOUT.
+//   3d. Proposals still unconfirmed are checked against the lay-language
+//      lexicon (functions/_lib/lexicon.json, T45; empty by default, no
+//      network). Each added term has a verbatim quote, confidence low and a
+//      warning.
 //   4. Zero grounded terms -> 422 NO_TERMS_FOUND, or 504 UPSTREAM_TIMEOUT when
 //      the answer was cut at the deadline (nothing about the notes is known).
 //      A finished answer that is not valid JSON as a whole (output-token cap)
 //      keeps its complete features with the same partial warning.
 // Only the live path is rate-limited per client IP (functions/_lib/rateLimit.ts,
 // T18p): 429 RATE_LIMITED with Retry-After. The demo path is never limited.
+// When the AI binding exists but its call throws (quota/allocation, model
+// unavailable, T41) -> 503 LLM_UNAVAILABLE with retryable true; timeouts stay
+// 504 and unusable model output stays 502.
 // If the AI binding is missing or the LLM / HPO call fails and the text is a
 // bundled demo narrative, the prepared extraction is returned instead
 // (contract section 4 table, design.md error handling).
@@ -34,12 +41,14 @@ import type { DataVersions, DemoCase, EngineDeps, ExtractedTerm } from "../../en
 import { getFallbackDemoCase } from "../_lib/fallback/demoCases";
 import {
   DEFAULT_MAX_LOOKUPS,
+  applyLexicon,
   estimateEngineSubrequests,
   recoverUngrounded,
   secondaryLookupCap,
 } from "../_lib/grounding";
-import type { SecondaryStats } from "../_lib/grounding";
-import { LlmError, MAX_TEXT_CHARS, noGroundedTermsCode, proposeTerms } from "../_lib/llm";
+import type { LexiconStats, SecondaryStats } from "../_lib/grounding";
+import { LEXICON } from "../_lib/lexicon";
+import { LlmError, MAX_TEXT_CHARS, llmFailureCode, noGroundedTermsCode, proposeTerms } from "../_lib/llm";
 import type { LlmEnv, ProposeResult } from "../_lib/llm";
 import { checkAndCount, clientIp, extractWindows, rateLimitMessage } from "../_lib/rateLimit";
 import {
@@ -246,6 +255,17 @@ async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promi
       logError("extract.ground2", err);
     }
   }
+  // ---- 3d. lay-language lexicon (T45): no network; empty lexicon = no change ----
+  let lexicon: LexiconStats | null = null;
+  if (LEXICON.length > 0) {
+    try {
+      const withLexicon = applyLexicon(text, proposed.proposals, grounded, LEXICON);
+      grounded = { ...grounded, terms: withLexicon.terms, warnings: withLexicon.warnings };
+      lexicon = withLexicon.stats;
+    } catch (err) {
+      logError("extract.lexicon", err);
+    }
+  }
   const groundMs = Date.now() - groundStarted;
 
   // Counts and timings only; never the text.
@@ -260,7 +280,8 @@ async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promi
           `lookups=${secondary.lookups}/${lookupCap} failed=${secondary.failedLookups} ` +
           `skippedBudget=${secondary.skippedByBudget}` +
           (lookupCap < SECONDARY_MAX_LOOKUPS ? " capCutBy=subrequests" : "")
-        : ` secondary=skipped reason=${secondarySkip ?? "none"}`),
+        : ` secondary=skipped reason=${secondarySkip ?? "none"}`) +
+      (lexicon ? ` lexiconChecked=${lexicon.checked} lexiconAdded=${lexicon.added}` : ""),
   );
 
   if (grounded.terms.length === 0) {
@@ -326,16 +347,44 @@ function llmFailure(err: unknown, text: string): Response {
     );
   }
 
+  if (err.code === "unavailable" && err.failure) {
+    // Class, Workers AI code and message only (they describe the account or
+    // model, never the notes). Shows the real cause of an outage in the logs.
+    const f = err.failure;
+    console.error(
+      `[rdd] extract.llm unavailable model=${err.model ?? "?"} kind=${f.kind} class=${f.errorClass} ` +
+        `aiCode=${f.aiCode ?? "none"} aiMessage=${JSON.stringify(f.aiMessage)}`,
+    );
+  }
+
   const demo = findDemoByNarrative(text);
   if (demo) return demoResponse(demo, [FALLBACK_WARNING]);
 
-  if (err.code === "timeout") {
+  const code = llmFailureCode(err.code);
+  if (code === "LLM_UNAVAILABLE") return llmOutage();
+  if (code === "UPSTREAM_TIMEOUT") {
     return apiError("UPSTREAM_TIMEOUT", LLM_TIMEOUT_MESSAGE);
   }
-  // "upstream" or "bad_output"
+  // "upstream" (stream failed mid-answer) or "bad_output"
   return apiError(
     "UPSTREAM_ERROR",
     "The extraction service returned an error. Your notes are kept; try again, or add terms by hand.",
+  );
+}
+
+const LLM_OUTAGE_MESSAGE =
+  "Reading free text is unavailable right now. Use a demo case, or add features by hand.";
+
+/**
+ * 503 LLM_UNAVAILABLE for a Workers AI outage (T41): the binding exists but
+ * its call threw (daily allocation used up, model unavailable, any binding
+ * exception). Unlike a missing binding the outage passes, so `retryable` is
+ * true here; apiError would take `false` from the contract table.
+ */
+function llmOutage(): Response {
+  return json(
+    { version: CONTRACT_VERSION, error: { code: "LLM_UNAVAILABLE", message: LLM_OUTAGE_MESSAGE, retryable: true } },
+    503,
   );
 }
 

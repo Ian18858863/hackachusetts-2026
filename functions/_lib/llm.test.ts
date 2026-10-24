@@ -4,7 +4,16 @@
 
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { LlmError, SseText, buildRequest, noGroundedTermsCode, parsePartialItems, proposeTerms } from "./llm.ts";
+import {
+  LlmError,
+  SseText,
+  buildRequest,
+  describeBindingFailure,
+  llmFailureCode,
+  noGroundedTermsCode,
+  parsePartialItems,
+  proposeTerms,
+} from "./llm.ts";
 
 const TEXT = "My son is 8. He keeps falling, his calves look very big, and he struggles to climb stairs.";
 const F1 = { phrase: "keeps falling", label: "Frequent falls", alternatives: [], negated: false, confidence: "high" };
@@ -152,4 +161,71 @@ test("a complete answer wrapped in chatter is not marked partial", async () => {
   assert.equal(r.partial, false);
   assert.equal(r.partialReason, undefined);
   assert.equal(r.proposals.length, 2);
+});
+
+// ---- T41: a throwing binding is an outage (503), not a 502 ----
+
+function aiThrowing(err: unknown) {
+  return {
+    async run() {
+      throw err;
+    },
+  };
+}
+
+test("a binding that throws a daily-allocation error is unavailable -> 503 LLM_UNAVAILABLE", async () => {
+  const quota = new Error(
+    "4006: you have used up your daily free allocation of 10,000 neurons, please upgrade to Cloudflare's Workers Paid plan",
+  );
+  await assert.rejects(proposeTerms(TEXT, { AI: aiThrowing(quota) }), (err: unknown) => {
+    if (!(err instanceof LlmError)) return false;
+    assert.equal(err.code, "unavailable");
+    assert.equal(llmFailureCode(err.code), "LLM_UNAVAILABLE");
+    assert.equal(err.failure?.aiCode, "4006");
+    assert.equal(err.failure?.kind, "quota");
+    assert.equal(err.failure?.errorClass, "Error");
+    // The notes never reach the loggable summary.
+    assert.ok(!JSON.stringify(err.failure).includes("calves"));
+    return true;
+  });
+});
+
+test("a generic binding exception is also unavailable -> 503 LLM_UNAVAILABLE", async () => {
+  class InferenceUpstreamError extends Error {
+    constructor(m: string) {
+      super(m);
+      this.name = "InferenceUpstreamError";
+    }
+  }
+  await assert.rejects(proposeTerms(TEXT, { AI: aiThrowing(new InferenceUpstreamError("network connection lost")) }), (err: unknown) => {
+    if (!(err instanceof LlmError)) return false;
+    assert.equal(err.code, "unavailable");
+    assert.equal(llmFailureCode(err.code), "LLM_UNAVAILABLE");
+    assert.equal(err.failure?.errorClass, "InferenceUpstreamError");
+    assert.equal(err.failure?.aiCode, undefined);
+    assert.equal(err.failure?.kind, "other");
+    return true;
+  });
+  // A thrown non-Error value is still an outage.
+  await assert.rejects(proposeTerms(TEXT, { AI: aiThrowing("boom") }), (err: unknown) => err instanceof LlmError && err.code === "unavailable");
+});
+
+test("describeBindingFailure reads a numeric code property and caps the message", () => {
+  const e = Object.assign(new Error(`model unavailable\n${"x".repeat(500)}`), { code: 5007 });
+  const f = describeBindingFailure(e);
+  assert.equal(f.aiCode, "5007");
+  assert.equal(f.aiMessage, "model unavailable");
+  assert.ok(describeBindingFailure(new Error("y".repeat(500))).aiMessage.length <= 200);
+});
+
+test("a binding that hangs is still a timeout -> 504, not an outage", async () => {
+  const ai = { run: () => new Promise<unknown>(() => {}) };
+  await assert.rejects(proposeTerms(TEXT, { AI: ai }, { timeoutMs: 100 }), (err: unknown) => {
+    if (!(err instanceof LlmError)) return false;
+    assert.equal(err.code, "timeout");
+    assert.equal(llmFailureCode(err.code), "UPSTREAM_TIMEOUT");
+    return true;
+  });
+  assert.equal(llmFailureCode("bad_output"), "UPSTREAM_ERROR");
+  assert.equal(llmFailureCode("upstream"), "UPSTREAM_ERROR");
 });

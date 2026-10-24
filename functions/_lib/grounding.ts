@@ -396,6 +396,140 @@ export async function recoverUngrounded(
   return { terms, warnings, stats };
 }
 
+// ------------------------------------------------------------ lay-language lexicon (T45)
+//
+// A curated list of lay phrases mapped to HPO terms (functions/_lib/lexicon.json,
+// built and checked against the JAX HPO API by scripts/validate-lexicon.mjs).
+// It runs after the engine and recoverUngrounded, needs no network, and only
+// looks at proposals that are STILL unconfirmed (their engine drop warning is
+// still in the list). For such a proposal, the phrase must be found verbatim in
+// the note (same locate() rule as the engine); that span is the quote. A
+// lexicon entry matches when its normalised words occur as a contiguous run
+// inside the quote's normalised words (plainWords: NFKC, lower case,
+// punctuation dropped, single spaces; no plural folding, no fuzzy matching).
+// At most one lexicon term per quote: the longest matching phrase wins, ties in
+// lexicon order, skipping ids already present. Negation is the proposal's flag.
+// Added terms are grounding "label-search", confidence "low", and always carry
+// a warning. With an empty lexicon the input is returned unchanged.
+
+export interface LexiconEntry {
+  phrase: string;
+  hpoId: string;
+  /** HPO primary name (validate-lexicon.mjs takes it from the JAX API). */
+  label: string;
+  source: string;
+}
+
+export interface LexiconStats {
+  /** Unconfirmed proposals checked against the lexicon. */
+  checked: number;
+  /** Terms added from the lexicon. */
+  added: number;
+}
+
+/** Normalised words of a lexicon phrase or a quote (plainWords, joined by single spaces). */
+export function lexiconKey(s: string): string {
+  return plainWords(s).join(" ");
+}
+
+/**
+ * Keep only well-formed entries: phrase with at least one word, HP:####### id,
+ * non-empty label. Deduplicated by (normalised phrase, id); first wins. Unknown
+ * input gives an empty list (the hook then does nothing).
+ */
+export function parseLexicon(raw: unknown): LexiconEntry[] {
+  if (!Array.isArray(raw)) return [];
+  const out: LexiconEntry[] = [];
+  const seen = new Set<string>();
+  for (const r of raw) {
+    if (typeof r !== "object" || r === null) continue;
+    const v = r as Record<string, unknown>;
+    if (typeof v.phrase !== "string" || typeof v.hpoId !== "string" || typeof v.label !== "string") continue;
+    const key = lexiconKey(v.phrase);
+    const hpoId = v.hpoId.trim();
+    const label = v.label.replace(/\s+/g, " ").trim();
+    if (key === "" || !HPO_ID_RE.test(hpoId) || label === "") continue;
+    const dedupe = `${key}|${hpoId}`;
+    if (seen.has(dedupe)) continue;
+    seen.add(dedupe);
+    out.push({ phrase: v.phrase.trim(), hpoId, label, source: typeof v.source === "string" ? v.source : "" });
+  }
+  return out;
+}
+
+/** Warning attached to every term added from the lexicon. */
+export function lexiconWarning(quote: string, hpoName: string): string {
+  return `Matched '${show(quote)}' to ${hpoName} through the lay-language lexicon; please check it.`;
+}
+
+/** True if the words of `inner` occur as a contiguous run inside the words of `outer` (both lexiconKey form). */
+function containsWords(outer: string, inner: string): boolean {
+  if (inner === "" || outer === "") return false;
+  return ` ${outer} `.includes(` ${inner} `);
+}
+
+/**
+ * Add lexicon terms for proposals that are still unconfirmed. Returns `primary`
+ * itself (same object) when the lexicon is empty or nothing matched, so the
+ * empty-lexicon output is identical to the path without this step.
+ */
+export function applyLexicon(
+  text: string,
+  proposals: ReadonlyArray<SecondaryProposal>,
+  primary: { terms: GroundedTerm[]; warnings: string[] },
+  lexicon: ReadonlyArray<LexiconEntry>,
+): { terms: GroundedTerm[]; warnings: string[]; stats: LexiconStats } {
+  const stats: LexiconStats = { checked: 0, added: 0 };
+  if (lexicon.length === 0) return { terms: primary.terms, warnings: primary.warnings, stats };
+
+  const entries = lexicon
+    .map((e, order) => ({ e, key: lexiconKey(e.phrase), order }))
+    .filter((x) => x.key !== "")
+    .sort((a, b) => b.key.split(" ").length - a.key.split(" ").length || a.order - b.order);
+
+  const warnings = [...primary.warnings];
+  const terms = [...primary.terms];
+  const keptIds = new Set(terms.map((t) => t.hpoId));
+  const taken = new Set(terms.map((t) => t.start));
+  const left = new Map<string, number>();
+  for (const w of warnings) left.set(w, (left.get(w) ?? 0) + 1);
+
+  for (const p of proposals) {
+    if (typeof p?.phrase !== "string" || p.phrase.trim() === "") continue;
+    const drop = engineDropWarning(p.phrase);
+    const n = left.get(drop) ?? 0;
+    if (n === 0) continue; // the proposal was grounded, or dropped for another reason
+    left.set(drop, n - 1);
+    stats.checked++;
+    const span = locate(text, p.phrase, taken);
+    if (!span) continue;
+    const quote = text.slice(span.start, span.end);
+    if (quote.toLowerCase() !== p.phrase.toLowerCase()) continue;
+    const quoteKey = lexiconKey(quote);
+    const hit = entries.find((x) => !keptIds.has(x.e.hpoId) && containsWords(quoteKey, x.key));
+    if (!hit) continue;
+    taken.add(span.start);
+    keptIds.add(hit.e.hpoId);
+    terms.push({
+      hpoId: hit.e.hpoId,
+      label: hit.e.label,
+      quote,
+      start: span.start,
+      end: span.end,
+      negated: p.negated === true,
+      confidence: "low",
+      grounding: "label-search",
+    });
+    stats.added++;
+    removeOnce(warnings, drop);
+    warnings.push(lexiconWarning(quote, hit.e.label));
+  }
+
+  if (stats.added === 0) return { terms: primary.terms, warnings: primary.warnings, stats };
+  terms.sort((a, b) => a.start - b.start || a.end - b.end);
+  return { terms, warnings, stats };
+}
+
 function removeOnce(list: string[], value: string): void {
   const i = list.indexOf(value);
   if (i >= 0) list.splice(i, 1);

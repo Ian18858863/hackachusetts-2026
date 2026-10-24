@@ -99,21 +99,95 @@ export type LlmErrorCode =
   | "invalid_input" // empty or oversized text
   | "no_binding" // env.AI missing (wrangler.toml [ai] binding not configured)
   | "timeout" // model call exceeded timeoutMs
-  | "upstream" // the binding threw (model unavailable, quota, network)
+  | "unavailable" // the binding call itself threw (quota/allocation, model unavailable, any binding exception)
+  | "upstream" // the model stream failed after the call had started
   | "bad_output"; // the model answered but no JSON array could be parsed
 
 export class LlmError extends Error {
   readonly code: LlmErrorCode;
   readonly model?: string;
   readonly llmMs?: number;
+  /**
+   * For `unavailable` only: what the binding threw, safe to log. The class
+   * name, the Workers AI error code when one is given (for example 4006 for
+   * the daily free allocation) and the first line of its message, capped at
+   * 200 characters. Workers AI errors describe the account or model, not the
+   * notes; the notes text is never put here.
+   */
+  readonly failure?: BindingFailure;
 
-  constructor(code: LlmErrorCode, message: string, model?: string, llmMs?: number) {
+  constructor(code: LlmErrorCode, message: string, model?: string, llmMs?: number, failure?: BindingFailure) {
     super(message);
     this.name = "LlmError";
     this.code = code;
     this.model = model;
     this.llmMs = llmMs;
+    if (failure) this.failure = failure;
   }
+}
+
+/** Loggable summary of an exception thrown by the Workers AI binding. */
+export interface BindingFailure {
+  /** Class name of the thrown value, e.g. "Error" or "InferenceUpstreamError". */
+  errorClass: string;
+  /** Workers AI error code, e.g. "4006", when the error carries one. */
+  aiCode?: string;
+  /** First line of the error message, at most 200 characters. */
+  aiMessage: string;
+  /** "quota" when the error is about the account's allocation or limits, else "other". */
+  kind: "quota" | "other";
+}
+
+const QUOTA_RE = /\b(neurons?|allocation|quota|limit|limits|exceeded|capacity)\b/i;
+/** Workers AI codes for account allocation and rate limits. */
+const QUOTA_CODES = new Set(["4006", "3036", "3040"]);
+
+/** Summarise an exception thrown by `env.AI.run` for logs. Exported for tests. */
+export function describeBindingFailure(err: unknown): BindingFailure {
+  const errorClass =
+    err instanceof Error ? err.name || err.constructor?.name || "Error" : err === null ? "null" : typeof err;
+  const raw =
+    err instanceof Error ? err.message : typeof err === "string" ? err : isRecord(err) && typeof err.message === "string" ? err.message : "";
+  const aiMessage = (raw.split("\n")[0] ?? "").slice(0, 200) || "no message";
+  let aiCode: string | undefined;
+  const own = isRecord(err) ? err.code ?? err.errorCode : undefined;
+  if (typeof own === "number" || (typeof own === "string" && /^\d{3,5}$/.test(own))) aiCode = String(own);
+  if (!aiCode) {
+    const m = /(?:^\s*|\b(?:code|error)\s*[:=]?\s*)(\d{4})\b/i.exec(aiMessage);
+    if (m) aiCode = m[1];
+  }
+  const kind = (aiCode && QUOTA_CODES.has(aiCode)) || QUOTA_RE.test(aiMessage) ? "quota" : "other";
+  const out: BindingFailure = { errorClass, aiMessage, kind };
+  if (aiCode) out.aiCode = aiCode;
+  return out;
+}
+
+/**
+ * Contract error code (docs/CONTRACT.md section 4) for an LlmError code once
+ * no demo fallback applies: a binding outage or a missing binding is 503
+ * LLM_UNAVAILABLE, a timeout 504, a failed stream or unusable output 502.
+ */
+export function llmFailureCode(code: LlmErrorCode):
+  | "INVALID_REQUEST"
+  | "LLM_UNAVAILABLE"
+  | "UPSTREAM_TIMEOUT"
+  | "UPSTREAM_ERROR" {
+  switch (code) {
+    case "invalid_input":
+      return "INVALID_REQUEST";
+    case "no_binding":
+    case "unavailable":
+      return "LLM_UNAVAILABLE";
+    case "timeout":
+      return "UPSTREAM_TIMEOUT";
+    default:
+      return "UPSTREAM_ERROR";
+  }
+}
+
+function bindingFailed(err: unknown, model: string, llmMs: number): LlmError {
+  const failure = describeBindingFailure(err);
+  return new LlmError("unavailable", `Model call failed: ${failure.aiMessage}`, model, llmMs, failure);
 }
 
 // ---------------------------------------------------------------------------
@@ -214,10 +288,8 @@ export async function proposeTerms(
     if (err instanceof TimeoutError) {
       throw new LlmError("timeout", `Model call exceeded ${timeoutMs} ms.`, model, llmMs);
     }
-    // The upstream message may describe the request but never contains the
-    // notes; still, keep only the first line and cap its length.
-    const detail = err instanceof Error ? err.message.split("\n")[0].slice(0, 200) : "unknown error";
-    throw new LlmError("upstream", `Model call failed: ${detail}`, model, llmMs);
+    // The binding itself threw (quota, model unavailable, network): an outage.
+    throw bindingFailed(err, model, llmMs);
   }
   return finishProposals(output, model, text, maxProposals, Date.now() - started);
 }
@@ -257,8 +329,7 @@ async function proposeStreaming(
     if (err instanceof TimeoutError) {
       throw new LlmError("timeout", `Model call exceeded ${timeoutMs} ms.`, model, llmMs);
     }
-    const detail = err instanceof Error ? err.message.split("\n")[0].slice(0, 200) : "unknown error";
-    throw new LlmError("upstream", `Model call failed: ${detail}`, model, llmMs);
+    throw bindingFailed(err, model, llmMs);
   }
 
   if (!(stream instanceof ReadableStream)) {

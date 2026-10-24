@@ -5,12 +5,16 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
 import {
+  applyLexicon,
   engineDropWarning,
+  lexiconWarning,
+  parseLexicon,
   estimateEngineSubrequests,
   namesTerm,
   recoverUngrounded,
   secondaryLookupCap,
   type GroundedTerm,
+  type LexiconEntry,
   type SecondaryProposal,
 } from "./grounding.ts";
 
@@ -192,4 +196,115 @@ test("a cap of 0 makes no lookups; failed fetches are counted apart from budget 
   assert.equal(r1.stats.failedLookups, 1);
   assert.equal(r1.stats.skippedByBudget, 0);
   assert.deepEqual(r1.warnings, [dropped(p.phrase)]);
+});
+
+// ------------------------------------------------------------ lay-language lexicon (T45)
+
+const LEX_TEXT = "Our son is 4. His calves are big and firm. He has never had a fit. He falls a lot.";
+// Stub entries; ids and primary names as returned by GET https://ontology.jax.org/api/hp/terms/{id} (2026-10-24).
+const STUB_LEXICON: LexiconEntry[] = parseLexicon([
+  { phrase: "Calves are big", hpoId: "HP:0003707", label: "Calf muscle pseudohypertrophy", source: "stub" },
+  { phrase: "a fit", hpoId: "HP:0001250", label: "Seizure", source: "stub" },
+  { phrase: "falls", hpoId: "HP:0002527", label: "Falls", source: "stub" },
+]);
+const BIG_CALVES: SecondaryProposal = { phrase: "His calves are big and firm", label: "Big calves", negated: false, confidence: "high" };
+const NO_FIT: SecondaryProposal = { phrase: "never had a fit", label: "Fits", negated: true, confidence: "high" };
+
+test("lexicon: a phrase inside a verbatim quote adds the term with a low confidence and a warning", () => {
+  const r = applyLexicon(LEX_TEXT, [BIG_CALVES], { terms: [], warnings: [dropped(BIG_CALVES.phrase)] }, STUB_LEXICON);
+  assert.equal(r.terms.length, 1);
+  const t = r.terms[0];
+  assert.equal(t.hpoId, "HP:0003707");
+  assert.equal(t.label, "Calf muscle pseudohypertrophy");
+  assert.equal(t.quote, BIG_CALVES.phrase);
+  assert.equal(LEX_TEXT.slice(t.start, t.end), t.quote);
+  assert.equal(t.negated, false);
+  assert.equal(t.confidence, "low");
+  assert.equal(t.grounding, "label-search");
+  assert.deepEqual(r.warnings, [
+    "Matched 'His calves are big and firm' to Calf muscle pseudohypertrophy through the lay-language lexicon; please check it.",
+  ]);
+  assert.equal(r.warnings[0], lexiconWarning(t.quote, t.label));
+  assert.deepEqual(r.stats, { checked: 1, added: 1 });
+});
+
+test("lexicon: a phrase that is in no quote adds nothing (no fuzzy match, no note-wide search)", () => {
+  // "falls" occurs in the note, but no unconfirmed proposal quotes it.
+  const p: SecondaryProposal = { phrase: "His calves are big and firm", label: "x", negated: false, confidence: "high" };
+  const lex = parseLexicon([
+    { phrase: "falls", hpoId: "HP:0002527", label: "Falls", source: "stub" },
+    { phrase: "calf big", hpoId: "HP:0003707", label: "Calf muscle pseudohypertrophy", source: "stub" },
+    { phrase: "calves are bigger", hpoId: "HP:0008981", label: "Calf muscle hypertrophy", source: "stub" },
+  ]);
+  const primary = { terms: [], warnings: [dropped(p.phrase)] };
+  const r = applyLexicon(LEX_TEXT, [p], primary, lex);
+  assert.equal(r.terms.length, 0);
+  assert.deepEqual(r.warnings, [dropped(p.phrase)]);
+  assert.equal(r.terms, primary.terms);
+  // A proposal whose phrase is not verbatim in the note is never used.
+  const missing: SecondaryProposal = { ...p, phrase: "he falls over" };
+  const r2 = applyLexicon(LEX_TEXT, [missing], { terms: [], warnings: [dropped(missing.phrase)] }, STUB_LEXICON);
+  assert.equal(r2.terms.length, 0);
+  // A proposal the engine grounded (no drop warning) is not re-used.
+  const r3 = applyLexicon(LEX_TEXT, [BIG_CALVES], { terms: [], warnings: [] }, STUB_LEXICON);
+  assert.equal(r3.terms.length, 0);
+});
+
+test("lexicon: an id already present is not added again", () => {
+  const existing: GroundedTerm = {
+    hpoId: "HP:0003707",
+    label: "Calf muscle pseudohypertrophy",
+    quote: "calves",
+    start: 18,
+    end: 24,
+    negated: false,
+    confidence: "high",
+    grounding: "exact-id",
+  };
+  const r = applyLexicon(LEX_TEXT, [BIG_CALVES], { terms: [existing], warnings: [dropped(BIG_CALVES.phrase)] }, STUB_LEXICON);
+  assert.deepEqual(r.terms, [existing]);
+  assert.deepEqual(r.warnings, [dropped(BIG_CALVES.phrase)]);
+  assert.equal(r.stats.added, 0);
+});
+
+test("lexicon: at most one term per quote, longest phrase first", () => {
+  const lex = parseLexicon([
+    { phrase: "calves", hpoId: "HP:0001430", label: "Abnormal calf musculature morphology", source: "stub" },
+    { phrase: "calves are big and firm", hpoId: "HP:0003707", label: "Calf muscle pseudohypertrophy", source: "stub" },
+  ]);
+  const r = applyLexicon(LEX_TEXT, [BIG_CALVES], { terms: [], warnings: [dropped(BIG_CALVES.phrase)] }, lex);
+  assert.deepEqual(r.terms.map((t) => t.hpoId), ["HP:0003707"]);
+});
+
+test("lexicon: empty lexicon gives output identical to the path without it", async () => {
+  const proposals = [CALVES, { ...CALVES, phrase: "He is tired", label: "Fatigue", alternatives: [] }];
+  const primary = { terms: [], warnings: [dropped(CALVES.phrase), dropped("He is tired")] };
+  const old = await recoverUngrounded(TEXT, proposals, primary, opts([]));
+  const withEmpty = applyLexicon(TEXT, proposals, old, []);
+  assert.equal(withEmpty.terms, old.terms);
+  assert.equal(withEmpty.warnings, old.warnings);
+  assert.equal(JSON.stringify({ terms: withEmpty.terms, warnings: withEmpty.warnings }), JSON.stringify({ terms: old.terms, warnings: old.warnings }));
+  assert.deepEqual(parseLexicon([]), []);
+  assert.deepEqual(parseLexicon("not an array"), []);
+});
+
+test("lexicon: a negated proposal gives a negated term", () => {
+  const r = applyLexicon(LEX_TEXT, [NO_FIT], { terms: [], warnings: [dropped(NO_FIT.phrase)] }, STUB_LEXICON);
+  assert.equal(r.terms.length, 1);
+  assert.equal(r.terms[0].hpoId, "HP:0001250");
+  assert.equal(r.terms[0].label, "Seizure");
+  assert.equal(r.terms[0].quote, "never had a fit");
+  assert.equal(r.terms[0].negated, true);
+});
+
+test("lexicon: malformed entries are ignored and duplicates removed", () => {
+  const lex = parseLexicon([
+    { phrase: "  ", hpoId: "HP:0001250", label: "Seizure", source: "s" },
+    { phrase: "a fit", hpoId: "HP:12", label: "Seizure", source: "s" },
+    { phrase: "a fit", hpoId: "HP:0001250", label: "", source: "s" },
+    { phrase: "A fit!", hpoId: "HP:0001250", label: "Seizure", source: "s" },
+    { phrase: "a  fit", hpoId: "HP:0001250", label: "Seizure", source: "s2" },
+    null,
+  ]);
+  assert.deepEqual(lex, [{ phrase: "A fit!", hpoId: "HP:0001250", label: "Seizure", source: "s" }]);
 });
