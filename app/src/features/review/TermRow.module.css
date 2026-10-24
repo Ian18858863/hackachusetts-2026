@@ -1,0 +1,121 @@
+/*
+ * Feature rows: no box. Hairlines between rows (drawn by the list in
+ * ReviewStep.module.css); hover and focus tint the row softly.
+ * Not present rows keep a dashed number, a "Not present" word and quieter
+ * text, so the state never rests on colour.
+ */
+.row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
+  align-items: center;
+  gap: var(--space-3) var(--space-4);
+  padding: var(--space-4) var(--space-3);
+  border-radius: var(--radius-md);
+  list-style: none;
+  scroll-margin-block: calc(var(--topbar-height) + var(--space-6)) var(--space-32);
+  transition: background-color var(--dur-fast) var(--ease-standard);
+}
+
+.row[data-active] {
+  background: var(--color-accent-tint);
+}
+
+.number {
+  display: grid;
+  place-items: center;
+  align-self: start;
+  min-width: calc(var(--size-step-number) + var(--space-1));
+  height: var(--size-step-number);
+  margin-top: var(--border-hair);
+  padding-inline: var(--space-1);
+  border: var(--border-indicator) solid var(--color-accent);
+  border-radius: var(--radius-pill);
+  background: var(--color-accent);
+  color: var(--color-accent-contrast);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.number[data-status='excluded'] {
+  border-style: dashed;
+  background: var(--color-surface);
+  color: var(--color-accent-text);
+}
+
+.text {
+  display: grid;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.plain {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: var(--weight-regular);
+  line-height: var(--leading-snug);
+  color: var(--color-text);
+  overflow-wrap: anywhere;
+}
+
+.row[data-status='excluded'] .plain {
+  color: var(--color-text-muted);
+}
+
+.term {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+  line-height: var(--leading-snug);
+  color: var(--color-text-subtle);
+}
+
+.absentTag {
+  display: inline-flex;
+  align-items: center;
+  padding-inline: var(--space-2);
+  border: var(--border-hair) dashed var(--color-border-strong);
+  border-radius: var(--radius-pill);
+  font-weight: var(--weight-semibold);
+  color: var(--color-text-muted);
+}
+
+.label {
+  color: var(--color-text-muted);
+}
+
+.id {
+  color: var(--color-text-subtle);
+}
+
+.flag {
+  color: var(--color-warning);
+  font-weight: var(--weight-medium);
+}
+
+.remove {
+  color: var(--color-text-muted);
+}
+
+/* Narrow list column: Remove sits top right, the toggle gets its own line. */
+@container features (max-width: 36rem) {
+  .row {
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: start;
+  }
+
+  .row > fieldset {
+    grid-column: 2 / -1;
+    grid-row: 2;
+    justify-self: start;
+  }
+
+  .remove {
+    grid-column: 3;
+    grid-row: 1;
+    margin-top: calc(-1 * var(--space-1));
+  }
+}

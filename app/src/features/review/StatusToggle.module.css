@@ -1,0 +1,103 @@
+/*
+ * A quiet pill track instead of a bordered box. The chosen option sits on
+ * the page colour with a soft shadow, and its mark changes shape (filled dot
+ * for present, slashed ring for not present), so state never rests on colour.
+ */
+.toggle {
+  display: inline-flex;
+  flex-shrink: 0;
+  min-width: 0;
+  margin: 0;
+  padding: var(--space-1);
+  border: 0;
+  border-radius: var(--radius-pill);
+  background: var(--color-surface-sunken);
+}
+
+.option {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-height: calc(var(--control-height-md) - var(--space-2));
+  padding-inline: var(--space-3);
+  border-radius: var(--radius-pill);
+  font-size: var(--text-sm);
+  font-weight: var(--weight-medium);
+  color: var(--color-text-muted);
+  white-space: nowrap;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--dur-fast) var(--ease-standard),
+    color var(--dur-fast) var(--ease-standard),
+    box-shadow var(--dur-fast) var(--ease-standard);
+}
+
+.toggle[data-size='sm'] .option {
+  min-height: calc(var(--control-height-sm) - var(--space-2));
+  padding-inline: var(--space-3);
+  font-size: var(--text-xs);
+}
+
+@media (pointer: coarse) {
+  .option,
+  .toggle[data-size='sm'] .option {
+    min-height: calc(var(--tap-min) - var(--space-2));
+  }
+}
+
+.option:hover {
+  color: var(--color-text);
+}
+
+/* The real radio stays in the accessibility tree and takes focus. */
+.input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.option:has(.input:checked) {
+  background: var(--color-surface);
+  color: var(--color-accent-text);
+  box-shadow: var(--shadow-md);
+}
+
+.option:has(.input:focus-visible) {
+  outline: var(--focus-width) solid var(--color-focus);
+  outline-offset: var(--focus-offset);
+}
+
+/* State mark: empty ring, filled dot (present) or slashed ring (not present). */
+.mark {
+  position: relative;
+  flex-shrink: 0;
+  width: var(--space-3);
+  height: var(--space-3);
+  border: var(--border-indicator) solid currentColor;
+  border-radius: var(--radius-pill);
+  opacity: 0.6;
+}
+
+.option:has(.input:checked) .mark {
+  opacity: 1;
+}
+
+.option[data-value='observed']:has(.input:checked) .mark {
+  background: currentColor;
+}
+
+.option[data-value='excluded']:has(.input:checked) .mark::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--space-3) + var(--border-indicator));
+  border-top: var(--border-indicator) solid currentColor;
+  transform: translate(-50%, -50%) rotate(-45deg);
+}
