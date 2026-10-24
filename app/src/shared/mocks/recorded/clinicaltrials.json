@@ -1,0 +1,132 @@
+{
+ "_meta": {
+  "request": "GET https://clinicaltrials.gov/api/v2/studies?query.cond=Niemann-Pick%20disease%20type%20C&filter.overallStatus=RECRUITING&pageSize=5&countTotal=true&fields=NCTId,BriefTitle,OverallStatus,Phase,Condition,LocationCountry",
+  "fetchedAt": "2026-10-24T17:42:25Z",
+  "trimmed": "Requested fields only; location list reduced to country."
+ },
+ "totalCount": 6,
+ "studies": [
+  {
+   "nctId": "NCT00344331",
+   "briefTitle": "Evaluation of Biochemical Markers and Clinical Investigation of Niemann-Pick Disease, Type C",
+   "overallStatus": "RECRUITING",
+   "phases": [],
+   "conditions": [
+    "Niemann-Pick Disease, Type C"
+   ],
+   "locationCountries": [
+    "United States"
+   ]
+  },
+  {
+   "nctId": "NCT07054515",
+   "briefTitle": "A Study to Evaluate the Safety and Efficacy of Oral Nizubaglustat (AZ-3102) in Late-infantile and Juvenile Forms of Niemann-Pick Type C Disease, GM1 Gangliosidosis or GM2 Gangliosidosis",
+   "overallStatus": "RECRUITING",
+   "phases": [
+    "PHASE3"
+   ],
+   "conditions": [
+    "Niemann-Pick Type C Disease",
+    "GM1 Gangliosidosis",
+    "GM2 Gangliosidosis"
+   ],
+   "locationCountries": [
+    "United States",
+    "United States",
+    "United States",
+    "United States",
+    "United States",
+    "Argentina",
+    "Argentina",
+    "Australia",
+    "Australia",
+    "Australia",
+    "Brazil",
+    "Brazil",
+    "Brazil",
+    "Canada",
+    "Canada",
+    "Canada",
+    "France",
+    "France",
+    "Germany",
+    "India",
+    "India",
+    "India",
+    "India",
+    "Italy",
+    "Mexico",
+    "Mexico",
+    "Pakistan",
+    "Portugal",
+    "Portugal",
+    "Spain",
+    "Spain",
+    "Sweden",
+    "Switzerland",
+    "Turkey (Türkiye)",
+    "Turkey (Türkiye)",
+    "Turkey (Türkiye)",
+    "United Kingdom",
+    "United Kingdom",
+    "United Kingdom"
+   ]
+  },
+  {
+   "nctId": "NCT04880356",
+   "briefTitle": "Longitudinal Study of Ultra-rare Inherited Metabolic and Degenerative Neurological Diseases.",
+   "overallStatus": "RECRUITING",
+   "phases": [],
+   "conditions": [
+    "Inherited Disease",
+    "Rare Diseases",
+    "Metabolic Disease",
+    "Undiagnosed Disease",
+    "Neurologic Disorder",
+    "Neuro-Degenerative Disease"
+   ],
+   "locationCountries": [
+    "Italy"
+   ]
+  },
+  {
+   "nctId": "NCT05163288",
+   "briefTitle": "A Pivotal Study of N-Acetyl-L-Leucine on Niemann-Pick Disease Type C",
+   "overallStatus": "RECRUITING",
+   "phases": [
+    "PHASE3"
+   ],
+   "conditions": [
+    "Niemann-Pick Disease, Type C"
+   ],
+   "locationCountries": [
+    "United States",
+    "Australia",
+    "Czechia",
+    "Germany",
+    "Germany",
+    "Germany",
+    "Germany",
+    "Germany",
+    "Netherlands",
+    "Slovakia",
+    "Switzerland",
+    "United Kingdom",
+    "United Kingdom",
+    "United Kingdom"
+   ]
+  },
+  {
+   "nctId": "NCT05588167",
+   "briefTitle": "Establishment of Genomic and Phenotypic Database for Niemann-Pick Disease, Type C",
+   "overallStatus": "RECRUITING",
+   "phases": [],
+   "conditions": [
+    "Niemann-Pick Disease, Type C"
+   ],
+   "locationCountries": [
+    "United States"
+   ]
+  }
+ ]
+}

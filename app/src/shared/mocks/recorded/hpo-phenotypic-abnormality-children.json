@@ -1,0 +1,101 @@
+{
+ "_meta": {
+  "request": "GET https://ontology.jax.org/api/hp/terms/HP:0000118/children",
+  "fetchedAt": "2026-10-24T17:42:23Z",
+  "trimmed": "Only id and name are kept."
+ },
+ "children": [
+  {
+   "id": "HP:0025354",
+   "name": "Abnormal cellular phenotype"
+  },
+  {
+   "id": "HP:0001871",
+   "name": "Abnormality of blood and blood-forming tissues"
+  },
+  {
+   "id": "HP:0000152",
+   "name": "Abnormality of head or neck"
+  },
+  {
+   "id": "HP:0040064",
+   "name": "Abnormality of limbs"
+  },
+  {
+   "id": "HP:0001939",
+   "name": "Abnormality of metabolism/homeostasis"
+  },
+  {
+   "id": "HP:0001197",
+   "name": "Abnormality of prenatal development or birth"
+  },
+  {
+   "id": "HP:0000769",
+   "name": "Abnormality of the breast"
+  },
+  {
+   "id": "HP:0001626",
+   "name": "Abnormality of the cardiovascular system"
+  },
+  {
+   "id": "HP:0025031",
+   "name": "Abnormality of the digestive system"
+  },
+  {
+   "id": "HP:0000598",
+   "name": "Abnormality of the ear"
+  },
+  {
+   "id": "HP:0000818",
+   "name": "Abnormality of the endocrine system"
+  },
+  {
+   "id": "HP:0000478",
+   "name": "Abnormality of the eye"
+  },
+  {
+   "id": "HP:0000119",
+   "name": "Abnormality of the genitourinary system"
+  },
+  {
+   "id": "HP:0002715",
+   "name": "Abnormality of the immune system"
+  },
+  {
+   "id": "HP:0001574",
+   "name": "Abnormality of the integument"
+  },
+  {
+   "id": "HP:0033127",
+   "name": "Abnormality of the musculoskeletal system"
+  },
+  {
+   "id": "HP:0000707",
+   "name": "Abnormality of the nervous system"
+  },
+  {
+   "id": "HP:0002086",
+   "name": "Abnormality of the respiratory system"
+  },
+  {
+   "id": "HP:0045027",
+   "name": "Abnormality of the thoracic cavity"
+  },
+  {
+   "id": "HP:0001608",
+   "name": "Abnormality of the voice"
+  },
+  {
+   "id": "HP:0025142",
+   "name": "Constitutional symptom"
+  },
+  {
+   "id": "HP:0001507",
+   "name": "Growth abnormality"
+  },
+  {
+   "id": "HP:0002664",
+   "name": "Neoplasm"
+  }
+ ]
+}

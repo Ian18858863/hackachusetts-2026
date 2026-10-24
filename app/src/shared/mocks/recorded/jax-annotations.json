@@ -1,0 +1,877 @@
+{
+ "_meta": {
+  "request": "GET https://ontology.jax.org/api/network/annotation/<id>",
+  "fetchedAt": "2026-10-24T17:42:23Z",
+  "trimmed": "Only disease id/name, gene id/name and per-category rows (id, name, metadata.frequency) are kept."
+ },
+ "responses": {
+  "OMIM:257220": {
+   "status": 200,
+   "disease": {
+    "id": "OMIM:257220",
+    "name": "Niemann-pick disease, type C1"
+   },
+   "genes": [
+    {
+     "id": "NCBIGene:4864",
+     "name": "NPC1"
+    }
+   ],
+   "categories": {
+    "Eye": [
+     {
+      "id": "HP:0000511",
+      "name": "Vertical supranuclear gaze palsy",
+      "frequency": ""
+     }
+    ],
+    "Prenatal and Birth": [
+     {
+      "id": "HP:0001791",
+      "name": "Fetal ascites",
+      "frequency": ""
+     }
+    ],
+    "Metabolism/Laboratory abnormality": [
+     {
+      "id": "HP:0003349",
+      "name": "Low cholesterol esterification rate",
+      "frequency": "13/13"
+     },
+     {
+      "id": "HP:6001353",
+      "name": "Elevated circulating C-triol concentration",
+      "frequency": ""
+     }
+    ],
+    "Clinical course": [
+     {
+      "id": "HP:0003621",
+      "name": "Juvenile onset",
+      "frequency": "3/4"
+     },
+     {
+      "id": "HP:0011462",
+      "name": "Young adult onset",
+      "frequency": "1/4"
+     }
+    ],
+    "Nervous System": [
+     {
+      "id": "HP:0002185",
+      "name": "Neurofibrillary tangles",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001250",
+      "name": "Seizure",
+      "frequency": "12/14"
+     },
+     {
+      "id": "HP:0000709",
+      "name": "Psychosis",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001251",
+      "name": "Ataxia",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001260",
+      "name": "Dysarthria",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0000726",
+      "name": "Dementia",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001263",
+      "name": "Global developmental delay",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001332",
+      "name": "Dystonia",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0002529",
+      "name": "Neuronal loss in central nervous system",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0002524",
+      "name": "Cataplexy",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001249",
+      "name": "Intellectual disability",
+      "frequency": "4/4"
+     },
+     {
+      "id": "HP:0002371",
+      "name": "Loss of speech",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0002066",
+      "name": "Gait ataxia",
+      "frequency": "4/4"
+     }
+    ],
+    "Cardiovascular": [
+     {
+      "id": "HP:0003640",
+      "name": "CNS foam cells",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001744",
+      "name": "Splenomegaly",
+      "frequency": "4/13"
+     },
+     {
+      "id": "HP:0003651",
+      "name": "Foam cells",
+      "frequency": ""
+     }
+    ],
+    "Inheritance": [
+     {
+      "id": "HP:0000007",
+      "name": "Autosomal recessive inheritance",
+      "frequency": ""
+     }
+    ],
+    "Musculature": [
+     {
+      "id": "HP:0001290",
+      "name": "Generalized hypotonia",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001252",
+      "name": "Hypotonia",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001257",
+      "name": "Spasticity",
+      "frequency": ""
+     }
+    ],
+    "Digestive System": [
+     {
+      "id": "HP:0006579",
+      "name": "Prolonged neonatal jaundice",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0002240",
+      "name": "Hepatomegaly",
+      "frequency": "7/13"
+     },
+     {
+      "id": "HP:0002015",
+      "name": "Dysphagia",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0006583",
+      "name": "Fatal liver failure in infancy",
+      "frequency": ""
+     }
+    ],
+    "Blood and blood-forming tissues": [
+     {
+      "id": "HP:0001982",
+      "name": "Sea-blue histiocytosis",
+      "frequency": "4/4"
+     },
+     {
+      "id": "HP:0004333",
+      "name": "Bone-marrow foam cells",
+      "frequency": ""
+     }
+    ],
+    "Cellular phenotype": [
+     {
+      "id": "HP:6000158",
+      "name": "Unesterified cholesterol accumulation in cultured fibroblasts",
+      "frequency": ""
+     }
+    ]
+   }
+  },
+  "ORPHA:2274": {
+   "status": 200,
+   "disease": {
+    "id": "ORPHA:2274",
+    "name": "Ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome"
+   },
+   "genes": [],
+   "categories": {
+    "Nervous System": [
+     {
+      "id": "HP:0000726",
+      "name": "Dementia",
+      "frequency": "Very frequent"
+     },
+     {
+      "id": "HP:0001265",
+      "name": "Hyporeflexia",
+      "frequency": "Very frequent"
+     },
+     {
+      "id": "HP:0001251",
+      "name": "Ataxia",
+      "frequency": "Very frequent"
+     },
+     {
+      "id": "HP:0002167",
+      "name": "Abnormal speech pattern",
+      "frequency": "Very frequent"
+     },
+     {
+      "id": "HP:0001288",
+      "name": "Gait disturbance",
+      "frequency": "Very frequent"
+     }
+    ],
+    "Cardiovascular": [
+     {
+      "id": "HP:0001744",
+      "name": "Splenomegaly",
+      "frequency": "Very frequent"
+     }
+    ],
+    "Digestive System": [
+     {
+      "id": "HP:0002240",
+      "name": "Hepatomegaly",
+      "frequency": "Very frequent"
+     }
+    ],
+    "Skin, Hair, and Nails": [
+     {
+      "id": "HP:0008064",
+      "name": "Ichthyosis",
+      "frequency": "Very frequent"
+     }
+    ]
+   }
+  },
+  "OMIM:242520": {
+   "status": 200,
+   "disease": {
+    "id": "OMIM:242520",
+    "name": "Ichthyosis, hepatosplenomegaly, and cerebellar degeneration"
+   },
+   "genes": [],
+   "categories": {
+    "Nervous System": [
+     {
+      "id": "HP:0001260",
+      "name": "Dysarthria",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001251",
+      "name": "Ataxia",
+      "frequency": ""
+     }
+    ],
+    "Cardiovascular": [
+     {
+      "id": "HP:0001433",
+      "name": "Hepatosplenomegaly",
+      "frequency": ""
+     }
+    ],
+    "Inheritance": [
+     {
+      "id": "HP:0000007",
+      "name": "Autosomal recessive inheritance",
+      "frequency": ""
+     }
+    ],
+    "Skin, Hair, and Nails": [
+     {
+      "id": "HP:0008064",
+      "name": "Ichthyosis",
+      "frequency": ""
+     }
+    ]
+   }
+  },
+  "OMIM:607625": {
+   "status": 200,
+   "disease": {
+    "id": "OMIM:607625",
+    "name": "Niemann-pick disease, type C2"
+   },
+   "genes": [
+    {
+     "id": "NCBIGene:10577",
+     "name": "NPC2"
+    }
+   ],
+   "categories": {
+    "Eye": [
+     {
+      "id": "HP:0000511",
+      "name": "Vertical supranuclear gaze palsy",
+      "frequency": ""
+     }
+    ],
+    "Prenatal and Birth": [
+     {
+      "id": "HP:0001791",
+      "name": "Fetal ascites",
+      "frequency": "1/8"
+     },
+     {
+      "id": "HP:0001791",
+      "name": "Fetal ascites",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001561",
+      "name": "Polyhydramnios",
+      "frequency": "1/8"
+     }
+    ],
+    "Metabolism/Laboratory abnormality": [
+     {
+      "id": "HP:6001353",
+      "name": "Elevated circulating C-triol concentration",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0003349",
+      "name": "Low cholesterol esterification rate",
+      "frequency": "8/8"
+     }
+    ],
+    "Clinical course": [
+     {
+      "id": "HP:0003819",
+      "name": "Death in childhood",
+      "frequency": "2/8"
+     },
+     {
+      "id": "HP:0003623",
+      "name": "Neonatal onset",
+      "frequency": "6/8"
+     },
+     {
+      "id": "HP:0001522",
+      "name": "Death in infancy",
+      "frequency": "4/8"
+     },
+     {
+      "id": "HP:0011463",
+      "name": "Childhood onset",
+      "frequency": "2/8"
+     }
+    ],
+    "Nervous System": [
+     {
+      "id": "HP:0000726",
+      "name": "Dementia",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001332",
+      "name": "Dystonia",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001251",
+      "name": "Ataxia",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001250",
+      "name": "Seizure",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0002371",
+      "name": "Loss of speech",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0002524",
+      "name": "Cataplexy",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0002185",
+      "name": "Neurofibrillary tangles",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001263",
+      "name": "Global developmental delay",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0000709",
+      "name": "Psychosis",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001249",
+      "name": "Intellectual disability",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001260",
+      "name": "Dysarthria",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0030223",
+      "name": "Perseverative thought",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0000733",
+      "name": "Motor stereotypy",
+      "frequency": ""
+     }
+    ],
+    "Cardiovascular": [
+     {
+      "id": "HP:0003640",
+      "name": "CNS foam cells",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001744",
+      "name": "Splenomegaly",
+      "frequency": "5/8"
+     },
+     {
+      "id": "HP:0003651",
+      "name": "Foam cells",
+      "frequency": ""
+     }
+    ],
+    "Inheritance": [
+     {
+      "id": "HP:0000007",
+      "name": "Autosomal recessive inheritance",
+      "frequency": ""
+     }
+    ],
+    "Musculature": [
+     {
+      "id": "HP:0001252",
+      "name": "Hypotonia",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001257",
+      "name": "Spasticity",
+      "frequency": ""
+     }
+    ],
+    "Respiratory System": [
+     {
+      "id": "HP:0002878",
+      "name": "Respiratory failure",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0002643",
+      "name": "Neonatal respiratory distress",
+      "frequency": "1/8"
+     },
+     {
+      "id": "HP:0002206",
+      "name": "Pulmonary fibrosis",
+      "frequency": "1/1"
+     },
+     {
+      "id": "HP:0002093",
+      "name": "Respiratory insufficiency",
+      "frequency": "7/8"
+     }
+    ],
+    "Digestive System": [
+     {
+      "id": "HP:0000952",
+      "name": "Jaundice",
+      "frequency": "5/8"
+     },
+     {
+      "id": "HP:0002240",
+      "name": "Hepatomegaly",
+      "frequency": "5/8"
+     },
+     {
+      "id": "HP:0006579",
+      "name": "Prolonged neonatal jaundice",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0002015",
+      "name": "Dysphagia",
+      "frequency": ""
+     }
+    ],
+    "Blood and blood-forming tissues": [
+     {
+      "id": "HP:0004333",
+      "name": "Bone-marrow foam cells",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0001982",
+      "name": "Sea-blue histiocytosis",
+      "frequency": ""
+     }
+    ]
+   }
+  },
+  "ORPHA:480556": {
+   "status": 404
+  },
+  "OMIM:617394": {
+   "status": 200,
+   "disease": {
+    "id": "OMIM:617394",
+    "name": "Sclerosing cholangitis, neonatal"
+   },
+   "genes": [
+    {
+     "id": "NCBIGene:51473",
+     "name": "DCDC2"
+    }
+   ],
+   "categories": {
+    "Metabolism/Laboratory abnormality": [
+     {
+      "id": "HP:0011985",
+      "name": "Acholic stools",
+      "frequency": "6/11"
+     },
+     {
+      "id": "HP:0030948",
+      "name": "Elevated gamma-glutamyltransferase level",
+      "frequency": "7/7"
+     }
+    ],
+    "Clinical course": [
+     {
+      "id": "HP:0003623",
+      "name": "Neonatal onset",
+      "frequency": "6/11"
+     },
+     {
+      "id": "HP:0003676",
+      "name": "Progressive",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0003593",
+      "name": "Infantile onset",
+      "frequency": "5/7"
+     }
+    ],
+    "Nervous System": [
+     {
+      "id": "HP:0001256",
+      "name": "Mild intellectual disability",
+      "frequency": "1/4"
+     }
+    ],
+    "Cardiovascular": [
+     {
+      "id": "HP:0001409",
+      "name": "Portal hypertension",
+      "frequency": "4/4"
+     },
+     {
+      "id": "HP:0001744",
+      "name": "Splenomegaly",
+      "frequency": "5/7"
+     }
+    ],
+    "Genitourinary system": [
+     {
+      "id": "HP:0000076",
+      "name": "Vesicoureteral reflux",
+      "frequency": "1/4"
+     }
+    ],
+    "Ear": [
+     {
+      "id": "HP:0000365",
+      "name": "Hearing impairment",
+      "frequency": "0/4"
+     }
+    ],
+    "Inheritance": [
+     {
+      "id": "HP:0000007",
+      "name": "Autosomal recessive inheritance",
+      "frequency": ""
+     }
+    ],
+    "Digestive System": [
+     {
+      "id": "HP:0000952",
+      "name": "Jaundice",
+      "frequency": "7/7"
+     },
+     {
+      "id": "HP:0001394",
+      "name": "Cirrhosis",
+      "frequency": "3/4"
+     },
+     {
+      "id": "HP:0001399",
+      "name": "Hepatic failure",
+      "frequency": "4/4"
+     },
+     {
+      "id": "HP:0001541",
+      "name": "Ascites",
+      "frequency": "1/7"
+     },
+     {
+      "id": "HP:0034294",
+      "name": "Ductal bile plugs",
+      "frequency": "4/7"
+     },
+     {
+      "id": "HP:0030991",
+      "name": "Sclerosing cholangitis",
+      "frequency": "4/4"
+     },
+     {
+      "id": "HP:0030991",
+      "name": "Sclerosing cholangitis",
+      "frequency": "7/7"
+     },
+     {
+      "id": "HP:0001408",
+      "name": "Bile duct proliferation",
+      "frequency": "6/11"
+     },
+     {
+      "id": "HP:0006580",
+      "name": "Portal fibrosis",
+      "frequency": "4/4"
+     },
+     {
+      "id": "HP:0001396",
+      "name": "Cholestasis",
+      "frequency": "4/4"
+     },
+     {
+      "id": "HP:0002240",
+      "name": "Hepatomegaly",
+      "frequency": "1/7"
+     },
+     {
+      "id": "HP:0012852",
+      "name": "Hepatic bridging fibrosis",
+      "frequency": "4/7"
+     },
+     {
+      "id": "HP:0002613",
+      "name": "Biliary cirrhosis",
+      "frequency": ""
+     }
+    ],
+    "Skin, Hair, and Nails": [
+     {
+      "id": "HP:0000989",
+      "name": "Pruritus",
+      "frequency": "5/7"
+     }
+    ]
+   }
+  },
+  "ORPHA:33574": {
+   "status": 200,
+   "disease": {
+    "id": "ORPHA:33574",
+    "name": "Glutamate-cysteine ligase deficiency"
+   },
+   "genes": [
+    {
+     "id": "NCBIGene:2729",
+     "name": "GCLC"
+    }
+   ],
+   "categories": {
+    "Metabolism/Laboratory abnormality": [
+     {
+      "id": "HP:0003355",
+      "name": "Aminoaciduria",
+      "frequency": "Very frequent"
+     }
+    ],
+    "Nervous System": [
+     {
+      "id": "HP:0001260",
+      "name": "Dysarthria",
+      "frequency": "Occasional"
+     },
+     {
+      "id": "HP:0002503",
+      "name": "Spinocerebellar tract degeneration",
+      "frequency": "Very frequent"
+     },
+     {
+      "id": "HP:0009830",
+      "name": "Peripheral neuropathy",
+      "frequency": "Very frequent"
+     },
+     {
+      "id": "HP:0001251",
+      "name": "Ataxia",
+      "frequency": "Occasional"
+     },
+     {
+      "id": "HP:0001263",
+      "name": "Global developmental delay",
+      "frequency": "Occasional"
+     },
+     {
+      "id": "HP:0010522",
+      "name": "Dyslexia",
+      "frequency": "Occasional"
+     },
+     {
+      "id": "HP:0000709",
+      "name": "Psychosis",
+      "frequency": "Occasional"
+     },
+     {
+      "id": "HP:0001347",
+      "name": "Hyperreflexia",
+      "frequency": "Occasional"
+     },
+     {
+      "id": "HP:0001249",
+      "name": "Intellectual disability",
+      "frequency": "Occasional"
+     }
+    ],
+    "Cardiovascular": [
+     {
+      "id": "HP:0001433",
+      "name": "Hepatosplenomegaly",
+      "frequency": "Occasional"
+     }
+    ],
+    "Musculature": [
+     {
+      "id": "HP:0003198",
+      "name": "Myopathy",
+      "frequency": "Very frequent"
+     }
+    ],
+    "Digestive System": [
+     {
+      "id": "HP:0000952",
+      "name": "Jaundice",
+      "frequency": "Occasional"
+     }
+    ],
+    "Blood and blood-forming tissues": [
+     {
+      "id": "HP:0001923",
+      "name": "Reticulocytosis",
+      "frequency": "Occasional"
+     },
+     {
+      "id": "HP:0001878",
+      "name": "Hemolytic anemia",
+      "frequency": "Obligate"
+     }
+    ]
+   }
+  },
+  "OMIM:230450": {
+   "status": 200,
+   "disease": {
+    "id": "OMIM:230450",
+    "name": "Anemia, congenital, nonspherocytic hemolytic, 7"
+   },
+   "genes": [
+    {
+     "id": "NCBIGene:2729",
+     "name": "GCLC"
+    }
+   ],
+   "categories": {
+    "Metabolism/Laboratory abnormality": [
+     {
+      "id": "HP:6000834",
+      "name": "Elevated urinary gamma-glutamylcysteine level",
+      "frequency": ""
+     },
+     {
+      "id": "HP:0025435",
+      "name": "Increased circulating lactate dehydrogenase concentration",
+      "frequency": "1/1"
+     }
+    ],
+    "Nervous System": [
+     {
+      "id": "HP:0001271",
+      "name": "Polyneuropathy",
+      "frequency": "0/1"
+     },
+     {
+      "id": "HP:0006904",
+      "name": "Late-onset spinocerebellar degeneration",
+      "frequency": ""
+     }
+    ],
+    "Inheritance": [
+     {
+      "id": "HP:0000007",
+      "name": "Autosomal recessive inheritance",
+      "frequency": "1/1"
+     }
+    ],
+    "Musculature": [
+     {
+      "id": "HP:0003198",
+      "name": "Myopathy",
+      "frequency": "0/1"
+     }
+    ],
+    "Blood and blood-forming tissues": [
+     {
+      "id": "HP:0001878",
+      "name": "Hemolytic anemia",
+      "frequency": "1/1"
+     },
+     {
+      "id": "HP:0001923",
+      "name": "Reticulocytosis",
+      "frequency": "1/1"
+     },
+     {
+      "id": "HP:6000132",
+      "name": "Reduced erythrocyte gamma-glutamyl cysteine synthetase activity",
+      "frequency": "3/3"
+     }
+    ]
+   }
+  }
+ }
+}

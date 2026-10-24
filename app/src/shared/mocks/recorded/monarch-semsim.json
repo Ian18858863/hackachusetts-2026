@@ -1,0 +1,492 @@
+{
+ "_meta": {
+  "request": "GET https://api.monarchinitiative.org/v3/api/semsim/search/HP:0006579,HP:0007017,HP:0031987,HP:0001260,HP:0002527,HP:0001268,HP:0001251,HP:0031833,HP:0002240,HP:0001744,HP:0003651,HP:0003349/Human%20Diseases?limit=5",
+  "fetchedAt": "2026-10-24T17:42:07Z",
+  "trimmed": "Only subject id/name/OMIM+Orphanet xrefs, score and object_best_matches (source, target, subsumer) are kept."
+ },
+ "results": [
+  {
+   "subject": {
+    "id": "MONDO:0009757",
+    "name": "Niemann-Pick disease, type C1",
+    "xref": [
+     "OMIM:257220"
+    ]
+   },
+   "score": 13.768556970635796,
+   "object_best_matches": {
+    "HP:0006579": {
+     "match_source": "HP:0006579",
+     "match_target": "HP:0006579",
+     "match_target_label": "Prolonged neonatal jaundice",
+     "match_subsumer": "HP:0006579",
+     "match_subsumer_label": "Prolonged neonatal jaundice"
+    },
+    "HP:0007017": {
+     "match_source": "HP:0007017",
+     "match_target": "HP:0000726",
+     "match_target_label": "Dementia",
+     "match_subsumer": "HP:0100543",
+     "match_subsumer_label": "Cognitive impairment"
+    },
+    "HP:0031987": {
+     "match_source": "HP:0031987",
+     "match_target": "HP:0000726",
+     "match_target_label": "Dementia",
+     "match_subsumer": "HP:0100543",
+     "match_subsumer_label": "Cognitive impairment"
+    },
+    "HP:0001260": {
+     "match_source": "HP:0001260",
+     "match_target": "HP:0001260",
+     "match_target_label": "Dysarthria",
+     "match_subsumer": "HP:0001260",
+     "match_subsumer_label": "Dysarthria"
+    },
+    "HP:0002527": {
+     "match_source": "HP:0002527",
+     "match_target": "HP:0002066",
+     "match_target_label": "Gait ataxia",
+     "match_subsumer": "HP:0001288",
+     "match_subsumer_label": "Gait disturbance"
+    },
+    "HP:0001268": {
+     "match_source": "HP:0001268",
+     "match_target": "HP:0000726",
+     "match_target_label": "Dementia",
+     "match_subsumer": "HP:0001268",
+     "match_subsumer_label": "Mental deterioration"
+    },
+    "HP:0001251": {
+     "match_source": "HP:0001251",
+     "match_target": "HP:0001251",
+     "match_target_label": "Ataxia",
+     "match_subsumer": "HP:0001251",
+     "match_subsumer_label": "Ataxia"
+    },
+    "HP:0031833": {
+     "match_source": "HP:0031833",
+     "match_target": "HP:0000511",
+     "match_target_label": "Vertical supranuclear gaze palsy",
+     "match_subsumer": "HP:0000496",
+     "match_subsumer_label": "Abnormality of eye movement"
+    },
+    "HP:0002240": {
+     "match_source": "HP:0002240",
+     "match_target": "HP:0002240",
+     "match_target_label": "Hepatomegaly",
+     "match_subsumer": "HP:0002240",
+     "match_subsumer_label": "Hepatomegaly"
+    },
+    "HP:0001744": {
+     "match_source": "HP:0001744",
+     "match_target": "HP:0001744",
+     "match_target_label": "Splenomegaly",
+     "match_subsumer": "HP:0001744",
+     "match_subsumer_label": "Splenomegaly"
+    },
+    "HP:0003651": {
+     "match_source": "HP:0003651",
+     "match_target": "HP:0003640",
+     "match_target_label": "CNS foam cells",
+     "match_subsumer": "HP:0003651",
+     "match_subsumer_label": "Foam cells"
+    },
+    "HP:0003349": {
+     "match_source": "HP:0003349",
+     "match_target": "HP:0003349",
+     "match_target_label": "Low cholesterol esterification rate",
+     "match_subsumer": "HP:0003349",
+     "match_subsumer_label": "Low cholesterol esterification rate"
+    }
+   }
+  },
+  {
+   "subject": {
+    "id": "MONDO:0009445",
+    "name": "ichthyosis-hepatosplenomegaly-cerebellar degeneration syndrome",
+    "xref": [
+     "OMIM:242520",
+     "Orphanet:2274"
+    ]
+   },
+   "score": 13.60032992185091,
+   "object_best_matches": {
+    "HP:0006579": {
+     "match_source": "HP:0006579",
+     "match_target": "HP:0001433",
+     "match_target_label": "Hepatosplenomegaly",
+     "match_subsumer": "HP:0001392",
+     "match_subsumer_label": "Abnormality of the liver"
+    },
+    "HP:0007017": {
+     "match_source": "HP:0007017",
+     "match_target": "HP:0000726",
+     "match_target_label": "Dementia",
+     "match_subsumer": "HP:0100543",
+     "match_subsumer_label": "Cognitive impairment"
+    },
+    "HP:0031987": {
+     "match_source": "HP:0031987",
+     "match_target": "HP:0000726",
+     "match_target_label": "Dementia",
+     "match_subsumer": "HP:0100543",
+     "match_subsumer_label": "Cognitive impairment"
+    },
+    "HP:0001260": {
+     "match_source": "HP:0001260",
+     "match_target": "HP:0001260",
+     "match_target_label": "Dysarthria",
+     "match_subsumer": "HP:0001260",
+     "match_subsumer_label": "Dysarthria"
+    },
+    "HP:0002527": {
+     "match_source": "HP:0002527",
+     "match_target": "HP:0001288",
+     "match_target_label": "Gait disturbance",
+     "match_subsumer": "HP:0001288",
+     "match_subsumer_label": "Gait disturbance"
+    },
+    "HP:0001268": {
+     "match_source": "HP:0001268",
+     "match_target": "HP:0000726",
+     "match_target_label": "Dementia",
+     "match_subsumer": "HP:0001268",
+     "match_subsumer_label": "Mental deterioration"
+    },
+    "HP:0001251": {
+     "match_source": "HP:0001251",
+     "match_target": "HP:0001251",
+     "match_target_label": "Ataxia",
+     "match_subsumer": "HP:0001251",
+     "match_subsumer_label": "Ataxia"
+    },
+    "HP:0031833": {
+     "match_source": "HP:0031833",
+     "match_target": "HP:0001251",
+     "match_target_label": "Ataxia",
+     "match_subsumer": "UPHENO:0079826",
+     "match_subsumer_label": "behavior process phenotype"
+    },
+    "HP:0002240": {
+     "match_source": "HP:0002240",
+     "match_target": "HP:0001433",
+     "match_target_label": "Hepatosplenomegaly",
+     "match_subsumer": "HP:0002240",
+     "match_subsumer_label": "Hepatomegaly"
+    },
+    "HP:0001744": {
+     "match_source": "HP:0001744",
+     "match_target": "HP:0001433",
+     "match_target_label": "Hepatosplenomegaly",
+     "match_subsumer": "HP:0001744",
+     "match_subsumer_label": "Splenomegaly"
+    },
+    "HP:0003651": {
+     "match_source": "HP:0003651",
+     "match_target": "HP:0001433",
+     "match_target_label": "Hepatosplenomegaly",
+     "match_subsumer": "HP:0002597",
+     "match_subsumer_label": "Abnormality of the vasculature"
+    },
+    "HP:0003349": {
+     "match_source": "HP:0003349",
+     "match_target": "HP:0000726",
+     "match_target_label": "Dementia",
+     "match_subsumer": "HP:0000118",
+     "match_subsumer_label": "Phenotypic abnormality"
+    }
+   }
+  },
+  {
+   "subject": {
+    "id": "MONDO:0011873",
+    "name": "Niemann-Pick disease, type C2",
+    "xref": [
+     "OMIM:607625"
+    ]
+   },
+   "score": 13.513454282927396,
+   "object_best_matches": {
+    "HP:0006579": {
+     "match_source": "HP:0006579",
+     "match_target": "HP:0006579",
+     "match_target_label": "Prolonged neonatal jaundice",
+     "match_subsumer": "HP:0006579",
+     "match_subsumer_label": "Prolonged neonatal jaundice"
+    },
+    "HP:0007017": {
+     "match_source": "HP:0007017",
+     "match_target": "HP:0000726",
+     "match_target_label": "Dementia",
+     "match_subsumer": "HP:0100543",
+     "match_subsumer_label": "Cognitive impairment"
+    },
+    "HP:0031987": {
+     "match_source": "HP:0031987",
+     "match_target": "HP:0030223",
+     "match_target_label": "Perseverative thought",
+     "match_subsumer": "HP:0025769",
+     "match_subsumer_label": "Disordered formal thought process"
+    },
+    "HP:0001260": {
+     "match_source": "HP:0001260",
+     "match_target": "HP:0001260",
+     "match_target_label": "Dysarthria",
+     "match_subsumer": "HP:0001260",
+     "match_subsumer_label": "Dysarthria"
+    },
+    "HP:0002527": {
+     "match_source": "HP:0002527",
+     "match_target": "HP:0001332",
+     "match_target_label": "Dystonia",
+     "match_subsumer": "HP:0100022",
+     "match_subsumer_label": "Abnormality of movement"
+    },
+    "HP:0001268": {
+     "match_source": "HP:0001268",
+     "match_target": "HP:0000726",
+     "match_target_label": "Dementia",
+     "match_subsumer": "HP:0001268",
+     "match_subsumer_label": "Mental deterioration"
+    },
+    "HP:0001251": {
+     "match_source": "HP:0001251",
+     "match_target": "HP:0001251",
+     "match_target_label": "Ataxia",
+     "match_subsumer": "HP:0001251",
+     "match_subsumer_label": "Ataxia"
+    },
+    "HP:0031833": {
+     "match_source": "HP:0031833",
+     "match_target": "HP:0000511",
+     "match_target_label": "Vertical supranuclear gaze palsy",
+     "match_subsumer": "HP:0000496",
+     "match_subsumer_label": "Abnormality of eye movement"
+    },
+    "HP:0002240": {
+     "match_source": "HP:0002240",
+     "match_target": "HP:0002240",
+     "match_target_label": "Hepatomegaly",
+     "match_subsumer": "HP:0002240",
+     "match_subsumer_label": "Hepatomegaly"
+    },
+    "HP:0001744": {
+     "match_source": "HP:0001744",
+     "match_target": "HP:0001744",
+     "match_target_label": "Splenomegaly",
+     "match_subsumer": "HP:0001744",
+     "match_subsumer_label": "Splenomegaly"
+    },
+    "HP:0003651": {
+     "match_source": "HP:0003651",
+     "match_target": "HP:0003640",
+     "match_target_label": "CNS foam cells",
+     "match_subsumer": "HP:0003651",
+     "match_subsumer_label": "Foam cells"
+    },
+    "HP:0003349": {
+     "match_source": "HP:0003349",
+     "match_target": "HP:0003349",
+     "match_target_label": "Low cholesterol esterification rate",
+     "match_subsumer": "HP:0003349",
+     "match_subsumer_label": "Low cholesterol esterification rate"
+    }
+   }
+  },
+  {
+   "subject": {
+    "id": "MONDO:0018816",
+    "name": "isolated neonatal sclerosing cholangitis",
+    "xref": [
+     "OMIM:617394",
+     "Orphanet:480556"
+    ]
+   },
+   "score": 12.105663557182053,
+   "object_best_matches": {
+    "HP:0006579": {
+     "match_source": "HP:0006579",
+     "match_target": "HP:0000952",
+     "match_target_label": "Jaundice",
+     "match_subsumer": "HP:0000952",
+     "match_subsumer_label": "Jaundice"
+    },
+    "HP:0007017": {
+     "match_source": "HP:0007017",
+     "match_target": "HP:0001256",
+     "match_target_label": "Mild intellectual disability",
+     "match_subsumer": "HP:0011446",
+     "match_subsumer_label": "Abnormality of mental function"
+    },
+    "HP:0031987": {
+     "match_source": "HP:0031987",
+     "match_target": "HP:0001256",
+     "match_target_label": "Mild intellectual disability",
+     "match_subsumer": "HP:0011446",
+     "match_subsumer_label": "Abnormality of mental function"
+    },
+    "HP:0001260": {
+     "match_source": "HP:0001260",
+     "match_target": "HP:0001256",
+     "match_target_label": "Mild intellectual disability",
+     "match_subsumer": "HP:0011446",
+     "match_subsumer_label": "Abnormality of mental function"
+    },
+    "HP:0002527": {
+     "match_source": "HP:0002527",
+     "match_target": "HP:0000365",
+     "match_target_label": "Hearing impairment",
+     "match_subsumer": "UPHENO:0049699",
+     "match_subsumer_label": "nervous system process phenotype"
+    },
+    "HP:0001268": {
+     "match_source": "HP:0001268",
+     "match_target": "HP:0001256",
+     "match_target_label": "Mild intellectual disability",
+     "match_subsumer": "HP:0011446",
+     "match_subsumer_label": "Abnormality of mental function"
+    },
+    "HP:0001251": {
+     "match_source": "HP:0001251",
+     "match_target": "HP:0000365",
+     "match_target_label": "Hearing impairment",
+     "match_subsumer": "UPHENO:0005596",
+     "match_subsumer_label": "decreased multicellular organismal process"
+    },
+    "HP:0031833": {
+     "match_source": "HP:0031833",
+     "match_target": "HP:0000365",
+     "match_target_label": "Hearing impairment",
+     "match_subsumer": "UPHENO:0002211",
+     "match_subsumer_label": "sense organ physiology phenotype"
+    },
+    "HP:0002240": {
+     "match_source": "HP:0002240",
+     "match_target": "HP:0002240",
+     "match_target_label": "Hepatomegaly",
+     "match_subsumer": "HP:0002240",
+     "match_subsumer_label": "Hepatomegaly"
+    },
+    "HP:0001744": {
+     "match_source": "HP:0001744",
+     "match_target": "HP:0001744",
+     "match_target_label": "Splenomegaly",
+     "match_subsumer": "HP:0001744",
+     "match_subsumer_label": "Splenomegaly"
+    },
+    "HP:0003651": {
+     "match_source": "HP:0003651",
+     "match_target": "HP:0001409",
+     "match_target_label": "Portal hypertension",
+     "match_subsumer": "HP:0002597",
+     "match_subsumer_label": "Abnormality of the vasculature"
+    },
+    "HP:0003349": {
+     "match_source": "HP:0003349",
+     "match_target": "HP:0030948",
+     "match_target_label": "Elevated gamma-glutamyltransferase level",
+     "match_subsumer": "HP:0012379",
+     "match_subsumer_label": "Abnormal circulating enzyme concentration or activity"
+    }
+   }
+  },
+  {
+   "subject": {
+    "id": "MONDO:0009259",
+    "name": "gamma-glutamylcysteine synthetase deficiency",
+    "xref": [
+     "OMIM:230450",
+     "Orphanet:33574"
+    ]
+   },
+   "score": 11.585167464171132,
+   "object_best_matches": {
+    "HP:0006579": {
+     "match_source": "HP:0006579",
+     "match_target": "HP:0000952",
+     "match_target_label": "Jaundice",
+     "match_subsumer": "HP:0000952",
+     "match_subsumer_label": "Jaundice"
+    },
+    "HP:0007017": {
+     "match_source": "HP:0007017",
+     "match_target": "HP:0000709",
+     "match_target_label": "Psychosis",
+     "match_subsumer": "HP:0011446",
+     "match_subsumer_label": "Abnormality of mental function"
+    },
+    "HP:0031987": {
+     "match_source": "HP:0031987",
+     "match_target": "HP:0001260",
+     "match_target_label": "Dysarthria",
+     "match_subsumer": "HP:0025792",
+     "match_subsumer_label": "Abnormal cognitive process"
+    },
+    "HP:0001260": {
+     "match_source": "HP:0001260",
+     "match_target": "HP:0001260",
+     "match_target_label": "Dysarthria",
+     "match_subsumer": "HP:0001260",
+     "match_subsumer_label": "Dysarthria"
+    },
+    "HP:0002527": {
+     "match_source": "HP:0002527",
+     "match_target": "HP:0001347",
+     "match_target_label": "Hyperreflexia",
+     "match_subsumer": "HP:0100022",
+     "match_subsumer_label": "Abnormality of movement"
+    },
+    "HP:0001268": {
+     "match_source": "HP:0001268",
+     "match_target": "HP:0000709",
+     "match_target_label": "Psychosis",
+     "match_subsumer": "HP:0011446",
+     "match_subsumer_label": "Abnormality of mental function"
+    },
+    "HP:0001251": {
+     "match_source": "HP:0001251",
+     "match_target": "HP:0001251",
+     "match_target_label": "Ataxia",
+     "match_subsumer": "HP:0001251",
+     "match_subsumer_label": "Ataxia"
+    },
+    "HP:0031833": {
+     "match_source": "HP:0031833",
+     "match_target": "HP:0001251",
+     "match_target_label": "Ataxia",
+     "match_subsumer": "UPHENO:0079826",
+     "match_subsumer_label": "behavior process phenotype"
+    },
+    "HP:0002240": {
+     "match_source": "HP:0002240",
+     "match_target": "HP:0001433",
+     "match_target_label": "Hepatosplenomegaly",
+     "match_subsumer": "HP:0002240",
+     "match_subsumer_label": "Hepatomegaly"
+    },
+    "HP:0001744": {
+     "match_source": "HP:0001744",
+     "match_target": "HP:0001433",
+     "match_target_label": "Hepatosplenomegaly",
+     "match_subsumer": "HP:0001744",
+     "match_subsumer_label": "Splenomegaly"
+    },
+    "HP:0003651": {
+     "match_source": "HP:0003651",
+     "match_target": "HP:0001923",
+     "match_target_label": "Reticulocytosis",
+     "match_subsumer": "UPHENO:0079539",
+     "match_subsumer_label": "increased number of cell"
+    },
+    "HP:0003349": {
+     "match_source": "HP:0003349",
+     "match_target": "HP:0025435",
+     "match_target_label": "Increased circulating lactate dehydrogenase concentration",
+     "match_subsumer": "HP:0012379",
+     "match_subsumer_label": "Abnormal circulating enzyme concentration or activity"
+    }
+   }
+  }
+ ]
+}

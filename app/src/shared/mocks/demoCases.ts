@@ -1,5 +1,5 @@
 /**
- * The four bundled demo cases, verbatim from docs/CONTRACT.md section 9
+ * The five bundled demo cases, verbatim from docs/CONTRACT.md section 9
  * (narratives, sources and prepared extractions). Not real patients.
  *
  * The app needs these locally to offer the demo picker and to send the exact
@@ -29,8 +29,31 @@ function demo(c: Omit<DemoCase, 'label' | 'recordedAt'>): DemoCase {
   return { ...c, label: demoCaseLabel(c.sourcePhenopacketId), recordedAt: RECORDED_AT };
 }
 
-/** Picker order (contract section 9): demo-dmd first. */
+/** Picker order (contract section 9): demo-npc1 first, then demo-dmd. */
 export const DEMO_CASES: readonly DemoCase[] = [
+  demo({
+    caseId: 'demo-npc1',
+    title: 'A 54-year-old with worsening memory and unsteady walking',
+    sourcePhenopacketId: 'PMID_27900365_patient',
+    expectedDiagnosis: { id: 'OMIM:257220', label: 'Niemann-Pick disease, type C1' },
+    narrative:
+      'I am a 54-year-old man. My mother says I stayed yellow for a long time as a newborn. Since I was 18 I have become more and more forgetful, I find it hard to concentrate, my speech is slurred, and I fall a lot. In middle age my thinking slowly got worse and my walking became unsteady and clumsy. A doctor noticed that when I flick my eyes upward they stop short. A scan found a large liver and a large spleen. A tissue sample showed cells swollen with fat, and a lab test found my cells are slow to process cholesterol. I do not get headaches.',
+    extraction: [
+      term('HP:0006579', 'Prolonged neonatal jaundice', 'stayed yellow for a long time as a newborn', 41, 83),
+      term('HP:0007017', 'Progressive forgetfulness', 'more and more forgetful', 114, 137),
+      term('HP:0031987', 'Diminished ability to concentrate', 'hard to concentrate', 149, 168),
+      term('HP:0001260', 'Dysarthria', 'my speech is slurred', 170, 190),
+      term('HP:0002527', 'Falls', 'I fall a lot', 196, 208),
+      term('HP:0001268', 'Mental deterioration', 'my thinking slowly got worse', 224, 252),
+      term('HP:0001251', 'Ataxia', 'my walking became unsteady and clumsy', 257, 294),
+      term('HP:0031833', 'Hypometric upward saccades', 'when I flick my eyes upward they stop short', 318, 361),
+      term('HP:0002240', 'Hepatomegaly', 'a large liver', 376, 389),
+      term('HP:0001744', 'Splenomegaly', 'a large spleen', 394, 408),
+      term('HP:0003651', 'Foam cells', 'cells swollen with fat', 433, 455),
+      term('HP:0003349', 'Low cholesterol esterification rate', 'my cells are slow to process cholesterol', 478, 518),
+      term('HP:0002315', 'Headache', 'I do not get headaches', 520, 542, true),
+    ],
+  }),
   demo({
     caseId: 'demo-dmd',
     title: 'A 4-year-old who struggles with stairs',
@@ -124,7 +147,7 @@ export const DEMO_CASES: readonly DemoCase[] = [
   }),
 ];
 
-export const PRIMARY_DEMO_CASE_ID = 'demo-dmd';
+export const PRIMARY_DEMO_CASE_ID = 'demo-npc1';
 
 export function findDemoCase(caseId: string | null | undefined): DemoCase | undefined {
   return caseId ? DEMO_CASES.find((c) => c.caseId === caseId) : undefined;

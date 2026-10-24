@@ -4,6 +4,7 @@ export {
   MOCK_RECORDED_AT,
   MOCK_RECORDED_DATE,
   MockContractError,
+  NPC1_REORDERED_NOTE,
   mockBrief,
   mockExtract,
   mockNextQuestions,

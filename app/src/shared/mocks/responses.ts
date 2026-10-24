@@ -18,10 +18,22 @@
  *   annotate are not invented: they appear as unmatched.
  * - Scores and therefore the order are ILLUSTRATIVE; nothing here came from
  *   Monarch, so no mock candidate lists "monarch-semsim" in its sources.
+ *   Exception: demo-npc1 (the primary case) uses recordedNpc1.ts, where the
+ *   five candidates, their order, raw scores and matches were recorded from a
+ *   real Monarch semsim call and every frequency from real JAX annotation
+ *   calls on 2026-10-24 (raw JSON in mocks/recorded/). The recorded order
+ *   and raw scores are used only when observed and excluded equal the
+ *   prepared set (12 observed, Headache excluded). For any other set the
+ *   evidence is recomputed, candidates are ordered by overlap label, then
+ *   matched count, then fewer contradictions, then diseaseId, score is 0
+ *   and dataVersions.monarch is NPC1_REORDERED_NOTE, so no raw service
+ *   score is claimed for terms Monarch never ranked.
  * - Comparison candidates are placeholders named "Mock comparison condition",
  *   with MOCK: ids, no genes and no frequencies (frequency null), so no
  *   disease fact is invented.
- * - Trials: the mock returns no studies; no trial id is invented.
+ * - Trials: the mock returns no studies, except for Niemann-Pick disease
+ *   type C, where the recruiting studies recorded from ClinicalTrials.gov on
+ *   2026-10-24 are returned. No trial id is invented.
  * - dataVersions.demoCache holds the recording date, as the contract asks;
  *   the response-level source stays "demo" (the contract has no "mock"
  *   value) and the app shows OFFLINE_MOCK_LABEL, which outranks the
@@ -57,7 +69,16 @@ import {
   type TrialsResponse,
 } from '../contract';
 import { ATTRIBUTION, DISCLAIMER, hpoAttribution } from '../text';
-import { DEMO_CASES, findDemoCase, verifyDemoCase } from './demoCases';
+import { DEMO_CASES, verifyDemoCase } from './demoCases';
+import {
+  NPC1_RECORDED_AT,
+  NPC1_RECORDED_CANDIDATES,
+  NPC1_RECORDED_TRIALS,
+  NPC1_TRIALS_QUERY,
+  NPC1_TRIALS_RECORDED_AT,
+  NPC1_TRIALS_TOTAL,
+  type RecordedCandidate,
+} from './recordedNpc1';
 
 export const MOCK_RECORDED_AT = '2026-10-24T16:05:00.000Z';
 export const MOCK_HPO_VERSION = 'unknown (offline mock)';
@@ -322,11 +343,32 @@ function profileFor(diseaseId: string): MockProfile | undefined {
   return PROFILES.find((p) => p.disease.diseaseId === diseaseId);
 }
 
+function recordedFor(diseaseId: string): RecordedCandidate | undefined {
+  return NPC1_RECORDED_CANDIDATES.find((c) => c.diseaseId === diseaseId);
+}
+
+/** Recorded annotation rows of a disease (profile or recorded Monarch candidate). */
+function annotationsFor(diseaseId: string): MockFeature[] {
+  return profileFor(diseaseId)?.annotations ?? recordedFor(diseaseId)?.annotations ?? [];
+}
+
+/** Annotation id a gene came from, when the mocks know it. */
+function geneSourceFor(diseaseId: string, geneId: string): string | undefined {
+  return (profileFor(diseaseId)?.disease ?? recordedFor(diseaseId))?.geneSources[geneId];
+}
+
 /** All verified terms the mocks know, for /api/terms and label lookups. */
 const KNOWN_TERMS: Map<HpoId, TermRef> = (() => {
   const map = new Map<HpoId, TermRef>();
   for (const c of DEMO_CASES) for (const t of c.extraction) map.set(t.hpoId, { id: t.hpoId, label: t.label });
   for (const p of PROFILES) for (const f of p.annotations) map.set(f.term.id, f.term);
+  for (const c of NPC1_RECORDED_CANDIDATES) {
+    for (const f of c.annotations) map.set(f.term.id, f.term);
+    for (const m of Object.values(c.matches)) {
+      map.set(m.target.id, m.target);
+      if (m.subsumer.id.startsWith('HP:')) map.set(m.subsumer.id, m.subsumer);
+    }
+  }
   return map;
 })();
 
@@ -334,12 +376,15 @@ function termRef(id: HpoId): TermRef {
   return KNOWN_TERMS.get(id) ?? { id, label: id };
 }
 
-/** The demo case whose prepared terms overlap the request most (ties: picker order). */
-function closestDemoCase(observed: readonly HpoId[]): { demo: DemoCase; profile: MockProfile } | null {
-  let best: { demo: DemoCase; profile: MockProfile; hits: number } | null = null;
-  for (const profile of PROFILES) {
-    const demo = findDemoCase(profile.caseId);
-    if (!demo) continue;
+/**
+ * The demo case whose prepared terms overlap the request most (ties: picker
+ * order). profile is undefined for demo-npc1, which uses recorded data.
+ */
+function closestDemoCase(observed: readonly HpoId[]): { demo: DemoCase; profile?: MockProfile } | null {
+  let best: { demo: DemoCase; profile?: MockProfile; hits: number } | null = null;
+  for (const demo of DEMO_CASES) {
+    const profile = PROFILES.find((p) => p.caseId === demo.caseId);
+    if (!profile && demo.caseId !== 'demo-npc1') continue;
     const ids = new Set(demo.extraction.filter((t) => !t.negated).map((t) => t.hpoId));
     const hits = observed.filter((id) => ids.has(id)).length;
     if (hits > 0 && (!best || hits > best.hits)) best = { demo, profile, hits };
@@ -460,6 +505,80 @@ function placeholderDisease(index: number, caseKey: string): MockDisease {
   };
 }
 
+const OVERLAP_ORDER: OverlapLabel[] = ['weak', 'partial', 'strong'];
+
+/**
+ * Shown as dataVersions.monarch when demo-npc1's terms were edited: the
+ * matches are recorded Monarch data, but Monarch never ranked this term set.
+ * The UI must not show a "raw service score" for these candidates.
+ */
+export const NPC1_REORDERED_NOTE =
+  'v3 API, recorded matches only: the terms differ from the recorded demo set, so the order follows the matched features and there is no raw service score';
+
+/** The prepared demo-npc1 term set the Monarch call was recorded for (contract 9.1). */
+function isNpc1RecordedSet(observed: readonly HpoId[], excluded: readonly HpoId[]): boolean {
+  const demo = DEMO_CASES.find((c) => c.caseId === 'demo-npc1');
+  if (!demo) return false;
+  const same = (a: readonly string[], b: readonly string[]) => a.length === b.length && a.every((x, i) => x === b[i]);
+  const recObserved = sortedUnique(demo.extraction.filter((t) => !t.negated).map((t) => t.hpoId));
+  const recExcluded = sortedUnique(demo.extraction.filter((t) => t.negated).map((t) => t.hpoId));
+  return same(observed, recObserved) && same(excluded, recExcluded);
+}
+
+/**
+ * A candidate from the recorded Monarch call (demo-npc1). Evidence follows
+ * contract 7.4 steps 5-8 over the recorded matches and annotations.
+ */
+function recordedCandidate(rc: RecordedCandidate, observed: HpoId[], excluded: HpoId[]): Omit<Candidate, 'rank'> {
+  const featureById = new Map(rc.annotations.map((f) => [f.term.id, f]));
+  const matched: Evidence[] = [];
+  const unmatched: TermRef[] = [];
+  for (const id of observed) {
+    const m = rc.matches[id];
+    if (!m || !m.qualifies) {
+      unmatched.push(termRef(id));
+      continue;
+    }
+    const exact = m.target.id === id;
+    matched.push({
+      patientTerm: termRef(id),
+      diseaseTerm: m.target,
+      via: exact ? 'exact' : 'ancestor',
+      ...(exact ? {} : { ancestor: m.subsumer }),
+      frequency: featureById.get(m.target.id)?.frequency ?? null,
+    });
+  }
+  const matchedTargets = new Set(matched.map((e) => e.diseaseTerm.id));
+  const byBandThenId = (a: DiseaseFeature, b: DiseaseFeature) =>
+    BAND_ORDER.indexOf(a.frequency.label as Band) - BAND_ORDER.indexOf(b.frequency.label as Band) ||
+    a.term.id.localeCompare(b.term.id);
+  const usual = rc.annotations.filter(isUsual);
+  const contradicted: DiseaseFeature[] = usual
+    .filter((f) => excluded.includes(f.term.id))
+    .map((f) => ({ term: f.term, frequency: f.frequency }));
+  const notReported: DiseaseFeature[] = usual
+    .filter((f) => !matchedTargets.has(f.term.id) && !observed.includes(f.term.id) && !excluded.includes(f.term.id))
+    .map((f) => ({ term: f.term, frequency: f.frequency }))
+    .sort(byBandThenId)
+    .slice(0, 8);
+
+  return {
+    diseaseId: rc.diseaseId,
+    mondoId: rc.mondoId,
+    name: rc.name,
+    overlap: overlapLabel(matched.length, observed.length, contradicted.length),
+    score: rc.score,
+    matched,
+    unmatched,
+    notReported,
+    contradicted,
+    categories: rc.categories,
+    genes: rc.genes,
+    links: rc.links,
+    sources: rc.annotationIds.length > 0 ? ['monarch-semsim', 'hpo-annotations'] : ['monarch-semsim'],
+  };
+}
+
 export function mockRank(req: RankRequest): RankResponse {
   const observed = sortedUnique(req.observed);
   const excluded = sortedUnique(req.excluded);
@@ -467,9 +586,38 @@ export function mockRank(req: RankRequest): RankResponse {
   const match = closestDemoCase(observed);
   const caseKey = match?.demo.caseId.replace(/^demo-/, '') ?? 'manual';
 
+  if (match && !match.profile) {
+    const built = NPC1_RECORDED_CANDIDATES.map((rc) => recordedCandidate(rc, observed, excluded));
+    const exact = isNpc1RecordedSet(observed, excluded);
+    // Recorded set: Monarch order and raw scores as recorded (score desc, then diseaseId).
+    // Any other set: Monarch never scored it, so order by the recomputed
+    // evidence and carry no raw score (0, flagged in dataVersions.monarch).
+    const ordered = exact
+      ? built.sort((a, b) => b.score - a.score || a.diseaseId.localeCompare(b.diseaseId))
+      : built
+          .map((c) => ({ ...c, score: 0 }))
+          .sort(
+            (a, b) =>
+              OVERLAP_ORDER.indexOf(b.overlap) - OVERLAP_ORDER.indexOf(a.overlap) ||
+              b.matched.length - a.matched.length ||
+              a.contradicted.length - b.contradicted.length ||
+              a.diseaseId.localeCompare(b.diseaseId),
+          );
+    const candidates: Candidate[] = ordered.slice(0, limit).map((c, i) => ({ ...c, rank: i + 1 }));
+    return {
+      version: CONTRACT_VERSION,
+      source: 'demo',
+      candidates,
+      dataVersions: mockDataVersions({
+        monarch: exact ? 'v3 API' : NPC1_REORDERED_NOTE,
+        fetchedAt: NPC1_RECORDED_AT,
+      }),
+    };
+  }
+
   const all: Array<Omit<Candidate, 'rank'>> = [];
 
-  if (match) {
+  if (match?.profile) {
     // Real disease: only the annotation rows recorded from JAX (see PROFILES).
     // Score is illustrative. Sources: the frequencies really are HPO annotations;
     // nothing came from Monarch.
@@ -523,10 +671,12 @@ export function mockNextQuestions(req: NextQuestionsRequest): NextQuestionsRespo
   const excluded = new Set(req.excluded ?? []);
   const limit = Math.min(Math.max(req.limit ?? 5, 1), 8);
   const candidateIds = req.candidates;
-  const annotationsOf = (id: string) => new Map((profileFor(id)?.annotations ?? []).map((f) => [f.term.id, f]));
+  const annotationsOf = (id: string) => new Map(annotationsFor(id).map((f) => [f.term.id, f]));
   const perCandidate = candidateIds.map((id) => ({ id, rows: annotationsOf(id) }));
   const nameOf = (id: string) =>
-    profileFor(id)?.disease.name ?? (id.startsWith('MOCK:') ? `Mock comparison condition ${id.slice(-1)}` : id);
+    profileFor(id)?.disease.name ??
+    recordedFor(id)?.name ??
+    (id.startsWith('MOCK:') ? `Mock comparison condition ${id.slice(-1)}` : id);
 
   const allIds = [...new Set(perCandidate.flatMap((c) => [...c.rows.keys()]))];
   const questions: Question[] = allIds
@@ -564,7 +714,24 @@ export function mockNextQuestions(req: NextQuestionsRequest): NextQuestionsRespo
 // /api/trials
 // ---------------------------------------------------------------------------
 
+/** Conditions answered with the recorded Niemann-Pick type C studies. */
+function isNiemannPickC(condition: string): boolean {
+  return /niemann[- ]pick/i.test(condition) && /type\s*c/i.test(condition);
+}
+
 export function mockTrials(query: TrialsQuery): TrialsResponse {
+  if (isNiemannPickC(query.condition)) {
+    // query.condition is the query that was actually recorded, not the request.
+    return {
+      version: CONTRACT_VERSION,
+      source: 'demo',
+      studies: NPC1_RECORDED_TRIALS.map((t) => ({ ...t })),
+      query: { condition: NPC1_TRIALS_QUERY, ids: query.ids, status: 'RECRUITING' },
+      total: NPC1_TRIALS_TOTAL,
+      fetchedAt: NPC1_TRIALS_RECORDED_AT,
+      dataVersions: { fetchedAt: NPC1_TRIALS_RECORDED_AT, demoCache: MOCK_RECORDED_DATE },
+    };
+  }
   return {
     version: CONTRACT_VERSION,
     source: 'demo',
@@ -657,7 +824,7 @@ export function mockBrief(c: CaseObject, now: Date = new Date(MOCK_RECORDED_AT))
       // Genes whose source the mocks do not know are left out (not traceable).
       testsToAsk: top3.flatMap((cand) =>
         cand.genes.flatMap((gene) => {
-          const source = profileFor(cand.diseaseId)?.disease.geneSources[gene.id];
+          const source = geneSourceFor(cand.diseaseId, gene.id);
           if (!source) return [];
           return [
             {
