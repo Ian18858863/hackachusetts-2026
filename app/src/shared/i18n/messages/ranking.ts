@@ -105,18 +105,16 @@ export default defineMessages(
     featuresDescribed: 'Features described',
     howOftenIn: 'How often in {name}',
     freqNotListedKey:
-      'A ring means frequency not listed: the HPO annotations for this condition list the matched feature without a frequency, or do not list it.',
+      'A ring means no frequency to show: the HPO annotations list this feature without a frequency, do not list it, or could not be loaded.',
     evidenceFor: 'Evidence for {name}',
     leadHint: 'Hover, focus or tap a feature to read the sentence it came from.',
     compareSideBySide: 'Compare side by side',
 
     othersTitle: 'Also worth discussing',
     othersNone: 'The ranking returned no other possible matches for these features.',
-    othersKey:
-      'Numbers follow the features in order. A larger dot means the feature occurs more often in the condition, a ring that it matched without a listed frequency, and a dash that it did not match. The order is phenotype overlap, not a probability.',
     stripLabel: 'How often the {n} present features occur in {name}: {list}',
     stripKey:
-      'One dot per present feature, numbered as in the notes. A larger dot means the feature occurs more often in that condition.',
+      'One mark per present feature, numbered as in the notes. A filled dot means it matched, larger means more often in that condition; a small ring that it matched with no frequency to show; a dash that it did not match. The order is phenotype overlap, not a probability.',
     listSep: ', ',
     altDescribed: ' {exact} of {n} described.',
     altDescribedBroader: ' {exact} of {n} described, plus {broader} through broader terms.',
@@ -248,18 +246,16 @@ export default defineMessages(
       featuresDescribed: '已描述的特征',
       howOftenIn: '在 {name} 中的出现频率',
       freqNotListedKey:
-        '圆环表示未列出频率：此病症的 HPO 注释列出了所匹配的特征但未给出频率，或未列出该特征。',
+        '圆环表示没有可显示的频率：HPO 注释列出了此特征但未给出频率、未列出此特征，或注释未能加载。',
       evidenceFor: '{name} 的依据',
       leadHint: '将指针悬停在特征上、聚焦或轻触它，即可查看它所来自的句子。',
       compareSideBySide: '并排比较',
 
       othersTitle: '同样值得讨论',
       othersNone: '对于这些特征，排序没有返回其他可能匹配。',
-      othersKey:
-        '数字按特征顺序编号。圆点越大，表示该特征在此病症中越常见；圆环表示已匹配但未列出频率；短横表示未匹配。排序依据的是表型重合度，并非概率。',
       stripLabel: '{n} 个已出现的特征在 {name} 中的出现频率：{list}',
       stripKey:
-        '每个圆点代表一个已出现的特征，编号与症状描述中的一致。圆点越大，表示该特征在此病症中越常见。',
+        '每个标记代表一个已出现的特征，编号与症状描述中的一致。实心圆点表示已匹配，越大表示在此病症中越常见；小圆环表示已匹配但没有可显示的频率；短横表示未匹配。排序依据的是表型重合度，并非概率。',
       listSep: '、',
       altDescribed: '{n} 个中有 {exact} 个相符。',
       altDescribedBroader: '{n} 个中有 {exact} 个相符，另有 {broader} 个通过更宽泛的术语匹配。',
@@ -393,18 +389,16 @@ export default defineMessages(
       featuresDescribed: '記録された特徴',
       howOftenIn: '{name} での頻度',
       freqNotListedKey:
-        '輪は頻度の記載なしを示します。この疾患の HPO アノテーションでは、一致した特徴が頻度なしで記載されているか、記載されていません。',
+        '輪は表示できる頻度がないことを示します。HPO アノテーションにこの特徴が頻度なしで記載されている、記載されていない、または読み込めなかった場合です。',
       evidenceFor: '{name} の根拠',
       leadHint: '特徴にポインタを合わせるか、フォーカスまたはタップすると、元の文が表示されます。',
       compareSideBySide: '並べて比較',
 
       othersTitle: 'ほかに相談する価値のある候補',
       othersNone: 'これらの特徴について、ほかの一致候補は返されませんでした。',
-      othersKey:
-        '数字は特徴の順番です。点が大きいほど、その疾患でその特徴がよく見られることを示します。輪は頻度の記載なしで一致したこと、ダッシュは一致しなかったことを示します。順位は表現型の重なりであり、確率ではありません。',
       stripLabel: '「あり」の特徴 {n} 件の {name} での頻度：{list}',
       stripKey:
-        '点は「あり」の特徴 1 件ずつで、番号はメモの番号と同じです。点が大きいほど、その特徴はその疾患でよく見られます。',
+        '記号は「あり」の特徴 1 件ずつで、番号はメモの番号と同じです。塗りつぶしの点は一致したことを示し、大きいほどその疾患でよく見られます。小さな輪は一致したが表示できる頻度がないこと、短い横線は一致しなかったことを示します。順位は表現型の重なりによるもので、確率ではありません。',
       listSep: '、',
       altDescribed: '{n} 件中 {exact} 件が一致。',
       altDescribedBroader: '{n} 件中 {exact} 件が一致、ほかに {broader} 件がより広い用語で一致。',
@@ -538,18 +532,16 @@ export default defineMessages(
       featuresDescribed: 'Rasgos descritos',
       howOftenIn: 'Frecuencia en {name}',
       freqNotListedKey:
-        'Un anillo indica frecuencia no indicada: las anotaciones HPO de esta afección incluyen el rasgo coincidente sin frecuencia, o no lo incluyen.',
+        'Un anillo indica que no hay frecuencia que mostrar: las anotaciones HPO incluyen este rasgo sin frecuencia, no lo incluyen o no se pudieron cargar.',
       evidenceFor: 'Evidencia para {name}',
       leadHint: 'Pase el puntero, enfoque o toque un rasgo para leer la frase de la que procede.',
       compareSideBySide: 'Comparar lado a lado',
 
       othersTitle: 'También vale la pena comentar',
       othersNone: 'La clasificación no devolvió otras posibles coincidencias para estos rasgos.',
-      othersKey:
-        'Los números siguen el orden de los rasgos. Un punto más grande significa que el rasgo aparece con más frecuencia en la afección; un anillo, que coincidió sin una frecuencia indicada; y un guion, que no coincidió. El orden refleja el solapamiento de fenotipos, no una probabilidad.',
       stripLabel: 'Frecuencia de los rasgos presentes ({n}) en {name}: {list}',
       stripKey:
-        'Un punto por rasgo presente, numerado como en las notas. Cuanto más grande es el punto, más frecuente es el rasgo en esa afección.',
+        'Una marca por rasgo presente, numerada como en las notas. Un punto relleno indica que coincidió, y cuanto más grande, más frecuente en esa afección; un anillo pequeño, que coincidió sin frecuencia que mostrar; un guion, que no coincidió. El orden refleja la coincidencia de fenotipo, no una probabilidad.',
       listSep: ', ',
       altDescribed: ' {exact} de {n} descritos.',
       altDescribedBroader: ' {exact} de {n} descritos, más {broader} a través de términos más amplios.',
@@ -680,18 +672,16 @@ export default defineMessages(
       featuresDescribed: '기록된 특징',
       howOftenIn: '{name}에서의 빈도',
       freqNotListedKey:
-        '고리는 빈도 기재 없음을 뜻합니다. 이 질환의 HPO 주석에 일치한 특징이 빈도 없이 올라 있거나, 아예 올라 있지 않습니다.',
+        '고리는 표시할 빈도가 없다는 뜻입니다. HPO 주석에 이 특징이 빈도 없이 올라 있거나, 올라 있지 않거나, 주석을 불러오지 못했습니다.',
       evidenceFor: '{name}의 근거',
       leadHint: '특징에 포인터를 올리거나, 포커스하거나, 탭하면 원래 문장을 볼 수 있습니다.',
       compareSideBySide: '나란히 비교',
 
       othersTitle: '함께 상의해 볼 만한 후보',
       othersNone: '이 특징들에 대해 다른 가능한 일치가 반환되지 않았습니다.',
-      othersKey:
-        '숫자는 특징 순서입니다. 점이 클수록 그 질환에서 해당 특징이 더 자주 나타납니다. 고리는 빈도 기재 없이 일치했음을, 대시는 일치하지 않았음을 뜻합니다. 순서는 표현형 겹침이며 확률이 아닙니다.',
       stripLabel: '있음 특징 {n}개가 {name}에서 나타나는 빈도: {list}',
       stripKey:
-        '점 하나가 있음 특징 하나이며, 번호는 메모의 번호와 같습니다. 점이 클수록 그 특징이 그 질환에서 더 자주 나타납니다.',
+        '표시 하나가 있음 특징 하나이며, 번호는 메모의 번호와 같습니다. 채워진 점은 일치했다는 뜻이고 클수록 그 질환에서 더 자주 나타납니다. 작은 고리는 일치했지만 표시할 빈도가 없다는 뜻이고, 짧은 선은 일치하지 않았다는 뜻입니다. 순서는 표현형 겹침 기준이며 확률이 아닙니다.',
       listSep: ', ',
       altDescribed: ' {n}개 중 {exact}개 일치.',
       altDescribedBroader: ' {n}개 중 {exact}개 일치, 더 넓은 용어로 {broader}개 추가 일치.',
@@ -827,18 +817,16 @@ export default defineMessages(
       featuresDescribed: 'Caractéristiques décrites',
       howOftenIn: 'Fréquence dans {name}',
       freqNotListedKey:
-        'Un anneau signifie fréquence non indiquée : les annotations HPO de cette affection mentionnent la caractéristique correspondante sans fréquence, ou ne la mentionnent pas.',
+        'Un anneau signifie qu’aucune fréquence n’est à afficher : les annotations HPO mentionnent cette caractéristique sans fréquence, ne la mentionnent pas, ou n’ont pas pu être chargées.',
       evidenceFor: 'Éléments pour {name}',
       leadHint: 'Survolez, sélectionnez ou touchez une caractéristique pour lire la phrase dont elle provient.',
       compareSideBySide: 'Comparer côte à côte',
 
       othersTitle: 'Également à discuter',
       othersNone: 'Le classement n’a renvoyé aucune autre correspondance possible pour ces caractéristiques.',
-      othersKey:
-        'Les numéros suivent l’ordre des caractéristiques. Un point plus grand signifie que la caractéristique est plus fréquente dans l’affection, un anneau qu’elle correspond sans fréquence indiquée, et un tiret qu’elle ne correspond pas. L’ordre reflète le recoupement des phénotypes, pas une probabilité.',
       stripLabel: 'Fréquence des caractéristiques présentes ({n}) dans {name} : {list}',
       stripKey:
-        'Un point par caractéristique présente, numéroté comme dans les notes. Plus le point est grand, plus la caractéristique est fréquente dans cette affection.',
+        'Une marque par caractéristique présente, numérotée comme dans les notes. Un point plein signifie qu’elle correspond, et plus il est grand, plus elle est fréquente dans cette affection ; un petit anneau, qu’elle correspond sans fréquence à afficher ; un tiret, qu’elle ne correspond pas. L’ordre reflète le recouvrement phénotypique, pas une probabilité.',
       listSep: ', ',
       altDescribed: ' {exact} sur {n} décrites.',
       altDescribedBroader: ' {exact} sur {n} décrites, plus {broader} par des termes plus larges.',

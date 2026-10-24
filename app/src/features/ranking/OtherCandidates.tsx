@@ -75,7 +75,6 @@ export function OtherCandidates({
           ))}
         </ol>
       )}
-      <p className={styles.key}>{t('othersKey')}</p>
     </section>
   );
 }
