@@ -54,6 +54,8 @@
   /* One line (useFitHeading shrinks it); full width of the title row. */
   flex: 1 1 100%;
   min-width: 0;
+  /* Its one-line width must not size the paper (phones); the hook fits it to the paper instead. */
+  contain: inline-size;
   font-size: var(--text-2xl);
   font-weight: 500;
   line-height: var(--leading-tight);

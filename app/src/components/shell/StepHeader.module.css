@@ -22,6 +22,7 @@
   color: var(--ink);
   /* One line at every desktop width: useFitHeading shrinks it to fit. */
   white-space: nowrap;
+  contain: inline-size;
 }
 
 /* The section 13 safety line: once per result step, body size, calm. */

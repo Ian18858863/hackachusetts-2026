@@ -530,9 +530,17 @@
 .altName {
   font-family: var(--f-display);
   font-size: calc(var(--t-md) + var(--s-1) / 2);
-  font-weight: var(--weight-medium);
+  font-weight: 500; /* the one loaded display weight */
   line-height: 1.25;
-  letter-spacing: -0.005em;
+  letter-spacing: -0.01em;
+}
+
+/* Laptop widths: the side column is narrow, so long disease names step down one size (fewer lines). */
+@media (min-width: 901px) and (max-width: 1240px) {
+  .altName {
+    font-size: var(--t-base);
+    line-height: 1.3;
+  }
 }
 
 .altLine,
