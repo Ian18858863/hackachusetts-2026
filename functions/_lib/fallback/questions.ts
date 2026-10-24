@@ -12,6 +12,13 @@
 //   Occasional 0.17, Very rare 0.025, Excluded 0; listed without a frequency
 //   0.5; not listed 0).
 // Features already observed or excluded are skipped; score >= 0.35 is kept.
+// Features that are an HPO ancestor or descendant of an observed or excluded
+// term are skipped too (T18d): asking "jaundice?" after "prolonged neonatal
+// jaundice" is redundant. Ancestors come from hpoAncestors.ts (JAX, cached 7
+// days). The patient side is looked up for at most MAX_PATIENT_LOOKUPS terms,
+// in parallel with the annotations; the descendant check covers only the top
+// MAX_FEATURE_CHECKS features by score. A failed lookup only means that term
+// is not checked, so the result falls back to the behaviour without hierarchy.
 //
 // Annotation data per candidate: the same merged ORPHA + OMIM sets as the rank
 // fallback (xrefs.ts resolves the partner id). MONDO ids are never sent to JAX.
@@ -36,6 +43,7 @@ import type {
 import { fetchAnnotation, hasAnnotationId, mergeAnnotations } from "./annotations";
 import type { AnnotationSet, MergedAnnotations } from "./annotations";
 import type { FallbackDeps } from "./http";
+import { hpoAncestors } from "./hpoAncestors";
 import { cachedXrefs, monarchXrefs } from "./xrefs";
 import type { DiseaseXrefs } from "./xrefs";
 
@@ -50,6 +58,10 @@ const MIDPOINT: Readonly<Record<FrequencyLabel, number>> = {
 const LISTED_WITHOUT_FREQUENCY = 0.5;
 const NOT_LISTED = 0;
 const MIN_SCORE = 0.35;
+/** Cap on ancestor lookups for observed + excluded terms (Workers subrequest budget). */
+const MAX_PATIENT_LOOKUPS = 20;
+/** Cap on ancestor lookups for candidate features, taken in score order. */
+const MAX_FEATURE_CHECKS = 15;
 
 export interface NormalizedQuestionsRequest {
   observed: HpoId[];
@@ -154,6 +166,11 @@ export async function fallbackNextQuestions(
   deps: FallbackDeps,
 ): Promise<NextQuestionsResponse> {
   const now = deps.now ?? (() => new Date());
+  const patientTerms = [...new Set([...req.observed, ...req.excluded])];
+  // Started before the annotations are awaited so both run in parallel; never rejects.
+  const patientAncestors = Promise.all(
+    patientTerms.slice(0, MAX_PATIENT_LOOKUPS).map((id) => hpoAncestors(id, deps)),
+  );
   const data = await Promise.all(req.candidates.map((id) => loadCandidate(id, deps)));
   const fetchedAt = now().toISOString();
   const dataVersions: DataVersions = { hpo: HPO_VERSION, fetchedAt };
@@ -201,5 +218,29 @@ export async function fallbackNextQuestions(
   }
   scored.sort((a, b) => b.score - a.score || (a.hpoId < b.hpoId ? -1 : a.hpoId > b.hpoId ? 1 : 0));
 
-  return { version: "0.1", source: "live", questions: scored.slice(0, req.limit), dataVersions };
+  const questions = await dropRelatedToPatient(scored, skip, await patientAncestors, req.limit, deps);
+  return { version: "0.1", source: "live", questions, dataVersions };
+}
+
+/**
+ * Removes questions whose feature is an HPO ancestor of a patient term (from
+ * `patientAncestors`) or has a patient term among its own ancestors (checked
+ * for the first MAX_FEATURE_CHECKS remaining questions). Order is kept; a
+ * failed lookup (null) keeps the question.
+ */
+async function dropRelatedToPatient(
+  scored: Question[],
+  patientTerms: ReadonlySet<HpoId>,
+  patientAncestors: ReadonlyArray<HpoId[] | null>,
+  limit: number,
+  deps: FallbackDeps,
+): Promise<Question[]> {
+  const aboveAPatientTerm = new Set<HpoId>();
+  for (const ids of patientAncestors) for (const id of ids ?? []) aboveAPatientTerm.add(id);
+  const notAncestors = scored.filter((q) => !aboveAPatientTerm.has(q.hpoId));
+
+  const checked = notAncestors.slice(0, MAX_FEATURE_CHECKS);
+  const featureAncestors = await Promise.all(checked.map((q) => hpoAncestors(q.hpoId, deps)));
+  const kept = checked.filter((_, i) => !(featureAncestors[i] ?? []).some((id) => patientTerms.has(id)));
+  return [...kept, ...notAncestors.slice(MAX_FEATURE_CHECKS)].slice(0, limit);
 }
