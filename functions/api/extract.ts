@@ -22,6 +22,9 @@
 //      keeps its complete features with the same partial warning.
 // Only the live path is rate-limited per client IP (functions/_lib/rateLimit.ts,
 // T18p): 429 RATE_LIMITED with Retry-After. The demo path is never limited.
+// When the AI binding exists but its call throws (quota/allocation, model
+// unavailable, T41) -> 503 LLM_UNAVAILABLE with retryable true; timeouts stay
+// 504 and unusable model output stays 502.
 // If the AI binding is missing or the LLM / HPO call fails and the text is a
 // bundled demo narrative, the prepared extraction is returned instead
 // (contract section 4 table, design.md error handling).
@@ -39,7 +42,7 @@ import {
   secondaryLookupCap,
 } from "../_lib/grounding";
 import type { SecondaryStats } from "../_lib/grounding";
-import { LlmError, MAX_TEXT_CHARS, noGroundedTermsCode, proposeTerms } from "../_lib/llm";
+import { LlmError, MAX_TEXT_CHARS, llmFailureCode, noGroundedTermsCode, proposeTerms } from "../_lib/llm";
 import type { LlmEnv, ProposeResult } from "../_lib/llm";
 import { checkAndCount, clientIp, extractWindows, rateLimitMessage } from "../_lib/rateLimit";
 import {
@@ -326,16 +329,44 @@ function llmFailure(err: unknown, text: string): Response {
     );
   }
 
+  if (err.code === "unavailable" && err.failure) {
+    // Class, Workers AI code and message only (they describe the account or
+    // model, never the notes). Shows the real cause of an outage in the logs.
+    const f = err.failure;
+    console.error(
+      `[rdd] extract.llm unavailable model=${err.model ?? "?"} kind=${f.kind} class=${f.errorClass} ` +
+        `aiCode=${f.aiCode ?? "none"} aiMessage=${JSON.stringify(f.aiMessage)}`,
+    );
+  }
+
   const demo = findDemoByNarrative(text);
   if (demo) return demoResponse(demo, [FALLBACK_WARNING]);
 
-  if (err.code === "timeout") {
+  const code = llmFailureCode(err.code);
+  if (code === "LLM_UNAVAILABLE") return llmOutage();
+  if (code === "UPSTREAM_TIMEOUT") {
     return apiError("UPSTREAM_TIMEOUT", LLM_TIMEOUT_MESSAGE);
   }
-  // "upstream" or "bad_output"
+  // "upstream" (stream failed mid-answer) or "bad_output"
   return apiError(
     "UPSTREAM_ERROR",
     "The extraction service returned an error. Your notes are kept; try again, or add terms by hand.",
+  );
+}
+
+const LLM_OUTAGE_MESSAGE =
+  "Reading free text is unavailable right now. Use a demo case, or add features by hand.";
+
+/**
+ * 503 LLM_UNAVAILABLE for a Workers AI outage (T41): the binding exists but
+ * its call threw (daily allocation used up, model unavailable, any binding
+ * exception). Unlike a missing binding the outage passes, so `retryable` is
+ * true here; apiError would take `false` from the contract table.
+ */
+function llmOutage(): Response {
+  return json(
+    { version: CONTRACT_VERSION, error: { code: "LLM_UNAVAILABLE", message: LLM_OUTAGE_MESSAGE, retryable: true } },
+    503,
   );
 }
 
