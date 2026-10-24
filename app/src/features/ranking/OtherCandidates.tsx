@@ -5,7 +5,7 @@ import ranking from '../../shared/i18n/messages/ranking';
 import { Icon } from '../../shared/ui';
 import { BandDot } from './FrequencyMark';
 import { broaderText, matchCounts, patientRows, type FeatureIndex } from './evidence';
-import { OVERLAP_KEY, frequencyState } from './format';
+import { OVERLAP_KEY, frequencyState, pick } from './format';
 import {
   CandidateFacts,
   CandidateLinks,
@@ -126,7 +126,8 @@ function OtherCandidate({
         {broaderLine
           ? t('altDescribedBroader', { exact, n: observedCount, broader })
           : t('altDescribed', { exact, n: observedCount })}
-        {c.contradicted.length > 0 && t('altContradicted', { n: c.contradicted.length })}
+        {c.contradicted.length > 0 &&
+          t(pick(c.contradicted.length, 'altContradictedOne', 'altContradictedOther'), { n: c.contradicted.length })}
       </p>
       {delta.kind !== 'none' && (
         <p className={styles.altDelta}>

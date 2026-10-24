@@ -303,7 +303,12 @@ function RankStatus({ auto, ranking }: { auto: AutoRank; ranking: CaseRanking })
 /** "12 present features", or "12 present features and 1 not present". */
 function countsText(observed: number, excluded: number, t: RankingT): string {
   return excluded > 0
-    ? t(pick(observed, 'countsExcludedOne', 'countsExcludedOther'), { n: observed, m: excluded })
+    ? t(
+        observed === 1
+          ? pick(excluded, 'countsExcludedOneOne', 'countsExcludedOneOther')
+          : pick(excluded, 'countsExcludedOtherOne', 'countsExcludedOtherOther'),
+        { n: observed, m: excluded },
+      )
     : t(pick(observed, 'countsOne', 'countsOther'), { n: observed });
 }
 
