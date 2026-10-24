@@ -152,9 +152,9 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T02 Unified visual steering + honest remediation of 10:55 draft | Ian | `.kiro/steering/design.md` only; log correction handled via separately claimed T10 | PUSHED (`38291acacb9d7895e17c7ecf088e4eafbd937c3d`) | 12:00 |
 | T02b Re-author team steering | Ian | `.kiro/steering/team.md` only | PUSHED (`cac4d5aad6a8c072a99f7397dfca1cd47acdcc8a`) | 12:10 |
 | T03 Deployment path + full-app smoke checks | Ian | `wrangler.toml` at repo root, `scripts/build-site.sh`, `functions/api/health.ts`, Cloudflare Pages project; deployment secrets outside repo; claim extended to `.gitignore` for `.dev.vars` and `.wrangler/` | DEPLOYED_VERIFIED (pushed `53263d4fe019fd1265f82df97e8a30f5cab0151a`; live https://hackachusetts-2026.pages.dev verified 12:03 ET) | 12:30 |
-| T04 Landing page | Ian (Peter's assistant handed T04 to Ian's Kiro at ~14:50 ET; Peter's Kiro v1/v2 is used as input) | `landing/**`, `.kiro/specs/landing/**`, `.kiro/steering/release-check.md` (demo id fix) | CLAIMED (Ian) | 15:45 |
+| T04 Landing page | Ian (Peter's assistant handed T04 to Ian's Kiro at ~14:50 ET; Peter's Kiro v1/v2 is used as input) | `landing/**`, `.kiro/specs/landing/**`, `.kiro/steering/release-check.md` (demo id fix) | DEPLOYED_VERIFIED (`a28e4f5` Peter's v2 import, `08941fe`, fix `6c89a84`; live in Cloudflare deployment `e05358cc`, ~15:16 ET) | 15:45 |
 | T05 Pitch narrative + under-3-minute video storyboard | Peter | Presentation/copy assets; never claim a feature works without a real demo | OPEN | TBD |
-| T06 README + Kiro write-up | Ian (Peter released T06 in the team chat ~14:35 ET) | `README.md`, `docs/KIRO_WRITEUP.md`; Kiro write-up from **real usage log**, not made-up entries | PUSHED (`2c641c0`) | 15:20 |
+| T06 README + Kiro write-up | Ian (Peter released T06 in the team chat ~14:35 ET) | `README.md`, `docs/KIRO_WRITEUP.md`; Kiro write-up from **real usage log**, not made-up entries | PUSHED (`6fcbcdb`, fix `2c641c0`); refreshed in T11m | 15:20 |
 | T07 Domain module + approved public datasets | Jerry | `engine/**`, `.kiro/specs/engine/**` (repo-root TypeScript domain engine; runs on Cloudflare Workers, fetch only, no fs; called from `functions/api/*`) | CLAIMED (Jerry) | TBD (Jerry) |
 | T08 Module tests / property-based test use | Jerry | `engine/test/**` (property-based tests with fast-check); record true Kiro usage | CLAIMED (Jerry) | TBD (Jerry) |
 | T09 API contract, mock response examples | Ian + relevant owners approve; **Ian is sole file editor**; Jerry approves the engine interface fields | `docs/CONTRACT.md`, `.kiro/specs/rare-disease-detective/**` | REVIEWING (contract v0.1 draft and spec pushed `f77cc31658296dfe0cbc956c9b180ba7b5262f6e`; pending APPROVE by Jerry and Ian) | 12:25 (v0.1 draft) |
@@ -176,6 +176,7 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T11j Claim T24 smoke script and T25 QA pass | Ian | `BRIEFING.md` | CLAIMED (Ian) | 14:35 |
 | T11k Record T06 hand-over from Peter to Ian | Ian | `BRIEFING.md` | CLAIMED (Ian) | TBD |
 | T11l Record T04 hand-over to Ian, T18g switch, QA fixes | Ian | `BRIEFING.md` | CLAIMED (Ian) | 15:00 |
+| T11m Records after the engine rank switch: usage log, reviews, board, README, write-up, spec ticks | Ian | `docs/KIRO_USAGE.md`, `docs/reviews/**` (new files), `BRIEFING.md` (section 6 rows), `README.md`, `docs/KIRO_WRITEUP.md`, `.kiro/specs/rare-disease-detective/tasks.md` | CLAIMED (Ian) | 15:45 |
 | T12 Art direction note | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`8460be2`); Ian picked the white direction (Option B) at ~12:20 ET but judged both options not good enough; refinement continues as T12b | 12:25 |
 | T12b Refined white art direction variants | Ian; Ian picks | `docs/art-direction/**` | PUSHED (`9208298`); Ian picking B1/B2/B3 | 12:45 |
 | T12c Ian-approved art direction | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | PUSHED (`e8fe0f8`); approved by Ian 12:33 ET: B1 UI + B2 typography | 12:35 |
@@ -195,14 +196,18 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | T18d Next-questions hierarchy filter | Ian | `functions/_lib/fallback/**` | PUSHED (`85dc482`, `1e79554`); claimed late; recorded 14:50 ET | — |
 | T18e Monarch timeout + recorded demo fallback | Ian | `functions/_lib/fallback/**`, `functions/api/rank.ts`, `functions/api/next-questions.ts`, `functions/api/trials.ts` | PUSHED (`6c907ff`); claimed late; recorded 14:50 ET | — |
 | T18f Trials relevance | Ian | `functions/_lib/fallback/**` plus one line in `functions/api/trials.ts` | DEPLOYED_VERIFIED (`cf07006`); claimed late; recorded 14:50 ET | — |
-| T18g Engine-path switch for functions (`RDD_ENGINE_PATH`, default = the verified fallback path) | Ian | `functions/_lib/fallback/engineFirst.ts`, `functions/api/*.ts` (small edits) | CLAIMED (Ian) | 15:30 |
+| T18g Engine-path switch for functions (`RDD_ENGINE_PATH`, default = the verified fallback path) | Ian | `functions/_lib/fallback/engineFirst.ts`, `functions/api/*.ts` (small edits) | DEPLOYED_VERIFIED (`42fb1df`; live since deployment `e05358cc`) | 15:30 |
+| T18h Engine rank path with `rankCandidatesWithReport`; never cache incomplete enrichment | Ian | `functions/api/rank.ts`, `functions/_lib/fallback/rank.ts`, `functions/_lib/fallback/questions.ts` | DEPLOYED_VERIFIED (`310ea07`); claimed late; recorded 15:20 ET | — |
+| T18i Fallback ranking counts only HP shared ancestors (parity with the engine); no caching after an Orphadata failure | Ian | `functions/_lib/fallback/rank.ts`, `functions/api/rank.ts` | DEPLOYED_VERIFIED (`50cfc74`, fix `0f36748`); parity on demo-npc1 and demo-dmd; claimed late; recorded 15:20 ET | — |
+| T18j Report the pinned HPO release in extract and brief | Ian | `functions/api/extract.ts`, `functions/api/brief.ts`, `README.md` | DEPLOYED_VERIFIED (`973ec39`); claimed late; recorded 15:20 ET | — |
+| T18k Serve `/api/rank` from the engine (coordinator decision 15:10 ET); contract v0.1.3 | Ian | `wrangler.toml`, `docs/CONTRACT.md` | DEPLOYED_VERIFIED (`820e7ff`; production `/api/rank` answers `X-RDD-Path: engine`); claimed late; recorded 15:20 ET | — |
 | T19 Kiro CLI custom agents and safe agent hooks | Ian | `.kiro/agents/**`, `.kiro/hooks/**` | PUSHED (`dd8a0791ef5fcfdcd3621a83df6ec8a42ed675ab`) | 12:25 |
 | T20 Kiro MCP for development | Ian | `.kiro/settings/mcp.json`, `.kiro/agents/rdd-builder.json`, `docs/research/biomcp-checks.md` (Context7 remote MCP server; real doc lookups logged) | PUSHED (`b3dce59`, `d35a18e` biomcp, `0dca96f` reviewer fixes) | 13:00 |
 | T21 Kiro IDE 1.x hooks and steering | Ian | `.kiro/hooks/**`, `.kiro/steering/medical-data.md`, `.kiro/steering/release-check.md` | PUSHED (`6c6ce91`, `68ec5cb`) | 13:05 |
 | T22 Kiro project power `rdd-medical-data` | Ian | `.kiro/powers/rdd-medical-data/**` | PUSHED (`c5f619f`, `47521fa`) | 13:10 |
 | T23 Pre-registered re-rank experiment (research only, not shipped) | Ian | `docs/research/ranking-benchmark.md`, `functions/_lib/rerank.ts` + test (not wired into any endpoint), `scripts/ranking-benchmark.ts`, `scripts/benchmark-data/**` | PUSHED (`4682cdd`); claimed late; recorded 13:50 ET | — |
-| T24 End-to-end smoke script (spec task 5.1) | Ian | `scripts/smoke.mjs` | PUSHED (`00ff364`) | 15:15 |
-| T25 Accessibility, responsive and definition-of-done QA pass (spec tasks 3.8, 5.2, 5.3) | Ian | `docs/QA.md`, `docs/qa/**` (screenshots) | PUSHED (`48d1e8f`) | 15:30 |
+| T24 End-to-end smoke script (spec task 5.1) | Ian | `scripts/smoke.mjs` | PUSHED (`00ff364`; used for every smoke run since, last on `6c89a84`: 14 passed, 0 failed, 1 noted) | 15:15 |
+| T25 Accessibility, responsive and definition-of-done QA pass (spec tasks 3.8, 5.2, 5.3) | Ian | `docs/QA.md`, `docs/qa/**` (screenshots) | PUSHED (`48d1e8f`); fixes in T14b/T15c/T16b (`e8d762f`) | 15:30 |
 
 From 12:35 ET every Ian task diff gets a first-pass review by the read-only Kiro agent rdd-reviewer before the assistant's review.
 

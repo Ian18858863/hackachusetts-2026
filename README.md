@@ -41,7 +41,9 @@ Cloudflare Pages Functions: functions/api/*.ts
 engine/: Workers-compatible TypeScript domain logic (fetch only, injected for tests)
 ```
 
-**What runs where today.** The engine's HPO grounding (`groundTerms`), term search (`searchTerms`), demo cases and phenopacket export (`toPhenopacket`) are live. The engine's `rankCandidates`, `nextQuestions`, `searchTrials` and `buildBrief` are still placeholders, so `/api/rank`, `/api/next-questions`, `/api/trials` and `/api/brief` currently run on Ian's temporary fallback layer in `functions/_lib/fallback/`. Each function calls the engine first and uses the fallback while the engine reports the function as not implemented. The fallback follows the same contract shapes and rules ([docs/CONTRACT.md](docs/CONTRACT.md) v0.1.2).
+**What runs where today.** The engine's HPO grounding (`groundTerms`), term search (`searchTerms`), demo cases, phenopacket export (`toPhenopacket`) and ranking are live. `/api/rank` runs on Jerry's engine (`rankCandidatesWithReport`) since T18k (`820e7ff`), after the T18i parity check: on `demo-npc1` and `demo-dmd` the engine and Ian's fallback returned the same top 5 with the same overlap labels. The engine's `nextQuestions`, `searchTrials` and `buildBrief` are still placeholders, so `/api/next-questions`, `/api/trials` and `/api/brief` run on Ian's temporary fallback layer in `functions/_lib/fallback/`, which follows the same contract shapes and rules ([docs/CONTRACT.md](docs/CONTRACT.md) v0.1.3).
+
+The switch is in `functions/_lib/fallback/engineFirst.ts`. `RDD_ENGINE_PATH` sets the path for all four functions, and `RDD_ENGINE_PATH_RANK`, `RDD_ENGINE_PATH_NEXT_QUESTIONS`, `RDD_ENGINE_PATH_TRIALS` and `RDD_ENGINE_PATH_BRIEF` override it per endpoint. Unset or unknown values mean `"fallback"`. With `"engine"`, the engine runs first and the fallback is used only while the engine function is a placeholder. `wrangler.toml` sets only `RDD_ENGINE_PATH_RANK = "engine"`; setting it to `"fallback"` (or removing it) and redeploying rolls rank back. Each response names its path in the `X-RDD-Path` header, for QA only.
 
 - **The ontology ranks; the LLM only translates.** The LLM proposes phrases copied from the notes and candidate labels. The engine keeps a term only if the phrase is found verbatim in the text and the HPO API confirms the term; the label shown is always the HPO primary name. Disease names, frequencies and genes come from Monarch and HPO annotation responses, never from the model.
 - **Model choice was measured.** In a bake-off on the demo narratives, `llama-3.3-70b-instruct-fp8-fast` matched `gpt-oss-120b` on quality and was 2–3 times faster (T17, [docs/KIRO_USAGE.md](docs/KIRO_USAGE.md)). Both models got most HPO ids wrong, so the prompt no longer asks for ids and grounding is by label.
@@ -62,7 +64,7 @@ Limitations:
 - The sample is small, and the cases come from publications that may already feed the HPO annotations, so results are likely optimistic. This is not a clinical validation.
 - In 4 of the 10 cases the correct condition is not in Monarch's top 50 at all.
 - The input was the published HPO terms, so this measures ranking, not extraction from notes.
-- Among the demo cases, only `demo-npc1` shows its source condition first. Monarch ranks Duchenne muscular dystrophy #40 for `demo-dmd`, and the Marfan, Kabuki and Cornelia de Lange sources fall outside its top 50. We kept these cases to show the tool's limits honestly. `demo-npc1` became the primary case because of this benchmark, and its source phenopacket is one of the 10 cases.
+- Among the demo cases, only `demo-npc1` shows its source condition first. In the benchmark run of 2026-10-24 13:04 ET, Monarch ranks Duchenne muscular dystrophy #40 for `demo-dmd`, and the Marfan, Kabuki and Cornelia de Lange sources fall outside its top 50. We kept these cases to show the tool's limits honestly. `demo-npc1` became the primary case because of this benchmark, and its source phenopacket is one of the 10 cases.
 - The 50-case benchmark planned in contract §12 has not been run.
 
 ## Safety
@@ -78,7 +80,7 @@ Limitations:
 Requirements: Node 22+ and npm. `npx wrangler` needs a Cloudflare login (`npx wrangler login`) for the Workers AI binding.
 
 ```bash
-# Build the site into dist/ (app under dist/app/; a placeholder landing page while landing/ is not on main)
+# Build the site into dist/ (landing page at dist/, app under dist/app/)
 ./scripts/build-site.sh
 
 # Serve dist/ plus functions/ (default http://127.0.0.1:8788). Run it in the background or a second terminal.
@@ -106,17 +108,18 @@ More detail: [app/README.md](app/README.md).
 | Path | What it holds | Owner |
 |---|---|---|
 | `app/` | The web app (Vite + React + TypeScript) | Ian (`Ian18858863`) |
+| `landing/` | The landing page at `/` (Vite + React + TypeScript), built into `dist/` by `scripts/build-site.sh`; spec in `.kiro/specs/landing/` | Ian (`Ian18858863`), started by Peter (`qirongwangpeter`) |
 | `functions/` | Cloudflare Pages Functions for `/api/*`, the Workers AI step and a temporary fallback layer in `functions/_lib/fallback/` | Ian (`Ian18858863`) |
-| `engine/` | Domain engine: grounding, demo cases, phenopacket export, tests with Vitest and fast-check | Jerry (`lolershark`) |
+| `engine/` | Domain engine: grounding, ranking, demo cases, phenopacket export, tests with Vitest and fast-check | Jerry (`lolershark`) |
 | `docs/` | Interface contract, art direction, research, rdd-reviewer reviews, Kiro usage log and write-up | Ian (`Ian18858863`) |
 | `.kiro/` | Kiro specs, steering, custom agents, hooks, MCP settings and a project power | Ian (`Ian18858863`) |
 | `scripts/` | Site build, end-to-end smoke check, ranking benchmark | Ian (`Ian18858863`) |
 
-Peter (`qirongwangpeter`) owns the landing page (`landing/`, in progress, not yet on `main`). Team decisions and the task board: [BRIEFING.md](BRIEFING.md).
+The landing page (`landing/`) was started by Peter's Kiro (v1/v2 and its spec, imported unchanged in `a28e4f5`) and re-implemented by Ian's Kiro on the approved art direction (T04, `08941fe`, `6c89a84`). Team decisions and the task board: [BRIEFING.md](BRIEFING.md).
 
 ## Data sources and attribution
 
-- **Human Phenotype Ontology** (https://hpo.jax.org), through the JAX ontology API: term search, term lookup and disease annotations. The app footer and the brief show "This product uses the Human Phenotype Ontology (version <hpo>). Find out more at https://hpo.jax.org". HPO release: see the app footer. HPO release 2026-09-01, the release the engine pins (engine/hpo.ts).
+- **Human Phenotype Ontology** (https://hpo.jax.org), through the JAX ontology API: term search, term lookup and disease annotations. The app footer and the brief show "This product uses the Human Phenotype Ontology (version <hpo>). Find out more at https://hpo.jax.org", with HPO release 2026-09-01, the release the engine pins (`engine/hpo.ts`).
 - **Monarch Initiative** semantic similarity service (monarchinitiative.org) for ranking. Monarch tools are not for diagnosis or medical decisions.
 - **Orphanet** data, CC BY 4.0 (orpha.net, orphadata.com), through Orphanet-sourced HPO annotations.
 - **ClinicalTrials.gov**, U.S. National Library of Medicine, for recruiting studies.

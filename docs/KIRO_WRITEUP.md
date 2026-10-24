@@ -11,26 +11,26 @@ This write-up is built from the log in [docs/KIRO_USAGE.md](KIRO_USAGE.md) plus 
 | Agent hooks (CLI) | Session context, shell guard, typecheck after writes, in `rdd-builder.json` and `.kiro/hooks/scripts/` | Fired live; the guard blocked commands (T19, T21) |
 | Agent hooks (IDE 1.x) | `.kiro/hooks/typecheck-on-save.json`, `.kiro/hooks/contract-drift-check.json` | On `main` (`6c6ce91`, `68ec5cb`); firing in Kiro IDE NOT yet recorded |
 | Steering | `design.md`, `team.md` (always), `medical-data.md` (fileMatch), `release-check.md` (manual) | Loaded by the CLI agents; fileMatch and manual modes not yet exercised in Kiro IDE |
-| Specs | `.kiro/specs/rare-disease-detective/` with EARS requirements, design with properties P1–P14, tasks | Written in `f77cc31`; spec ticks as of 13:30 ET (`5508f1a`); an update is in progress |
+| Specs | `.kiro/specs/rare-disease-detective/` with EARS requirements, design with properties P1–P14, tasks | Written in `f77cc31`; ticks in `5508f1a` (13:30 ET) and refreshed in T11m (through `6c89a84`) |
 | MCP | Context7 and biomcp in `.kiro/settings/mcp.json` and in `rdd-builder`'s own `mcpServers` | Real calls logged (`b3dce59`, `d35a18e`, `0dca96f`, T18d fix) |
 | Powers | `.kiro/powers/rdd-medical-data/` | Installed and activated in kiro-cli (`c5f619f`, `47521fa`) |
-| Property-based testing | fast-check property for P1–P3 in `engine/test/ground.test.ts` | On `main` from Jerry's engine commit `c2ffb08`; P4–P14 not written yet |
+| Property-based testing | fast-check properties P1–P3 in `engine/test/ground.test.ts` and P4–P6 in `engine/test/rank.test.ts` | On `main` from Jerry's engine commits `c2ffb08` and `f6a3ebe`; P7–P14 not written yet |
 
 ## How we drive Kiro
 
-Ian's assistant (Claude, outside Kiro) plans each task, writes a natural-language prompt and reviews the resulting diff and QA output. For Ian's tasks, Kiro CLI (`kiro-cli chat --no-interactive`, model claude-opus-5.5) authors every file and runs the builds, tests and smoke checks. The engine (`engine/**`) was written by Jerry with Kiro; which Kiro tools he used is not logged yet. Under Ian's standing authorization (`docs/PROTOCOL.md` section 6A), Kiro also commits each task on its own worktree branch and integrates it into `main` one task at a time: cherry-pick, scope check, ancestry check, push without force. The integration rows in `docs/KIRO_USAGE.md` list every `main` SHA pushed this way.
+Ian's assistant (Claude, outside Kiro) plans each task, writes a natural-language prompt and reviews the resulting diff and QA output. For Ian's tasks, Kiro CLI (`kiro-cli chat --no-interactive`, model claude-opus-5.5) authors every file and runs the builds, tests and smoke checks. The engine (`engine/**`) was written by Jerry with Kiro; which Kiro tools he used is not logged yet. The landing page was started by Peter's Kiro (v1/v2 and its spec, imported unchanged in `a28e4f5`) and re-implemented by Ian's Kiro on the approved art direction (T04, `08941fe`, fix `6c89a84`); which Kiro tools Peter used is not logged either. Under Ian's standing authorization (`docs/PROTOCOL.md` section 6A), Kiro also commits each task on its own worktree branch and integrates it into `main` one task at a time: cherry-pick, scope check, ancestry check, push without force. The integration rows in `docs/KIRO_USAGE.md` list every `main` SHA pushed this way.
 
 Each task has one git worktree and one branch, and several Kiro sessions run in parallel on disjoint claimed paths (claims on the board in `BRIEFING.md` section 6). No two writers touch the same file.
 
 Before the event, `kiro-cli chat` edited, committed and pushed a README change in a private test repo to verify Kiro-to-GitHub access (`Ian18858863/kiro-connection-test`, commit `28aac81`).
 
-Deploys to Cloudflare Pages ran from Kiro only after a passing smoke test (usage-log rows for `53263d4`, `cd1a1a4`, `3c99583`, `eb86f02`, `2254286`, `cf07006`). From T24 on, that smoke test is the script `scripts/smoke.mjs` (`00ff364`).
+Deploys to Cloudflare Pages ran from Kiro only after a passing smoke test (usage-log rows for `53263d4`, `cd1a1a4`, `3c99583`, `eb86f02`, `2254286`, `cf07006`, `e8d762f`, `6c89a84`). From T24 on, that smoke test is the script `scripts/smoke.mjs` (`00ff364`).
 
 ## Spec-driven development
 
 - **Spec.** `.kiro/specs/rare-disease-detective/requirements.md` (12 requirements in EARS form, for example "WHEN the user submits text longer than 8,000 characters THE SYSTEM SHALL keep the text…"), `design.md` (architecture, components, error handling, testing strategy and correctness properties P1–P14) and `tasks.md` (five parallel lanes with owners and paths). Written by Kiro in `f77cc31` together with the interface contract `docs/CONTRACT.md` v0.1.
-- **Contract next to the spec.** `docs/CONTRACT.md` fixes request and response shapes, error codes, timeouts and demo cases. The spec refers to contract sections instead of repeating them, and the contract wins on conflict. Contract changes follow a written process (section 14) and are logged in its changelog: v0.1.1 (`629c869`, new primary demo case) and v0.1.2 (`18556d7`, timeouts, overlap counting, question filter, trial relevance).
-- **Ticks.** Kiro ticks tasks as they ship (T09b, `5508f1a`). The ticks in `tasks.md` are as of 13:30 ET; work shipped since then (for example the rank, questions, trials and brief functions, the brief and trials UI, and the smoke script `00ff364`) is not ticked yet, and an update is in progress. Partially done items carry a note saying what is missing.
+- **Contract next to the spec.** `docs/CONTRACT.md` fixes request and response shapes, error codes, timeouts and demo cases. The spec refers to contract sections instead of repeating them, and the contract wins on conflict. Contract changes follow a written process (section 14) and are logged in its changelog: v0.1.1 (`629c869`, new primary demo case), v0.1.2 (`18556d7`, timeouts, overlap counting, question filter, trial relevance) and v0.1.3 (`820e7ff`, a broader-term match counts only through an HP: shared ancestor; `/api/rank` served by the engine).
+- **Ticks.** Kiro ticks tasks as they ship (T09b, `5508f1a`, then T11m for work through `6c89a84`, for example the four functions, the brief and trials UI, the smoke script `00ff364` and the QA pass `48d1e8f`). Partially done items carry a note saying what is missing.
 - **The spec changed when the evidence changed.** T09c (`629c869`) made `demo-npc1` the primary demo case after the T23 benchmark showed Monarch ranks its source condition first, while Duchenne ranks #40 for `demo-dmd`. Requirements, design, tasks and contract were updated in the same commit.
 
 ### Specs compared with vibe coding
@@ -46,7 +46,7 @@ Both agents are in `.kiro/agents/` (T19, `dd8a079`) and validate with `kiro-cli 
 
 ## First-pass review workflow
 
-From 12:35 ET, every task diff from Ian's Kiro got a first-pass review by `rdd-reviewer` before the assistant's review. Sixteen reviews are kept in `docs/reviews/` (T13a, T13c, T13d, T13e, T14, T15, T16, T18a–T18f, T20, T21, T22). Each ends with an Outcome line naming the commit on `main` that fixed the findings, or the findings still open.
+From 12:35 ET, every task diff from Ian's Kiro got a first-pass review by `rdd-reviewer` before the assistant's review. Twenty-four reviews are kept in `docs/reviews/` (T04, T06, T13a, T13c, T13d, T13e, T14, T14b, T15, T15c, T16, T16b, T18a–T18g, T18h-T18i, T20, T21, T22, T24). Each ends with an Outcome line naming the commit on `main` that fixed the findings, or the findings still open.
 
 Examples of what the reviewer caught:
 
@@ -54,7 +54,7 @@ Examples of what the reviewer caught:
 - T18b ([review](reviews/T18b.md)): 6 should-fix findings, for example the rank cache stored partial results and questions sent MONDO ids to the JAX API. Fixed before the first commit, in `3c99583`.
 - T18f ([review](reviews/T18f.md)): findings 1–4 fixed in `cf07006`; finding 5 (missing tests) is still open, and the review says so.
 
-Several reviews ran on uncommitted work (T14, T13d, T18a, T18b, T16, T13e), so the fixes are in the task's first commit.
+Several reviews ran on uncommitted work (T14, T13d, T18a, T18b, T16, T13e, T24), so the fixes are in the task's first commit.
 
 ## Agent hooks
 
@@ -95,8 +95,8 @@ Configured in `.kiro/settings/mcp.json` and, since `0dca96f`, in `rdd-builder`'s
 ## Property-based testing
 
 - The design names 14 correctness properties (P1–P14 in `.kiro/specs/rare-disease-detective/design.md`, full wording in `docs/CONTRACT.md` section 11).
-- On `main`: one fast-check property in `engine/test/ground.test.ts` covers P1–P3 for `groundTerms` (only HPO-confirmed ids, exact quote offsets with the HPO primary name, no duplicate ids), with 200 runs and a fixed seed. It came with Jerry's engine commit `c2ffb08`. Jerry's own Kiro usage line for it has not been added to `docs/KIRO_USAGE.md` yet, so this write-up does not describe how it was authored.
-- P4–P14 are in progress; they depend on engine functions (`rankCandidates`, `nextQuestions`, `buildBrief`) that are still placeholders on `main`.
+- On `main`: one fast-check property in `engine/test/ground.test.ts` covers P1–P3 for `groundTerms` (only HPO-confirmed ids, exact quote offsets with the HPO primary name, no duplicate ids), with 200 runs and a fixed seed. It came with Jerry's engine commit `c2ffb08`. Jerry's commit `f6a3ebe` added fast-check properties P4–P6 for `rankCandidates` in `engine/test/rank.test.ts` (order independence, ranks 1..n, matched plus unmatched covers every observed term). Jerry's own Kiro usage lines have not been added to `docs/KIRO_USAGE.md` yet, so this write-up does not describe how they were authored.
+- P7–P14 are not written yet; `nextQuestions` and `buildBrief` are still placeholders on `main`.
 
 ## Rigour: a pre-registered benchmark
 
@@ -125,4 +125,4 @@ The same benchmark changed the product: it is why `demo-npc1` is the primary dem
 
 - **Kiro Web:** not used, because it needs a paid plan.
 - **Kiro Crew:** not used; we skipped it to save time during the event.
-- **Kiro IDE:** not yet used for Ian's tasks. Usage by Peter and Jerry will be added to `docs/KIRO_USAGE.md` when their usage lines arrive.
+- **Kiro IDE:** not yet used for Ian's tasks. Peter's Kiro wrote the landing v1/v2 and Jerry's Kiro wrote the engine, but which Kiro tools they used is not logged; it will be added to `docs/KIRO_USAGE.md` when their usage lines arrive.
