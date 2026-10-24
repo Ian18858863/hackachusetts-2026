@@ -8,6 +8,20 @@ Do these on **your own laptop**. Kiro accounts cannot be shared.
 4. **Clone the repo in Kiro**: Command Palette (Cmd/Ctrl+Shift+P) → `Git: Clone` → paste `https://github.com/Ian18858863/hackachusetts-2026.git` → open it.
 5. **Test**: edit one line in your own folder, Commit, then Sync. Tell Ian; he checks it on GitHub.
 
+## Shortcut: let Kiro do steps 4–5
+
+Steps 1–3 need you (install, sign-in, accepting the invite). After that, open Kiro, open the chat, and paste this (replace `<your name>`):
+
+```
+Clone https://github.com/Ian18858863/hackachusetts-2026.git into my home folder and open it.
+Read .kiro/steering/team.md and docs/TEAM_SETUP.md.
+Then create docs/hello-<your name>.md with one line saying I joined,
+commit it with the message "Setup test from <your name>", and push to origin main.
+If git asks me to sign in to GitHub, stop and tell me exactly what to click.
+```
+
+If anything fails, do steps 4–5 by hand with the Command Palette (`Git: Clone`) and the Sync button.
+
 ## Rules of the day
 - Work only in your own folder (see `.kiro/steering/team.md`).
 - Sync before you start and after every small step.
