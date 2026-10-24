@@ -136,7 +136,7 @@ export default defineMessages(
 
       howTitle: '工作原理',
       howDek: '从家长的症状描述到专科医生可以核查的内容，共五步。',
-      howFamily: '在家庭模式下，应用从不显示疾病名称，只为临床医生整理症状描述和要问的问题。',
+      howFamily: '在家庭模式下，应用从不显示疾病名称，而是为临床医生整理症状描述和要问的问题。',
       step1Title: '症状描述',
       step1Body: '用日常语言粘贴症状经过，或打开演示病例。',
       step2Title: '特征及其原句',

@@ -27,6 +27,10 @@ function useDemoHref(): string {
   return demoHref(useLocale().locale);
 }
 
+function useFamilyHref(): string {
+  return familyHref(useLocale().locale);
+}
+
 /** Document title and meta description follow the language (English values equal index.html). */
 function useDocumentMeta() {
   const t = useLandingT();
@@ -101,7 +105,7 @@ function Hero() {
   const tc = useT(commonMessages);
   const { locale } = useLocale();
   const href = useDemoHref();
-  const familyLink = familyHref(locale);
+  const familyLink = useFamilyHref();
   return (
     <section className="hero" aria-labelledby="hero-title">
       <div className="wrap hero-in">
