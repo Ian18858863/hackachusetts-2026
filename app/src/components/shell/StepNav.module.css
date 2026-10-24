@@ -178,6 +178,8 @@
   }
 
   .link {
+    /* Contains the hidden labels, so they cannot widen the page from inside the scrolling rail. */
+    position: relative;
     min-width: var(--tap-min);
     justify-content: center;
   }
