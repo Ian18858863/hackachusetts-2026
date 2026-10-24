@@ -1,0 +1,92 @@
+{
+  "caseId": "DEV-05",
+  "split": "dev",
+  "origin": "T38 research (Peter's Kiro, 2026-10-24)",
+  "source": {
+    "pmcid": "PMC5615464",
+    "pmid": "28950840",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5615464/",
+    "title": "Diagnostic challenge in a patient with nephropathic juvenile cystinosis: a case report.",
+    "journal": "BMC nephrology",
+    "year": 2017,
+    "patient": "Single patient (12-year-old boy)",
+    "textAccess": "fulltext"
+  },
+  "diagnosis": {
+    "name": "juvenile nephropathic cystinosis",
+    "mondo": "MONDO:0009066",
+    "acceptedIds": [
+      "MONDO:0009066",
+      "MONDO:0016239"
+    ],
+    "genes": [
+      "CTNS"
+    ],
+    "confirmation": {
+      "method": "biochemical+genetic",
+      "summary": "High free cystine in granulocytes and two CTNS splice-site variants proven by transcript analysis.",
+      "evidence": [
+        "A cystine-binding protein assay showed a high free cystine content in granulocytes",
+        "two novel heterozygous single nucleotide substitutions of c.329G > C and c.329 + 2 T > C"
+      ]
+    }
+  },
+  "note": {
+    "text": "Since he was three, our son's urine tests have kept showing sugar and protein, and nobody could explain why. He grew and developed normally and felt well. Later tests also showed extra amino acids in his urine and a low uric acid level in his blood. At twelve, an eye examination with a special lamp found tiny crystals in the clear front part of his eyes.",
+    "voice": "parent",
+    "author": "Peter's Kiro, written from the article's findings; not the parent's words"
+  },
+  "phenotypes": [
+    {
+      "hpoId": "HP:0003076",
+      "label": "Glycosuria",
+      "origin": "T38",
+      "evidence": "followed at another hospital since the age of 3 years because of glycosuria and proteinuria of unknown cause",
+      "inNote": true,
+      "notePhrase": "urine tests have kept showing sugar"
+    },
+    {
+      "hpoId": "HP:0000093",
+      "label": "Proteinuria",
+      "origin": "T38",
+      "evidence": "followed at another hospital since the age of 3 years because of glycosuria and proteinuria of unknown cause",
+      "inNote": true,
+      "notePhrase": "sugar and protein"
+    },
+    {
+      "hpoId": "HP:0003355",
+      "label": "Aminoaciduria",
+      "origin": "T38",
+      "evidence": "and aminoaciduria consistent with Fanconi syndrome",
+      "inNote": true,
+      "notePhrase": "extra amino acids in his urine"
+    },
+    {
+      "hpoId": "HP:0003537",
+      "label": "Hypouricemia",
+      "origin": "T38",
+      "evidence": "Laboratory findings showed a low serum uric acid level (2 mg/dL)",
+      "inNote": true,
+      "notePhrase": "a low uric acid level in his blood"
+    },
+    {
+      "hpoId": "HP:0001994",
+      "label": "Renal Fanconi syndrome",
+      "origin": "T38",
+      "evidence": "and aminoaciduria consistent with Fanconi syndrome",
+      "inNote": false,
+      "comment": "A clinical synthesis of the urine findings; the note gives the findings, not the syndrome."
+    },
+    {
+      "hpoId": "HP:6000955",
+      "label": "Corneal cystine crystals",
+      "origin": "T38",
+      "evidence": "A recent slit-lamp examination showed cystine crystals in the cornea",
+      "inNote": true,
+      "notePhrase": "tiny crystals in the clear front part of his eyes"
+    }
+  ],
+  "uncertainty": [
+    "Almost every finding is a laboratory or eye-examination result; this is a deliberately hard case for lay-language extraction."
+  ]
+}

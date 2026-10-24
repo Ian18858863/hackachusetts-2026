@@ -1,0 +1,48 @@
+{
+  "caseId": "HO-09",
+  "split": "heldout",
+  "origin": "T33 hand-off (Ian team research, 2026-10-24); re-verified by T38",
+  "source": {
+    "pmcid": "PMC2694857",
+    "pmid": "18810657",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2694857/",
+    "title": "Two sisters with Rett syndrome and non-identical paternally-derived microdeletions in the MECP2 gene.",
+    "journal": "Genomic medicine",
+    "year": 2008,
+    "patient": "Case 1 (older sister, aged 11)",
+    "textAccess": "html-manual"
+  },
+  "diagnosis": {
+    "name": "Rett syndrome",
+    "mondo": "MONDO:0010726",
+    "acceptedIds": ["MONDO:0010726", "MONDO:0017746"],
+    "genes": ["MECP2"],
+    "confirmation": {
+      "method": "genetic+clinical",
+      "summary": "Novel 18 bp MECP2 deletion c.1155_1172del18 in Case 1, with symptoms of RTT.",
+      "evidence": [
+        "Sequencing of the MECP2 gene in Case 1 revealed a novel 18 base-pair (bp) deletion, c.1155_1172del18"
+      ]
+    }
+  },
+  "note": {
+    "text": "My daughter fed poorly as a baby, although feeding improved after we switched to a bottle. By seven months she seemed unusually floppy, paid less attention to things around her and her head was growing more slowly. She began having frightening episodes after waking up and would repeatedly bang on the table. She never managed to sit steadily on her own. She has never spoken recognizable words, and her development has worried us for a long time.",
+    "voice": "parent",
+    "author": "T33 hand-off (assistant-written from the article; not the parent's words)"
+  },
+  "phenotypes": [
+    { "hpoId": "HP:0011968", "label": "Feeding difficulties", "origin": "T38", "evidence": "Feeding was initially poor, although this improved on bottle feeds", "inNote": true, "notePhrase": "fed poorly as a baby" },
+    { "hpoId": "HP:0001252", "label": "Hypotonia", "origin": "T33", "t33Label": "Hypotonia", "evidence": "concerns were raised about significant muscular hypotonia, regressing attentiveness and slowing of head growth", "inNote": true, "notePhrase": "she seemed unusually floppy" },
+    { "hpoId": "HP:0000252", "label": "Microcephaly", "origin": "T33", "t33Label": "Microcephaly", "evidence": "Head growth stalled at 47.3 cm at the age of 3 years 7 months (0.4 cm below the 0.4th centile)", "inNote": true, "notePhrase": "her head was growing more slowly" },
+    { "hpoId": "HP:0001250", "label": "Seizure", "origin": "T33", "t33Label": "Seizure", "evidence": "she started to develop seizures upon waking, as well as ritualistic table-banging", "inNote": true, "notePhrase": "frightening episodes after waking up" },
+    { "hpoId": "HP:0000733", "label": "Motor stereotypy", "origin": "T38", "evidence": "she started to develop seizures upon waking, as well as ritualistic table-banging", "inNote": true, "notePhrase": "would repeatedly bang on the table" },
+    { "hpoId": "HP:0001270", "label": "Motor delay", "origin": "T33", "t33Label": "Motor delay", "evidence": "She did not achieve a stable sitting posture, and never developed recognisable speech", "inNote": true, "notePhrase": "She never managed to sit steadily on her own" },
+    { "hpoId": "HP:0001344", "label": "Absent speech", "origin": "T33", "t33Label": "Absent speech", "evidence": "She did not achieve a stable sitting posture, and never developed recognisable speech", "inNote": true, "notePhrase": "She has never spoken recognizable words" },
+    { "hpoId": "HP:0002376", "label": "Developmental regression", "origin": "T33", "t33Label": "Developmental regression", "evidence": "concerns were raised about significant muscular hypotonia, regressing attentiveness and slowing of head growth", "inNote": true, "notePhrase": "paid less attention to things around her", "comment": "Weak: the article says 'regressing attentiveness' for Case 1; it reports skill regression only for Case 2." }
+  ],
+  "uncertainty": [
+    "Europe PMC does not list this article as open access and NCBI does not allow automated full-text download. Quotes were checked by reading the public PMC page on 2026-10-24 and cannot be re-checked by verify-sources.",
+    "Developmental regression is weakly supported for Case 1.",
+    "The article describes two sisters; only Case 1 is used, and Case 2 must never be added to the development split."
+  ]
+}

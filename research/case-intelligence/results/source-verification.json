@@ -1,0 +1,992 @@
+{
+  "generatedAt": "2026-10-24T22:40:25.600Z",
+  "cases": [
+    {
+      "caseId": "DEV-01",
+      "pmcid": "PMC8524855",
+      "isOpenAccess": true,
+      "license": "cc by",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 25
+        },
+        {
+          "kind": "HP:0000093",
+          "status": "found",
+          "words": 9
+        },
+        {
+          "kind": "HP:0000790",
+          "status": "found",
+          "words": 9
+        },
+        {
+          "kind": "HP:0003259",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "HP:0001337",
+          "status": "found",
+          "words": 12
+        },
+        {
+          "kind": "HP:0001394",
+          "status": "found",
+          "words": 7
+        },
+        {
+          "kind": "HP:0200032",
+          "status": "found",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "caseId": "DEV-02",
+      "pmcid": "PMC4878062",
+      "isOpenAccess": true,
+      "license": "cc by",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 14
+        },
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0002373",
+          "status": "found",
+          "words": 21
+        },
+        {
+          "kind": "HP:0002133",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "HP:0001250",
+          "status": "found",
+          "words": 15
+        },
+        {
+          "kind": "HP:0020073",
+          "status": "found",
+          "words": 17
+        },
+        {
+          "kind": "HP:0001263",
+          "status": "found",
+          "words": 18
+        },
+        {
+          "kind": "HP:0000750",
+          "status": "found",
+          "words": 18
+        },
+        {
+          "kind": "HP:0000717",
+          "status": "found",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "caseId": "DEV-03",
+      "pmcid": "PMC10522161",
+      "isOpenAccess": true,
+      "license": "cc by",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 21
+        },
+        {
+          "kind": "HP:0001252",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0000028",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0002033",
+          "status": "found",
+          "words": 12
+        },
+        {
+          "kind": "HP:0001508",
+          "status": "found",
+          "words": 9
+        },
+        {
+          "kind": "HP:0002591",
+          "status": "found",
+          "words": 15
+        },
+        {
+          "kind": "HP:0001513",
+          "status": "found",
+          "words": 15
+        },
+        {
+          "kind": "HP:0004322",
+          "status": "found",
+          "words": 7
+        },
+        {
+          "kind": "HP:0200055",
+          "status": "found",
+          "words": 14
+        },
+        {
+          "kind": "HP:0001773",
+          "status": "found",
+          "words": 14
+        },
+        {
+          "kind": "HP:0002857",
+          "status": "found",
+          "words": 14
+        },
+        {
+          "kind": "HP:0001328",
+          "status": "found",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "caseId": "DEV-04",
+      "pmcid": "PMC6788382",
+      "isOpenAccess": true,
+      "license": "cc by",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 14
+        },
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 14
+        },
+        {
+          "kind": "HP:0001250",
+          "status": "found",
+          "words": 17
+        },
+        {
+          "kind": "HP:0100543",
+          "status": "found",
+          "words": 19
+        },
+        {
+          "kind": "HP:0010794",
+          "status": "found",
+          "words": 14
+        },
+        {
+          "kind": "HP:0000751",
+          "status": "found",
+          "words": 14
+        },
+        {
+          "kind": "HP:0002317",
+          "status": "found",
+          "words": 14
+        },
+        {
+          "kind": "HP:0000975",
+          "status": "found",
+          "words": 10
+        },
+        {
+          "kind": "HP:0000019",
+          "status": "found",
+          "words": 10
+        },
+        {
+          "kind": "HP:0002019",
+          "status": "found",
+          "words": 10
+        },
+        {
+          "kind": "HP:0002313",
+          "status": "found",
+          "words": 10
+        },
+        {
+          "kind": "HP:0001337",
+          "status": "found",
+          "words": 10
+        },
+        {
+          "kind": "HP:0001347",
+          "status": "found",
+          "words": 10
+        },
+        {
+          "kind": "HP:0004923",
+          "status": "found",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "caseId": "DEV-05",
+      "pmcid": "PMC5615464",
+      "isOpenAccess": true,
+      "license": "cc by",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 16
+        },
+        {
+          "kind": "HP:0003076",
+          "status": "found",
+          "words": 18
+        },
+        {
+          "kind": "HP:0000093",
+          "status": "found",
+          "words": 18
+        },
+        {
+          "kind": "HP:0003355",
+          "status": "found",
+          "words": 6
+        },
+        {
+          "kind": "HP:0003537",
+          "status": "found",
+          "words": 12
+        },
+        {
+          "kind": "HP:0001994",
+          "status": "found",
+          "words": 6
+        },
+        {
+          "kind": "HP:6000955",
+          "status": "found",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "caseId": "DEV-06",
+      "pmcid": "PMC6498611",
+      "isOpenAccess": true,
+      "license": "cc by",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 12
+        },
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 11
+        },
+        {
+          "kind": "HP:0001270",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0001510",
+          "status": "found",
+          "words": 21
+        },
+        {
+          "kind": "HP:0001387",
+          "status": "found",
+          "words": 21
+        },
+        {
+          "kind": "HP:0012514",
+          "status": "found",
+          "words": 21
+        },
+        {
+          "kind": "HP:0000280",
+          "status": "found",
+          "words": 10
+        },
+        {
+          "kind": "HP:0002159",
+          "status": "found",
+          "words": 10
+        },
+        {
+          "kind": "HP:0008301",
+          "status": "found",
+          "words": 10
+        }
+      ]
+    },
+    {
+      "caseId": "DEV-07",
+      "pmcid": "PMC5968380",
+      "isOpenAccess": true,
+      "license": "cc by",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 16
+        },
+        {
+          "kind": "HP:0001508",
+          "status": "found",
+          "words": 14
+        },
+        {
+          "kind": "HP:0000737",
+          "status": "found",
+          "words": 14
+        },
+        {
+          "kind": "HP:0002019",
+          "status": "found",
+          "words": 14
+        },
+        {
+          "kind": "HP:0004322",
+          "status": "found",
+          "words": 16
+        },
+        {
+          "kind": "HP:0000252",
+          "status": "found",
+          "words": 16
+        },
+        {
+          "kind": "HP:0001999",
+          "status": "found",
+          "words": 11
+        },
+        {
+          "kind": "HP:0003072",
+          "status": "found",
+          "words": 9
+        },
+        {
+          "kind": "HP:0012408",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0004381",
+          "status": "found",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "caseId": "HO-01",
+      "pmcid": "PMC11349674",
+      "isOpenAccess": true,
+      "license": "cc by",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 19
+        },
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 20
+        },
+        {
+          "kind": "HP:0031006",
+          "status": "found",
+          "words": 9
+        },
+        {
+          "kind": "HP:0002027",
+          "status": "found",
+          "words": 10
+        },
+        {
+          "kind": "HP:0002046",
+          "status": "found",
+          "words": 10
+        },
+        {
+          "kind": "HP:6000855",
+          "status": "found",
+          "words": 10
+        },
+        {
+          "kind": "HP:0000970",
+          "status": "found",
+          "words": 6
+        },
+        {
+          "kind": "HP:0000822",
+          "status": "found",
+          "words": 6
+        },
+        {
+          "kind": "HP:0012622",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0000093",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "HP:0001639",
+          "status": "found",
+          "words": 9
+        },
+        {
+          "kind": "HP:0001903",
+          "status": "found",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "caseId": "HO-02",
+      "pmcid": "PMC9626657",
+      "isOpenAccess": true,
+      "license": "cc by",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 16
+        },
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 15
+        },
+        {
+          "kind": "HP:0001943",
+          "status": "found",
+          "words": 16
+        },
+        {
+          "kind": "HP:0001942",
+          "status": "found",
+          "words": 14
+        },
+        {
+          "kind": "HP:0010911",
+          "status": "found",
+          "words": 7
+        },
+        {
+          "kind": "HP:0010910",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0004372",
+          "status": "found",
+          "words": 16
+        },
+        {
+          "kind": "HP:0002342",
+          "status": "found",
+          "words": 7
+        }
+      ]
+    },
+    {
+      "caseId": "HO-03",
+      "pmcid": "PMC10277605",
+      "isOpenAccess": true,
+      "license": "cc by-nc-nd",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 20
+        },
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "HP:0001324",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0001270",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0002136",
+          "status": "found",
+          "words": 15
+        },
+        {
+          "kind": "HP:0003307",
+          "status": "found",
+          "words": 15
+        },
+        {
+          "kind": "HP:0003551",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0002650",
+          "status": "found",
+          "words": 12
+        },
+        {
+          "kind": "HP:0001288",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "HP:0002527",
+          "status": "found",
+          "words": 21
+        },
+        {
+          "kind": "HP:0002014",
+          "status": "found",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "caseId": "HO-04",
+      "pmcid": "PMC12170415",
+      "isOpenAccess": false,
+      "license": null,
+      "textSource": "none (manual check of the public PMC page)",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "manual",
+          "words": 20
+        },
+        {
+          "kind": "diagnosis",
+          "status": "manual",
+          "words": 20
+        },
+        {
+          "kind": "HP:0001324",
+          "status": "manual",
+          "words": 11
+        },
+        {
+          "kind": "HP:0002061",
+          "status": "manual",
+          "words": 11
+        },
+        {
+          "kind": "HP:0001288",
+          "status": "manual",
+          "words": 9
+        },
+        {
+          "kind": "HP:0002136",
+          "status": "manual",
+          "words": 9
+        },
+        {
+          "kind": "HP:0033748",
+          "status": "manual",
+          "words": 12
+        },
+        {
+          "kind": "HP:0001260",
+          "status": "manual",
+          "words": 11
+        },
+        {
+          "kind": "HP:0003394",
+          "status": "manual",
+          "words": 9
+        },
+        {
+          "kind": "HP:0001347",
+          "status": "manual",
+          "words": 16
+        }
+      ]
+    },
+    {
+      "caseId": "HO-05",
+      "pmcid": "PMC13381835",
+      "isOpenAccess": true,
+      "license": "cc by",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 22
+        },
+        {
+          "kind": "HP:0008905",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0011800",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0004482",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0002098",
+          "status": "found",
+          "words": 15
+        },
+        {
+          "kind": "HP:0002677",
+          "status": "found",
+          "words": 10
+        },
+        {
+          "kind": "HP:0010535",
+          "status": "found",
+          "words": 9
+        },
+        {
+          "kind": "HP:0004322",
+          "status": "found",
+          "words": 6
+        },
+        {
+          "kind": "HP:0001252",
+          "status": "found",
+          "words": 9
+        }
+      ]
+    },
+    {
+      "caseId": "HO-06",
+      "pmcid": "PMC12033654",
+      "isOpenAccess": true,
+      "license": "cc by-nc",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "HP:0002757",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "HP:0002653",
+          "status": "found",
+          "words": 9
+        },
+        {
+          "kind": "HP:0006487",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "HP:0004322",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "HP:0000592",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "HP:0000703",
+          "status": "found",
+          "words": 11
+        },
+        {
+          "kind": "HP:0000225",
+          "status": "found",
+          "words": 11
+        }
+      ]
+    },
+    {
+      "caseId": "HO-07",
+      "pmcid": "PMC5102842",
+      "isOpenAccess": true,
+      "license": "cc by-nc",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 27
+        },
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0100665",
+          "status": "found",
+          "words": 15
+        },
+        {
+          "kind": "HP:0000969",
+          "status": "found",
+          "words": 15
+        },
+        {
+          "kind": "HP:0002027",
+          "status": "found",
+          "words": 11
+        },
+        {
+          "kind": "HP:0002094",
+          "status": "found",
+          "words": 15
+        },
+        {
+          "kind": "HP:0012027",
+          "status": "found",
+          "words": 6
+        }
+      ]
+    },
+    {
+      "caseId": "HO-08",
+      "pmcid": "PMC13491777",
+      "isOpenAccess": true,
+      "license": "cc by-nc-nd",
+      "textSource": "europepmc-fullTextXML",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 18
+        },
+        {
+          "kind": "HP:0001344",
+          "status": "found",
+          "words": 15
+        },
+        {
+          "kind": "HP:0001270",
+          "status": "found",
+          "words": 11
+        },
+        {
+          "kind": "HP:0000256",
+          "status": "found",
+          "words": 9
+        },
+        {
+          "kind": "HP:0000098",
+          "status": "found",
+          "words": 8
+        },
+        {
+          "kind": "HP:0000337",
+          "status": "found",
+          "words": 17
+        },
+        {
+          "kind": "HP:0000508",
+          "status": "found",
+          "words": 17
+        },
+        {
+          "kind": "HP:0005280",
+          "status": "found",
+          "words": 17
+        },
+        {
+          "kind": "HP:0008081",
+          "status": "found",
+          "words": 15
+        }
+      ]
+    },
+    {
+      "caseId": "HO-09",
+      "pmcid": "PMC2694857",
+      "isOpenAccess": false,
+      "license": "cc by",
+      "textSource": "none (manual check of the public PMC page)",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "manual",
+          "words": 19
+        },
+        {
+          "kind": "HP:0011968",
+          "status": "manual",
+          "words": 10
+        },
+        {
+          "kind": "HP:0001252",
+          "status": "manual",
+          "words": 14
+        },
+        {
+          "kind": "HP:0000252",
+          "status": "manual",
+          "words": 23
+        },
+        {
+          "kind": "HP:0001250",
+          "status": "manual",
+          "words": 13
+        },
+        {
+          "kind": "HP:0000733",
+          "status": "manual",
+          "words": 13
+        },
+        {
+          "kind": "HP:0001270",
+          "status": "manual",
+          "words": 13
+        },
+        {
+          "kind": "HP:0001344",
+          "status": "manual",
+          "words": 13
+        },
+        {
+          "kind": "HP:0002376",
+          "status": "manual",
+          "words": 14
+        }
+      ]
+    },
+    {
+      "caseId": "HO-10",
+      "pmcid": "PMC11698633",
+      "isOpenAccess": false,
+      "license": null,
+      "textSource": "ncbi-efetch-pmc",
+      "metadataDiffs": [],
+      "quotes": [
+        {
+          "kind": "diagnosis",
+          "status": "found",
+          "words": 17
+        },
+        {
+          "kind": "HP:0030051",
+          "status": "found",
+          "words": 17
+        },
+        {
+          "kind": "HP:0002061",
+          "status": "found",
+          "words": 10
+        },
+        {
+          "kind": "HP:0001288",
+          "status": "found",
+          "words": 12
+        },
+        {
+          "kind": "HP:0001251",
+          "status": "found",
+          "words": 12
+        },
+        {
+          "kind": "HP:0001639",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "HP:0002650",
+          "status": "found",
+          "words": 13
+        },
+        {
+          "kind": "HP:0034392",
+          "status": "found",
+          "words": 7
+        },
+        {
+          "kind": "HP:0000011",
+          "status": "found",
+          "words": 7
+        }
+      ]
+    }
+  ],
+  "totals": {
+    "quotesFound": 143,
+    "quotesNotFound": 0,
+    "quotesManual": 19,
+    "quotesOverWordLimit": 0,
+    "metadataDiffs": 0
+  }
+}

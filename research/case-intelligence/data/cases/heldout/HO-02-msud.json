@@ -1,0 +1,45 @@
+{
+  "caseId": "HO-02",
+  "split": "heldout",
+  "origin": "T33 hand-off (Ian team research, 2026-10-24); re-verified by T38",
+  "source": {
+    "pmcid": "PMC9626657",
+    "pmid": "36341163",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9626657/",
+    "title": "Maple syrup urine disease due to a paracentric inversion of chr 19 that disrupts BCKDHA: A case report.",
+    "journal": "JIMD reports",
+    "year": 2022,
+    "patient": "Single patient (girl, now 10 years old)",
+    "textAccess": "fulltext"
+  },
+  "diagnosis": {
+    "name": "maple syrup urine disease",
+    "mondo": "MONDO:0009563",
+    "acceptedIds": ["MONDO:0009563", "MONDO:0017051"],
+    "genes": ["BCKDHA"],
+    "confirmation": {
+      "method": "newborn-screening+genetic",
+      "summary": "Positive newborn screen; compound heterozygous BCKDHA missense variant and a paracentric chr19 inversion found by whole-genome sequencing.",
+      "evidence": [
+        "She tested positive for MSUD in a newborn screening (NBS) performed at 5 days of age",
+        "a paracentric inversion disrupting Intron 1 of BCKDHA, which was identified by whole‐genome sequencing"
+      ]
+    }
+  },
+  "note": {
+    "text": "Soon after my daughter was born, doctors said her blood sugar was very low. A newborn blood test showed unusually high amounts of certain substances, and she needed hospital treatment during her first week. Doctors also said her blood had become too acidic. Later, whenever she caught an infection, she sometimes became barely responsive and needed care in an intensive care unit. By age ten, learning and understanding things were much harder for her than for other children her age.",
+    "voice": "parent",
+    "author": "T33 hand-off (assistant-written from the article; not the parent's words)"
+  },
+  "phenotypes": [
+    { "hpoId": "HP:0001943", "label": "Hypoglycemia", "origin": "T33", "t33Label": "Hypoglycemia", "evidence": "At birth, she was found to have mild hypoglycemia and was temporarily administered a glucose infusion", "inNote": true, "notePhrase": "her blood sugar was very low" },
+    { "hpoId": "HP:0001942", "label": "Metabolic acidosis", "origin": "T33", "t33Label": "Metabolic acidosis", "evidence": "At 8 days of age, she was hospitalized and noted to have metabolic acidosis", "inNote": true, "notePhrase": "her blood had become too acidic" },
+    { "hpoId": "HP:0010911", "label": "Hyperleucinemia", "origin": "T33", "t33Label": "Hyperleucinemia", "evidence": "leucine 1646.7 nmol/ml (normal range", "inNote": false, "comment": "The note says 'unusually high amounts of certain substances' without naming leucine." },
+    { "hpoId": "HP:0010910", "label": "Hypervalinemia", "origin": "T33", "t33Label": "Hypervalinemia", "evidence": "markedly elevated with valine 776.7 nmol/ml", "inNote": false, "comment": "As above; not named in the note." },
+    { "hpoId": "HP:0004372", "label": "Reduced consciousness", "origin": "T38", "evidence": "admitted to the intensive care unit three times because of severe metabolic acidosis with impaired consciousness", "inNote": true, "notePhrase": "became barely responsive" },
+    { "hpoId": "HP:0002342", "label": "Moderate intellectual disability", "origin": "T33", "t33Label": "Moderate intellectual disability", "evidence": "The patient's IQ score was 44", "inNote": true, "notePhrase": "learning and understanding things were much harder for her", "comment": "An IQ of 44 falls in the moderate range; the note itself does not convey the severity." }
+  ],
+  "uncertainty": [
+    "Severity (moderate) is inferred from the reported IQ score, not stated in words by the authors."
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "caseId": "DEV-07",
+  "split": "dev",
+  "origin": "T38 research (Peter's Kiro, 2026-10-24)",
+  "source": {
+    "pmcid": "PMC5968380",
+    "pmid": "29867772",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5968380/",
+    "title": "Pamidronate Rescue Therapy for Hypercalcemia in a Child With Williams Syndrome.",
+    "journal": "Frontiers in endocrinology",
+    "year": 2018,
+    "patient": "Single patient (15-month-old boy)",
+    "textAccess": "fulltext"
+  },
+  "diagnosis": {
+    "name": "Williams syndrome",
+    "mondo": "MONDO:0008678",
+    "acceptedIds": [
+      "MONDO:0008678"
+    ],
+    "genes": [
+      "ELN"
+    ],
+    "confirmation": {
+      "method": "cytogenetic",
+      "summary": "FISH showed a 7q11.23 deletion including the elastin gene.",
+      "evidence": [
+        "confirmed by FISH probe analysis which revealed a deletion at 7q11.23 encompassing the elastin gene"
+      ]
+    }
+  },
+  "note": {
+    "text": "Since he was six months old, our baby has not been gaining weight, has been fussy and cranky, and has been constipated. At fifteen months he is small and thin, and his weight, length and head size are all well below the charts. People say his face looks a bit unusual. Blood tests showed far too much calcium, a kidney scan showed calcium deposits, and a heart scan found a mild narrowing just above a heart valve.",
+    "voice": "parent",
+    "author": "Peter's Kiro, written from the article's findings; not the parent's words"
+  },
+  "phenotypes": [
+    {
+      "hpoId": "HP:0001508",
+      "label": "Failure to thrive",
+      "origin": "T38",
+      "evidence": "presented for failure to thrive, irritability, and constipation since the age of 6 months",
+      "inNote": true,
+      "notePhrase": "has not been gaining weight"
+    },
+    {
+      "hpoId": "HP:0000737",
+      "label": "Irritability",
+      "origin": "T38",
+      "evidence": "presented for failure to thrive, irritability, and constipation since the age of 6 months",
+      "inNote": true,
+      "notePhrase": "fussy and cranky"
+    },
+    {
+      "hpoId": "HP:0002019",
+      "label": "Constipation",
+      "origin": "T38",
+      "evidence": "presented for failure to thrive, irritability, and constipation since the age of 6 months",
+      "inNote": true,
+      "notePhrase": "has been constipated"
+    },
+    {
+      "hpoId": "HP:0004322",
+      "label": "Short stature",
+      "origin": "T38",
+      "evidence": "length 74 cm; and head circumference 42 cm, all significantly below the third centile for age",
+      "inNote": true,
+      "notePhrase": "length and head size are all well below the charts"
+    },
+    {
+      "hpoId": "HP:0000252",
+      "label": "Microcephaly",
+      "origin": "T38",
+      "evidence": "length 74 cm; and head circumference 42 cm, all significantly below the third centile for age",
+      "inNote": true,
+      "notePhrase": "head size are all well below the charts"
+    },
+    {
+      "hpoId": "HP:0001999",
+      "label": "Abnormal facial shape",
+      "origin": "T38",
+      "evidence": "Physical exam revealed a small, undernourished baby with a peculiar facies",
+      "inNote": true,
+      "notePhrase": "his face looks a bit unusual",
+      "comment": "'Peculiar facies' is non-specific; this broad term is the honest match."
+    },
+    {
+      "hpoId": "HP:0003072",
+      "label": "Hypercalcemia",
+      "origin": "T38",
+      "evidence": "Laboratory tests revealed hypercalcemia at 17.5 mg/dl",
+      "inNote": true,
+      "notePhrase": "far too much calcium"
+    },
+    {
+      "hpoId": "HP:0012408",
+      "label": "Medullary nephrocalcinosis",
+      "origin": "T38",
+      "evidence": "Renal ultrasound showed grade III bilateral medullary nephrocalcinosis",
+      "inNote": true,
+      "notePhrase": "a kidney scan showed calcium deposits"
+    },
+    {
+      "hpoId": "HP:0004381",
+      "label": "Supravalvular aortic stenosis",
+      "origin": "T38",
+      "evidence": "echocardiography detected mild supravalvular aortic stenosis",
+      "inNote": true,
+      "notePhrase": "a mild narrowing just above a heart valve"
+    }
+  ],
+  "uncertainty": [
+    "'Short stature' is coded from length below the 3rd centile at 15 months."
+  ]
+}

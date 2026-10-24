@@ -1,0 +1,48 @@
+{
+  "caseId": "HO-04",
+  "split": "heldout",
+  "origin": "T33 hand-off (Ian team research, 2026-10-24); re-verified by T38",
+  "source": {
+    "pmcid": "PMC12170415",
+    "pmid": "40535651",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12170415/",
+    "title": "Twenty years of misdiagnosis of X-linked adrenoleukodystrophy: a case report.",
+    "journal": "American journal of translational research",
+    "year": 2025,
+    "patient": "Single patient (38-year-old man)",
+    "textAccess": "html-manual"
+  },
+  "diagnosis": {
+    "name": "X-linked adrenoleukodystrophy (adult myelopathy presentation)",
+    "mondo": "MONDO:0018544",
+    "acceptedIds": ["MONDO:0018544", "MONDO:0015339"],
+    "genes": ["ABCD1"],
+    "confirmation": {
+      "method": "genetic+biochemical",
+      "summary": "Raised plasma VLCFA ratios and a novel hemizygous ABCD1 c.356dupC found by Sanger sequencing.",
+      "evidence": [
+        "VLCFA analysis indicated elevated plasma ratios of C24/C22 (1.46; reference range: 0.64-0.98) and C26/C22",
+        "Sanger sequencing detected a novel potentially pathogenic hemizygous mutation (Figure 2) at exon 1 (c.356dupC) in the ABCD1 gene"
+      ]
+    }
+  },
+  "note": {
+    "text": "My legs have grown stiffer and weaker over many years. At first walking only felt awkward, but the problem gradually became so severe that I needed a wheelchair. Sometimes my legs felt numb, and I started walking with my feet far apart to keep my balance. Other people noticed that some of my words were harder to understand. I've also had muscle cramps, changes in my mood and problems controlling when I go to the bathroom.",
+    "voice": "patient",
+    "author": "T33 hand-off (assistant-written from the article; not the patient's words)"
+  },
+  "phenotypes": [
+    { "hpoId": "HP:0001324", "label": "Muscle weakness", "origin": "T33", "t33Label": "Muscle weakness", "evidence": "initially manifested as rigidity and weakness in both legs since 1998", "inNote": true, "notePhrase": "My legs have grown stiffer and weaker" },
+    { "hpoId": "HP:0002061", "label": "Lower limb spasticity", "origin": "T33", "t33Label": "Lower limb spasticity", "evidence": "a persistent increase in cogwheel muscle tone in both lower limbs", "inNote": true, "notePhrase": "My legs have grown stiffer" },
+    { "hpoId": "HP:0001288", "label": "Gait disturbance", "origin": "T33", "t33Label": "Gait disturbance", "evidence": "a 20-year history of progressively worsening gait disturbances", "inNote": true, "notePhrase": "walking only felt awkward" },
+    { "hpoId": "HP:0002136", "label": "Broad-based gait", "origin": "T33", "t33Label": "Broad-based gait", "evidence": "spastic paraparesis accompanied by a wide-based spastic gait", "inNote": true, "notePhrase": "walking with my feet far apart" },
+    { "hpoId": "HP:0033748", "label": "Hypoesthesia", "origin": "T38", "evidence": "Numbness in the lower limbs was reported by the patient in 2003", "inNote": true, "notePhrase": "my legs felt numb" },
+    { "hpoId": "HP:0001260", "label": "Dysarthria", "origin": "T33", "t33Label": "Dysarthria", "evidence": "Neurological examination revealed impaired cognitive function, mild dysarthria, and spastic paraparesis", "inNote": true, "notePhrase": "some of my words were harder to understand" },
+    { "hpoId": "HP:0003394", "label": "Muscle spasm", "origin": "T38", "evidence": "Additional manifestations included asynodia, muscle cramps, and psychiatric conditions", "inNote": true, "notePhrase": "muscle cramps", "comment": "HPO lists 'muscle cramps' as a synonym of Muscle spasm." },
+    { "hpoId": "HP:0001347", "label": "Hyperreflexia", "origin": "T33", "t33Label": "Hyperreflexia", "evidence": "Deep tendon reflexes were diffusely brisk, with a bilateral Achilles clonus and a positive Babinski sign", "inNote": false, "comment": "Examination finding; not in the note." }
+  ],
+  "uncertainty": [
+    "Europe PMC does not list this article as open access and NCBI does not allow automated full-text download. Quotes were checked by reading the public PMC page on 2026-10-24 and cannot be re-checked by verify-sources.",
+    "The note mentions mood changes and bathroom control; the article reports anxiety, depression, apathy and sphincter dysfunction, but these are not coded here because the note's wording is too general to pick one HPO term."
+  ]
+}

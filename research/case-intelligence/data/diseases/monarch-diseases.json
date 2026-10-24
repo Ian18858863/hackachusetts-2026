@@ -1,0 +1,228 @@
+{
+  "source": "https://api.monarchinitiative.org/v3/api/entity/{id}",
+  "fetchedAt": "2026-10-24T22:40:25.522Z",
+  "diseases": {
+    "MONDO:0007037": {
+      "id": "MONDO:0007037",
+      "name": "achondroplasia",
+      "xrefs": [
+        "OMIM:100800",
+        "Orphanet:15"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0008146": {
+      "id": "MONDO:0008146",
+      "name": "osteogenesis imperfecta type 1",
+      "xrefs": [
+        "OMIM:166200",
+        "Orphanet:216796"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0008300": {
+      "id": "MONDO:0008300",
+      "name": "Prader-Willi syndrome",
+      "xrefs": [
+        "OMIM:176270",
+        "Orphanet:739"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0008678": {
+      "id": "MONDO:0008678",
+      "name": "Williams syndrome",
+      "xrefs": [
+        "OMIM:194050",
+        "Orphanet:904"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0009066": {
+      "id": "MONDO:0009066",
+      "name": "juvenile nephropathic cystinosis",
+      "xrefs": [
+        "OMIM:219900",
+        "Orphanet:411634"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0009290": {
+      "id": "MONDO:0009290",
+      "name": "glycogen storage disease II",
+      "xrefs": [
+        "Orphanet:365"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0009563": {
+      "id": "MONDO:0009563",
+      "name": "maple syrup urine disease",
+      "xrefs": [
+        "Orphanet:511"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0009861": {
+      "id": "MONDO:0009861",
+      "name": "phenylketonuria",
+      "xrefs": [
+        "OMIM:261600",
+        "Orphanet:716"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0010200": {
+      "id": "MONDO:0010200",
+      "name": "Wilson disease",
+      "xrefs": [
+        "OMIM:277900",
+        "Orphanet:905"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0010526": {
+      "id": "MONDO:0010526",
+      "name": "Fabry disease",
+      "xrefs": [
+        "OMIM:301500",
+        "Orphanet:324"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0010674": {
+      "id": "MONDO:0010674",
+      "name": "mucopolysaccharidosis type 2",
+      "xrefs": [
+        "OMIM:309900",
+        "Orphanet:580",
+        "Orphanet:79388"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0010726": {
+      "id": "MONDO:0010726",
+      "name": "Rett syndrome",
+      "xrefs": [
+        "OMIM:312750",
+        "Orphanet:778"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0013199": {
+      "id": "MONDO:0013199",
+      "name": "tuberous sclerosis 2",
+      "xrefs": [
+        "OMIM:613254"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0015054": {
+      "id": "MONDO:0015054",
+      "name": "hereditary angioedema type 2",
+      "xrefs": [
+        "Orphanet:100051"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0015339": {
+      "id": "MONDO:0015339",
+      "name": "adrenomyeloneuropathy",
+      "xrefs": [
+        "Orphanet:139399"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0016239": {
+      "id": "MONDO:0016239",
+      "name": "cystinosis",
+      "xrefs": [
+        "Orphanet:213"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0016315": {
+      "id": "MONDO:0016315",
+      "name": "mucopolysaccharidosis type 2, severe form",
+      "xrefs": [
+        "Orphanet:217085"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0016316": {
+      "id": "MONDO:0016316",
+      "name": "mucopolysaccharidosis type 2, attenuated form",
+      "xrefs": [
+        "Orphanet:217093"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0017051": {
+      "id": "MONDO:0017051",
+      "name": "classic maple syrup urine disease",
+      "xrefs": [
+        "Orphanet:268145"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0017746": {
+      "id": "MONDO:0017746",
+      "name": "atypical Rett syndrome",
+      "xrefs": [
+        "Orphanet:3095"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0018544": {
+      "id": "MONDO:0018544",
+      "name": "adrenoleukodystrophy",
+      "xrefs": [
+        "OMIM:300100",
+        "Orphanet:43"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0019259": {
+      "id": "MONDO:0019259",
+      "name": "classic phenylketonuria",
+      "xrefs": [
+        "Orphanet:79254"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0019349": {
+      "id": "MONDO:0019349",
+      "name": "Sotos syndrome",
+      "xrefs": [
+        "OMIM:117550",
+        "Orphanet:821"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0033946": {
+      "id": "MONDO:0033946",
+      "name": "hereditary angioedema with C1Inh deficiency",
+      "xrefs": [
+        "OMIM:106100",
+        "Orphanet:528623"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0100339": {
+      "id": "MONDO:0100339",
+      "name": "Friedreich ataxia",
+      "xrefs": [
+        "Orphanet:95"
+      ],
+      "deprecated": false
+    },
+    "MONDO:0100340": {
+      "id": "MONDO:0100340",
+      "name": "Friedreich ataxia 1",
+      "xrefs": [
+        "OMIM:229300"
+      ],
+      "deprecated": false
+    }
+  }
+}

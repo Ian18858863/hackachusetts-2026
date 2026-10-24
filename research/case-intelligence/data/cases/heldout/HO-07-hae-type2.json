@@ -1,0 +1,91 @@
+{
+  "caseId": "HO-07",
+  "split": "heldout",
+  "origin": "T33 hand-off (Ian team research, 2026-10-24); re-verified by T38",
+  "source": {
+    "pmcid": "PMC5102842",
+    "pmid": "27826968",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5102842/",
+    "title": "A Case of Type 2 Hereditary Angioedema With SERPING1 Mutation.",
+    "journal": "Allergy, asthma & immunology research",
+    "year": 2017,
+    "patient": "Single patient (24-year-old woman)",
+    "textAccess": "fulltext"
+  },
+  "diagnosis": {
+    "name": "hereditary angioedema type 2",
+    "mondo": "MONDO:0015054",
+    "acceptedIds": [
+      "MONDO:0015054",
+      "MONDO:0033946"
+    ],
+    "genes": [
+      "SERPING1"
+    ],
+    "confirmation": {
+      "method": "genetic+biochemical",
+      "summary": "Low C4, high C1-INH level with low C1-INH activity, and a confirmed SERPING1 mutation.",
+      "evidence": [
+        "she presented with a very high C1-INH level (81.0 mg/dL; normal range: 21.0-39.0 mg/dL) and abnormally low C1-INH activity",
+        "The SERPING1 gene mutation was confirmed in this"
+      ]
+    }
+  },
+  "note": {
+    "text": "Every few weeks my hands, thighs or feet swell up without a clear injury. Sometimes I get strong stomach pain during an attack. The swelling can last more than a day before it goes away on its own. My attacks became more frequent after I started a stressful job. Once my throat swelled and I had trouble breathing, and ordinary allergy medicine did not help.",
+    "voice": "patient",
+    "author": "T33 hand-off (assistant-written from the article; not the patient's words)"
+  },
+  "phenotypes": [
+    {
+      "hpoId": "HP:0100665",
+      "label": "Angioedema",
+      "origin": "T33",
+      "t33Label": "Angioedema",
+      "evidence": "she had experienced migrating soft tissue swelling in both hands, thighs, and feet twice monthly",
+      "inNote": true,
+      "notePhrase": "my hands, thighs or feet swell up"
+    },
+    {
+      "hpoId": "HP:0000969",
+      "label": "Edema",
+      "origin": "T33",
+      "t33Label": "Edema",
+      "evidence": "she developed abdominal pain, edema of both hands, and dyspnea due to upper airway swelling",
+      "inNote": true,
+      "notePhrase": "swell up",
+      "comment": "Broader parent of Angioedema; kept because T33 listed it, but it is redundant."
+    },
+    {
+      "hpoId": "HP:0002027",
+      "label": "Abdominal pain",
+      "origin": "T33",
+      "t33Label": "Abdominal pain",
+      "evidence": "presented with recurrent episodic abdominal pain and swelling of the extremities",
+      "inNote": true,
+      "notePhrase": "strong stomach pain"
+    },
+    {
+      "hpoId": "HP:0002094",
+      "label": "Dyspnea",
+      "origin": "T33",
+      "t33Label": "Dyspnea",
+      "evidence": "she developed abdominal pain, edema of both hands, and dyspnea due to upper airway swelling",
+      "inNote": true,
+      "notePhrase": "I had trouble breathing"
+    },
+    {
+      "hpoId": "HP:0012027",
+      "label": "Laryngeal edema",
+      "origin": "T33",
+      "t33Label": "Laryngeal edema",
+      "evidence": "dyspnea due to upper airway swelling",
+      "inNote": true,
+      "notePhrase": "my throat swelled",
+      "comment": "The article says 'upper airway swelling', not larynx specifically. Accepted as the closest term, flagged as an inference."
+    }
+  ],
+  "uncertainty": [
+    "Laryngeal edema is an inference from 'upper airway swelling'."
+  ]
+}

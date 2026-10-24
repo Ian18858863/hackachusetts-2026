@@ -1,0 +1,143 @@
+{
+  "caseId": "DEV-04",
+  "split": "dev",
+  "origin": "T38 research (Peter's Kiro, 2026-10-24)",
+  "source": {
+    "pmcid": "PMC6788382",
+    "pmid": "31636599",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6788382/",
+    "title": "Effect of Delayed Diagnosis of Phenylketonuria With Imaging Findings of Bilateral Diffuse Symmetric White Matter Lesions: A Case Report and Literature Review.",
+    "journal": "Frontiers in neurology",
+    "year": 2019,
+    "patient": "Single patient (60-year-old man)",
+    "textAccess": "fulltext"
+  },
+  "diagnosis": {
+    "name": "phenylketonuria",
+    "mondo": "MONDO:0009861",
+    "acceptedIds": [
+      "MONDO:0009861",
+      "MONDO:0019259"
+    ],
+    "genes": [
+      "PAH"
+    ],
+    "confirmation": {
+      "method": "genetic+biochemical",
+      "summary": "Markedly raised blood phenylalanine (1221.5 μM) and PAH variants c.1068C>A and c.740G>T.",
+      "evidence": [
+        "significantly elevated Phe levels (1221.5μM, Phe/Tyr ratio 27.45) in blood",
+        "Heterozygous mutations exist in gene encoding PAH c.1068C>A and c.740G>T"
+      ]
+    }
+  },
+  "note": {
+    "text": "My older brother had a fit when he was three and has struggled to think and count ever since; he never went to school. Over the last two months he has had trouble judging where things are and finding his way, and his personality has changed. He can no longer walk steadily. He sweats a lot, has trouble passing urine and is constipated. His legs are stiff and weak, and his hands shake.",
+    "voice": "relative",
+    "author": "Peter's Kiro, written from the article's findings; not the family's words"
+  },
+  "phenotypes": [
+    {
+      "hpoId": "HP:0001250",
+      "label": "Seizure",
+      "origin": "T38",
+      "evidence": "He had convulsions at the age of three and, since then, he began to show cognitive impairment",
+      "inNote": true,
+      "notePhrase": "had a fit when he was three"
+    },
+    {
+      "hpoId": "HP:0100543",
+      "label": "Cognitive impairment",
+      "origin": "T38",
+      "evidence": "he began to show cognitive impairment which was evident since he was not able to count beyond two numbers",
+      "inNote": true,
+      "notePhrase": "struggled to think and count"
+    },
+    {
+      "hpoId": "HP:0010794",
+      "label": "Impaired visuospatial constructive cognition",
+      "origin": "T38",
+      "evidence": "admitted to our hospital for 2 months of visual-spatial impairment and personality change",
+      "inNote": true,
+      "notePhrase": "trouble judging where things are and finding his way"
+    },
+    {
+      "hpoId": "HP:0000751",
+      "label": "Personality changes",
+      "origin": "T38",
+      "evidence": "admitted to our hospital for 2 months of visual-spatial impairment and personality change",
+      "inNote": true,
+      "notePhrase": "his personality has changed"
+    },
+    {
+      "hpoId": "HP:0002317",
+      "label": "Unsteady gait",
+      "origin": "T38",
+      "evidence": "He developed visual orientation disorders and couldn't walk with stability in 2 months",
+      "inNote": true,
+      "notePhrase": "can no longer walk steadily"
+    },
+    {
+      "hpoId": "HP:0000975",
+      "label": "Hyperhidrosis",
+      "origin": "T38",
+      "evidence": "The patient reported having excessive sweat, difficult urination, and constipation",
+      "inNote": true,
+      "notePhrase": "He sweats a lot"
+    },
+    {
+      "hpoId": "HP:0000019",
+      "label": "Urinary hesitancy",
+      "origin": "T38",
+      "evidence": "The patient reported having excessive sweat, difficult urination, and constipation",
+      "inNote": true,
+      "notePhrase": "trouble passing urine",
+      "comment": "'Difficult urination' could also be retention; hesitancy is the closest specific term."
+    },
+    {
+      "hpoId": "HP:0002019",
+      "label": "Constipation",
+      "origin": "T38",
+      "evidence": "The patient reported having excessive sweat, difficult urination, and constipation",
+      "inNote": true,
+      "notePhrase": "is constipated"
+    },
+    {
+      "hpoId": "HP:0002313",
+      "label": "Spastic paraparesis",
+      "origin": "T38",
+      "evidence": "spastic paraparesis with tremor, brisk tendon reflexes, bilateral pyramidal sign",
+      "inNote": true,
+      "notePhrase": "His legs are stiff and weak"
+    },
+    {
+      "hpoId": "HP:0001337",
+      "label": "Tremor",
+      "origin": "T38",
+      "evidence": "spastic paraparesis with tremor, brisk tendon reflexes, bilateral pyramidal sign",
+      "inNote": true,
+      "notePhrase": "his hands shake",
+      "comment": "The article does not say the tremor is in the hands."
+    },
+    {
+      "hpoId": "HP:0001347",
+      "label": "Hyperreflexia",
+      "origin": "T38",
+      "evidence": "spastic paraparesis with tremor, brisk tendon reflexes, bilateral pyramidal sign",
+      "inNote": false,
+      "comment": "Examination finding; not in the note."
+    },
+    {
+      "hpoId": "HP:0004923",
+      "label": "Hyperphenylalaninemia",
+      "origin": "T38",
+      "evidence": "significantly elevated Phe levels (1221.5μM, Phe/Tyr ratio 27.45) in blood",
+      "inNote": false,
+      "comment": "Laboratory finding; not in the note."
+    }
+  ],
+  "uncertainty": [
+    "The note says 'his hands shake'; the article reports tremor without naming the body site.",
+    "The article reports a family history of intellectual disability; the note is written as if by a sibling, which is a framing choice, not a source fact."
+  ]
+}
