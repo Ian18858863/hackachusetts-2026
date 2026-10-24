@@ -1,12 +1,41 @@
 # Rare Disease Detective
 
-Turn a symptom history into a specialist-ready brief in minutes — possible conditions to discuss with a doctor, each with its evidence.
+## At a glance
 
+- **What it is:** a web app that turns a plain-language symptom history into HPO phenotype terms, possible rare conditions with the evidence behind each, questions for the next appointment, and a one-page specialist brief.
+- **Who it is for:** clinicians and genetic counselors (clinician mode), and families preparing notes for a doctor (family mode, no disease names shown).
 - **Live demo:** https://hackachusetts-2026.pages.dev/app/?demo=demo-npc1 (opens the primary demo case; no sign-up). Family mode: https://hackachusetts-2026.pages.dev/app/?demo=demo-npc1&audience=family
-- **Demo video (< 3 min):** VIDEO_LINK_TBD (placeholder, added before submission)
-- **Built at Sundai** — Hackachusetts 2026, powered by Kiro. Healthcare & Biotech track.
+- **Demo video (< 3 min):** https://youtu.be/NhfCiivQvSw
+- **Decision support, not a diagnosis.** These are possible matches to discuss with a doctor.
 
-> Decision support, not a diagnosis. These are possible matches to discuss with a doctor.
+**Built at Sundai** — Hackachusetts 2026, powered by Kiro. Healthcare & Biotech track. A one-page map of this submission onto the judging criteria, with a 60-second test path: [SUBMISSION.md](SUBMISSION.md).
+
+## Implementation
+
+- **Kiro CLI did the authoring.** `kiro-cli chat --no-interactive` sessions ran in parallel, one git worktree and branch per task, on disjoint paths claimed in [BRIEFING.md](BRIEFING.md) section 6. The usage log has 114 dated rows, 20 of them Kiro-run Git integrations into `main` ([docs/KIRO_USAGE.md](docs/KIRO_USAGE.md)).
+- **Two custom agents** in [.kiro/agents/](.kiro/agents/): `rdd-builder` writes code behind agent hooks on `agentSpawn`, `userPromptSubmit`, `preToolUse` and `postToolUse` (3 scripts in [.kiro/hooks/scripts/](.kiro/hooks/scripts/); the shell guard blocks push, hard reset and deploy), and the read-only `rdd-reviewer` gave the first-pass review before merges: 46 review files in [docs/reviews/](docs/reviews/). Kiro IDE: one IDE `PostFileSave` hook (`typecheck-app-on-save`) was observed firing at 15:44 ET (usage-log row for 15:44, [.kiro/hooks/typecheck-on-save.json](.kiro/hooks/typecheck-on-save.json)); Jerry's engine commits say "Authored by Jerry's Kiro", but his tool details are not in the log.
+- **Specs, steering, MCP, power.** 3 specs in [.kiro/specs/](.kiro/specs/) with 127 numbered EARS acceptance criteria (65 product, 25 landing, 37 i18n) and 14 correctness properties P1–P14 in the [product design](.kiro/specs/rare-disease-detective/design.md); 4 steering files in [.kiro/steering/](.kiro/steering/) (always, fileMatch, manual); MCP servers Context7 and biomcp ([.kiro/settings/mcp.json](.kiro/settings/mcp.json), [docs/research/biomcp-checks.md](docs/research/biomcp-checks.md)); the project power [`rdd-medical-data`](.kiro/powers/rdd-medical-data/) with 3 skills.
+- **Property-based tests.** 19 `fc.assert` properties across 5 files in [engine/test/](engine/test/), with 19 `numRuns` settings from 30 to 3,000 (14,960 runs in total) and the fixed seed 20261024 ([engine/test/properties.test.ts](engine/test/properties.test.ts), commit `4a06d17`).
+- **Strategy: contract first, measure before shipping.** The interface contract [docs/CONTRACT.md](docs/CONTRACT.md) (commit `f77cc31`) let three people and parallel sessions build against one shape. Two benchmarks were pre-registered before any result: the 14-case re-rank test (T23, 12:57 ET, [ranking-benchmark.md](docs/research/ranking-benchmark.md)) and Jerry's 50-case benchmark ([ranking-benchmark-50.md](docs/research/ranking-benchmark-50.md)).
+- **Negative and neutral results are kept.** The frequency-aware re-rank did not help (top-1 5 → 4, top-3 6 → 6 over 14 cases) and is not shipped; PubCaseFinder showed no top-1 or top-3 gain on Jerry's 10 held-out cases ([pcf-ranking.md](docs/research/pcf-ranking.md)) and was switched on only after the 20-case held-out run ([held-out-20.md](docs/research/held-out-20.md)); the model bake-off picked the faster of two equal models (T17 row in the usage log).
+
+## Potential Value
+
+- **A real problem, with sources.** 263–446 million people live with a rare disease ([PMC6974615](https://pmc.ncbi.nlm.nih.gov/articles/PMC6974615/)); diagnosis takes 4.7 years on average and 73% of patients were misdiagnosed at least once, in a survey of 6,507 patients ([PMC11369105](https://pmc.ncbi.nlm.nih.gov/articles/PMC11369105/)). Competitors and gaps: [docs/research/health-visions.md](docs/research/health-visions.md).
+- **Two audiences.** Clinician mode shows ranked matches with evidence; family mode (`?audience=family`, commit `843a1c7`) shows only features and questions to ask a doctor, never disease names, rankings or trials (see "Two audiences" below).
+- **6 interface languages** (en, zh, ja, es, ko, fr; `LOCALES` in [app/src/shared/i18n/locales.ts](app/src/shared/i18n/locales.ts); spec [.kiro/specs/i18n/](.kiro/specs/i18n/requirements.md)).
+- **Low barrier, private by design.** No sign-up; the case stays in the browser (`localStorage`) and the functions do not store or log note text ([docs/CONTRACT.md](docs/CONTRACT.md) section 2).
+- **Hands off to existing tools.** The export is a GA4GH Phenopacket v2 JSON a genetics clinic can load into its own software (contract section 7.7). Code and docs are [Apache-2.0](LICENSE).
+
+## Quality and Design
+
+- **Six public resources combined:** the Human Phenotype Ontology (JAX API), Monarch semantic similarity, PubCaseFinder (DBCLS), Orphanet annotations, ClinicalTrials.gov v2 and phenopacket-store, each credited in the app ([THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md), contract section 13).
+- **Evidence you can trace.** Every extracted term keeps the exact sentence fragment it came from (`text.slice(start, end) === quote`, properties P2 and P14), and the notes view footnotes each term to its sentence (T33, commit `4418ebf`).
+- **Negation is a first-class input.** "I do not get headaches" becomes an excluded term in a "Not present" group; excluded features the disease usually has lower its overlap label (contract section 7.4, property P7).
+- **No false precision.** Overlap is a plain label (strong, partial, weak), never a percentage; the raw number is shown only as "raw service score" (contract section 1).
+- **Accessibility checked with tools.** QA pass in [docs/QA.md](docs/QA.md) (commit `48d1e8f`): axe-core on every step at 1440×900, 1000×600 and 375×812 with no critical or serious findings, a keyboard-only happy path with a visible focus ring on all 59 focused controls, reduced-motion mode, and 37 files of evidence in [docs/qa/](docs/qa/).
+
+The sections below give the full detail.
 
 ## The problem
 

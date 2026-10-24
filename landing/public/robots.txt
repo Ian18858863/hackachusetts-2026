@@ -1,0 +1,3 @@
+# A summary for language models is at https://hackachusetts-2026.pages.dev/llms.txt
+User-agent: *
+Allow: /
