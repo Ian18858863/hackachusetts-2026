@@ -16,7 +16,8 @@
     "name": "tuberous sclerosis 2",
     "mondo": "MONDO:0013199",
     "acceptedIds": [
-      "MONDO:0013199"
+      "MONDO:0013199",
+      "MONDO:0001734"
     ],
     "genes": [
       "TSC2"

@@ -1,7 +1,15 @@
 {
   "source": "https://api.monarchinitiative.org/v3/api/entity/{id}",
-  "fetchedAt": "2026-10-24T22:40:25.522Z",
+  "fetchedAt": "2026-10-24T22:42:06.672Z",
   "diseases": {
+    "MONDO:0001734": {
+      "id": "MONDO:0001734",
+      "name": "tuberous sclerosis",
+      "xrefs": [
+        "Orphanet:805"
+      ],
+      "deprecated": false
+    },
     "MONDO:0007037": {
       "id": "MONDO:0007037",
       "name": "achondroplasia",
