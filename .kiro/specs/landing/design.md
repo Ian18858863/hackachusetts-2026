@@ -1,152 +1,53 @@
-# Design: Landing Page for Rare Disease Detective
+# Design: Landing page
 
-> Implements visual direction from docs/ART_DIRECTION.md
-> Status: APPROVED for implementation
+> Status: DRAFT, IN PROGRESS (T04, owner Ian). Not approved by the team yet.
+> Provenance: Started from Peter's Kiro v2 spec (hand-over 14:50 ET); re-written by Ian's Kiro.
+> Requirement numbers refer to `requirements.md` in this folder.
 
-## Design System Implementation
+## Stack and build
 
-### Typography
-- **Headings**: Newsreader, Georgia, serif stack
-- **Body text**: Source Sans 3, system-ui sans-serif stack
-- **Font sizes**: Using CSS custom properties defined in landing/src/design.css
-- **Line heights**: --lh-text (1.5) for body, --lh-head (1.1) for headings
+- Vite + React + TypeScript in `landing/`, the same tool versions as `app/` (pinned in `landing/package.json`).
+- `npm run build` runs `tsc --noEmit -p tsconfig.json`, then `vite build` into `landing/dist` (R7.6). `scripts/build-site.sh` copies it to `dist/`; the app goes to `dist/app/`.
+- No router and no client state. The page is static content rendered by React.
 
-### Color Palette
-Implemented as CSS custom properties in landing/src/design.css:
-- **Primary colors**: --bg, --surface, --hair, --ink, --accent
-- **Text colors**: --ink, --ink-2, --ink-3, --on-dark
-- **Semantic colors**: --mark (positive), --focus (interaction)
+## Files
 
-### Spacing System
-Based on 8px grid with custom properties:
-- **Base unit**: 4px (--s-1)
-- **Scale**: --s-1 through --s-10 (4px to 128px)
-- **Responsive gutters**: --gutter adjusts at 900px and 600px breakpoints
+| File | Role |
+|---|---|
+| `landing/index.html` | Meta title and description, favicon, root element |
+| `landing/src/main.tsx` | Font imports (same @fontsource packages and files as `app/src/main.tsx`), stylesheet, render |
+| `landing/src/content.ts` | Every fact, number, link and contract section 13 string, each next to its source |
+| `landing/src/App.tsx` | Sections: header, hero with proof, problem, how it works, evidence, closing call to action, footer |
+| `landing/src/styles.css` | The token sheet copied from `docs/ART_DIRECTION.md`, a small reset, section styles, real `:hover` and `:focus-visible` states. No inline style objects |
+| `landing/public/proof-matches-demo-npc1.webp` | True screenshot of the live app (R1.3) |
+| `landing/public/favicon.svg` | Copy of `app/public/favicon.svg` (R7.2) |
 
-### Components Styling
+## Look
 
-#### 1. Hero Section
-- **Background**: --accent (#2B55C0)
-- **Text color**: --on-dark (#FFFFFF)
-- **Primary button**: --surface background, --ink text, --r-l border radius
-- **Secondary button**: --surface border and text, transparent background, hover: --surface background, --ink text
-- **Process cards**: rgba(--surface, 0.1) background with backdrop blur
+- White B1 page from `docs/art-direction/final.html`: generous whitespace, one rounded surface panel per idea, almost no borders, hairlines between items, black pill primary button. No full-bleed colour hero.
+- Header matches the app's top bar: brand mark and name in Newsreader 500, quiet text links in `--ink-3`, the pill on the right. Under 900px the section links wrap onto their own row, so they work at every width without a hidden menu (R7.3).
+- Hero: two columns from 901px (copy left, proof right) so the proof sits above the fold at 1000×600 (R1.5); one column below.
+- The accent blue appears only inside the screenshot (rank 1) and on the focus ring, as in the art direction.
 
-#### 2. Problem Section
-- **Background**: --surface (#F5F6F8)
-- **Stat cards**: --bg (#FFFFFF) with --shadow-pop
-- **Stat numbers**: --accent color with large typography
-- **Source links**: --ink-3 with underline on hover
+## Proof moment
 
-#### 3. How It Works Section
-- **Background**: --bg (#FFFFFF)
-- **Step cards**: --surface background with --shadow-pop
-- **Step numbers**: --accent color
-- **Example boxes**: rgba(--ink, 0.05) with --accent left border
+- Captured by Ian's Kiro on 2026-10-24 at about 14:59 ET from `https://hackachusetts-2026.pages.dev/app/?demo=demo-npc1`, step `#/matches`, at 1440×900 with device scale 2, after a warm-up load, in background headless Chrome via CDP.
+- Cropped to the rank-1 focal panel (657×600 CSS px, 1314×1200 px). It shows Niemann-Pick disease, type C1, strong overlap, 6 of 12 present features described plus 6 through broader terms, and the first evidence rows.
+- The image has `width` and `height` attributes (R1.4). A CSS mask fades the bottom edge of the crop.
+- If the live ranking changes, re-capture it; never edit the image.
 
-#### 4. Trust Section
-- **Background**: --surface (#F5F6F8)
-- **Trust cards**: --bg (#FFFFFF) with --shadow-pop
-- **Data source badges**: --ink-2 background, --on-dark text
-- **Warning boxes**: Semantic colors for limitations (#e53e3e) and value (#38a169)
+## Copy rules
 
-## Layout Architecture
+- Facts come only from the sources listed in `requirements.md`. Numbers sit next to their citation.
+- The safety line and credits are the contract section 13 strings, kept in `content.ts`.
+- The HPO version in the footer is a single constant (`HPO_VERSION` in `content.ts`). It is set to 2026-09-01, the latest HPO GitHub release (checked 2026-10-24). The engine on `main` still reports `"unknown"` (contract open question 6), so the two must be brought in step before release.
 
-### Responsive Breakpoints
-- **Mobile**: < 600px (--gutter: 16px)
-- **Tablet**: 600px - 900px (--gutter: 24px)
-- **Desktop**: > 900px (--gutter: 48px)
+## Motion
 
-### Container System
-- **Max content width**: --content (1056px)
-- **Container class**: .container provides max-width and gutter padding
-- **Column system**: Based on --col (184px) for complex layouts
+- The headline sharpens from a light blur (600ms), the proof fades in (520ms), with the art-direction easing. Native scroll; smooth anchor scrolling only without reduced motion. `prefers-reduced-motion: reduce` turns all of it off (R7.5).
 
-### Component Layouts
+## Accessibility
 
-#### Hero Layout
-```
-Mobile: Column layout, content above process
-Tablet+: Row layout, 50/50 split
-```
-
-#### Statistics Grid
-```
-Mobile: 1 column
-Tablet: 2 columns
-Desktop: 4 columns
-```
-
-#### How It Works Steps
-```
-Mobile: Column layout
-Desktop: Staggered row layout (alternating left/right)
-```
-
-## Interaction Design
-
-### Button States
-- **Default**: Base styling with border radius
-- **Hover**: translateY(-2px) with --shadow-pop
-- **Focus**: 2px --focus outline with 3px offset
-- **Active**: Scale down slightly (0.98)
-
-### Card Interactions
-- **Hover**: Enhanced shadow for depth
-- **Focus**: Visible focus ring for keyboard navigation
-
-### Animation Principles
-- **Duration**: --dur-base (220ms) for interactions
-- **Easing**: --ease (cubic-bezier(0.2, 0, 0, 1))
-- **Reduced motion**: Respects prefers-reduced-motion
-
-## Accessibility Implementation
-
-### Focus Management
-- **Focus rings**: 2px --focus outline with 3:1 contrast minimum
-- **Focus visible**: Only show focus rings for keyboard navigation
-- **Focus order**: Logical reading order matches visual order
-
-### Color Contrast
-- **Text on backgrounds**: Minimum 4.5:1 ratio
-- **Large text**: Minimum 3:1 ratio
-- **Interactive elements**: Minimum 3:1 for focus states
-
-### Semantic Structure
-- **Heading hierarchy**: h1 for page title, h2 for sections, h3 for subsections
-- **Landmark regions**: header, main, footer with appropriate roles
-- **ARIA labels**: For interactive elements without visible labels
-
-## Implementation Notes
-
-### CSS Architecture
-- **Design tokens**: All values as CSS custom properties in :root
-- **Component styles**: Inline styles in React components using design tokens
-- **Utility classes**: Minimal, only for layout and spacing when needed
-- **No frameworks**: Pure CSS implementation without Tailwind or other CSS frameworks
-
-### Image Optimization
-- **SVG icons**: Inline where possible for accessibility
-- **Performance**: No large background images or complex animations
-
-### Performance Considerations
-- **Critical CSS**: Inline in index.html for above-the-fold content
-- **Font loading**: Font-display: swap for web fonts
-- **JavaScript**: Minimal React hydration with code splitting if needed
-
-## Mobile Navigation (Future Enhancement)
-For responsive navigation at mobile breakpoints:
-- **Hamburger menu**: Collapsed navigation at < 768px
-- **Slide-out panel**: Full-screen navigation overlay
-- **Touch targets**: 44×44px minimum for all interactive elements
-
-## Verification Checklist
-- [ ] All colors use design token custom properties
-- [ ] All typography uses correct font stacks and sizes
-- [ ] Spacing follows 8px grid system
-- [ ] Responsive breakpoints work correctly
-- [ ] Focus states are visible and accessible
-- [ ] Color contrast meets WCAG AA standards
-- [ ] Semantic HTML structure is correct
-- [ ] No Tailwind-style utility classes remain
-- [ ] Build outputs to correct directory
+- One `<h1>`, a skip link, `<nav aria-label="Sections">`, `<main>`, `<footer>`; sections labelled by their `<h2>`.
+- Focus ring `2px solid var(--focus)`, offset 3px, on every interactive element (R7.4). Tap targets at least 44px high.
+- The header pill shows "Demo" on phones; its accessible name stays "Open the demo".

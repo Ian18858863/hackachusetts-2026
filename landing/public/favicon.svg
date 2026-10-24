@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- Brand mark from the approved specimen: an ink square with a white ring. Colours match --ink and --on-dark. -->
+  <rect width="32" height="32" rx="9.6" fill="#14161b" />
+  <circle cx="16" cy="16" r="6.4" fill="none" stroke="#ffffff" stroke-width="3.2" />
+</svg>

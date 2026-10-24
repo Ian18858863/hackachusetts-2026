@@ -23,7 +23,7 @@ Include this file with `#release-check` (or `/release-check`). Walk the list top
 - [ ] `./scripts/build-site.sh` finishes with "Done. Built:" and no `WARNING ... /assets/` line.
 - [ ] Local smoke test: `npx wrangler pages dev` from the repo root, then `/` and `/app/` return 200. If the end-to-end smoke script from spec task 5.1 exists under `scripts/`, run it instead of the manual checks below and report its output.
 - [ ] `GET /api/health` returns 200 with `version: "0.1"`, `source` and `llm.binding`. Report the `llm.binding` value: `false` means non-demo extraction returns 503 `LLM_UNAVAILABLE` (contract section 7.1).
-- [ ] `POST /api/extract` with the exact `demo-dmd` narrative and `"caseId": "demo-dmd"` returns 200 with `source: "demo"` and the prepared terms (contract sections 7.2 and 9.1; R10.3).
+- [ ] `POST /api/extract` with the exact `demo-npc1` narrative and `"caseId": "demo-npc1"` returns 200 with `source: "demo"` and the prepared terms (contract sections 7.2 and 9.1; R10.3).
 
 ## 2. Deploy (Ian-authorized step only)
 
@@ -33,9 +33,9 @@ Include this file with `#release-check` (or `/release-check`). Walk the list top
 
 ## 3. Live and incognito check
 
-- [ ] `https://hackachusetts-2026.pages.dev/`, `/app/` and `/api/health` return 200 (show the `curl -sS -o /dev/null -w '%{http_code}'` output). Repeat the `/api/health` field check and the `demo-dmd` `POST /api/extract` check from section 1 against the live URL.
+- [ ] `https://hackachusetts-2026.pages.dev/`, `/app/` and `/api/health` return 200 (show the `curl -sS -o /dev/null -w '%{http_code}'` output). Repeat the `/api/health` field check and the `demo-npc1` `POST /api/extract` check from section 1 against the live URL.
 - [ ] Open the live URL in a private/incognito window: no login, the happy path completes, no console errors.
-- [ ] The landing page's main call to action opens `/app/?demo=demo-dmd` with that demo case preloaded (R10.6).
+- [ ] The landing page's main call to action opens `/app/?demo=demo-npc1` with that demo case preloaded (R10.6).
 - [ ] The demo label `Demo case (synthetic narrative from phenopacket-store <id>)` appears near the notes, the results, the brief and the phenopacket export (R10.2, R6.6).
 - [ ] The safety line `Decision support, not a diagnosis. These are possible matches to discuss with a doctor.` is visible in body size on every result screen (ranking, questions, trials) and on the exported brief (R9.1, design section 7).
 - [ ] The HPO attribution with version is in the footer and the brief (R8.1).
