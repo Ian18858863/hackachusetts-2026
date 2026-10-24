@@ -3,6 +3,7 @@
 //
 // predictions = { cases: [{ caseId, extracted?: [{hpoId}], ranking?: [diseaseId, ...] }] }
 import { checkTerm } from './hpo-check.mjs';
+import { checkSubmission } from './submission.mjs';
 
 const ratio = (a, b) => (b ? a / b : null);
 const round = (x) => (x === null ? null : Math.round(x * 1000) / 1000);
@@ -19,7 +20,31 @@ export function acceptedDiseaseIds(c, diseases) {
   return ids;
 }
 
-export function evaluate(predictions, cases, { hpo, diseases } = {}) {
+export class SubmissionError extends Error {
+  constructor(message, issues) {
+    super(message);
+    this.code = 'INCOMPLETE_SUBMISSION';
+    this.issues = issues;
+  }
+}
+
+/**
+ * Score predictions against cases.
+ * mode 'formal' (default): rejects (throws SubmissionError) unless every
+ *   expected case has exactly one well-formed prediction, no unknown ids,
+ *   and either every case or no case has a ranking.
+ * mode 'exploratory': scores what is present, labels the result
+ *   exploratory, and reports ranking metrics both over ranked cases and over
+ *   all expected cases. Duplicate case ids are rejected in both modes because
+ *   they make the score ambiguous.
+ */
+export function evaluate(predictions, cases, { hpo, diseases, mode = 'formal' } = {}) {
+  if (!['formal', 'exploratory'].includes(mode)) throw new Error(`Unknown mode ${mode}`);
+  const submission = checkSubmission(predictions, cases);
+  const blocking = submission.issues.filter((i) => mode === 'formal' || ['DUPLICATE_CASE_ID', 'NO_CASES', 'MALFORMED_PREDICTION', 'MALFORMED_EXTRACTED', 'MALFORMED_RANKING'].includes(i.code));
+  if (blocking.length) {
+    throw new SubmissionError(`${mode} evaluation rejected: ${blocking.map((i) => i.code).join(', ')}`, submission.issues);
+  }
   const byId = new Map((predictions?.cases ?? []).map((p) => [p.caseId, p]));
   const unknown = [...byId.keys()].filter((id) => !cases.some((c) => c.caseId === id));
   const perCase = [];
@@ -82,12 +107,23 @@ export function evaluate(predictions, cases, { hpo, diseases } = {}) {
       predictedArticleOnly: articleOnly,
       invalidHpoIds: invalid,
     },
-    ranking: {
-      casesWithRanking: ranked,
-      top1Accuracy: round(ratio(top1, ranked)),
-      top5Recall: round(ratio(top5, ranked)),
-      note: ranked ? null : 'No ranking in the predictions; Top-1 and Top-5 were not computed.',
-    },
+    ranking: mode === 'formal'
+      ? {
+        casesWithRanking: ranked,
+        top1Accuracy: ranked ? round(top1 / cases.length) : null,
+        top5Recall: ranked ? round(top5 / cases.length) : null,
+        note: ranked ? null : 'No ranking in the predictions; Top-1 and Top-5 were not computed.',
+      }
+      : {
+        casesWithRanking: ranked,
+        top1OverRankedCases: round(ratio(top1, ranked)),
+        top5OverRankedCases: round(ratio(top5, ranked)),
+        top1OverAllCases: ranked ? round(top1 / cases.length) : null,
+        top5OverAllCases: ranked ? round(top5 / cases.length) : null,
+        note: 'EXPLORATORY: not an official Top-1/Top-5 result. Unranked or missing cases count as wrong in the *OverAllCases figures.',
+      },
+    status: mode,
+    submissionIssues: submission.issues,
     perCase,
   };
 }
