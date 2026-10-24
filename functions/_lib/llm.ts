@@ -207,7 +207,8 @@ export async function proposeTerms(
 // Request building per model family
 // ---------------------------------------------------------------------------
 
-function pickModel(candidate: string | undefined): string {
+/** Model id actually used for `candidate` (env.LLM_MODEL); exported for /api/health. */
+export function pickModel(candidate: string | undefined): string {
   const m = typeof candidate === "string" ? candidate.trim() : "";
   // Workers AI ids look like "@cf/vendor/name"; anything else falls back.
   return /^@[a-z0-9-]+\/[\w.\-]+\/[\w.\-]+$/i.test(m) ? m : DEFAULT_LLM_MODEL;
