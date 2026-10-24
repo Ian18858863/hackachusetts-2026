@@ -135,13 +135,21 @@ export type BodyResult = { ok: true; value: unknown } | { ok: false; response: R
 
 /**
  * Read and parse a JSON request body with a byte cap.
- * Over the cap -> 413 TEXT_TOO_LONG (the only large field we accept is `text`);
+ * Over the cap -> `tooLarge` (default 413 TEXT_TOO_LONG, for bodies whose only
+ * large field is `text`; endpoints without `text` pass 400 INVALID_REQUEST);
  * unreadable or malformed JSON -> 400 INVALID_REQUEST.
  */
-export async function readJsonBody(request: Request, maxBytes: number): Promise<BodyResult> {
+export async function readJsonBody(
+  request: Request,
+  maxBytes: number,
+  tooLarge: { code: ErrorCode; message: string } = {
+    code: "TEXT_TOO_LONG",
+    message: "The text is too long. The limit is 8,000 characters; shorten it and try again.",
+  },
+): Promise<BodyResult> {
   const tooLong = (): BodyResult => ({
     ok: false,
-    response: apiError("TEXT_TOO_LONG", "The text is too long. The limit is 8,000 characters; shorten it and try again."),
+    response: apiError(tooLarge.code, tooLarge.message),
   });
   const declared = Number(request.headers.get("Content-Length") ?? "");
   if (Number.isFinite(declared) && declared > maxBytes) return tooLong();
@@ -164,6 +172,25 @@ export async function readJsonBody(request: Request, maxBytes: number): Promise<
 
 export function isRecord(v: unknown): v is Record<string, unknown> {
   return typeof v === "object" && v !== null && !Array.isArray(v);
+}
+
+/**
+ * Demo-cache payload as returned to the client: `source: "demo"` and
+ * `dataVersions.demoCache` always set (contract 7.4 failure table). When a
+ * recording lacks `demoCache`, its recording date is taken from `fetchedAt`,
+ * which for demo data is the recording time (contract section 5).
+ */
+export function asDemoPayload<T extends { dataVersions: { fetchedAt: string; demoCache?: string } }>(recorded: T): T {
+  const dv = { ...recorded.dataVersions };
+  if (!dv.demoCache) dv.demoCache = dv.fetchedAt.slice(0, 10);
+  return { ...recorded, version: CONTRACT_VERSION, source: "demo", dataVersions: dv };
+}
+
+/** Copy of `res` with one extra header (Response headers can be immutable). */
+export function withHeader(res: Response, name: string, value: string): Response {
+  const headers = new Headers(res.headers);
+  headers.set(name, value);
+  return new Response(res.body, { status: res.status, statusText: res.statusText, headers });
 }
 
 /** The Workers default cache, or undefined where the Cache API is not available. */
