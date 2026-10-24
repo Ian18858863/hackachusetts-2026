@@ -74,8 +74,35 @@ export function weightedMatchCount(matched: readonly Evidence[]): number {
   return Math.floor(exact + 0.5 * ancestor);
 }
 
-/** Total /api/rank budget (contract 7.4): later calls are capped by what is left. */
+/** Default total /api/rank budget (contract 7.4): later calls are capped by what is left. */
 export const RANK_BUDGET_MS = 12000;
+
+/**
+ * Network work stops this long before the rank budget so aborting late calls
+ * and building the response still finish inside it. Without it, hung
+ * enrichment calls aborted exactly at the budget and the call returned 1-2 ms
+ * late (measured 2026-10-24 16:15 ET: 1002 ms and 1001 ms for a 1000 ms budget).
+ */
+export const RANK_FINISH_MARGIN_MS = 100;
+
+/** deps.rankBudgetMs if it is a positive finite number, else the 12 s default. */
+export function rankBudgetOf(deps: EngineDeps): number {
+  const b = deps.rankBudgetMs;
+  return typeof b === "number" && Number.isFinite(b) && b > 0 ? b : RANK_BUDGET_MS;
+}
+
+/**
+ * Obsolete disease records never become candidates. Authoritative signal:
+ * Monarch's `deprecated: true` on the semsim subject (present on every
+ * subject, checked 2026-10-24 16:05 ET). Fallback for records without it: a
+ * name that starts with the word "obsolete" (MONDO's label convention for
+ * obsoleted classes, e.g. "obsolete chorea"); names that merely contain the
+ * word elsewhere are kept.
+ */
+export function isObsoleteSubject(subject: { deprecated?: unknown; name?: unknown }): boolean {
+  if (subject.deprecated === true) return true;
+  return typeof subject.name === "string" && /^\s*obsolete\b/i.test(subject.name);
+}
 
 // ------------------------------------------------------------------ constants
 
@@ -161,6 +188,7 @@ function obj(v: unknown): Record<string, unknown> {
 }
 
 function parseMonarch(body: unknown): MonarchResult[] {
+  let obsoleteSkipped = 0;
   if (!Array.isArray(body)) throw new UpstreamError("monarchSemsim", null);
   const out: MonarchResult[] = [];
   for (const row of body) {
@@ -169,6 +197,10 @@ function parseMonarch(body: unknown): MonarchResult[] {
     const mondoId = str(subject.id);
     const score = typeof r.score === "number" && Number.isFinite(r.score) ? r.score : null;
     if (!mondoId.startsWith("MONDO:") || score === null) continue;
+    if (isObsoleteSubject(subject)) {
+      obsoleteSkipped++;
+      continue;
+    }
 
     let orpha: string | null = null;
     let omim: string | null = null;
@@ -204,7 +236,8 @@ function parseMonarch(body: unknown): MonarchResult[] {
   }
   // Rows came back but none was usable: that is a broken response, not "no
   // matching diseases", so it must not look like an empty live ranking.
-  if (body.length > 0 && out.length === 0) throw new UpstreamError("monarchSemsim", null);
+  // (Rows that were all obsolete are a real answer, not a broken response.)
+  if (body.length > 0 && out.length === 0 && obsoleteSkipped === 0) throw new UpstreamError("monarchSemsim", null);
   return out;
 }
 
@@ -275,6 +308,13 @@ export interface CandidateEnrichment {
   diseaseId: DiseaseId;
   annotations: Array<{ id: DiseaseId; status: FetchStatus; error?: string }>; // [] when no ORPHA or OMIM id
   orphadata: { id: DiseaseId; status: FetchStatus; error?: string } | { status: "not-applicable" };
+  /**
+   * true when every HPO annotation call for this candidate answered (ok or a
+   * real 404). Only then does `frequency: null` mean "not listed"; when false
+   * it means "could not be read" (failed, unusable or out of budget) and must
+   * not be shown as "Frequency not listed".
+   */
+  evidenceComplete: boolean;
 }
 
 export interface EnrichmentReport {
@@ -324,6 +364,7 @@ async function enrich(
           ? { id: r.orpha, status: orpha.status, error: orpha.error }
           : { id: r.orpha, status: orpha.status }
         : { status: "not-applicable" },
+    evidenceComplete: outcomes.every((o) => o.status === "ok" || o.status === "not-found"),
   };
   const record = orpha?.status === "ok" ? orpha.data : null;
   return { annotations, orphaName: record?.preferredTerm ?? null, orphaDate: record?.date || null, report };
@@ -439,14 +480,20 @@ export async function rankCandidatesWithReport(req: RankRequest, deps: EngineDep
 
   const startedAt = Date.now();
   const url = `${MONARCH_SEMSIM}/${observed.join(",")}/Human%20Diseases?limit=${limit + 5}`;
-  const body = await getJson("monarchSemsim", url, deps);
+  // The Monarch call gets its own timeout (default 10 s) but never more than the
+  // whole budget; enrichment then gets what is left (rankBudgetOf).
+  const budget = rankBudgetOf(deps);
+  // Deadline for network work; the margin is kept for finishing the response.
+  const networkBudget = Math.max(0, budget - RANK_FINISH_MARGIN_MS);
+  const monarchMs = Math.min(deps.timeoutsMs?.monarchSemsim ?? DEFAULT_TIMEOUTS_MS.monarchSemsim, networkBudget);
+  const body = await getJson("monarchSemsim", url, { ...deps, timeoutsMs: { ...deps.timeoutsMs, monarchSemsim: monarchMs } });
   if (body === null) throw new UpstreamError("monarchSemsim", 404);
   const top = topResults(parseMonarch(body), limit);
 
   // Contract v0.1.2: annotation and Orphadata calls keep their own timeouts but
   // never run past the 12 s budget. A call refused for lack of budget is
   // reported as "failed" in the enrichment report and only drops its data.
-  const left = Math.max(0, RANK_BUDGET_MS - (Date.now() - startedAt));
+  const left = Math.max(0, networkBudget - (Date.now() - startedAt));
   const capped = (name: "hpoAnnotation" | "orphadata") => Math.min(deps.timeoutsMs?.[name] ?? DEFAULT_TIMEOUTS_MS[name], left);
   const after: EngineDeps = { ...deps, timeoutsMs: { ...deps.timeoutsMs, hpoAnnotation: capped("hpoAnnotation"), orphadata: capped("orphadata") } };
 

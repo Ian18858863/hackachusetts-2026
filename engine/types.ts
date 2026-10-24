@@ -324,6 +324,13 @@ export interface EngineDeps {
   now?: () => Date; // injected clock for deterministic tests
   cache?: Cache; // Workers Cache API (caches.default); optional
   timeoutsMs?: Partial<Record<UpstreamName, number>>; // defaults in section 10
+  /**
+   * Total budget for one rankCandidates call in ms, Monarch plus enrichment
+   * (default 12000, contract 7.4). Not in contract v0.1.3 section 6: additive
+   * optional field, proposed as a contract change. Pair it with
+   * timeoutsMs.monarchSemsim, e.g. 20000 / 25000.
+   */
+  rankBudgetMs?: number;
 }
 
 /** What the LLM step hands to the engine. Nothing here is trusted. */

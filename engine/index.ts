@@ -65,7 +65,7 @@ export const ENGINE_STATUS = {
   listDemoCases: "implemented",
   getDemoCase: "implemented",
   demoRankKey: "implemented",
-  getDemoRanking: "implemented (no recorded responses yet: always undefined)",
-  getDemoQuestions: "implemented (no recorded responses yet: always undefined)",
-  getDemoTrials: "implemented (no recorded responses yet: always undefined)",
+  getDemoRanking: "implemented (recorded limit-5 rankings for demo-npc1, demo-dmd and demo-kabuki; others undefined)",
+  getDemoQuestions: "implemented (no recorded questions yet: always undefined)",
+  getDemoTrials: "implemented (no recorded trials yet: always undefined)",
 } as const;

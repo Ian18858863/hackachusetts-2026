@@ -15,7 +15,7 @@
 // is 40, not 50, so the calling function keeps 10 of the Workers free-plan
 // limit of 50 for its own Cache API calls (which count too).
 
-import { fetchAnnotations, type AnnotationOutcome, type DiseaseAnnotations, type FetchStatus } from "./annotations";
+import { fetchAnnotations, type DiseaseAnnotations, type FetchStatus } from "./annotations";
 import { InvalidInput, UpstreamError, UpstreamTimeout } from "./errors";
 import { DEFAULT_TIMEOUTS_MS, getJson } from "./http";
 import { HPO_ID_RE, HPO_VERSION, normalizeHpoId } from "./hpo";
@@ -203,6 +203,12 @@ interface CandidateData {
   diseaseId: DiseaseId;
   name: string;
   features: Map<HpoId, { label: string; frequency: FrequencyInfo }>; // clinical features only
+  /**
+   * true when every annotation set of this candidate was read (for ORPHA: its
+   * own set and its linked OMIM set, or a confirmed "no partner"). Only then
+   * may a feature it lacks be called "not listed" (7.5 step 7).
+   */
+  complete: boolean;
 }
 
 function midpoint(f: FrequencyInfo | undefined): number {
@@ -229,13 +235,128 @@ function frequencyPhrase(f: FrequencyInfo | undefined, name: string): string {
   return `${f.label}${raw} in ${name}`;
 }
 
-function toCandidateData(a: DiseaseAnnotations): CandidateData {
-  const features = new Map<HpoId, { label: string; frequency: FrequencyInfo }>();
-  for (const f of a.features) {
-    if (NON_FEATURE_CATEGORIES.has(f.category)) continue;
-    features.set(f.id, { label: f.label, frequency: f.frequency });
+/**
+ * Clinical features of one or more annotation sets, merged as rank.ts does
+ * (contract 7.4 step 4): sets in order ORPHA then OMIM; a feature takes the
+ * first banded frequency (so a usable ORPHA band wins, else the normalised
+ * OMIM value), else the first set's unbanded entry. Each frequency keeps the
+ * `source` of the set it came from.
+ */
+export function mergeClinicalFeatures(sets: readonly DiseaseAnnotations[]): Map<HpoId, { label: string; frequency: FrequencyInfo }> {
+  const merged = new Map<HpoId, { label: string; frequency: FrequencyInfo }>();
+  for (const set of sets) {
+    for (const f of set.features) {
+      if (NON_FEATURE_CATEGORIES.has(f.category)) continue;
+      const prev = merged.get(f.id);
+      if (!prev || (prev.frequency.label === null && f.frequency.label !== null)) {
+        merged.set(f.id, { label: prev?.label ?? f.label, frequency: f.frequency });
+      }
+    }
   }
-  return { diseaseId: a.diseaseId, name: a.name || a.diseaseId, features };
+  return merged;
+}
+
+// ------------------------------------------------- ORPHA -> OMIM partner link
+
+const MONARCH_API = "https://api.monarchinitiative.org/v3/api";
+/** Monarch mapping and entity lookups are small; 2 s like the other id lookups (contract 10). */
+const PARTNER_LOOKUP_MS = 2000;
+
+type PartnerResult =
+  | { status: "ok"; omim: DiseaseId | null; mondoName: string | null } // omim null = Monarch lists no OMIM partner
+  | { status: "failed"; error: string };
+
+/**
+ * The OMIM id linked to an ORPHA disease, the same link rankCandidates gets
+ * from Monarch xrefs (7.4 step 3): the disease's MONDO id (from the JAX
+ * annotation set, else Monarch's skos:exactMatch mapping of Orphanet:n), then
+ * the OMIM xref of that MONDO entity. A failed lookup is reported, never
+ * read as "no partner".
+ */
+async function omimPartnerOf(orpha: DiseaseId, mondoFromJax: string | undefined, deps: EngineDeps, deadline: number): Promise<PartnerResult> {
+  const left = () => Math.max(0, Math.min(PARTNER_LOOKUP_MS, deadline - Date.now()));
+  const monarch = (): EngineDeps => ({ ...deps, timeoutsMs: { ...deps.timeoutsMs, monarchSemsim: left() } });
+  try {
+    let mondo = mondoFromJax ?? null;
+    if (!mondo) {
+      const orphanet = `Orphanet:${orpha.slice(orpha.indexOf(":") + 1)}`;
+      const body = await getJson("monarchSemsim", `${MONARCH_API}/mappings?entity_id=${encodeURIComponent(orphanet)}`, monarch());
+      const items = (body as { items?: unknown } | null)?.items;
+      if (!Array.isArray(items)) return { status: "failed", error: "Monarch mapping response unusable" };
+      const hit = items.find((x) => {
+        const m = x as Record<string, unknown>;
+        return m.object_id === orphanet && m.predicate_id === "skos:exactMatch" && typeof m.subject_id === "string" && /^MONDO:\d+$/.test(m.subject_id);
+      }) as { subject_id: string } | undefined;
+      if (!hit) return { status: "ok", omim: null, mondoName: null };
+      mondo = hit.subject_id;
+    }
+    const entity = await getJson("monarchSemsim", `${MONARCH_API}/entity/${encodeURIComponent(mondo)}`, monarch());
+    if (entity === null) return { status: "ok", omim: null, mondoName: null };
+    const e = entity as { xref?: unknown; name?: unknown };
+    if (!Array.isArray(e.xref)) return { status: "failed", error: "Monarch entity response unusable" };
+    const omim = e.xref.find((x): x is string => typeof x === "string" && /^OMIM:\d+$/.test(x)) ?? null;
+    return { status: "ok", omim, mondoName: typeof e.name === "string" && e.name !== "" ? e.name : null };
+  } catch (err) {
+    return { status: "failed", error: err instanceof Error ? err.message : "unknown error" };
+  }
+}
+
+interface LoadedCandidate {
+  data: CandidateData | null; // null: no clinical features at all
+  report: QuestionsCandidateReport;
+  /** true when a call failed or was unusable (as opposed to "there is nothing to get"). */
+  lost: boolean;
+  timedOut: boolean;
+}
+
+async function loadCandidate(id: DiseaseId, deps: EngineDeps, deadline: number): Promise<LoadedCandidate> {
+  if (id.startsWith("MONDO:")) {
+    return { data: null, report: { diseaseId: id, status: "not-applicable", participates: false }, lost: false, timedOut: false };
+  }
+  const annDeps = () => capped(deps, "hpoAnnotation", deadline);
+  const primary = await fetchAnnotations(id, annDeps());
+  const report: QuestionsCandidateReport = { diseaseId: id, status: primary.status, participates: false };
+  if (primary.error) report.error = primary.error;
+  const lostStatus = (s: FetchStatus) => s === "failed" || s === "unusable";
+  const timeout = (e?: string) => /timed out|budget exhausted/i.test(e ?? "");
+  let lost = lostStatus(primary.status);
+  let timedOut = lost && timeout(primary.error);
+  const sets: DiseaseAnnotations[] = primary.status === "ok" && primary.data ? [primary.data] : [];
+  let complete = !lost;
+  let name = primary.data?.name || "";
+
+  // ORPHA candidates also read their linked OMIM set, as rankCandidates does (7.4 step 4).
+  // Also after a failed ORPHA call: the verified OMIM set is still real evidence
+  // (the candidate stays incomplete, so nothing it lacks is called "not listed").
+  if (id.startsWith("ORPHA:")) {
+    const link = await omimPartnerOf(id, primary.data?.mondoId, deps, deadline);
+    if (link.status === "failed") {
+      report.partner = { status: "lookup-failed", error: link.error };
+      complete = false;
+      lost = true;
+      timedOut ||= timeout(link.error);
+    } else if (link.omim === null) {
+      report.partner = { status: "none" };
+      if (!name && link.mondoName) name = link.mondoName;
+    } else {
+      const omim = await fetchAnnotations(link.omim, annDeps());
+      report.partner = omim.error ? { id: link.omim, status: omim.status, error: omim.error } : { id: link.omim, status: omim.status };
+      if (omim.status === "ok" && omim.data) sets.push(omim.data);
+      if (lostStatus(omim.status)) {
+        complete = false;
+        lost = true;
+        timedOut ||= timeout(omim.error);
+      }
+      if (!name) name = link.mondoName || omim.data?.name || "";
+    }
+  }
+
+  report.evidenceComplete = complete;
+  const features = mergeClinicalFeatures(sets);
+  if (features.size === 0) return { data: null, report, lost, timedOut };
+  report.participates = true;
+  report.sources = sets.map((s) => s.diseaseId);
+  return { data: { diseaseId: id, name: name || id, features, complete }, report, lost, timedOut };
 }
 
 // -------------------------------------------------------------------- report
@@ -246,6 +367,16 @@ export interface QuestionsCandidateReport {
   /** true when this candidate's annotations took part in the spread. */
   participates: boolean;
   error?: string;
+  /** ORPHA candidates only: the linked OMIM set (none = Monarch lists no OMIM partner). */
+  partner?: { id: DiseaseId; status: FetchStatus; error?: string } | { status: "none" } | { status: "lookup-failed"; error: string };
+  /** Annotation sets that supplied this candidate's features, ORPHA first. */
+  sources?: DiseaseId[];
+  /**
+   * true when every annotation set of this candidate was read. When false, a
+   * `frequency: null` for this candidate means "could not be read", not
+   * "not listed". Absent for MONDO candidates (no annotation call).
+   */
+  evidenceComplete?: boolean;
 }
 
 export interface NextQuestionsReport {
@@ -295,48 +426,55 @@ export async function nextQuestionsWithReport(req: NextQuestionsRequest, deps: E
   const metered: EngineDeps = { ...deps, fetch: meter.wrap(deps.fetch, deadline) };
   const warnings: string[] = [];
 
-  // 1. annotations, one call per ORPHA / OMIM candidate, in parallel
-  const annDeps = capped(metered, "hpoAnnotation", deadline);
-  const outcomes = await Promise.all(
-    norm.candidates.map((id): Promise<AnnotationOutcome | null> =>
-      id.startsWith("MONDO:") ? Promise.resolve(null) : fetchAnnotations(id, annDeps),
-    ),
-  );
+  // 1. annotations per candidate in parallel; ORPHA candidates also read their linked OMIM set (7.4 step 4)
+  const loaded = await Promise.all(norm.candidates.map((id) => loadCandidate(id, metered, deadline)));
 
   const data = new Map<DiseaseId, CandidateData>();
-  const candidateReports: QuestionsCandidateReport[] = norm.candidates.map((id, i) => {
-    const o = outcomes[i] ?? null;
-    if (!o) return { diseaseId: id, status: "not-applicable", participates: false };
-    const cd = o.status === "ok" && o.data ? toCandidateData(o.data) : null;
-    const participates = cd !== null && cd.features.size > 0;
-    if (participates && cd) data.set(id, cd);
-    const r: QuestionsCandidateReport = { diseaseId: id, status: o.status, participates };
-    if (o.error) r.error = o.error;
-    return r;
+  const candidateReports: QuestionsCandidateReport[] = loaded.map((l) => {
+    if (l.data) data.set(l.report.diseaseId, l.data);
+    return l.report;
   });
-  for (const r of candidateReports) {
-    if (r.status === "failed" || r.status === "unusable") {
-      warnings.push(`${r.diseaseId}: HPO annotations ${r.status === "failed" ? "could not be fetched" : "were unusable"}; it takes no part in the questions`);
-    } else if (!r.participates) {
-      warnings.push(`${r.diseaseId}: no HPO annotation data${r.status === "not-applicable" ? " for a MONDO id" : ""}; it takes no part in the questions`);
+  for (const l of loaded) {
+    const r = l.report;
+    if (!r.participates) {
+      warnings.push(
+        l.lost
+          ? `${r.diseaseId}: HPO annotations could not be fully read; it takes no part in the questions`
+          : `${r.diseaseId}: no HPO annotation data${r.status === "not-applicable" ? " for a MONDO id" : ""}; it takes no part in the questions`,
+      );
+    } else if (l.data && !l.data.complete) {
+      warnings.push(`${r.diseaseId}: only part of its HPO annotations could be read; features it lacks are not called "not listed"`);
     }
   }
 
   const participating = norm.candidates.map((id) => data.get(id)).filter((c): c is CandidateData => c !== undefined);
-  const lost = outcomes.filter((o) => o && (o.status === "failed" || o.status === "unusable"));
+  const lost = loaded.filter((l) => l.lost);
   if (participating.length < 2 && lost.length > 0) {
     // Without data we cannot say "not listed": let the function use the demo cache or 502/504.
-    const allTimeouts = lost.every((o) => /timed out/.test(o?.error ?? ""));
-    throw allTimeouts ? new UpstreamTimeout("hpoAnnotation") : new UpstreamError("hpoAnnotation", null);
+    throw lost.every((l) => l.timedOut) ? new UpstreamTimeout("hpoAnnotation") : new UpstreamError("hpoAnnotation", null);
   }
 
-  // 2-4. score every feature annotated in a participating candidate and not already reported
+  /**
+   * A candidate's evidence for one feature: its frequency if annotated;
+   * "not-listed" only when all its sets were read; else unknown (no claim).
+   */
+  const evidence = (c: CandidateData, hpoId: HpoId): FrequencyInfo | "not-listed" | "unknown" =>
+    c.features.get(hpoId)?.frequency ?? (c.complete ? "not-listed" : "unknown");
+
+  // 2-4. score every feature annotated in a participating candidate and not already reported;
+  // candidates with unknown evidence for a feature take no part in its spread
   const reported = new Set([...norm.observed, ...norm.excluded]);
   const featureIds = new Set<HpoId>();
   for (const c of participating) for (const id of c.features.keys()) if (!reported.has(id)) featureIds.add(id);
   const scored: Array<{ hpoId: HpoId; score: number }> = [];
   for (const hpoId of featureIds) {
-    const m = participating.map((c) => midpoint(c.features.get(hpoId)?.frequency));
+    const m: number[] = [];
+    for (const c of participating) {
+      const e = evidence(c, hpoId);
+      if (e === "unknown") continue;
+      m.push(e === "not-listed" ? NOT_LISTED_MIDPOINT : midpoint(e));
+    }
+    if (m.length < 2) continue; // nothing to compare against
     const score = round3(Math.max(...m) - Math.min(...m));
     if (score >= MIN_SCORE) scored.push({ hpoId, score });
   }
@@ -352,7 +490,10 @@ export async function nextQuestionsWithReport(req: NextQuestionsRequest, deps: E
       diseaseId,
       frequency: data.get(diseaseId)?.features.get(hpoId)?.frequency ?? null,
     }));
-    const why = participating.map((c) => frequencyPhrase(c.features.get(hpoId)?.frequency, c.name)).join("; ");
+    const why = participating
+      .filter((c) => evidence(c, hpoId) !== "unknown")
+      .map((c) => frequencyPhrase(c.features.get(hpoId)?.frequency, c.name))
+      .join("; ");
     return {
       hpoId,
       label,
@@ -375,7 +516,7 @@ export async function nextQuestionsWithReport(req: NextQuestionsRequest, deps: E
   };
   const complete =
     coverage.full &&
-    candidateReports.every((r) => r.status !== "failed" && r.status !== "unusable") &&
+    loaded.every((l) => !l.lost && (l.data?.complete ?? true)) &&
     hierarchy.report.ran &&
     hierarchy.report.uncheckedReturned.length === 0;
 

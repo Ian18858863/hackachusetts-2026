@@ -7,7 +7,7 @@ import fc from "fast-check";
 import { describe, expect, it } from "vitest";
 import { InvalidInput, UpstreamError, UpstreamTimeout } from "../errors";
 import { DEFAULT_TIMEOUTS_MS } from "../http";
-import { RANK_BUDGET_MS, rankCandidates, rankCandidatesWithReport, weightedMatchCount } from "../rank";
+import { RANK_BUDGET_MS, RANK_FINISH_MARGIN_MS, isObsoleteSubject, rankBudgetOf, rankCandidates, rankCandidatesWithReport, weightedMatchCount } from "../rank";
 import type { EngineDeps, FetchLike } from "../types";
 
 const A = "HP:0001166"; // patient terms (opaque keys)
@@ -79,6 +79,18 @@ interface MockOpts {
   annotationsMissing?: boolean; // JAX answers 404 for every disease id
   orphadataStatus?: number;
   orphadataBody?: unknown;
+  monarchDelayMs?: number; // answer after this long (rejects on abort, like a real fetch)
+  annotationDelayMs?: number;
+}
+
+function abortableDelay(ms: number, signal: AbortSignal | null | undefined): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const t = setTimeout(resolve, ms);
+    signal?.addEventListener("abort", () => {
+      clearTimeout(t);
+      reject(Object.assign(new Error("t"), { name: "TimeoutError" }));
+    });
+  });
 }
 
 function mock(opts: MockOpts = {}): { deps: EngineDeps; calls: string[] } {
@@ -93,6 +105,7 @@ function mock(opts: MockOpts = {}): { deps: EngineDeps; calls: string[] } {
           init?.signal?.addEventListener("abort", () => reject(Object.assign(new Error("t"), { name: "TimeoutError" }))),
         );
       }
+      if (opts.monarchDelayMs) await abortableDelay(opts.monarchDelayMs, init?.signal);
       if (opts.monarchStatus) return json({}, opts.monarchStatus);
       if (opts.monarchBody !== undefined) return json(opts.monarchBody);
       const ids = decodeURIComponent(url.pathname.split("/")[5] ?? "").split(",");
@@ -116,6 +129,7 @@ function mock(opts: MockOpts = {}): { deps: EngineDeps; calls: string[] } {
     }
     if (url.hostname === "ontology.jax.org") {
       const id = decodeURIComponent(url.pathname.split("/").pop() ?? "");
+      if (opts.annotationDelayMs) await abortableDelay(opts.annotationDelayMs, init?.signal);
       if (id === opts.failAnnotation) return json({}, 503);
       if (opts.annotationsMissing) return json({ message: "not found" }, 404);
       const body = ANNOTATIONS[id];
@@ -308,9 +322,9 @@ describe("rankCandidatesWithReport: enrichment outcomes", () => {
     expect(enrichment.complete).toBe(true);
     expect(enrichment.warnings).toEqual([]);
     expect(enrichment.candidates).toEqual([
-      { diseaseId: "ORPHA:9000001", annotations: [{ id: "ORPHA:9000001", status: "ok" }, { id: "OMIM:9000001", status: "ok" }], orphadata: { id: "ORPHA:9000001", status: "ok" } },
-      { diseaseId: "MONDO:9000004", annotations: [], orphadata: { status: "not-applicable" } },
-      { diseaseId: "OMIM:9000002", annotations: [{ id: "OMIM:9000002", status: "ok" }], orphadata: { status: "not-applicable" } },
+      { diseaseId: "ORPHA:9000001", annotations: [{ id: "ORPHA:9000001", status: "ok" }, { id: "OMIM:9000001", status: "ok" }], orphadata: { id: "ORPHA:9000001", status: "ok" }, evidenceComplete: true },
+      { diseaseId: "MONDO:9000004", annotations: [], orphadata: { status: "not-applicable" }, evidenceComplete: true },
+      { diseaseId: "OMIM:9000002", annotations: [{ id: "OMIM:9000002", status: "ok" }], orphadata: { status: "not-applicable" }, evidenceComplete: true },
     ]);
   });
 
@@ -455,5 +469,142 @@ describe("contract v0.1.2 parity", () => {
     } finally {
       Date.now = realNow;
     }
+  });
+});
+
+// ------------------------------------------------ R6.1: configurable rank budget
+
+describe("R6.1 rank budget (deps.rankBudgetMs)", () => {
+  it("rankBudgetOf: positive finite value wins, anything else falls back to 12 s", () => {
+    const f: FetchLike = async () => new Response("[]");
+    expect(rankBudgetOf({ fetch: f })).toBe(12000);
+    expect(rankBudgetOf({ fetch: f, rankBudgetMs: 25000 })).toBe(25000);
+    for (const bad of [0, -1, Number.NaN, Number.POSITIVE_INFINITY]) expect(rankBudgetOf({ fetch: f, rankBudgetMs: bad })).toBe(12000);
+  });
+
+  // Scaled-down version of Ian's 20 s / 25 s setting (real timers, ~0.5 s per test):
+  // Monarch takes 350 ms of a 400 ms Monarch timeout; annotations need 100 ms.
+  const SLOW = { monarchDelayMs: 350, annotationDelayMs: 100 };
+
+  it("slow Monarch + a budget with room: enrichment still completes", async () => {
+    const m = mock(SLOW);
+    const { response, enrichment } = await rankCandidatesWithReport(
+      { observed: [A, B] },
+      { ...m.deps, timeoutsMs: { monarchSemsim: 400, hpoAnnotation: 3000, orphadata: 2000 }, rankBudgetMs: 700 },
+    );
+    expect(enrichment.complete).toBe(true);
+    expect(enrichment.candidates.every((c) => c.evidenceComplete)).toBe(true);
+    expect(response.candidates[0]!.sources).toContain("hpo-annotations");
+    expect(response.candidates[0]!.matched.find((x) => x.patientTerm.id === A)!.frequency).toEqual({ label: "Very frequent", source: "ORPHA:9000001" });
+  });
+
+  it("slow Monarch + a budget that leaves too little: enrichment is cut, reported, and never read as 'not listed'", async () => {
+    const m = mock(SLOW);
+    const { response, enrichment } = await rankCandidatesWithReport(
+      { observed: [A, B] },
+      // 480 - 100 ms finish margin = 380 ms of network time: Monarch (350 ms) fits, the 100 ms annotations do not
+      { ...m.deps, timeoutsMs: { monarchSemsim: 400, hpoAnnotation: 3000, orphadata: 2000 }, rankBudgetMs: 480 },
+    );
+    expect(enrichment.complete).toBe(false);
+    const one = enrichment.candidates.find((c) => c.diseaseId === "ORPHA:9000001")!;
+    expect(one.evidenceComplete).toBe(false); // the caller must say "could not be read", not "not listed"
+    expect(one.annotations.every((a) => a.status === "failed")).toBe(true);
+    const cand = response.candidates.find((c) => c.diseaseId === "ORPHA:9000001")!;
+    expect(cand.sources).not.toContain("hpo-annotations");
+    expect(cand.matched.every((x) => x.frequency === null)).toBe(true);
+  });
+
+  it("the Monarch timeout never exceeds the total budget", async () => {
+    const m = mock({ monarchHang: true });
+    const t0 = Date.now();
+    await expect(
+      rankCandidates({ observed: [A] }, { ...m.deps, timeoutsMs: { monarchSemsim: 5000 }, rankBudgetMs: 300 }),
+    ).rejects.toBeInstanceOf(UpstreamTimeout);
+    expect(Date.now() - t0).toBeLessThan(1000);
+  });
+
+  it("without rankBudgetMs the default behaviour is unchanged (12 s budget, 10 s Monarch)", () => {
+    expect(RANK_BUDGET_MS).toBe(12000);
+    expect(DEFAULT_TIMEOUTS_MS.monarchSemsim).toBe(10000);
+  });
+});
+
+// ------------------------------------------------ R6.1: obsolete candidates
+
+describe("R6.1 obsolete disease records", () => {
+  const row = (mondo: string, name: string, score: number, extra: Record<string, unknown> = {}) => ({
+    subject: { id: mondo, name, xref: [], ...extra },
+    score,
+    similarity: { object_termset: { [A]: { id: A, label: "Arachnodactyly" } }, object_best_matches: {} },
+  });
+  const BODY = [
+    row("MONDO:9000101", "obsolete synthetic disease flagged", 15, { deprecated: true }), // authoritative flag
+    row("MONDO:9000102", "synthetic disease A", 14, { deprecated: false }),
+    row("MONDO:9000103", "Obsolete synthetic label only", 13.5), // label convention, no flag
+    row("MONDO:9000104", "synthetic disease with obsolete in the middle", 13, { deprecated: false }), // kept
+    row("MONDO:9000105", "synthetic disease B", 12, { deprecated: false }),
+  ];
+
+  it("excludes obsolete records before truncation; valid ones keep their order; nothing is invented", async () => {
+    const r = await rankCandidates({ observed: [A], limit: 3 }, mock({ monarchBody: BODY }).deps);
+    expect(r.candidates.map((c) => [c.rank, c.mondoId, c.name])).toEqual([
+      [1, "MONDO:9000102", "synthetic disease A"],
+      [2, "MONDO:9000104", "synthetic disease with obsolete in the middle"],
+      [3, "MONDO:9000105", "synthetic disease B"],
+    ]);
+    const all = await rankCandidates({ observed: [A], limit: 10 }, mock({ monarchBody: BODY }).deps);
+    expect(all.candidates).toHaveLength(3); // no replacement candidates
+  });
+
+  it("deterministic: input order of the Monarch rows does not matter", async () => {
+    await fc.assert(
+      fc.asyncProperty(fc.shuffledSubarray(BODY, { minLength: BODY.length }), async (shuffled) => {
+        const a = await rankCandidates({ observed: [A], limit: 5 }, mock({ monarchBody: BODY }).deps);
+        const b = await rankCandidates({ observed: [A], limit: 5 }, mock({ monarchBody: shuffled }).deps);
+        expect(b).toEqual(a);
+      }),
+      { numRuns: 30, seed: 20261024 },
+    );
+  });
+
+  it("all rows obsolete: a real empty answer, not an upstream error", async () => {
+    const r = await rankCandidates({ observed: [A] }, mock({ monarchBody: [BODY[0], BODY[2]] }).deps);
+    expect(r.candidates).toEqual([]);
+  });
+
+  it("isObsoleteSubject: flag or leading 'obsolete' word only", () => {
+    expect(isObsoleteSubject({ deprecated: true, name: "anything" })).toBe(true);
+    expect(isObsoleteSubject({ name: "obsolete chorea" })).toBe(true);
+    expect(isObsoleteSubject({ name: "  Obsolete X" })).toBe(true);
+    expect(isObsoleteSubject({ deprecated: false, name: "disease with obsolete in the middle" })).toBe(false);
+    expect(isObsoleteSubject({ name: "obsoleteness syndrome" })).toBe(false);
+    expect(isObsoleteSubject({ deprecated: "true", name: "Marfan syndrome" })).toBe(false);
+  });
+});
+
+describe("R6.1 R2: the whole rank call finishes inside rankBudgetMs", () => {
+  // Measured before the fix (2026-10-24 16:15 ET): 1002 ms and 1001 ms for a 1000 ms budget.
+  it.each([
+    ["Monarch 790 ms, annotations hang", { monarchDelayMs: 790, monarchFirst503: false }],
+    ["Monarch 503 then retry ok, annotations hang", { monarchDelayMs: 0, monarchFirst503: true }],
+  ] as Array<[string, { monarchDelayMs: number; monarchFirst503: boolean }]>)("%s: total <= budget", async (_n, o) => {
+    const m = mock({ ...(o.monarchDelayMs ? { monarchDelayMs: o.monarchDelayMs } : {}), annotationDelayMs: 60_000 });
+    let monarchCalls = 0;
+    const base = m.deps.fetch;
+    const fetch: FetchLike = async (input, init) => {
+      if (o.monarchFirst503 && input.includes("monarchinitiative") && monarchCalls++ === 0) return new Response("{}", { status: 503 });
+      return base(input, init);
+    };
+    const t0 = Date.now();
+    const { enrichment } = await rankCandidatesWithReport({ observed: [A] }, { ...m.deps, fetch, timeoutsMs: { monarchSemsim: 800 }, rankBudgetMs: 1000 });
+    expect(Date.now() - t0).toBeLessThanOrEqual(1000);
+    expect(enrichment.complete).toBe(false);
+    expect(enrichment.candidates.every((c) => !c.evidenceComplete || c.annotations.length === 0)).toBe(true);
+  }, 10_000);
+
+  it("Ian's 20 s / 25 s setting: Monarch at 19.9 s still leaves the full 3 s for annotations", async () => {
+    // Pure arithmetic of the allocation, no 20 s wait: left = 25000 - 100 - 19900 = 5000 >= 3000.
+    expect(RANK_FINISH_MARGIN_MS).toBe(100);
+    expect(Math.min(3000, 25000 - RANK_FINISH_MARGIN_MS - 19900)).toBe(3000);
   });
 });

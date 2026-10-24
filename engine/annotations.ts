@@ -20,6 +20,8 @@ export interface AnnotatedFeature {
 export interface DiseaseAnnotations {
   diseaseId: DiseaseId; // the id that was queried, e.g. "ORPHA:558"
   name: string;
+  /** MONDO id JAX gives for this disease, if any. Used by nextQuestions to find the OMIM partner; rank ignores it. */
+  mondoId?: string;
   features: AnnotatedFeature[]; // one per HPO id, source order
   categories: string[]; // category keys that have at least one feature
   genes: Gene[];
@@ -77,7 +79,10 @@ export function parseAnnotations(body: unknown, diseaseId: DiseaseId): DiseaseAn
       if (id !== "" && symbol !== "") genes.push({ id, symbol });
     }
   }
-  return { diseaseId, name: str(disease.name), features, categories, genes };
+  const out: DiseaseAnnotations = { diseaseId, name: str(disease.name), features, categories, genes };
+  const mondo = str(disease.mondoId);
+  if (/^MONDO:\d+$/.test(mondo)) out.mondoId = mondo;
+  return out;
 }
 
 /**
