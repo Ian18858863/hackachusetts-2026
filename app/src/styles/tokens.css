@@ -188,6 +188,8 @@
 
   --measure: 62ch;
   --measure-narrow: 48ch;
+  /* Lead paragraph on short laptop screens: the widest reading measure (design §4: max 75). */
+  --measure-wide: 75ch;
 
   /* Spacing (4px base) */
   --space-0: 0;
@@ -265,6 +267,19 @@
 @media (max-width: 900px) {
   :root {
     --gutter: var(--s-5);
+  }
+}
+
+/*
+ * Short laptop screens (about 1000×600): a lower header and a page title one
+ * step down (44 → 34), so the closest match stays above the fold (art
+ * direction: the first case file is visible at 1000×600). Phones and tall
+ * screens are not affected.
+ */
+@media (max-height: 720px) and (min-width: 901px) {
+  :root {
+    --topbar-h: 56px; /* still fits the 44px tap targets */
+    --text-display: var(--t-xl);
   }
 }
 

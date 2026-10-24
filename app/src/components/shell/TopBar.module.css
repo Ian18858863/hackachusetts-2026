@@ -81,8 +81,28 @@
   display: none;
 }
 
-/* Laptop and tablet: the steps move to their own row under the brand. */
-@media (max-width: 1120px) {
+/*
+ * 901–1120px wide, at any height (short laptops and also e.g. a 1024×768
+ * tablet, on purpose): one row stays, with tighter gaps and no demo chip in
+ * the header, so the page keeps its height above the fold. The demo case is
+ * still labelled in every step's intro (StepHeader kicker and demo label).
+ */
+@media (min-width: 901px) and (max-width: 1120px) {
+  .inner {
+    column-gap: var(--s-5);
+  }
+
+  .steps {
+    margin-left: 0;
+  }
+
+  .chip {
+    display: none;
+  }
+}
+
+/* Tablet: the steps move to their own row under the brand. */
+@media (max-width: 900px) {
   .inner {
     grid-template-columns: minmax(0, 1fr) auto;
     grid-template-areas:

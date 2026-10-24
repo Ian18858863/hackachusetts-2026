@@ -53,7 +53,21 @@
   pointer-events: none;
 }
 
-/* Under the brand (laptop, tablet, phone): scroll inside the row, never the page. */
+/*
+ * 901–1120px wide (any height): the steps share the brand's row, so the full
+ * labels get a smaller size and tighter gaps instead of shorter names.
+ */
+@media (min-width: 901px) and (max-width: 1120px) {
+  .list {
+    gap: var(--s-4);
+  }
+
+  .link {
+    font-size: var(--t-xs);
+  }
+}
+
+/* Up to 1120px (beside the brand, or under it on tablet and phone): scroll inside the row, never the page. */
 @media (max-width: 1120px) {
   .list {
     overflow-x: auto;

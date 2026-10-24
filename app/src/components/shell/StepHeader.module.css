@@ -53,9 +53,25 @@
   }
 }
 
-/* Short laptop screens: tighter intro so results stay above the fold. */
-@media (max-height: 700px) and (min-width: 901px) {
+/*
+ * Short laptop screens: tighter intro so results stay above the fold. The
+ * title drops one step through --text-display (tokens.css); the lead text
+ * goes to body size on the widest reading measure (--measure-wide, 75ch).
+ */
+@media (max-height: 720px) and (min-width: 901px) {
+  .kicker {
+    margin-bottom: var(--s-1);
+    font-size: var(--t-xs);
+    line-height: var(--leading-snug);
+  }
+
   .lede {
+    max-width: var(--measure-wide);
+    margin-top: var(--s-3);
+    font-size: var(--t-base);
+  }
+
+  .labels {
     margin-top: var(--s-3);
   }
 }
