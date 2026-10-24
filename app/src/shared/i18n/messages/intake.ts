@@ -53,6 +53,8 @@ export default defineMessages(
     confirmText: 'Opening this demo patient replaces the notes you typed in this browser.',
     confirmReplace: 'Replace my notes',
     confirmKeep: 'Keep my notes',
+    hardCase: 'Hard case — the ranking may miss the known condition',
+    demoPrecision: 'This narrative was written from published HPO terms and is more precise than typical family notes.',
   },
   {
     zh: {
@@ -96,6 +98,8 @@ export default defineMessages(
       confirmText: '打开这位演示患者会替换您在此浏览器中输入的症状描述。',
       confirmReplace: '替换我的描述',
       confirmKeep: '保留我的描述',
+      hardCase: '难例：排序可能找不到已知病症',
+      demoPrecision: '这段描述是根据已发表的 HPO 术语编写的，比一般家属写的症状描述更精确。',
     },
     ja: {
       promise: '散らばったメモを、専門医に渡せるサマリーにまとめます。医師と相談するための候補となる疾患を、それぞれの根拠とともに示します。',
@@ -138,6 +142,8 @@ export default defineMessages(
       confirmText: 'このデモ患者を開くと、このブラウザで入力した記録が置き換えられます。',
       confirmReplace: '置き換える',
       confirmKeep: '記録を残す',
+      hardCase: '難しい症例：既知の疾患が順位に入らないことがあります',
+      demoPrecision: 'この記録は公表された HPO 用語をもとに書かれており、一般的なご家族の記録より正確です。',
     },
     es: {
       promise:
@@ -185,6 +191,8 @@ export default defineMessages(
       confirmText: 'Abrir este paciente de demostración reemplaza las notas que escribió en este navegador.',
       confirmReplace: 'Reemplazar mis notas',
       confirmKeep: 'Conservar mis notas',
+      hardCase: 'Caso difícil: la clasificación puede no incluir la enfermedad conocida',
+      demoPrecision: 'Esta narración se escribió a partir de términos HPO publicados y es más precisa que las notas habituales de una familia.',
     },
     ko: {
       promise: '흩어진 기록을 전문의에게 전달할 요약서로 정리합니다. 의사와 상의할 수 있는 질환 후보를 각각의 근거와 함께 보여 줍니다.',
@@ -227,6 +235,8 @@ export default defineMessages(
       confirmText: '이 데모 환자를 열면 이 브라우저에 입력한 기록이 바뀝니다.',
       confirmReplace: '내 기록 바꾸기',
       confirmKeep: '내 기록 유지',
+      hardCase: '어려운 사례: 순위에서 알려진 질환이 빠질 수 있습니다',
+      demoPrecision: '이 기록은 발표된 HPO 용어를 바탕으로 작성되어 일반적인 가족의 기록보다 더 정확합니다.',
     },
     fr: {
       promise:
@@ -277,6 +287,8 @@ export default defineMessages(
       confirmText: 'Ouvrir ce patient de démonstration remplace les notes que vous avez saisies dans ce navigateur.',
       confirmReplace: 'Remplacer mes notes',
       confirmKeep: 'Garder mes notes',
+      hardCase: 'Cas difficile : le classement peut manquer la maladie connue',
+      demoPrecision: 'Ce récit a été rédigé à partir de termes HPO publiés et il est plus précis que les notes habituelles d’une famille.',
     },
   },
 );

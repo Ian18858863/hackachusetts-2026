@@ -1009,6 +1009,12 @@
   margin: 0;
 }
 
+.sourcesScope {
+  max-width: var(--measure);
+  font-size: var(--t-xs);
+  color: var(--ink-2);
+}
+
 /* ---- Next step ------------------------------------------------------------ */
 
 .next {

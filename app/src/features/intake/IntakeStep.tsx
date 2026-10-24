@@ -175,6 +175,11 @@ export function IntakeStep() {
             </label>
             {demoTitle && <span className={styles.loaded}>{t('demoLoaded', { title: demoTitle.toLowerCase() })}</span>}
           </div>
+          {demoTitle && (
+            <p className={styles.demoPrecision} data-testid="demo-precision-note">
+              {t('demoPrecision')}
+            </p>
+          )}
           <p id={hintId} className={styles.hint}>
             {t('fieldHint')}
           </p>

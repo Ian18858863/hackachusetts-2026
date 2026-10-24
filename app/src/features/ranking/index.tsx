@@ -341,6 +341,7 @@ function RankingSources({ ranking }: { ranking: CaseRanking }) {
           <dd>{formatDateTime(response.dataVersions.fetchedAt, locale)}</dd>
         </div>
       </dl>
+      <p className={styles.sourcesScope}>{t('scopeNote')}</p>
     </section>
   );
 }

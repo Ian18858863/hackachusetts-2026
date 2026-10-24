@@ -75,6 +75,7 @@ export function TrialsPanel() {
               ? t('ledeWithCandidate')
               : t('ledeNoCandidate')}
           </p>
+          <p className={styles.notRecommendation}>{t('notRecommendation')}</p>
         </div>
         {choices.length > 1 && candidate && (
           <CandidateChooser

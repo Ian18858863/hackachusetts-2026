@@ -32,6 +32,11 @@
   color: var(--color-text-muted);
 }
 
+.notRecommendation {
+  font-size: var(--text-sm);
+  color: var(--color-text-muted);
+}
+
 /* ---- Candidate chooser: a segmented radio group --------------------- */
 
 .chooser {

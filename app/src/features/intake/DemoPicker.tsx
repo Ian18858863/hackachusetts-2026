@@ -5,9 +5,14 @@ import intake from '../../shared/i18n/messages/intake';
 import { Button, Icon } from '../../shared/ui';
 import styles from './DemoPicker.module.css';
 
+/** Demo cases where the ranking may miss the source condition (benchmark of 2026-10-24, README "Honest evaluation"). */
+const HARD_CASE_IDS: ReadonlySet<string> = new Set(['demo-dmd', 'demo-marfan', 'demo-kabuki', 'demo-cdls']);
+
 /**
- * "Try a demo patient": the four bundled demo cases (contract section 9), in
- * picker order, each with its verbatim demo label. Choosing one replaces the
+ * "Try a demo patient": the five bundled demo cases (contract section 9), in
+ * picker order, each with its verbatim demo label. The cases whose source
+ * condition Monarch does not rank first (README "Honest evaluation") carry a
+ * "hard case" line. Choosing one replaces the
  * case in this browser, so if the user has typed their own notes we ask once
  * before replacing them.
  */
@@ -89,6 +94,11 @@ export function DemoPicker({
                     <span className={styles.counts}>
                       {t('demoCounts', { present, absent })}
                     </span>
+                    {HARD_CASE_IDS.has(demo.caseId) && (
+                      <span className={styles.hardCase} data-testid={`demo-hard-${demo.caseId}`}>
+                        {t('hardCase')}
+                      </span>
+                    )}
                   </span>
                 </span>
                 <Icon name="arrowRight" size={18} className={styles.arrow} />
