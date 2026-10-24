@@ -1,13 +1,25 @@
 # Team Briefing — Hackachusetts 2026 (read this first)
 
-Last updated: 2026-10-24, morning. Single source of shared context for every teammate and every teammate's AI agent.
+Last updated: 2026-10-24. **v4 — approved by all three humans (Ian, Peter, Jerry) in the team chat at ~11:35 ET.** This version preserves the original event rules, topic research, and submission requirements, and adopts the faster 3-person coordination workflow.
 
-## 0. For AI agents reading this
+This is the single source of shared **decisions and current task claims**. The companion [`docs/PROTOCOL.md`](docs/PROTOCOL.md) (Assistant × Kiro Agent Collaboration Protocol v4) is the operational handbook for human teammates, their AI Assistants, and Kiro coding Agents.
 
-- You are helping **one member** of a three-person team. Read this whole file before doing anything.
-- **Do not assume a role.** Ask your human what they want to own (backend, frontend, data, design, pitch, anything), then record it in [section 6](#6-whos-doing-what) and commit.
-- [Section 3](#3-hard-rules-from-the-official-rules) lists rules that can disqualify us. Everything else here is a default the team may change. If you change a default, update this file.
-- When something here is unclear or out of date, ask your human instead of guessing.
+## 0. Read first — terminology and operating rule
+
+- **Human:** Ian (`Ian18858863`), Peter (`qirongwangpeter`), or Jerry (`lolershark`). Humans own decisions, Git approval, release, and evidence of real tests.
+- **Assistant:** A teammate's planning/review assistant (Claude for Ian; ChatGPT or other assistant for other teammates). It writes **natural-language Kiro instructions**, reviews actual diffs/tests, reports risks, and never authors project code. Ian's Assistant can use `kiro-cli` to direct Kiro; Ian's expressly authorized Kiro Git actions follow the review/QA limits in the companion protocol.
+- **Agent:** The **Kiro** coding agent (IDE / CLI / related Kiro workflow), which authors and fixes project code, tests, and project implementation artifacts. Only Kiro writes competition project code.
+- **One GitHub repository, one shared `main` branch, task-level file claims.** No mandatory B0/B1 lock, Integration branch, formal Patch handoffs, or PRs. Prefer small, reviewed, tested commits on `main` every ~20–30 minutes when safe. **Under Ian's ratified standing authorization (see docs/PROTOCOL.md section 6A), his Kiro may integrate/commit/push reviewed Ian-owned tasks after real QA; Peter and Jerry still approve Git actions themselves.**
+- **Ian is the demo integration, visual consistency, deployment, and submission coordinator.** This supersedes earlier tentative plans that made Peter the integration lead. Responsibilities are *claim-based*, not permanent monopoly; the initial suggestions in section 6 remain proposals until accepted and claimed.
+- **One source of truth for decisions:** this committed `BRIEFING.md`; API shapes live in `docs/CONTRACT.md`; live short-term signals come from group chat and the verified remote SHA. **Assistant-drafted internal coordination files** (`BRIEFING.md`, `docs/CONTRACT.md`, team protocol) may be submitted by a designated editor; **competition code and judge-facing artifacts** (README, source/tests, Kiro specs/steering, Kiro write-up) are Kiro-authored. If sources disagree, ask the humans.
+- **All project/submission content remains in English.** Operational human/Assistant chat may be in Chinese or English, but all repo documents (including `docs/PROTOCOL.md`) are in English.
+- Read [Section 3](#3-hard-rules-from-the-official-rules) before every Kiro coding task. Stop before acting on ambiguous or unauthorized high-risk changes.
+
+### Known Git event requiring honest follow-up (disclosed by Ian's Assistant)
+
+- At **10:55 ET** on October 24, Ian's Assistant pushed `c31e29feaeac861e3498fe65f53e6c571dd82618` to `main`, after the earlier `c9c7c030dd7e5ab8f6a913c42b761be18b954e76`. Ian's Assistant **verified** at **11:39 ET** that `origin/main` is `c31e29feaeac861e3498fe65f53e6c571dd82618`. Still re-check current `origin/main` before each task. No fixed B0/B1.
+- That commit includes a `.kiro/steering/design.md` **draft authored by Claude** and a **premature Kiro-usage line**. Preserve history; no force-push. Ian's **Kiro** must genuinely write/revise the steering, and correct the usage record to reflect **actual** actions only. Do not disguise prior authorship or claim Kiro used the draft before it actually did. Team reviews/approves the new steering SHA.
+- Ian's separate Kiro CLI sessions use **unique worktrees and temporary branches** for non-overlapping subtasks `T##a/T##b`, integrated **serially** into clean `main` after Assistant diff review and genuine QA. Only Ian's expressly approved, narrow standing Git consent applies; shared files require their own approvals. Deployment follows the pre-authorization in section 5 (only after a real smoke test passes); making the repo public and submitting stay Ian's personal actions.
 
 ## 1. The event in one screen
 
@@ -102,35 +114,107 @@ Official event datasets for this track: https://hackachusetts2026.vercel.app/#/h
 
 Full research with all links: [docs/research/health-visions.md](docs/research/health-visions.md).
 
-## 5. Open decisions (team decides; write answers here)
+## 5. Open decisions — only mark CONFIRMED after human agreement
 
-| Decision | Answer |
-|---|---|
-| Final topic and product name | TBD |
-| Who owns what | TBD — see section 6 |
-| Tech stack (frontend, backend, hosting) | TBD — owners choose; must deploy to a public URL by 18:00 |
-| Runtime LLM provider and whose API key | TBD (e.g. AWS Bedrock, OpenAI, Anthropic). Key lives in `.env`, never in the repo |
-| Open-source license | TBD (MIT / Apache-2.0 / AGPL-3.0) |
-| Submission Representative | Ian (proposed) |
+| Decision | Status / current answer | Approval owner |
+|---|---|---|
+| Final product topic and name | **PENDING**. Rare Disease Detective is the leading researched candidate, not yet formally selected | Three humans; Ian records decision |
+| Track | **PENDING final confirmation**. Healthcare & Biotech currently leads | Three humans |
+| Working roles | **PROPOSED starting claims** in section 6, flexible after announcement | Each human claims; Ian updates board |
+| Frontend/backend/hosting stack | **CONFIRMED (~11:35 ET)**. `app/` is Vite + React + TypeScript, served under `/app`. Backend APIs are Cloudflare Pages Functions in the repo-root `functions/` folder, one file per endpoint (`functions/api/<name>.ts`), each claimed separately. Deployment to Ian's Cloudflare Pages runs from the repo root; `scripts/build-site.sh` builds `landing/` into `dist/` and `app/` into `dist/app/`. Peter chooses the landing stack (same stack recommended); landing must output to `landing/dist` via `npm run build` | Three humans |
+| API and medical-module contract | **PENDING**. Must be agreed in `docs/CONTRACT.md` before dependent interfaces are built | Ian + affected owners |
+| Shared visual direction | Ian owns initial `.kiro/steering/design.md` draft through Kiro; team reviews before it is treated as final | Ian |
+| Runtime LLM provider, account, key | **PENDING**. Keys remain in ignored local/hosting secrets, never committed | Owner + Ian |
+| Open-source license | **PENDING**; select a suitable license before repo publication | Three humans |
+| Integration, demo and deployment | **CONFIRMED (~11:35 ET): Ian**, with repository-admin access (already Ian) | Three humans |
+| Deployment authorization | **CONFIRMED (~11:35 ET)**. Ian pre-approved deploying the demo to his Cloudflare Pages through his Kiro **only after a real smoke test passes**. Making the repo public and submitting the form stay Ian's personal actions | Ian |
+| Submission representative | Ian was previously proposed; confirm explicitly | Three humans |
 
-## 6. Who's doing what
+**No premature topic-specific claims.** Until the topic is confirmed in sections 4 and 5, Kiro may only implement topic-neutral scaffolding, landing layout, deployment path, README template, demo video outline, and other explicitly claimed non-domain-specific tasks. Do not invent app features or medical facts before confirmation.
 
-Each person (or their agent) fills in their own row and commits. Change it whenever plans change.
+## 6. Live task claim board (the team coordination center)
 
-| Person | GitHub | Owns | Kiro tools they'll use | Status |
+This is a **task board**, not permanent role assignment. One task, folder, or shared file may have only one active editor at a time. Human owners post a `[CLAIM]` in group chat first; Ian ensures the claimed task is reflected here **before substantive editing**. If Ian is busy, coordinate a single temporary board editor in the group. No simultaneous edits to this file.
+
+Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `PUSHED` → `DEMO_VERIFIED` → `DONE`; or `BLOCKED`. `PUSHED` does **not** mean the whole demo works.
+
+**Rows marked OPEN or BLOCKED are starter suggestions, unclaimed until explicitly accepted by the owner; replace ETA with real local time (ET) at claim. CLAIMED/IN_PROGRESS rows are real claims.**
+
+| Task ID / task | Suggested owner | Owned area / conflict boundary | Status | ETA (ET) |
 |---|---|---|---|---|
-| Ian | `Ian18858863` | | | |
-| Qirong Wang | `qirongwangpeter` | | | |
-| Jerry | `lolershark` | | | |
+| T01 Main demo shell, core frontend + backend | Ian | Main application routes, demo API, root project config; exact paths assigned after stack choice | OPEN | TBD |
+| T01a Topic-neutral app shell | Ian | `app/**`; no deployment config inside `app/` | CLAIMED (Ian) | 12:15 |
+| T02 Unified visual steering + honest remediation of 10:55 draft | Ian | `.kiro/steering/design.md` only; log correction handled via separately claimed T10 | CLAIMED (Ian) | 12:00 |
+| T02b Re-author team steering | Ian | `.kiro/steering/team.md` only | CLAIMED (Ian) | 12:10 |
+| T03 Deployment path + full-app smoke checks | Ian | `wrangler.toml` at repo root, `scripts/build-site.sh`, `functions/api/health.ts`, Cloudflare Pages project; deployment secrets outside repo | CLAIMED (Ian) | 12:30 |
+| T04 Topic-neutral landing skeleton | Peter | **Dedicated landing area only** (`landing/` or exact agreed route)—not the main demo route | OPEN | TBD |
+| T05 Pitch narrative + under-3-minute video storyboard | Peter | Presentation/copy assets; never claim a feature works without a real demo | OPEN | TBD |
+| T06 README skeleton + Kiro write-up draft | Peter | `README.md` (exclusive once claimed); Kiro write-up from **real usage log**, not made-up entries | OPEN | TBD |
+| T07 Domain module + approved public datasets | Jerry | Domain-specific library/data folder **only after topic confirmed** | BLOCKED: TOPIC | TBD |
+| T08 Module tests / property-based test use | Jerry | Tests under claimed module; record true Kiro usage | BLOCKED: TOPIC | TBD |
+| T09 API contract, mock response examples | Ian + relevant owners approve; **Ian is sole file editor** | `docs/CONTRACT.md` shared file | OPEN | TBD |
+| T10 Kiro usage record aggregation + correct early inaccurate entry | Ian/Kiro is sole file editor; all members supply **actual** usage evidence | `docs/KIRO_USAGE.md` | CLAIMED (Ian) | 11:50 |
+| T11 Team board updates | Ian, or named one-time delegate | `BRIEFING.md`, `docs/PROTOCOL.md` | DONE (Ian; rolling board updates continue) | 11:45 |
 
-## 7. Working together (defaults that reduce friction)
+**What a claim must include in group chat:** task ID, human owner, exact paths (or an explicit pending-path blocker), ETA, interface dependencies, and current Git main SHA. A teammate can take over an abandoned task **only after the original owner releases it in chat**; update this board. Do not let an Agent quietly self-claim overlapping files.
 
-- **Contract first.** Before building, whoever owns the backend and whoever owns the frontend agree on endpoints and example JSON in [docs/CONTRACT.md](docs/CONTRACT.md). Use mock data so both sides can build in parallel.
-- **Claim before you build.** Write your area in section 6 (and tell the group chat). One owner per folder or file at a time.
-- **Git.** Pull/Sync before starting. Small commits, clear English messages. Push often. Never force-push or delete someone else's work. On a merge conflict, keep both sides' intent and ask if unsure.
-- **Suggested checkpoints.** 12:30 contract agreed + skeleton runs · 14:30 end-to-end happy path works · 16:30 deployed + polish · 17:30 feature freeze · 18:00 record video · 19:00 submitted.
-- **Kiro usage counts for a third of the score.** Each time anyone uses a Kiro feature in a new way, add a line to [docs/KIRO_USAGE.md](docs/KIRO_USAGE.md). Spread tools across the team (IDE, CLI, Crew/Web) and features (specs, hooks, steering, MCP, property-based tests, powers).
-- **Credits.** Each person has their own 2,000 bonus credits. Use the **Auto** model; avoid long autonomous loops. Free plans don't include premium models.
+**Change the starter assignments whenever the team needs to.** For example, Ian's Assistant may drive the demo frontend and backend by giving separate tasks to Ian's Kiro through `kiro-cli`, while Peter and Jerry work on unrelated claimed paths. Separate tasks are fine; simultaneous Kiro sessions may not edit the same dirty working directory or overlapping paths.
+
+**Shared files / ownership guard:** `BRIEFING.md`, `docs/CONTRACT.md`, `docs/KIRO_USAGE.md`, `.kiro/steering/design.md`, package manifests/lockfiles, app entry routes, and deployment config require a named editor. Affected teammates approve breaking changes. Ian's standing Kiro Git consent does **not** authorize bypassing shared-file claims. To avoid a shared `docs/KIRO_USAGE.md` collision, everyone posts their **real Kiro usage line** in chat immediately, and Ian's Kiro appends those lines in one serial edit.
+
+## 7. Working together — fast, safe, shared-main workflow
+
+1. **Claim first, then work.** Announce a `[CLAIM]` with exclusive paths, owner and ETA. Ian updates the section-6 board; others avoid claimed paths. This rule applies equally to human edits and Kiro Agent sessions.
+2. **Agree on the contract before dependent implementation.** The API producer and consumers approve sample JSON, error semantics, `demo/live` labeling, and version in `docs/CONTRACT.md`. Topic-neutral frontend shell can proceed; frontend uses clearly labeled mock data. Any breaking change requires a group `[CONTRACT CHANGE]` first, with one designated file editor.
+3. **One coherent visual language.** Ian's **Kiro** creates `.kiro/steering/design.md`, covering layout, typography, palette, responsive behavior, interactions, motion, accessibility, and navigation. Ian checks visual consistency. Each Kiro session reads the committed steering; custom Kiro agents may need explicit steering-resource configuration. Do not assume teammates have fetched a newly pushed steering file.
+4. **Direct main, frequent small checkpoints.** The team's default is independent local clones on the shared `main`; Ian's multiple Kiro sessions use different worktrees **and different temporary branches**, with one-by-one integration into clean `main`. Check `git status`, `git fetch` and current remote commit before each task. If clean, `git pull --ff-only origin main`. After Kiro changes, the owning Assistant inspects `git diff`, scope and actual test results; Peter/Jerry approve their Git operations manually, while Ian may use his limited Kiro Git delegation after Assistant review and genuine QA. Push a small change (~20–30 min) when safe. Use meaningful English commit messages and announce the resulting full SHA. No automatic force-push, hard reset, conflict overwrite, or destructive auto-sync.
+5. **On push rejection, stop and reconcile.** Another teammate may have pushed first. Keep local commits, alert the group, inspect remote changes, and let the human safely integrate/rebase without losing work. Rerun affected QA before pushing. A short-lived personal branch is an acceptable **exception** to resolve conflicts or risky changes, but there is **no mandatory Integration branch** and no B0/B1 freeze system.
+6. **Reviews are diffs, not formal patch rounds.** Kiro edits only the files it was authorized to change. The owner's Assistant reviews the changed files (`git diff` / `git show`), user experience, tests and risks. If defects are found, the Assistant returns a **natural-language correction task** to Kiro; Kiro makes the fix. Assistants never write replacement project code. Do not say "reviewed" without actual evidence.
+7. **Human Git control + continuous verification.** Peter and Jerry approve their Git actions individually; under Ian's ratified standing authorization (see docs/PROTOCOL.md section 6A), his Kiro may commit/push **reviewed, QA-passing, Ian-claimed work**, one task at a time, subject to the protocol's gates. Ian fetches the team's latest `main` and runs the integrated main demo at least hourly, plus at 12:30 / 14:30 / 16:30 checkpoints. Before announcing deployment, verify the real live URL in an incognito session. `PUSHED` does not equal `DEMO_VERIFIED` or `DEPLOYED`.
+8. **Kiro usage log is part of the deliverable.** Everyone reports real specs, steering, CLI, hooks, MCP, property-based tests, etc. to the group. Ian coordinates single-editor updates to `docs/KIRO_USAGE.md`. Record who, time, Kiro feature, what it actually did and proof; never claim an unperformed tool usage. Hooks must be safe, deterministic and must not secretly commit/push/deploy.
+9. **Two cadences:** Task updates / safe pushes about every 20–30 minutes; Ian runs integrated smoke **at least hourly and at 12:30, 14:30, 16:30 checkpoints**. **Hourly three-sentence update.** Each human posts: DONE / NEXT / BLOCKED (include task ID and real main commit SHA if pushed). Each human forwards material team changes to their Assistant; Assistants cannot directly access each other's chat history.
+10. **Feature freeze at 17:30 ET.** After freeze, only scoped P0/P1 fixes, deployment reliability, video/submission and release checks. Ian coordinates merges/safe main changes and submission. Avoid risky last-minute migrations or replacing working functionality.
+11. **Safety and readiness.** Do not publish credentials, real patient data, or source-restricted datasets. If the chosen topic is rare disease, label mock/demo clearly and frame all output as discussion support, not diagnosis. Build and actual demo results must be verified, never inferred.
+12. **Credits.** Original team briefing states each person has a 2,000-credit bonus allocation; verify each account's actual current balance. Each account chooses its own Kiro model and manages its own credits; Ian's account uses Claude Opus 5.5 and Ian tops up his own credits. Avoid runaway loops.
+
+### Safe per-task Git rhythm (human-supervised; example, not an auto-run script)
+
+```powershell
+# Before starting, only after checking you have no uncommitted work:
+git status --short
+git fetch origin
+git pull --ff-only origin main
+
+# After Kiro coding and Assistant review:
+git diff --check
+git diff --stat
+# Run module-specific QA / build; human checks actual results.
+# Human stages only claimed/approved paths, then reviews staged diff:
+git add -- <approved-paths>
+git diff --cached --stat
+# Peter/Jerry approve Git; Ian may use the reviewed, QA-gated Kiro Git exception.
+```
+
+If any command reports divergence, a dirty tree, or unexpected files, **STOP**; do not overwrite teammates' work. Use actual Git paths instead of placeholder `<approved-paths>`.
+
+### Startup approvals
+
+- **11:20 ET target, slipped to ~11:35 ET:** Ian, Peter and Jerry explicitly approved this v4 briefing, the v4 protocol, the limited Ian-only Git delegation and the stack in the team chat (Ian first; Peter and Jerry each wrote "APPROVE v4 + stack").
+- **11:45 ET target:** Select and record the actual topic. Until then, only **explicitly claimed and authorized topic-neutral tasks** may begin; the clock reaching 11:30 does not automatically grant authorization.
+- **12:30 ET target:** minimal API contract is accepted by impacted owners, if topic-specific interfaces are required. Shared-file edits use one designated editor. Kiro specs/steering/README and judge-facing descriptions must be authored by Kiro, although assistants may prepare internal planning drafts.
+
+### Timeline (Eastern Time; original event checkpoints)
+
+| Checkpoint | Acceptance focus |
+|---|---|
+| 11:30 | Start project implementation after topic/claim decisions, or topic-neutral tasks only |
+| 12:30 | API contract agreed, skeleton launches locally |
+| 14:30 | Core demo happy path works end to end |
+| 16:30 | Public deployment functioning; demonstrate from fresh browser session |
+| 17:30 | Feature freeze |
+| 18:00 | Record <3-minute real product demo |
+| 19:00 | Submit (internal target) |
+| 20:00 | Official hard deadline |
 
 ## 8. Submission checklist
 
@@ -157,3 +241,28 @@ Each person (or their agent) fills in their own row and commits. Change it whene
 1. Install **Kiro IDE** (the IDE download, not only Crew) and sign in.
 2. Redeem your paper code: sign in at https://app.kiro.dev first, then open `https://app.kiro.dev/account/usage?redemption_code=<your-code>`. Check "Bonus credits 0 / 2000". "Redemption Failed" after a refresh usually means it already worked in another tab.
 3. In Kiro: Command Palette → `Git: Clone` → `https://github.com/Ian18858863/hackachusetts-2026.git`.
+
+## 11. Cross-Assistant synchronization — the minimum viable handoff
+
+**Assistants do not automatically sync.** The group chat is the fast status channel; GitHub `main` and its SHA show what code actually exists; `BRIEFING.md` preserves human decisions/claims; `docs/CONTRACT.md` preserves approved interfaces. Every human forwards relevant group messages to their own Assistant.
+
+**Events that must be reported:** `CLAIM`, `CONTRACT CHANGE`, `REVIEWED`, `PUSHED`, `BLOCKED`, `MAIN SMOKE`, `DEPLOYED`, `FEATURE FREEZE`. Avoid treating `REVIEWED` as proof of a push or of end-to-end success.
+
+```text
+[TEAM CHECKPOINT]
+Time (ET): YYYY-MM-DD HH:MM
+Owner / Task: Ian|Peter|Jerry / T##
+Claimed paths: ...
+Assistant review: PENDING|CHANGES_REQUESTED|REVIEWED
+QA: NOT_RUN|PASS|FAIL (actual command / output summary)
+Local commit / remote main SHA: NONE|<full 40-character SHA>
+Main integration smoke: NOT_RUN|PASS|FAIL (Ian; specific tested SHA)
+Blocked / contract change: ...
+Next action / ETA: ...
+```
+
+**Five-step relay:** (1) Owner Assistant reviews the actual Kiro diff and test evidence; (2) human posts the checkpoint message to group; (3) human runs/approves QA and the Git action, then posts the pushed SHA; (4) Ian pulls `main`, runs demo smoke and posts verified SHA/URL; (5) each teammate forwards the updated group message to their own Assistant before the next affected task. A post from one Assistant is **not** proof other Assistants received it.
+
+**Exception/incident:** On a shared-file collision, push rejection, broken `main`, incompatible API, or secret exposure, post `[BLOCKED]`, stop affected edits, preserve existing work, assign **one** repair owner. Do not force-push or paper over failing tests to recover speed. If live `main` is broken, Ian selects a previously demonstrated working commit for a controlled recovery decision; no Agent or Assistant self-deploys a fallback.
+
+**End-of-event signal:** Ian announces the exact final Git SHA, public repo URL, live demo URL, incognito smoke result, video URL, and submission status. Other teammates verify/acknowledge; this is the release record. Never equate a Kiro task completion message with submission success.
