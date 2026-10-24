@@ -12,7 +12,7 @@
   width: 100%;
   max-width: var(--content-max);
   margin-inline: auto;
-  padding: var(--s-7) var(--gutter) 0;
+  padding: var(--s-8) var(--gutter) 0;
 }
 
 .main:focus {
@@ -21,9 +21,17 @@
 
 .view {
   display: grid;
-  gap: var(--s-6);
+  gap: var(--s-7);
   min-width: 0;
-  animation: dissolve var(--dur-base) var(--ease) both;
+}
+
+/*
+ * Step change (T35): the new step comes into focus from a 12px blur over
+ * 0.7s, in place, and stays clickable the whole time. Reduced motion turns it
+ * off (base.css), so the step appears complete and static.
+ */
+.view {
+  animation: step-in 0.7s var(--ease-soft) both;
 }
 
 .body {
@@ -32,12 +40,14 @@
   min-width: 0;
 }
 
-@keyframes dissolve {
+@keyframes step-in {
   from {
     opacity: 0;
+    filter: blur(12px);
   }
   to {
     opacity: 1;
+    filter: none;
   }
 }
 
@@ -45,6 +55,10 @@
 @media (max-height: 700px) and (min-width: 901px) {
   .main {
     padding-top: var(--s-5);
+  }
+
+  .view {
+    gap: var(--s-5);
   }
 }
 

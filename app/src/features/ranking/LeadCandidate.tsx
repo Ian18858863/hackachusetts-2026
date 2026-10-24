@@ -17,6 +17,7 @@ import {
   type LinkProps,
 } from './parts';
 import type { RankDelta } from './rankingChange';
+import { useFitHeading } from '../../components/ui/useFitHeading';
 import styles from './ranking.module.css';
 
 /**
@@ -50,6 +51,8 @@ export function LeadCandidate({
   const broaderLine = broaderText(broader, t);
   const n = observedCount;
   const contradicted = c.contradicted.length;
+  // The hero name stays on one line on desktop (shrinks to fit; wraps only at 26px).
+  const nameRef = useFitHeading<HTMLHeadingElement>(c.name, { min: 26 });
 
   return (
     <article
@@ -66,7 +69,7 @@ export function LeadCandidate({
           {t('closestOverlap')}
           <DeltaBadge delta={delta} />
         </p>
-        <h2 id="lead-title" className={styles.leadName}>
+        <h2 id="lead-title" ref={nameRef} className={styles.leadName}>
           <span className="sr-only">{t('srRank', { n: c.rank })}</span>
           {c.name}
         </h2>
@@ -75,6 +78,13 @@ export function LeadCandidate({
             {exact} <span>{t('scoreOf', { n })}</span>
           </b>
           <small>{t('scoreSmall')}</small>
+          {/* Overlap meter (T35b), decorative: the numbers and words beside it carry the meaning.
+              Filled = described exactly, ring = through a broader term, empty = not matched. */}
+          <span className={styles.meter} aria-hidden="true">
+            {Array.from({ length: n }, (_, i) => (
+              <i key={i} data-kind={i < exact ? 'exact' : i < exact + broader ? 'broader' : 'none'} />
+            ))}
+          </span>
         </p>
         <p className={styles.leadOverlap}>
           <b>{t(OVERLAP_KEY[c.overlap])}</b>

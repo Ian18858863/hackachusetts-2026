@@ -24,41 +24,45 @@
  */
 
 :root {
-  /* ==== Token sheet (docs/ART_DIRECTION.md) =========================== */
-  --bg: #ffffff;
-  --surface: #f5f6f8;
-  --hair: #e7e9ed;
-  --ink: #14161b;
-  --ink-2: #454a54;
-  --ink-3: #5d636e;
-  --mark: #454a54;
-  --mark-off: #cdd2da;
-  --mark-none: #7a808a;
-  --accent: #2b55c0;
-  --accent-soft: #eef2fb;
+  /* ==== v2 token sheet (T35; docs/ART_DIRECTION.md "v2") =============== */
+  /* Clinical paper: warm white page, ink text, two semantic accents only.
+     --accent  = the primary action and the proof moment (rank 1, focus ring).
+     --attention = needs attention (stale ranking, warnings, demo-cache notes).
+     Red (--palette-danger) appears only for errors. */
+  --bg: #fbfaf7;
+  --surface: #f2f0ea;
+  --hair: #e4e1d8;
+  --ink: #141412;
+  --ink-2: #47463f;
+  --ink-3: #5f5d55;
+  --mark: #47463f;
+  --mark-off: #cfccc2;
+  --mark-none: #7d7a70;
+  --accent: #2348b0;
+  --accent-soft: #ebeffa;
+  --attention: #7a5200;
+  --attention-soft: #f8f0dc;
   --on-dark: #ffffff;
-  --focus: #2b55c0;
+  --focus: #2348b0;
 
-  /* Newsreader (OFL-1.1, opsz + wght axes; 400 and 500 used) and
-     Source Sans 3 (OFL-1.1, 400 and 600), self-hosted via @fontsource
-     (imported in src/main.tsx). */
-  --f-display: 'Newsreader Variable', 'Newsreader', Georgia, 'Times New Roman', var(--f-cjk-serif), serif;
-  --f-text: 'Source Sans 3', system-ui, -apple-system, 'Segoe UI', var(--f-cjk-sans), sans-serif;
-  /* CJK fallbacks: system fonts only, no webfont downloads. They come after the
-     Latin faces, so Latin text keeps the stacks above; the :lang() rules at the
-     end of this file put each language's own fonts first within this slot. */
-  --f-cjk-sans: 'PingFang SC', 'Hiragino Sans', 'Apple SD Gothic Neo', 'Noto Sans CJK SC', 'Microsoft YaHei',
+  /* One sans for headings, body and numbers (Ian's option A, 18:46 ET): Geist
+     400/500/600 (OFL-1.1). Han, kana and hangul fall through to Noto Sans
+     SC/JP/KR 400/500, unicode-range slices loaded per language (shared/fonts.ts).
+     Self-hosted via @fontsource. */
+  --f-display: 'Geist', var(--f-cjk-sans), system-ui, sans-serif;
+  --f-text: 'Geist', var(--f-cjk-sans), system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --f-cjk-sans: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans', 'Apple SD Gothic Neo', 'Noto Sans CJK SC', 'Microsoft YaHei',
     'Yu Gothic', 'Malgun Gothic';
-  --f-cjk-serif: 'Songti SC', 'Hiragino Mincho ProN', 'Noto Serif CJK SC', var(--f-cjk-sans);
-  --t-xs: 0.875rem; /* 14 */
-  --t-sm: 0.9375rem; /* 15 */
-  --t-base: 1.0625rem; /* 17 */
-  --t-md: 1.1875rem; /* 19 */
-  --t-lg: 1.5rem; /* 24 */
-  --t-xl: 2.125rem; /* 34 */
-  --t-2xl: 2.75rem; /* 44 */
-  --lh-text: 1.5;
-  --lh-head: 1.1;
+  --t-xs: 0.8125rem; /* 13 */
+  --t-sm: 0.875rem; /* 14 */
+  --t-base: 1rem; /* 16 */
+  --t-md: 1.125rem; /* 18 */
+  --t-lg: 1.375rem; /* 22 */
+  --t-xl: clamp(1.75rem, 2.4vw, 2.25rem); /* 28-36 */
+  --t-2xl: clamp(2.125rem, 3.6vw, 3.25rem); /* 34-52: page title */
+  --lh-text: 1.6;
+  --lh-head: 1.08;
+  --track-display: -0.02em;
 
   --s-1: 4px;
   --s-2: 8px;
@@ -72,25 +76,26 @@
   --s-10: 128px;
   --r-s: 10px;
   --r-m: 16px;
-  --r-l: 28px;
+  --r-l: 22px;
   --r-pill: 999px;
-  --shadow-pop: 0 12px 32px -12px rgba(20, 22, 27, 0.2), 0 2px 6px rgba(20, 22, 27, 0.06);
+  --shadow-pop: 0 18px 40px -18px rgba(20, 20, 18, 0.22), 0 2px 6px rgba(20, 20, 18, 0.05);
   --z-pop: 10;
 
-  --ease: cubic-bezier(0.2, 0, 0, 1);
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-soft: cubic-bezier(0.22, 1, 0.36, 1);
   --dur-fast: 160ms;
-  --dur-base: 220ms;
+  --dur-base: 240ms;
   --dur-proof: 520ms;
   --stagger: 60ms;
 
-  --content: 1056px;
-  --gutter: 48px; /* 24px under 900px, 16px under 600px */
+  --content: 1120px;
+  --gutter: clamp(16px, 4vw, 56px);
   --col: 184px; /* comparison matrix candidate column, 64px under 600px */
 
   /* ==== Shell additions (derived from the specimen) ==================== */
-  --ink-hover: #2a2d34; /* black pill hover, from final.html .btn:hover */
-  --skeleton: #eceef1;
-  --skeleton-shine: #f7f8fa;
+  --ink-hover: #1a3a94; /* primary pill ink fill (accent, one step deeper) */
+  --skeleton: #edebe4;
+  --skeleton-shine: #f6f5f0;
   --topbar-h: 72px; /* 64px under 600px */
   --dur-sharpen: 600ms;
   --dur-dot: 320ms;
@@ -108,14 +113,14 @@
   --palette-wash: var(--surface);
   --palette-wash-2: var(--skeleton);
   --palette-accent: var(--accent);
-  --palette-accent-deep: #2447a3;
+  --palette-accent-deep: #1a3a94;
   --palette-accent-wash: var(--accent-soft);
-  --palette-accent-line: #c9d4f0;
+  --palette-accent-line: #c6d0ee;
   /* Status colours stay muted and are never used for candidates. */
-  --palette-danger: #8f3a2e;
+  --palette-danger: #a3271b;
   --palette-danger-wash: var(--surface);
-  --palette-warning: #6b4a00;
-  --palette-warning-wash: #faf5ea;
+  --palette-warning: var(--attention);
+  --palette-warning-wash: var(--attention-soft);
   --palette-success: #2f6b4a;
 
   /* Colour roles */
@@ -151,10 +156,11 @@
 
   --color-focus: var(--focus);
   --color-overlay: rgb(20 22 27 / 0.4);
-  /* Loading blocks are non-text UI: #c5c8ce is 1.68:1 on --bg and 1.55:1 on --surface (T38), so a
-     loading list reads as loading on white. --skeleton itself stays, it also feeds other tokens. */
-  --color-skeleton: #c5c8ce;
-  --color-skeleton-shine: #dde0e5;
+  /* Loading blocks are non-text UI (T38): on the v2 warm paper, #c4c1b8 is 1.72:1 on --bg (#fbfaf7),
+     1.58:1 on --surface (#f2f0ea) and 1.80:1 on white, so a loading list reads as loading.
+     --skeleton itself stays, it also feeds other tokens. */
+  --color-skeleton: #c4c1b8;
+  --color-skeleton-shine: #dcd9d1;
   --color-highlight: var(--accent-soft);
 
   --color-fill-primary: var(--ink-hover);
@@ -175,22 +181,22 @@
   --text-md: var(--t-base); /* 17: body */
   --text-lg: var(--t-md); /* 19: lead text, quotes */
   --text-xl: var(--t-lg); /* 24 */
-  --text-2xl: 1.75rem; /* 28 */
-  --text-3xl: var(--t-xl); /* 34: section titles, disease name */
-  --text-display: var(--t-2xl); /* 44: page title (34 on phone) */
+  --text-2xl: 1.625rem; /* 26 */
+  --text-3xl: var(--t-xl); /* 28-36: section titles, disease name */
+  --text-display: var(--t-2xl); /* 34-52: page title */
 
   --leading-tight: var(--lh-head);
   --leading-snug: 1.3;
   --leading-normal: var(--lh-text);
   --leading-reading: 1.6;
 
-  --tracking-display: -0.012em;
-  --tracking-tight: -0.01em;
+  --tracking-display: var(--track-display);
+  --tracking-tight: -0.015em;
   --tracking-normal: 0;
   --tracking-caps: 0.04em;
 
   --weight-regular: 400;
-  --weight-medium: 600; /* only 400 and 600 are loaded for Source Sans 3 */
+  --weight-medium: 600; /* only 400 and 600 are loaded for Inter */
   --weight-semibold: 600;
   --weight-bold: 600; /* no 700 is loaded; avoid faux bold */
 
@@ -272,11 +278,6 @@
   --z-toast: 400;
 }
 
-@media (max-width: 900px) {
-  :root {
-    --gutter: var(--s-5);
-  }
-}
 
 /*
  * Short laptop screens (about 1000×600): a lower header and a page title one
@@ -293,11 +294,9 @@
 
 @media (max-width: 600px) {
   :root {
-    --gutter: var(--s-4);
     --col: 64px;
-    --t-base: 1rem; /* body 16px on phone */
-    --text-display: var(--t-xl); /* page title 34px on phone */
-    --text-3xl: 1.875rem; /* disease name 30px on phone */
+    --text-display: 2rem; /* page title 32px on phone */
+    --text-3xl: 1.75rem; /* disease name 28px on phone */
     --topbar-h: 64px;
   }
 }
@@ -329,33 +328,28 @@
    the negative Latin tracking, which crowds CJK glyphs.
    ------------------------------------------------------------------------ */
 :root:lang(zh) {
-  --f-cjk-sans: 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei';
-  --f-cjk-serif: 'Songti SC', 'Noto Serif CJK SC', 'Source Han Serif SC', var(--f-cjk-sans);
+  --f-cjk-sans: 'Noto Sans SC', 'PingFang SC', 'Hiragino Sans GB', 'Noto Sans CJK SC', 'Microsoft YaHei';
 }
 
 :root:lang(ja) {
-  --f-cjk-sans: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', 'Yu Gothic';
-  --f-cjk-serif: 'Hiragino Mincho ProN', 'Noto Serif CJK JP', 'Yu Mincho', var(--f-cjk-sans);
+  --f-cjk-sans: 'Noto Sans JP', 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Noto Sans CJK JP', 'Yu Gothic';
 }
 
 :root:lang(ko) {
-  --f-cjk-sans: 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Malgun Gothic';
-  --f-cjk-serif: 'AppleMyungjo', 'Noto Serif CJK KR', var(--f-cjk-sans);
+  --f-cjk-sans: 'Noto Sans KR', 'Apple SD Gothic Neo', 'Noto Sans CJK KR', 'Malgun Gothic';
   word-break: keep-all;
 }
 
+/* Body text in CJK: the system CJK sans goes first so Han glyphs never mix
+   with Inter's Latin punctuation metrics. */
 :root:lang(zh),
 :root:lang(ja),
 :root:lang(ko) {
-  --tracking-display: normal;
+  --f-text: 'Geist', var(--f-cjk-sans), system-ui, sans-serif;
+  --f-display: 'Geist', var(--f-cjk-sans), system-ui, sans-serif;
+  --tracking-display: 0;
+  --track-display: 0;
   --tracking-tight: normal;
-  /* One clean sans system for CJK (T34): display and text both use the CJK
-     sans stack, no serif fallback to Songti or Mincho. Display text uses the
-     system CJK sans (real 400/500/600, so the 500 headings are not faux);
-     body text keeps Source Sans 3 (loaded 400 and 600) for Latin runs. */
-  --f-cjk-serif: var(--f-cjk-sans);
-  --f-display: var(--f-cjk-sans), system-ui, sans-serif; /* the system CJK sans has real 400, 500 and 600 */
-  --f-text: 'Source Sans 3', var(--f-cjk-sans), system-ui, sans-serif;
 }
 
 :lang(zh) :is(h1, h2, h3, h4),

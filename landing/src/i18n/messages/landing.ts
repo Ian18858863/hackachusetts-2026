@@ -31,7 +31,6 @@ export default defineMessages(
     heroLede: 'Turn years of scattered notes into a specialist-ready brief in minutes.',
     heroSafetyRest: ' Possible matches to discuss with a doctor, each with the evidence behind it.',
     tryDemo: 'Try the demo case',
-    howLink: 'How it works',
     familyCta: 'For families: prepare notes for your doctor',
     demoNote: 'Opens a synthetic demo case with no sign-up. Not a real patient.',
     proofAlt:
@@ -47,8 +46,6 @@ export default defineMessages(
     stat2Label: 'mean time to diagnosis (the median is 0.8 years)',
     stat3Value: '73%',
     stat3Label: 'of patients were misdiagnosed at least once',
-    surveyNote:
-      'Time to diagnosis and misdiagnosis come from the Rare Barometer survey of 6,507 patients in 41 European countries, run in 2022.',
 
     howTitle: 'How it works',
     howDek: 'Five steps from a parent’s notes to something a specialist can check.',
@@ -117,7 +114,6 @@ export default defineMessages(
       heroLede: '把多年零散的症状描述，在几分钟内整理成一份可交给专科医生的简报。',
       heroSafetyRest: '列出可与医生讨论的可能匹配，并附上每一项背后的证据。',
       tryDemo: '试用演示病例',
-      howLink: '工作原理',
       familyCta: '家庭使用：为医生整理症状描述',
       demoNote: '打开一个合成的演示病例，无需注册。并非真实患者。',
       proofAlt:
@@ -132,7 +128,6 @@ export default defineMessages(
       stat2Label: '平均确诊时间（中位数为 0.8 年）',
       stat3Value: '73%',
       stat3Label: '的患者至少被误诊过一次',
-      surveyNote: '确诊时间和误诊数据来自 2022 年开展的 Rare Barometer 调查，调查对象为欧洲 41 个国家的 6,507 名患者。',
 
       howTitle: '工作原理',
       howDek: '从家长的症状描述到专科医生可以核查的内容，共五步。',
@@ -198,7 +193,6 @@ export default defineMessages(
       heroLede: '何年分もの散らばった記録を、数分で専門医向けサマリーにまとめます。',
       heroSafetyRest: '医師と相談するための一致候補を、それぞれの根拠とともに示します。',
       tryDemo: 'デモ症例を試す',
-      howLink: '仕組み',
       familyCta: 'ご家族の方へ：医師に渡す記録を準備する',
       demoNote: '登録不要で、合成のデモ症例が開きます。実在の患者ではありません。',
       proofAlt:
@@ -214,8 +208,6 @@ export default defineMessages(
       stat2Label: '診断までの平均期間（中央値は 0.8 年）',
       stat3Value: '73%',
       stat3Label: 'の患者が少なくとも一度は誤診を経験しています',
-      surveyNote:
-        '診断までの期間と誤診の数値は、2022 年に欧州 41 か国の患者 6,507 人を対象に実施された Rare Barometer 調査によるものです。',
 
       howTitle: '仕組み',
       howDek: '保護者の記録から、専門医が確認できる形になるまでの 5 つのステップ。',
@@ -282,7 +274,6 @@ export default defineMessages(
       heroLede: 'Convierta años de notas dispersas en un resumen para el especialista en minutos.',
       heroSafetyRest: ' Posibles coincidencias para comentar con un médico, cada una con la evidencia que la respalda.',
       tryDemo: 'Probar el caso de demostración',
-      howLink: 'Cómo funciona',
       familyCta: 'Para familias: prepare notas para su médico',
       demoNote: 'Abre un caso de demostración sintético, sin registro. No es un paciente real.',
       proofAlt:
@@ -298,8 +289,6 @@ export default defineMessages(
       stat2Label: 'tiempo medio hasta el diagnóstico (la mediana es de 0,8 años)',
       stat3Value: '73 %',
       stat3Label: 'de los pacientes recibieron al menos un diagnóstico erróneo',
-      surveyNote:
-        'Los datos sobre el tiempo hasta el diagnóstico y los diagnósticos erróneos proceden de la encuesta Rare Barometer, realizada en 2022 a 6507 pacientes de 41 países europeos.',
 
       howTitle: 'Cómo funciona',
       howDek: 'Cinco pasos desde las notas de una madre o un padre hasta algo que un especialista puede comprobar.',
@@ -368,7 +357,6 @@ export default defineMessages(
       heroLede: '여러 해 동안 흩어진 기록을 몇 분 만에 전문의용 요약서로 정리합니다.',
       heroSafetyRest: ' 의사와 상의할 가능한 일치 항목을 각각의 근거와 함께 보여 줍니다.',
       tryDemo: '데모 사례 사용해 보기',
-      howLink: '작동 방식',
       familyCta: '가족용: 의사에게 전할 기록 준비하기',
       demoNote: '가입 없이 합성 데모 사례가 열립니다. 실제 환자가 아닙니다.',
       proofAlt:
@@ -383,8 +371,6 @@ export default defineMessages(
       stat2Label: '진단까지 걸리는 평균 기간(중앙값은 0.8년)',
       stat3Value: '73%',
       stat3Label: '한 번 이상 오진을 경험한 환자의 비율',
-      surveyNote:
-        '진단까지의 기간과 오진 수치는 2022년 유럽 41개국 환자 6,507명을 대상으로 실시한 Rare Barometer 조사에서 나왔습니다.',
 
       howTitle: '작동 방식',
       howDek: '부모의 기록에서 전문의가 확인할 수 있는 자료까지, 다섯 단계.',
@@ -451,7 +437,6 @@ export default defineMessages(
       heroLede: 'Transformez des années de notes éparses en une synthèse pour le spécialiste en quelques minutes.',
       heroSafetyRest: ' Des correspondances possibles à discuter avec un médecin, chacune avec les éléments qui l’appuient.',
       tryDemo: 'Essayer le cas de démonstration',
-      howLink: 'Fonctionnement',
       familyCta: 'Pour les familles : préparer des notes pour votre médecin',
       demoNote: 'Ouvre un cas de démonstration synthétique, sans inscription. Ce n’est pas un vrai patient.',
       proofAlt:
@@ -467,8 +452,6 @@ export default defineMessages(
       stat2Label: 'délai moyen avant le diagnostic (la médiane est de 0,8 an)',
       stat3Value: '73 %',
       stat3Label: 'des patients ont reçu au moins un diagnostic erroné',
-      surveyNote:
-        'Le délai de diagnostic et les erreurs de diagnostic proviennent de l’enquête Rare Barometer menée en 2022 auprès de 6 507 patients dans 41 pays européens.',
 
       howTitle: 'Fonctionnement',
       howDek: 'Cinq étapes, des notes d’un parent à un document qu’un spécialiste peut vérifier.',

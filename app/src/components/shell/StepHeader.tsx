@@ -8,6 +8,7 @@ import shell from '../../shared/i18n/messages/shell';
 import { getStep, stepsFor, type StepId } from '../../shared/steps';
 import { useCase } from '../../shared/store';
 import { DataOriginLabel, Disclaimer, OfflineMockLabel } from '../../shared/ui';
+import { headingText, useFitHeading } from '../ui/useFitHeading';
 import styles from './StepHeader.module.css';
 
 interface PayloadInfo {
@@ -36,7 +37,8 @@ export function StepHeader({ step }: { step: StepId }) {
   const gap = locale === 'zh' || locale === 'ja' ? '' : ' ';
   // Family mode has its own wording for the questions and brief steps.
   const familyText = isFamily && (step === 'questions' || step === 'brief');
-  const title = familyText ? ta(`${step}Title`) : t(`${step}Title`);
+  const title = headingText(familyText ? ta(`${step}Title`) : t(`${step}Title`));
+  const titleRef = useFitHeading<HTMLHeadingElement>(title);
   const mockEndpoints = useOfflineMockEndpoints();
 
   const payload = payloadFor(step, caseObject.lastRanking?.response, meta);
@@ -45,8 +47,11 @@ export function StepHeader({ step }: { step: StepId }) {
 
   return (
     <header className={styles.header}>
-      <p className={styles.kicker}>{t('stepOf', { n: index + 1, total: steps.length })}</p>
-      <h1 className={styles.title}>{title}</h1>
+      {/* The progress rail in the top bar shows the step visually (T35b); the count stays for screen readers. */}
+      <p className="sr-only">{t('stepOf', { n: index + 1, total: steps.length })}</p>
+      <h1 ref={titleRef} className={styles.title}>
+        {title}
+      </h1>
       {isFamily ? (
         // Contract section 13 v0.1.5 (family mode only): "Decision support, not a diagnosis." verbatim,
         // followed by "This view prepares your notes for a clinician. It does not suggest conditions."

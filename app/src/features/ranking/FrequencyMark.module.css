@@ -50,6 +50,11 @@
   white-space: nowrap;
 }
 
+.mark[data-kind='quiet'] .word {
+  color: var(--ink-3);
+  font-size: var(--t-xs);
+}
+
 .mark[data-kind='unknown'] .word,
 .mark[data-kind='none'] .word {
   color: var(--ink-3);
@@ -62,7 +67,7 @@
 
 /*
  * Quiet "no frequency to show" mark: one small ring, 4.0:1 on white. Used only
- * by the quietUnknown variant (patient rows) and its legend line.
+ * by the quietUnknown variant (patient rows).
  */
 .ring {
   display: inline-block;

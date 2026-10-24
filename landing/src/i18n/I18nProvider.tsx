@@ -1,5 +1,6 @@
 // Copy of app/src/shared/i18n/I18nProvider.tsx (T28a): same initial-locale rules (?lang=, then rdd.lang.v1, then English).
 import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState, type ReactNode } from 'react';
+import { loadDisplayFont } from '../fonts.ts';
 import { format, type FormatVars, type Messages } from './define.ts';
 import { DEFAULT_LOCALE, LOCALE_META, LOCALE_STORAGE_KEY, parseLocale, type Locale } from './locales.ts';
 
@@ -49,6 +50,7 @@ function applyToDocument(locale: Locale): void {
   const root = document.documentElement;
   root.lang = LOCALE_META[locale].htmlLang;
   root.dataset.locale = locale;
+  loadDisplayFont(locale);
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {

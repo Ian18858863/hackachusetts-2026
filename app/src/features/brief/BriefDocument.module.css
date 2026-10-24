@@ -51,8 +51,13 @@
 }
 
 .title {
+  /* One line (useFitHeading shrinks it); full width of the title row. */
+  flex: 1 1 100%;
+  min-width: 0;
+  /* Its one-line width must not size the paper (phones); the hook fits it to the paper instead. */
+  contain: inline-size;
   font-size: var(--text-2xl);
-  font-weight: var(--weight-regular);
+  font-weight: 500;
   line-height: var(--leading-tight);
   letter-spacing: var(--tracking-tight);
   text-wrap: balance;
@@ -130,6 +135,8 @@
 }
 
 .heading {
+  /* A label, not a title: the UI sans, so no serif small caps. */
+  font-family: var(--f-text);
   font-size: var(--text-xs);
   font-weight: var(--weight-semibold);
   letter-spacing: var(--tracking-caps);
@@ -508,7 +515,8 @@
   }
 
   .title {
-    font-size: var(--text-xl);
+    font-size: var(--text-xl) !important;
+    white-space: normal !important;
   }
 
   /* The feature captions already carry the counts. */

@@ -1,11 +1,13 @@
 /* The specimen's .intro: kicker, Newsreader headline, one lead paragraph. */
 .header {
   display: grid;
+  /* minmax(0, 1fr): the one-line title must never widen the page. */
+  grid-template-columns: minmax(0, 1fr);
   min-width: 0;
 }
 
 .kicker {
-  margin-bottom: var(--s-3);
+  margin-bottom: var(--s-4);
   font-size: var(--t-sm);
   color: var(--ink-3);
 }
@@ -16,10 +18,11 @@
   font-weight: 500;
   font-optical-sizing: auto;
   line-height: var(--lh-head);
-  letter-spacing: -0.012em;
+  letter-spacing: var(--track-display);
   color: var(--ink);
-  /* The headline sharpens from a light blur on each view. */
-  animation: sharpen var(--dur-sharpen) var(--ease) both;
+  /* One line at every desktop width: useFitHeading shrinks it to fit. */
+  white-space: nowrap;
+  contain: inline-size;
 }
 
 /* The section 13 safety line: once per result step, body size, calm. */
@@ -36,17 +39,6 @@
   flex-wrap: wrap;
   gap: var(--s-2);
   margin-top: var(--s-5);
-}
-
-@keyframes sharpen {
-  from {
-    opacity: 0;
-    filter: blur(6px);
-  }
-  to {
-    opacity: 1;
-    filter: none;
-  }
 }
 
 /*

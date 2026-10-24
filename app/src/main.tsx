@@ -1,11 +1,12 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
-// Self-hosted fonts (OFL-1.1, font-display: swap), as set in docs/ART_DIRECTION.md.
-// Newsreader: display face, variable with optical size and weight axes (400 and 500 used).
-import '@fontsource-variable/newsreader/opsz.css';
-// Source Sans 3: UI and body, weights 400 and 600 only.
-import '@fontsource/source-sans-3/400.css';
-import '@fontsource/source-sans-3/600.css';
+// Self-hosted fonts (OFL-1.1, font-display: swap; T35 v2, Ian's option A 18:46 ET).
+// Geist for display, body and numbers, weights 400 / 500 / 600 only (no faux bold:
+// font-synthesis is off). Noto Sans SC / JP / KR (400, 500) load on demand for
+// zh / ja / ko as unicode-range slices (fonts.ts).
+import '@fontsource/geist/400.css';
+import '@fontsource/geist/500.css';
+import '@fontsource/geist/600.css';
 import './styles/tokens.css';
 import './styles/base.css';
 import { App } from './App';

@@ -16,6 +16,7 @@ import rankingMessages from '../../shared/i18n/messages/ranking';
 import shellMessages from '../../shared/i18n/messages/shell';
 import { frequencyState } from '../ranking/format';
 import { Icon } from '../../shared/ui';
+import { headingText, useFitHeading } from '../../components/ui/useFitHeading';
 import styles from './BriefDocument.module.css';
 import { candidateIds, formatDateTime, frequencyText, overlapWords, versionPairs } from './format';
 
@@ -35,6 +36,8 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
   const tc = useT(common);
   const ts = useT(shellMessages);
   const { locale } = useLocale();
+  const title = headingText(locale === 'en' ? brief.title : ts('briefTitle'));
+  const titleRef = useFitHeading<HTMLHeadingElement>(title, { min: 20 });
 
   return (
     <article className={styles.doc} aria-labelledby={id('title')}>
@@ -48,9 +51,9 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
           </p>
         </div>
         <div className={styles.titleRow}>
-        <h2 id={id('title')} className={styles.title}>
+        <h2 id={id('title')} ref={titleRef} className={styles.title}>
           {/* The server's English title; other languages show the app's own step title (T34). */}
-          {locale === 'en' ? brief.title : ts('briefTitle')}
+          {title}
         </h2>
         <dl className={styles.summary}>
           {summary.ageText && (

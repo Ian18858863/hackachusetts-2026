@@ -17,8 +17,8 @@ export type MarkTone = 'accent' | 'neutral';
  *   frequency null    a dash + `noneWord` (default "Not listed for this condition")
  *
  * With `quietUnknown` (patient rows), "Frequency not listed" is one small
- * muted ring instead of four empty dots, its word kept for screen readers
- * only; a legend line under the column header says what the ring means.
+ * muted ring instead of four empty dots, followed by the word in small
+ * muted text, so the state is always visible as text.
  *
  * The accent tone is for rank 1 only; every other candidate is neutral.
  * With `animate`, filled dots pop in after `delay` stagger steps (off under
@@ -61,7 +61,7 @@ export function FrequencyMark({
   }
   const state = frequencyState(frequency, t, noneWord);
   if (quietUnknown && state.kind !== 'band') {
-    // A quiet ring and a quiet word: the state reads at a glance, no legend needed.
+    // A quiet ring and a small muted word: the state is readable text, not a graphic alone (R3.7, R12.4).
     return (
       <span className={[styles.mark, className].filter(Boolean).join(' ')} data-kind="quiet">
         <span className={styles.glyph} aria-hidden="true">
@@ -102,11 +102,6 @@ function Glyph({ state }: { state: FrequencyState }) {
       ))}
     </span>
   );
-}
-
-/** The quiet "frequency not listed" ring, for legend lines. Decorative. */
-export function NotListedRing() {
-  return <span className={styles.ring} aria-hidden="true" />;
 }
 
 /**

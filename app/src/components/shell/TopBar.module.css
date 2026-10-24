@@ -1,6 +1,7 @@
 /* Header from final.html: 72px, no bar colour, no border. */
 .bar {
   background: var(--bg);
+  border-bottom: 1px solid var(--hair);
 }
 
 /*
@@ -11,11 +12,13 @@
  */
 .inner {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
+  /* T35b: the progress rail gets its own row under the brand, beside the utility controls. */
+  grid-template-columns: minmax(0, 1fr) auto;
   grid-template-rows: var(--topbar-h) auto;
   grid-template-areas:
-    'brand steps end'
-    'utility utility utility';
+    'brand end'
+    'steps utility';
+  padding-bottom: var(--s-2);
   align-items: center;
   column-gap: var(--s-6);
   max-width: var(--content-max);
@@ -56,7 +59,7 @@
 
 .name {
   font-family: var(--f-display);
-  font-size: 1.375rem;
+  font-size: 1.25rem;
   font-weight: 500;
   font-optical-sizing: auto;
   line-height: 1;
@@ -66,11 +69,12 @@
 .steps {
   grid-area: steps;
   min-width: 0;
-  margin-left: var(--s-4);
+  margin-left: -6px; /* the rail's focus padding */
 }
 
 .end {
   grid-area: end;
+  justify-self: end;
   display: flex;
   align-items: center;
 }
@@ -89,7 +93,6 @@
   justify-content: flex-end;
   gap: 0 var(--s-3);
   min-width: 0;
-  margin-top: calc((var(--tap-min) - var(--topbar-h)) / 2);
 }
 
 .chipWrap {
@@ -191,7 +194,10 @@
   }
 
   .name {
-    font-size: 1.25rem;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    font-size: 1.0625rem;
   }
 
   .wide {

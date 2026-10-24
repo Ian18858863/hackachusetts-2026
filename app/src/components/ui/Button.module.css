@@ -1,11 +1,11 @@
 /*
- * Pill buttons from the approved specimen (final.html .btn).
- * Primary: black pill, white text (18.1:1). Secondary: white pill with a
- * 3:1 control border. Ghost: text only, a soft surface on hover.
- * The accent stays reserved for rank 1, footnotes and the focus ring.
+ * Pill buttons (T35 v2). Primary: the action accent with white text
+ * (white on #2348b0 is 8.0:1); the hover "ink" spreads a deeper accent from
+ * the pointer's entry point and drains toward the exit. Secondary: page pill
+ * with a 3:1 control border. Ghost: text only, a soft surface on hover.
  */
 .button {
-  --btn-bg: var(--ink);
+  --btn-bg: var(--accent);
   --btn-fg: var(--on-dark);
   --btn-border: transparent;
   --btn-fill: var(--ink-hover);
@@ -39,7 +39,7 @@ a.button:hover {
 }
 
 .button:active:not(:disabled):not([data-loading]) {
-  transform: scale(0.98);
+  transform: scale(0.97);
 }
 
 /* Fill that grows from the pointer's entry point (set in Button.tsx). */
@@ -53,7 +53,7 @@ a.button:hover {
   border-radius: 50%;
   background: var(--btn-fill);
   transform: translate(-50%, -50%) scale(0);
-  transition: transform var(--dur-slow) var(--ease);
+  transition: transform 0.7s var(--ease);
   pointer-events: none;
 }
 

@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useLayoutEffect, useMemo, useState, type ReactNode } from 'react';
+import { loadDisplayFont } from '../fonts';
 import { format, type FormatVars, type Messages } from './define.ts';
 import { DEFAULT_LOCALE, LOCALE_META, LOCALE_STORAGE_KEY, parseLocale, type Locale } from './locales.ts';
 
@@ -48,6 +49,7 @@ function applyToDocument(locale: Locale): void {
   const root = document.documentElement;
   root.lang = LOCALE_META[locale].htmlLang;
   root.dataset.locale = locale;
+  loadDisplayFont(locale);
 }
 
 export function I18nProvider({ children }: { children: ReactNode }) {

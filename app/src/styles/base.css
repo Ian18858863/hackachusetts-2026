@@ -11,6 +11,8 @@
 }
 
 html {
+  /* Only the loaded weights render: no faux bold or italic (T35). */
+  font-synthesis: none;
   -webkit-text-size-adjust: 100%;
   text-size-adjust: 100%;
   background: var(--bg);
@@ -35,7 +37,7 @@ body {
   min-height: 100dvh;
 }
 
-/* Newsreader carries every heading; the optical-size axis follows the size. */
+/* The display serif carries every heading and every big number. */
 h1,
 h2,
 h3,
@@ -45,7 +47,15 @@ h4 {
   font-optical-sizing: auto;
   line-height: var(--lh-head);
   letter-spacing: var(--tracking-tight);
+  font-variant-numeric: lining-nums;
   text-wrap: balance;
+  color: var(--ink);
+}
+
+/* Emphasis inside a heading changes nothing but colour (one face, one weight). */
+:is(h1, h2, h3, h4) :is(b, strong, em) {
+  font-weight: inherit;
+  font-style: normal;
 }
 
 p {

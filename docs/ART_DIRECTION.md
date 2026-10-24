@@ -68,3 +68,27 @@ Copy into the app's root stylesheet. Components use these names, never raw value
 ```
 
 Fonts: `https://fonts.googleapis.com/css2?family=Newsreader:opsz,wght@6..72,400;6..72,500&family=Source+Sans+3:wght@400;600&display=swap` (self-host for production). Focus ring: `outline: 2px solid var(--focus); outline-offset: 3px`.
+
+## v2 (T35, 2026-10-24, pending Ian's review)
+
+Why: Ian rated v1 3/10 ("密密麻麻", too dense). v2 keeps the promise, proof and safety framing above and changes the visual system only. Rules applied: `handoff/design_lessons_from_ziliaoku.md` sections 1, 4 and 5; reference discipline from https://yezi-library.pages.dev (type scale, rhythm, restraint, motion timing), not its brand effects (no WebGL wall, no grain, no preloader).
+
+**Landing: dark, function first.**
+- First screen: one-line headline, one lead line, two actions ("Try the demo case" opens `/app/?demo=demo-npc1`; "For families" opens the same case with `&audience=family`), the safety line, the demo note, then the stat row with cited figures (4.7 years, 73%, 263–446 million), each with one label and its source link. The proof screenshot moved to the next section.
+- Colours: page `#0a0a09`, text `#eeebe4` (16.6:1), `#bcb8af` (10.0:1), `#8f8b83` (5.8:1); action accent `#a9bcf5` (10.6:1) with `#0b1430` text (9.7:1).
+- Section padding `clamp(96px, 13vw, 200px)`, content max 1328px, gutter `clamp(16px, 4vw, 56px)`.
+- Motion: headline characters come into focus (blur 16px → 0, opacity 0 → 1, 1.3s, power2.out, stagger ≤ 0.06s, whole title ≤ 0.9s of stagger). Buttons use the ink hover: a circle grows from the pointer's entry point and shrinks back toward the exit point (0.7s). No preloader. Native scroll.
+
+**App: light "clinical paper".** The brief must print well, so the app stays light: page `#fbfaf7`, surface `#f2f0ea`, ink `#141412`. Same type system and accent discipline as the landing.
+
+**Type.** One display serif for every heading and number in all six languages: Noto Serif 500 (Latin), with Noto Serif SC / JP / KR 500 loaded on demand for zh / ja / ko as unicode-range slices (`shared/fonts.ts`). One sans for the UI: Inter 400 and 600, with the system CJK sans per `:lang()`. `font-synthesis: none` (no faux bold or italic); emphasis inside a heading changes colour only. All fonts self-hosted via @fontsource (OFL-1.1).
+- Headings never wrap at desktop widths: `useFitHeading` shrinks the size until the line fits and allows wrapping only at its floor (22px, or about 0.78 of the size on phones), then wraps balanced. Rendered headings drop trailing punctuation (`headingText`); the copy itself is unchanged.
+- Scale: app page title `clamp(34px, 3.6vw, 52px)`, section titles `clamp(28px, 2.4vw, 36px)`, body 16px / 1.6; landing section titles `clamp(32px, 4.2vw, 64px)`, stats `clamp(44px, min(5.4vw, 9vh), 84px)` (one shared size per row), body 15px / 1.65. Display tracking −0.028 to −0.032em in Latin, 0 in CJK.
+
+**Colour: exactly two semantic accents.** `--accent` (app `#2348b0`, 8.0:1 with white text) marks the primary action, rank 1 and the focus ring. `--attention` (app `#7a5200` on `#f8f0dc`, 6.1:1) marks needs-attention states (warnings, demo-cache labels). Red (`#a3271b`, 7.0:1) appears only for errors. Candidates never use alarm or success colours (steering section 7).
+
+**Motion in the app.** A step change brings the new step into focus from a 12px blur over 0.7s, in place. We tried the View Transitions API first (old step blurring out over 0.45s): while a transition runs, Chrome sends every pointer event to `<html>` (measured: `elementFromPoint` returned HTML at 0 and 300 ms), so clicks right after a step change were lost, including the recorder's. The CSS version keeps every control clickable. `prefers-reduced-motion: reduce` turns all of it off.
+
+**Controls.** The native language `<select>` is replaced by an in-page dropdown (`components/ui/Dropdown.tsx`, copied to `landing/src/ui/`): a button with `aria-haspopup="listbox"` and `aria-expanded`, a listbox with `aria-activedescendant`, ↑ ↓ Home End to move, Enter or Space to choose, Esc and Tab to close, focus back on the button; it opens below and flips up only without room. Its trigger keeps `data-testid="language-switcher"`.
+
+**Kept.** Section 7 safety framing, every §13 line, the footer attribution and the evaluation sentence (restyled), all `data-testid`s, step order, URLs and query parameters (`?demo`, `?lang`, `?audience`).
