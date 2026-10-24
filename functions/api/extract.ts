@@ -16,6 +16,7 @@
 
 import { getDemoCase, groundTerms, listDemoCases } from "../../engine/index";
 import type { DataVersions, DemoCase, EngineDeps, ExtractedTerm } from "../../engine/index";
+import { getFallbackDemoCase } from "../_lib/fallback/demoCases";
 import { LlmError, MAX_TEXT_CHARS, proposeTerms } from "../_lib/llm";
 import type { LlmEnv, ProposeResult } from "../_lib/llm";
 import {
@@ -113,7 +114,7 @@ async function handlePost({ request, env }: PagesContext<Env>): Promise<Response
 
   // ---- 2. demo path: exact narrative of the named demo case ----
   if (typeof caseId === "string") {
-    const demo = getDemoCase(caseId);
+    const demo = lookupDemoCase(caseId);
     if (demo && demo.narrative === text) return demoResponse(demo, []);
   }
 
@@ -238,10 +239,20 @@ function llmFailure(err: unknown, text: string): Response {
   );
 }
 
+/**
+ * Engine demo case first; the temporary functions fallback (demo-npc1 only,
+ * T18c) is used only when the engine does not have the case.
+ */
+function lookupDemoCase(caseId: string): DemoCase | undefined {
+  return getDemoCase(caseId) ?? getFallbackDemoCase(caseId);
+}
+
 /** The bundled demo case whose narrative equals `text` exactly, if any. */
 function findDemoByNarrative(text: string): DemoCase | undefined {
-  for (const summary of listDemoCases()) {
-    const demo = getDemoCase(summary.caseId);
+  const ids = new Set(listDemoCases().map((s) => s.caseId));
+  ids.add("demo-npc1");
+  for (const id of ids) {
+    const demo = lookupDemoCase(id);
     if (demo && demo.narrative === text) return demo;
   }
   return undefined;
