@@ -6,36 +6,59 @@ Judges score how deeply and strategically we used Kiro. Log every meaningful use
 
 Ian's assistant (Claude, outside Kiro) writes natural-language task prompts and reviews the diffs and QA. Kiro CLI (`kiro-cli chat --no-interactive`, model claude-opus-5.5) authors every file and runs the checks. Under Ian's ratified standing authorization (`docs/PROTOCOL.md` section 6A), Kiro also commits each task on its own worktree branch and then integrates it into `main` one task at a time: cherry-pick, scope check, ancestry check, push without force. Each task gets one worktree and one branch, and several Kiro sessions run in parallel on disjoint paths.
 
+## AI-development strategy
+
+- Ian's assistant (Claude, outside Kiro) plans each task, writes the prompt and reviews the result. Kiro authors every project file.
+- Each task gets its own git worktree and branch. Several Kiro CLI sessions run in parallel on disjoint claimed paths, so no two writers touch the same file.
+- The product follows Kiro's spec-driven path: requirements in EARS form, then design, then tasks, then correctness properties (P1–P14 in the spec design), which become property-based tests in the engine.
+- Two custom agents split the work. `rdd-builder` writes code, with agent hooks as guardrails (shell guard, typecheck after writes). `rdd-reviewer` is read-only and gives every task a first-pass review against the contract, the EARS requirements and design.md sections 7 and 12 before the human-side review.
+- MCP servers give Kiro current library docs (Context7) and biomedical cross-checks (biomcp), so code and demo data are checked against sources instead of model memory.
+- A project power, `rdd-medical-data`, packages the contract's medical-data rules (upstream services, demo fixtures, attribution text) for any Kiro session.
+- Every integration into `main` is a reviewed, smoke-tested, fast-forward push without force. Deploys happen only after a passing smoke test.
+
 ## Tools
-- Kiro IDE: Not yet used today for project work. The IDE hook file `.kiro/hooks/typecheck-on-save.kiro.hook` exists (commit `dd8a079`) but has not been exercised in Kiro IDE.
+- Kiro IDE: not yet used for Ian's tasks. Peter's and Jerry's Kiro IDE usage will be logged here only when their real usage lines arrive.
 - Kiro CLI: `kiro-cli chat` edited, committed and pushed a README change in the private test repo `Ian18858863/kiro-connection-test` (commit `28aac81`) to verify Kiro-to-GitHub access before the event. Since 11:40 ET, `kiro-cli chat --no-interactive` has authored every project commit listed in the log below, run the builds and checks, created and deployed the Cloudflare Pages project, and run the custom agents `rdd-builder` and `rdd-reviewer`.
-- Kiro Crew / Web:
+- Kiro Web and Kiro Crew: not used; see "Not used, and why".
 
 ## Spec-driven development
-- Specs created (`.kiro/specs/...`): In progress under task T09. Nothing to claim yet.
-- How specs compared with vibe coding:
+- Spec created at commit `f77cc31` (T09): `.kiro/specs/rare-disease-detective/requirements.md` (requirements in EARS form), `design.md` (architecture, components, data models, error handling, testing strategy and correctness properties P1–P14) and `tasks.md`. The same commit added the interface contract draft `docs/CONTRACT.md` v0.1.
+- Task progress ticks in `tasks.md` are maintained under T09b, starting now. So far one item is ticked (0.2, the LLM decision), in `f77cc31`.
+- How specs compared with vibe coding: the contract and spec gave parallel sessions one shared reference. The `rdd-reviewer` findings cite requirement IDs and contract sections (for example R1.2, R9.1, CONTRACT §4), which made each finding checkable (see `docs/reviews/`).
 
 ## Steering
-- `.kiro/steering/design.md` was re-authored by Kiro from the disclosed assistant draft (task T02, commit `38291ac`).
-- `.kiro/steering/team.md` was re-authored by Kiro from the disclosed assistant draft (task T02b, commit `cac4d5a`).
-- Both steering files are loaded as resources (`file://.kiro/steering/**/*.md`) by the custom agents `rdd-builder` and `rdd-reviewer` in `.kiro/agents/` (commit `dd8a079`).
+- `.kiro/steering/design.md` was re-authored by Kiro from the disclosed assistant draft (task T02, commit `38291ac`). Inclusion: always.
+- `.kiro/steering/team.md` was re-authored by Kiro from the disclosed assistant draft (task T02b, commit `cac4d5a`). Inclusion: always.
+- `.kiro/steering/medical-data.md` (T21, commits `6c6ce91`, `68ec5cb`): `inclusion: fileMatch` for `engine/**` and `functions/**`; medical-data rules distilled from the contract, and it pulls in the contract with `#[[file:docs/CONTRACT.md]]`.
+- `.kiro/steering/release-check.md` (T21, commits `6c6ce91`, `68ec5cb`): `inclusion: manual`, used with `#release-check`; deploy, live, design definition-of-done and submission checklist reported as PASS / FAIL / NOT RUN.
+- The custom agents `rdd-builder` and `rdd-reviewer` in `.kiro/agents/` load all steering files as resources (`file://.kiro/steering/**/*.md`, commit `dd8a079`). The fileMatch and manual inclusion modes have not yet been exercised in Kiro IDE.
 
 ## Agent hooks
-- Kiro CLI agent hooks (commit `dd8a079`), configured in `.kiro/agents/rdd-builder.json` with scripts in `.kiro/hooks/scripts/`:
+- Kiro CLI agent hooks, used live (commit `dd8a079`), configured in `.kiro/agents/rdd-builder.json` with scripts in `.kiro/hooks/scripts/`:
   - `session-context.sh` on `agentSpawn` and `userPromptSubmit`: injects session context.
-  - `guard-shell.sh` on `preToolUse` (shell): blocks `git push`, `git reset --hard`, `git clean`, `push --force`, `wrangler deploy`, `pkill` and `killall`. In a real `rdd-builder` session it blocked a `git push` attempt live (evidence: assistant's run log).
+  - `guard-shell.sh` on `preToolUse` (shell): blocks `git push`, `git reset --hard`, `git clean`, `push --force`, `wrangler deploy`, `wrangler pages deploy`, `pkill` and `killall`. It blocked commands live in real `rdd-builder` sessions during T19 and T21 (see the log).
   - `post-write-check.sh` on `postToolUse` (write): runs the typecheck after writes.
 - Finding: in kiro-cli 2.34.0, `agentSpawn` does not fire in `--no-interactive` mode, so `userPromptSubmit` was added to run the same context script.
-- Kiro IDE hook `.kiro/hooks/typecheck-on-save.kiro.hook` (runs `npm --prefix app run typecheck` when `app/src/**/*.ts(x)` is edited): written, NOT yet exercised in Kiro IDE.
+- Kiro IDE hooks in the 1.x (`"version": "v1"`) format (T21, commits `6c6ce91`, `68ec5cb`): `.kiro/hooks/typecheck-on-save.json` (`PostFileSave` on `app/src/**/*.ts(x)`, runs the app typecheck) and `.kiro/hooks/contract-drift-check.json` (`PostFileSave` on `docs/CONTRACT.md`, an `agent` action that reports spec drift and is read-only only by its prompt). They replace the 0.x file `typecheck-on-save.kiro.hook`, deleted in `6c6ce91`. Firing in Kiro IDE is NOT yet recorded; it is pending Ian's recording.
 
 ## MCP
--
+- Context7 (T20, commit `b3dce59`; agent-level config in `0dca96f`): `rdd-builder` called `@context7/resolve-library-id` and `@context7/query-docs` in a real session. It resolved Cloudflare Workers AI (`/llmstxt/developers_cloudflare_workers-ai_llms-full_txt`) and fast-check (`/dubzzz/fast-check`) and read how to bind Workers AI in a Pages Function.
+- biomcp (T20b, commit `d35a18e`): two real `rdd-builder` sessions (12:38–12:40 ET) used only biomcp tools to cross-check the demo cases. Results are in `docs/research/biomcp-checks.md`. Findings included: biomcp caps phenotype search at 10 HPO terms (Monarch accepts 12), and biomcp marks 6 of 10 terms as `not_supported` for Duchenne. One extra Monarch call in that file was a plain `curl`, labelled there as a cross-check without biomcp.
+- T20c (commit `0dca96f`): both servers are declared in `rdd-builder`'s own `mcpServers`; its prompt limits MCP queries to library names, technical questions, HPO ids and labels and synthetic demo data. A live session at 12:47 ET called `@context7/resolve-library-id` and `@biomcp/get` (OMIM:310200 → Duchenne muscular dystrophy, MONDO:0010679). The workspace `.kiro/settings/mcp.json` still gives both servers to `kiro_default` sessions, which do not have that prompt rule. Whether Kiro IDE reads the workspace `mcp.json` is not verified.
 
 ## Property-based testing
--
+- Pending. Jerry's engine tests for properties P1–P14 have not landed; nothing to claim yet.
 
 ## Powers
--
+- `rdd-medical-data` (T22, commits `c5f619f`, `47521fa`): a project power under `.kiro/powers/rdd-medical-data/` (`plugin.json` plus three skills: `rdd-upstream-services`, `rdd-demo-fixtures`, `rdd-attribution-text`), with content copied verbatim from the contract.
+- Installed and activated in kiro-cli: `kiro-cli powers install` exited 0, and the installed copy under `~/.kiro/powers/installed/` is identical to the repo. A fresh `kiro-cli chat` session in an empty directory called `activate` on `rdd-medical-data` and `readSkill` on `rdd-upstream-services`, then answered with the contract's timeout, cache and licence rules (session `sess_150850c3-e089-422c-92ef-dc8134af184a`). Not checked: the Kiro IDE Powers panel, and whether custom agents load the power.
+
+## Reviews by the `rdd-reviewer` agent
+- First-pass reviews, translated into English: [T20](reviews/T20.md), [T21](reviews/T21.md), [T13a](reviews/T13a.md), [T22](reviews/T22.md). Each file ends with the commit that fixed the findings.
+
+## Not used, and why
+- Kiro Web: not used, because it needs a paid plan.
+- Kiro Crew: not used; we skipped it to save time during the event.
 
 ## Log
 
@@ -55,6 +78,27 @@ Every row must describe an action Kiro actually performed, with evidence (a file
 | 2026-10-24 12:01–12:09 | Ian | Kiro CLI custom agents + agent hooks | T19: Kiro created `.kiro/agents/rdd-builder.json` and `.kiro/agents/rdd-reviewer.json` (resources: steering, contract, spec, briefing; reviewer has no write tool and a git read-only shell allowlist), hook scripts under `.kiro/hooks/scripts/` (session context on `agentSpawn`/`userPromptSubmit`, `preToolUse` shell guard, `postToolUse` typecheck after writes) and the IDE hook `.kiro/hooks/typecheck-on-save.kiro.hook`; validated both agents with `kiro-cli agent validate` | Both agents validate; in a real `rdd-builder` session the guard blocked a `git push` live; finding: in kiro-cli 2.34.0 `agentSpawn` does not fire in `--no-interactive` mode, so `userPromptSubmit` was added; IDE hook NOT yet exercised in Kiro IDE | commit `dd8a079`; validation and live block: assistant's run log |
 | 2026-10-24 12:06–12:08 | Ian | Kiro CLI | T11d: Kiro edited `BRIEFING.md` to record topic approval, teammate claims and the first deploy on the claim board | Board updated | commit `69fe53d` |
 | 2026-10-24 11:56–12:09 | Ian | Kiro CLI (Git integration under `docs/PROTOCOL.md` 6A) | Kiro integrated tasks into `main` one at a time (cherry-pick, scope check, ancestry check, push without force) | `main` SHAs pushed: `cac4d5a`, `b180493`, `5d54ab9`, `53263d4`, `69fe53d`, `dd8a079` | `git log origin/main` |
+| 2026-10-24 12:05–12:15 | Ian | Kiro CLI (Spec-driven development) | T09: Kiro wrote the spec `.kiro/specs/rare-disease-detective/` (`requirements.md` in EARS form, `design.md` with correctness properties P1–P14, `tasks.md`) and the interface contract draft `docs/CONTRACT.md` v0.1 | Spec and contract v0.1 on `main` | commit `f77cc31`; Kiro CLI session `e191e47b` |
+| 2026-10-24 12:15–12:24 | Ian | Kiro CLI custom agent `rdd-builder` | T17: Kiro wrote `functions/_lib/llm.ts` (`proposeTerms`) and the `[ai]` binding in `wrangler.toml`, then ran a measured model bake-off through the Workers AI REST API: `gpt-oss-120b`, `kimi-k2.6`, `llama-3.3-70b-instruct-fp8-fast` and `glm-5.3` (2 runs each), then `gpt-oss-120b`, `llama-3.3-70b` and `gpt-oss-20b` (3 runs each) after a prompt revision. It checked the proposed terms against the HPO API | Default model `@cf/meta/llama-3.3-70b-instruct-fp8-fast`: same quality as `gpt-oss-120b` and 2–3 times faster (2.3–4.9 s; `gpt-oss-120b` reached 10.4 s). Both models got most `hpoId` values wrong, so the prompt no longer asks for them. 23 offline edge-case checks passed. `wrangler pages dev` did not start (no workers.dev subdomain), so a call through the real `env.AI` binding was NOT RUN | commit `cd1a1a4`; session `fa795712`; bake-off output: assistant's run log |
+| 2026-10-24 12:28–12:29 | Ian | Kiro CLI (Git integration + deploy) | T17 integration: smoke test on `cd1a1a4` (`/`, `/app/`, `/api/health` 200), push `c46c832..cd1a1a4` without force, then deploy to Cloudflare Pages | Live `/api/health` returned 200 with `"commit":"cd1a1a47af9ccd7993909fc76ce718e8ad3a6eaf"`. `POST /api/extract` was not called, so the Workers AI binding is not yet exercised live | `git reflog origin/main`; assistant's run log |
+| 2026-10-24 ≤12:11 | Ian | Kiro CLI | T12: Kiro wrote `docs/ART_DIRECTION.md` and two HTML specimens (options A and B), took headless Chrome screenshots at 1440 px and 375 px, found that `--window-size` cannot go below 500 px and switched to DevTools viewport emulation for the 375 px shots | Options A and B were judged ugly (history line in `docs/ART_DIRECTION.md`) | commit `8460be2`; `docs/art-direction/option-{a,b}-{1440,375}.png` |
+| 2026-10-24 12:13–12:28 | Ian | Kiro CLI | T12b: Kiro made three refined white variants B1, B2 and B3 with headless screenshots at 1440 px and 375 px | The candidates for Ian's pick in T12c | commit `9208298`; `docs/art-direction/option-b{1,2,3}-*.png`; session `8d2fe7ff` |
+| 2026-10-24 12:35–12:44 | Ian | Kiro CLI | T12c: Kiro merged Ian's pick into a final specimen and rewrote `docs/ART_DIRECTION.md` in the design.md section 1 format | Ian approved at 12:33 ET: B1 UI with B2 typography (Newsreader and Source Sans 3); his words are quoted in the note | commit `e8fe0f8`; `docs/art-direction/final.html`, `final-1440.png`, `final-375.png`; session `14943330` |
+| 2026-10-24 12:17 / 12:33 / 12:52 | Ian | Kiro CLI | T11e, T11f, T11g: Kiro edited the `BRIEFING.md` claim board (LLM decision and contract draft; Kiro coverage tasks T20–T22, T10c, T09b; T13c–T16 claims and pushed tasks) | Board kept current | commits `c46c832`, `6b94db7`, `079e559` |
+| 2026-10-24 12:17–12:38 | Ian | Kiro CLI custom agent `rdd-builder` | T13a: Kiro built the app foundation under `app/` (contract types, API client, mocks, case store, step shell) | Typecheck passed (per the reviewer's run) | commit `6c1f106`; session `21661445` (agent `rdd-builder`) |
+| 2026-10-24 12:38–12:40 | Ian | Kiro CLI custom agent `rdd-reviewer` | T13a first-pass review (read-only) | CHANGES_REQUESTED: 2 blockers, 2 should-fix, 6 nits | [docs/reviews/T13a.md](reviews/T13a.md); session `4ef888c3` |
+| 2026-10-24 12:42–12:48 | Ian | Kiro CLI custom agent `rdd-builder` | T13b: Kiro fixed the review findings (real JAX annotation values for the four demo diseases, mock fallback only in DEV or with `?mock=1`, no silent truncation, contract errors in mocks) and tested `api.ts` built with `DEV=false` and `DEV=true` | Production build shows "The service could not be reached … Try again" instead of mock data; `tsc` and `npm run build` passed | commit `87febca`; session `72c48c0b` |
+| 2026-10-24 12:35–12:37 | Ian | Kiro CLI (MCP) | T20: Kiro added `.kiro/settings/mcp.json` with Context7 and enabled it in `rdd-builder`; an `rdd-builder` session resolved the Workers AI and fast-check library ids and queried the docs | Context7 lookups returned docs for the Workers AI binding in Pages Functions | commit `b3dce59`; sessions `502a83c6`, `1bcd7182` |
+| 2026-10-24 12:38–12:41 | Ian | Kiro CLI custom agent `rdd-builder` (MCP) | T20b: Kiro added the biomcp server and ran two biomcp-only sessions to cross-check the demo cases | Results in `docs/research/biomcp-checks.md` (10-term cap in biomcp; 6 of 10 Duchenne terms `not_supported`) | commit `d35a18e`; sessions `68a3a309`, `4728fafe` |
+| 2026-10-24 12:37–12:38 | Ian | Kiro CLI custom agent `rdd-reviewer` | T20 first-pass review (read-only) | REVIEWED: 2 should-fix, 3 nits | [docs/reviews/T20.md](reviews/T20.md); session `2d05781f` |
+| 2026-10-24 12:47 | Ian | Kiro CLI custom agent `rdd-builder` (MCP) | T20c: Kiro moved both MCP servers into the agent's own `mcpServers`, added the MCP query rule to its prompt, and ran a live session calling Context7 and biomcp | `@context7/resolve-library-id` ("fast-check" → `/dubzzz/fast-check`) and `@biomcp/get` (OMIM:310200 → Duchenne muscular dystrophy) returned results | commit `0dca96f`; session `7d054974` |
+| 2026-10-24 12:35–12:37 | Ian | Kiro CLI (Agent hooks, Steering) | T21: Kiro rewrote the IDE hooks in the 1.x format (`typecheck-on-save.json`, `contract-drift-check.json`), deleted the 0.x hook, and added `medical-data.md` (fileMatch) and `release-check.md` (manual) steering | Hooks and steering on `main`; IDE firing NOT yet recorded | commit `6c6ce91`; session `c49b5c92` |
+| 2026-10-24 12:37–12:40 | Ian | Kiro CLI custom agent `rdd-reviewer` | T21 first-pass review (read-only) | CHANGES_REQUESTED: 7 should-fix, 3 nits | [docs/reviews/T21.md](reviews/T21.md); session `b4e5e93e` |
+| 2026-10-24 12:40–12:41 | Ian | Kiro CLI custom agent `rdd-builder` | T21 fix: Kiro addressed findings 1–9 | Findings 1–9 addressed; finding 10 handled in T10c | commit `68ec5cb`; session `3f958cd5` |
+| 2026-10-24 12:35–12:43 | Ian | Kiro CLI (Powers) | T22: Kiro wrote the `rdd-medical-data` power from the contract, checked the format against https://kiro.dev/docs/powers/create, installed it with `kiro-cli powers install`, and checked activation in a fresh session in an empty directory; after the review it fixed the findings and repeated the install and activation check | Session called `activate` on `rdd-medical-data` and `readSkill` on `rdd-upstream-services`, and read the updated skill text | commits `c5f619f`, `47521fa`; sessions `7ba24666`, `sess_150850c3-e089-422c-92ef-dc8134af184a` |
+| 2026-10-24 12:40–12:41 | Ian | Kiro CLI custom agent `rdd-reviewer` | T22 first-pass review (read-only) | CHANGES_REQUESTED: 3 should-fix, 1 nit | [docs/reviews/T22.md](reviews/T22.md); session `dd41ffc6` |
+| 2026-10-24 12:05–12:41 | Ian | Kiro CLI agent hooks (`preToolUse`) | The live `guard-shell.sh` guard blocked shell commands inside real `rdd-builder` sessions: in T19 a command containing `git push origin main` ("PreToolHook blocked the tool execution: BLOCKED by …"); in the T21 fix session, a QA command whose text contained the literal push string | Both blocked with exit 2; the agent then built the test payload in a temp file | assistant's run log (T19, T21 fix) |
+| 2026-10-24 12:12–12:52 | Ian | Kiro CLI (Git integration under `docs/PROTOCOL.md` 6A) | Kiro integrated tasks into `main` one at a time (scope check, ancestry check, push without force) | `main` updated by push to `8460be2`, `ff02d63`, `f77cc31`, `c46c832`, `cd1a1a4`, `9208298`, `6b94db7`, `e8fe0f8`, `68ec5cb` (with `6c6ce91`), `47521fa` (with `c5f619f`), `0dca96f` (with `b3dce59`, `d35a18e`), `87febca` (with `6c1f106`), `079e559` | `git reflog show origin/main` |
 
 ## Corrections (not Kiro actions)
 
