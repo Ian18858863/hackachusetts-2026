@@ -21,7 +21,7 @@ import type { DataVersions, DemoCase, EngineDeps, ExtractedTerm } from "../../en
 import { getFallbackDemoCase } from "../_lib/fallback/demoCases";
 import { LlmError, MAX_TEXT_CHARS, proposeTerms } from "../_lib/llm";
 import type { LlmEnv, ProposeResult } from "../_lib/llm";
-import { checkAndCount, clientIp, extractWindows } from "../_lib/rateLimit";
+import { checkAndCount, clientIp, extractWindows, rateLimitMessage } from "../_lib/rateLimit";
 import {
   CONTRACT_VERSION,
   apiError,
@@ -96,7 +96,7 @@ export const onRequest = async (context: PagesContext<Env>): Promise<Response> =
   }
 };
 
-async function handlePost({ request, env }: PagesContext<Env>): Promise<Response> {
+async function handlePost({ request, env, waitUntil }: PagesContext<Env>): Promise<Response> {
   // ---- 1. validate ----
   const body = await readJsonBody(request, MAX_BODY_BYTES);
   if (!body.ok) return body.response;
@@ -132,13 +132,12 @@ async function handlePost({ request, env }: PagesContext<Env>): Promise<Response
   }
 
   // Per-IP limit on live LLM calls only (approximate, fails open).
-  const decision = await checkAndCount(defaultCache(), clientIp(request), extractWindows(env));
+  // Counter writes go to waitUntil so they add no latency.
+  const decision = await checkAndCount(defaultCache(), clientIp(request), extractWindows(env), Date.now(), waitUntil);
   if (decision.limited) {
-    return apiError(
-      "RATE_LIMITED",
-      "Too many requests from this address. Wait a minute and try again, or use a demo case.",
-      { "Retry-After": String(decision.retryAfterSec) },
-    );
+    return apiError("RATE_LIMITED", rateLimitMessage(decision.retryAfterSec), {
+      "Retry-After": String(decision.retryAfterSec),
+    });
   }
 
   let proposed: ProposeResult;

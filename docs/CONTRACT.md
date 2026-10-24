@@ -405,7 +405,7 @@ Total budget 20 s: LLM 15 s, grounding 4 s (HPO term lookup 2 s, label search 2 
 
 Errors: 400, 405, 413, 422, 503 `LLM_UNAVAILABLE` (binding missing), 504 (Workers AI timeout, non-demo text), 502 (Workers AI error).
 
-Also 429 `RATE_LIMITED` (v0.1.3, `retryable: true`, with a `Retry-After` header in seconds): the live LLM path is limited per client IP (`CF-Connecting-IP`) to 10 extractions per minute and 60 per hour in fixed windows, counted approximately in the Workers Cache API (per data centre, not atomic, fails open). The prepared demo extraction (step 2) is never limited.
+Also 429 `RATE_LIMITED` (v0.1.3, `retryable: true`, with a `Retry-After` header in seconds): the live LLM path is limited per client IP (`CF-Connecting-IP`) to 10 extractions per minute and 60 per hour in fixed windows, counted approximately in the Workers Cache API (per data centre, not atomic, fails open). The prepared demo extraction (step 2) is never limited; a demo narrative sent without its `caseId` goes through the live path and counts. The message says to try again in a minute, or in about an hour when the hourly window is full.
 
 ### 7.3 GET /api/terms (proposed)
 

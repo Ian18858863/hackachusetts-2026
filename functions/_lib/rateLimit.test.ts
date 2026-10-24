@@ -10,6 +10,7 @@ import {
   checkAndCount,
   clientIp,
   extractWindows,
+  rateLimitMessage,
   type CounterCache,
 } from "./rateLimit.ts";
 
@@ -101,4 +102,36 @@ test("env override lowers the per-minute limit; invalid values keep the default"
 test("clientIp reads CF-Connecting-IP, else 'unknown'", () => {
   assert.equal(clientIp(new Request("https://x/", { headers: { "CF-Connecting-IP": " 192.0.2.4 " } })), "192.0.2.4");
   assert.equal(clientIp(new Request("https://x/")), "unknown");
+});
+
+test("429 message wording follows the wait", () => {
+  const minute = "Too many requests from this address. Your notes are kept. Try again in a minute, or use a demo case.";
+  const hour = "Too many requests from this address. Your notes are kept. Try again in about an hour, or use a demo case.";
+  assert.equal(rateLimitMessage(1), minute);
+  assert.equal(rateLimitMessage(60), minute);
+  assert.equal(rateLimitMessage(119), minute);
+  assert.equal(rateLimitMessage(120), hour);
+  assert.equal(rateLimitMessage(3000), hour);
+});
+
+test("with waitUntil, counter writes are handed off and still land", async () => {
+  const cache = new MemoryCache();
+  const pending: Promise<unknown>[] = [];
+  const d = await checkAndCount(cache, "a", windows, T0, (p) => pending.push(p));
+  assert.deepEqual(d, { limited: false });
+  assert.equal(pending.length, 1);
+  await Promise.all(pending);
+  assert.deepEqual([...cache.store.values()], ["1", "1"]);
+});
+
+test("a failing background write never rejects", async () => {
+  const cache: CounterCache = {
+    match: async () => undefined,
+    put: async () => {
+      throw new Error("cache down");
+    },
+  };
+  const pending: Promise<unknown>[] = [];
+  assert.deepEqual(await checkAndCount(cache, "a", windows, T0, (p) => pending.push(p)), { limited: false });
+  await assert.doesNotReject(Promise.all(pending));
 });

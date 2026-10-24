@@ -52,6 +52,18 @@ export interface RateWindow {
 
 export type RateDecision = { limited: false } | { limited: true; retryAfterSec: number };
 
+/** Waits under this many seconds are worded "in a minute"; longer ones "in about an hour". */
+const MINUTE_WORDING_MAX_SEC = 120;
+
+/** User-facing 429 message, worded from the wait (contract section 4: say what the user can do). */
+export function rateLimitMessage(retryAfterSec: number): string {
+  const when = retryAfterSec < MINUTE_WORDING_MAX_SEC ? "in a minute" : "in about an hour";
+  return `Too many requests from this address. Your notes are kept. Try again ${when}, or use a demo case.`;
+}
+
+/** Schedules background work after the response (Pages `context.waitUntil`). */
+export type WaitUntil = (promise: Promise<unknown>) => void;
+
 /** Minute and hour windows, with the optional per-minute override from env. */
 export function extractWindows(env: { RDD_EXTRACT_LIMIT_PER_MIN?: unknown } | undefined): RateWindow[] {
   let perMinute = EXTRACT_LIMIT_PER_MINUTE;
@@ -87,12 +99,18 @@ async function readCount(cache: CounterCache, key: Request): Promise<number> {
 /**
  * Check every window and, when none is full, count this request in all of
  * them. A rejected request is not counted. Never throws.
+ *
+ * With `waitUntil`, the counter writes run in the background after the
+ * response, so they add no latency. This makes the count a little more
+ * approximate (a request that arrives before the write lands reads the old
+ * value); without `waitUntil` (tests) the writes are awaited.
  */
 export async function checkAndCount(
   cache: CounterCache | undefined,
   ip: string,
   windows: readonly RateWindow[],
   nowMs: number = Date.now(),
+  waitUntil?: WaitUntil,
 ): Promise<RateDecision> {
   if (!cache) return { limited: false };
   try {
@@ -113,7 +131,7 @@ export async function checkAndCount(
     });
     if (retryAfterSec > 0) return { limited: true, retryAfterSec };
 
-    await Promise.all(
+    const writes = Promise.all(
       slots.map((s, i) => {
         const maxAge = Math.max(1, Math.ceil((s.endMs - nowMs) / 1000)) + MAX_AGE_SLACK_SEC;
         return cache.put(
@@ -123,7 +141,9 @@ export async function checkAndCount(
           }),
         );
       }),
-    );
+    ).catch(() => undefined); // fail open: a failed write only loosens the limit
+    if (waitUntil) waitUntil(writes);
+    else await writes;
     return { limited: false };
   } catch {
     // Fail open: a broken cache must never block extraction.
