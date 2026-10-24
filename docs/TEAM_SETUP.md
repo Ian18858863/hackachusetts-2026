@@ -3,7 +3,11 @@
 Do these on **your own laptop**. Kiro accounts cannot be shared.
 
 1. **Install Kiro IDE** (the "IDE" card on https://kiro.dev/downloads/, not only Crew). Open it and sign in with GitHub or Google.
-2. **Redeem your own 2,000-credit paper code**: open the link printed on your slip (`https://kiro.dev/redeem/<your-code>`) and sign in with the **same** account you used in Kiro IDE.
+2. **Redeem your own 2,000-credit paper code** (order matters):
+   1. First sign in at https://app.kiro.dev with the **same** account you used in Kiro IDE.
+   2. Then open `https://app.kiro.dev/account/usage?redemption_code=<your-code>` (the code is printed on your slip).
+   3. Refresh https://app.kiro.dev/account/usage and check **Additional credits → Bonus credits → 0 / 2000**.
+   - If you see "Redemption Failed", refresh first: it often means the code was already redeemed in another tab.
 3. **Send your GitHub username** to Ian. You will get an invite email from GitHub — click **Accept**.
 4. **Clone the repo in Kiro**: Command Palette (Cmd/Ctrl+Shift+P) → `Git: Clone` → paste `https://github.com/Ian18858863/hackachusetts-2026.git` → open it.
 5. **Test**: edit one line in your own folder, Commit, then Sync. Tell Ian; he checks it on GitHub.
