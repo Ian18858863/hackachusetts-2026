@@ -39,6 +39,8 @@ export async function loadDictionary(dataDir = DATA) {
   return {
     verified: await optionalJson(join(dataDir, 'dictionary', 'lay-hpo.verified.json'), { entries: [] }),
     rejected: await optionalJson(join(dataDir, 'dictionary', 'lay-hpo.rejected.json'), { entries: [] }),
+    // Unverified T37 candidates (present only after import-t37 has run).
+    candidates: await optionalJson(join(dataDir, 'dictionary', 't37-candidates.json'), { candidates: [] }),
   };
 }
 
@@ -48,5 +50,7 @@ export function collectHpoIds(cases, dictionary) {
   for (const c of cases) for (const p of c.phenotypes ?? []) ids.add(p.hpoId);
   for (const e of dictionary?.verified?.entries ?? []) ids.add(e.hpoId);
   for (const e of dictionary?.rejected?.entries ?? []) if (e.hpoId) ids.add(e.hpoId);
+  // Well-formed ids of unverified candidates, so their precheck can be completed.
+  for (const c of dictionary?.candidates?.candidates ?? []) if (/^HP:\d{7}$/.test(c.hpoId ?? '')) ids.add(c.hpoId);
   return [...ids].sort();
 }
