@@ -195,9 +195,15 @@ test('provenance: a stale committed inputs file is rejected', () => {
   assert.ok(provCodes(goodPred(), deps({ inputsFile: { sha256: 'stale' } })).includes('INPUTS_FILE_STALE'));
 });
 
-test('provenance of the committed held-out baseline predictions passes against real git history', async () => {
+// These two tests read the real T38 git history. When the files were applied
+// as a patch onto another branch, the recorded commits do not exist there, so
+// the tests skip with a reason instead of failing for the wrong cause.
+const historyAvailable = async (sha) => (await import('../lib/git.mjs')).isAncestor(sha);
+
+test('provenance of the committed held-out baseline predictions passes against real git history', async (t) => {
   const { isAncestor, showAt } = await import('../lib/git.mjs');
   const pred = await readJson(join(DATA, '..', 'results', 'predictions', 'baseline-heldout.json'));
+  if (!(await historyAvailable(pred.gitSha))) return t.skip(`recorded commit ${pred.gitSha.slice(0, 7)} is not in this checkout's history`);
   const r = checkProvenance(pred, 'heldout', {
     cases: await loadCases('heldout'),
     inputsFile: await readJson(join(DATA, 'eval', 'heldout-inputs.json')),
@@ -208,9 +214,10 @@ test('provenance of the committed held-out baseline predictions passes against r
   assert.deepEqual(r.issues, []);
 });
 
-test('provenance of the historical dev baseline fails: it ran before its inputs were committed', async () => {
+test('provenance of the historical dev baseline fails: it ran before its inputs were committed', async (t) => {
   const { isAncestor, showAt } = await import('../lib/git.mjs');
   const pred = await readJson(join(DATA, '..', 'results', 'predictions', 'baseline-dev.json'));
+  if (!(await historyAvailable(pred.gitSha))) return t.skip(`recorded commit ${pred.gitSha.slice(0, 7)} is not in this checkout's history`);
   const r = checkProvenance(pred, 'dev', {
     cases: await loadCases('dev'),
     inputsFile: await readJson(join(DATA, 'eval', 'dev-inputs.json')),
