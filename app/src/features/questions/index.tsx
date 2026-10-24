@@ -46,17 +46,33 @@ function QuestionsBody() {
   const sync = useQuestionsSync();
   const [answers, setAnswers] = useState<Record<HpoId, Answer>>({});
   // After an answer the ranking and then the questions refresh, and the answered
-  // question usually leaves the list. If focus went with it, put it on the list.
+  // question usually leaves the list. If focus went with it, put it on the list,
+  // or, when no question remains, on the heading of the state shown instead.
+  // While a loading panel is shown, wait for the next phase.
   const listRef = useRef<HTMLOListElement>(null);
+  const stateRef = useRef<HTMLDivElement>(null);
   const lastAnswered = useRef<HpoId | null>(null);
   const questionIds = caseObject.questions.map((q) => q.hpoId).join(',');
   useEffect(() => {
     const id = lastAnswered.current;
     if (!id || questionIds.split(',').includes(id)) return;
-    lastAnswered.current = null;
     const active = document.activeElement;
-    if (!active || active === document.body) listRef.current?.focus();
-  }, [questionIds]);
+    if (active && active !== document.body) {
+      lastAnswered.current = null;
+      return;
+    }
+    if (listRef.current) {
+      lastAnswered.current = null;
+      listRef.current.focus();
+      return;
+    }
+    const heading = stateRef.current?.querySelector<HTMLElement>('h1, h2, h3, h4, h5, h6');
+    if (heading) {
+      lastAnswered.current = null;
+      heading.tabIndex = -1;
+      heading.focus();
+    }
+  }, [questionIds, sync.phase, auto.phase]);
 
   const ranking = caseObject.lastRanking;
   const candidates = useMemo(() => {
@@ -120,16 +136,18 @@ function QuestionsBody() {
 
   if (sync.phase === 'too-few') {
     return (
-      <EmptyState
-        icon="compare"
-        title="Not enough possible matches to compare"
-        description="Questions need at least two possible matches to tell apart. Adding more features from the notes may help."
-        action={
-          <Button variant="secondary" onClick={() => goToStep('matches')}>
-            See the possible matches
-          </Button>
-        }
-      />
+      <div ref={stateRef}>
+        <EmptyState
+          icon="compare"
+          title="Not enough possible matches to compare"
+          description="Questions need at least two possible matches to tell apart. Adding more features from the notes may help."
+          action={
+            <Button variant="secondary" onClick={() => goToStep('matches')}>
+              See the possible matches
+            </Button>
+          }
+        />
+      </div>
     );
   }
 
@@ -139,7 +157,13 @@ function QuestionsBody() {
     .filter((c): c is Candidate => Boolean(c));
 
   if (questions.length === 0) {
-    if (sync.phase === 'error' && sync.error) return <ApiErrorState error={sync.error} onRetry={sync.retry} />;
+    if (sync.phase === 'error' && sync.error) {
+      return (
+        <div ref={stateRef}>
+          <ApiErrorState error={sync.error} onRetry={sync.retry} />
+        </div>
+      );
+    }
     if (sync.phase !== 'ready') {
       return (
         <LoadingPanel step={`Finding the features that best tell the top ${top.length} possible matches apart`}>
@@ -148,16 +172,18 @@ function QuestionsBody() {
       );
     }
     return (
-      <EmptyState
-        icon="question"
-        title="No clear question to ask"
-        description="The top possible matches list similar features in HPO annotations, so no single feature tells them apart well. They are still worth discussing with a doctor."
-        action={
-          <Button variant="secondary" onClick={() => goToStep('matches')}>
-            See the possible matches
-          </Button>
-        }
-      />
+      <div ref={stateRef}>
+        <EmptyState
+          icon="question"
+          title="No clear question to ask"
+          description="The top possible matches list similar features in HPO annotations, so no single feature tells them apart well. They are still worth discussing with a doctor."
+          action={
+            <Button variant="secondary" onClick={() => goToStep('matches')}>
+              See the possible matches
+            </Button>
+          }
+        />
+      </div>
     );
   }
 
