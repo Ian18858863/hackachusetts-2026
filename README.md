@@ -41,6 +41,8 @@ Cloudflare Pages Functions: functions/api/*.ts
 engine/: Workers-compatible TypeScript domain logic (fetch only, injected for tests)
 ```
 
+**What runs where today.** The engine's HPO grounding (`groundTerms`), term search (`searchTerms`), demo cases and phenopacket export (`toPhenopacket`) are live. The engine's `rankCandidates`, `nextQuestions`, `searchTrials` and `buildBrief` are still placeholders, so `/api/rank`, `/api/next-questions`, `/api/trials` and `/api/brief` currently run on Ian's temporary fallback layer in `functions/_lib/fallback/`. Each function calls the engine first and uses the fallback while the engine reports the function as not implemented. The fallback follows the same contract shapes and rules ([docs/CONTRACT.md](docs/CONTRACT.md) v0.1.2).
+
 - **The ontology ranks; the LLM only translates.** The LLM proposes phrases copied from the notes and candidate labels. The engine keeps a term only if the phrase is found verbatim in the text and the HPO API confirms the term; the label shown is always the HPO primary name. Disease names, frequencies and genes come from Monarch and HPO annotation responses, never from the model.
 - **Model choice was measured.** In a bake-off on the demo narratives, `llama-3.3-70b-instruct-fp8-fast` matched `gpt-oss-120b` on quality and was 2–3 times faster (T17, [docs/KIRO_USAGE.md](docs/KIRO_USAGE.md)). Both models got most HPO ids wrong, so the prompt no longer asks for ids and grounding is by label.
 - **Fallbacks.** Demo cases have a prepared extraction, so they work without the LLM. For `demo-npc1`, a recorded ranking, questions and trials response is used only when the live upstream fails and the request matches exactly; such responses are labelled `source: "demo"`.
@@ -123,7 +125,7 @@ Peter (`qirongwangpeter`) owns the landing page (`landing/`, in progress, not ye
 
 ## How we built it with Kiro
 
-- Kiro CLI authored the project files, ran the checks and integrated reviewed tasks into `main`, with parallel sessions in separate worktrees on disjoint paths.
+- Kiro CLI authored the files for Ian's tasks, ran the checks and integrated reviewed tasks into `main`, with parallel sessions in separate worktrees on disjoint paths. The engine was written by Jerry with Kiro; his tool details are not logged yet.
 - Spec-driven: EARS requirements, a design with correctness properties P1–P14, and a ticked task list in `.kiro/specs/rare-disease-detective/`, next to the interface contract.
 - Two custom agents: `rdd-builder` writes code behind hook guardrails; `rdd-reviewer` is read-only and gave first-pass reviews, kept in `docs/reviews/`.
 - Steering (always, fileMatch and manual), MCP (Context7 and biomcp) and a project power `rdd-medical-data`.

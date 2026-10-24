@@ -1,6 +1,6 @@
 # How we built Rare Disease Detective with Kiro
 
-This write-up is built only from the log in [docs/KIRO_USAGE.md](KIRO_USAGE.md) and the files under [`.kiro/`](../.kiro/). Every claim cites a commit or a path. Where something was not checked, we say so. Times are Eastern Time on 2026-10-24.
+This write-up is built from the log in [docs/KIRO_USAGE.md](KIRO_USAGE.md) plus git history and the files under [`.kiro/`](../.kiro/). Every claim cites a commit or a path. Where something was not checked, we say so. Times are Eastern Time on 2026-10-24.
 
 ## At a glance
 
@@ -11,14 +11,14 @@ This write-up is built only from the log in [docs/KIRO_USAGE.md](KIRO_USAGE.md) 
 | Agent hooks (CLI) | Session context, shell guard, typecheck after writes, in `rdd-builder.json` and `.kiro/hooks/scripts/` | Fired live; the guard blocked commands (T19, T21) |
 | Agent hooks (IDE 1.x) | `.kiro/hooks/typecheck-on-save.json`, `.kiro/hooks/contract-drift-check.json` | On `main` (`6c6ce91`, `68ec5cb`); firing in Kiro IDE NOT yet recorded |
 | Steering | `design.md`, `team.md` (always), `medical-data.md` (fileMatch), `release-check.md` (manual) | Loaded by the CLI agents; fileMatch and manual modes not yet exercised in Kiro IDE |
-| Specs | `.kiro/specs/rare-disease-detective/` with EARS requirements, design with properties P1–P14, tasks | Written in `f77cc31`; 11 of 35 tasks ticked at `5508f1a` |
+| Specs | `.kiro/specs/rare-disease-detective/` with EARS requirements, design with properties P1–P14, tasks | Written in `f77cc31`; spec ticks as of 13:30 ET (`5508f1a`); an update is in progress |
 | MCP | Context7 and biomcp in `.kiro/settings/mcp.json` and in `rdd-builder`'s own `mcpServers` | Real calls logged (`b3dce59`, `d35a18e`, `0dca96f`, T18d fix) |
 | Powers | `.kiro/powers/rdd-medical-data/` | Installed and activated in kiro-cli (`c5f619f`, `47521fa`) |
 | Property-based testing | fast-check property for P1–P3 in `engine/test/ground.test.ts` | On `main` from Jerry's engine commit `c2ffb08`; P4–P14 not written yet |
 
 ## How we drive Kiro
 
-Ian's assistant (Claude, outside Kiro) plans each task, writes a natural-language prompt and reviews the resulting diff and QA output. Kiro CLI (`kiro-cli chat --no-interactive`, model claude-opus-5.5) authors every project file and runs the builds, tests and smoke checks. Under Ian's standing authorization (`docs/PROTOCOL.md` section 6A), Kiro also commits each task on its own worktree branch and integrates it into `main` one task at a time: cherry-pick, scope check, ancestry check, push without force. The integration rows in `docs/KIRO_USAGE.md` list every `main` SHA pushed this way.
+Ian's assistant (Claude, outside Kiro) plans each task, writes a natural-language prompt and reviews the resulting diff and QA output. For Ian's tasks, Kiro CLI (`kiro-cli chat --no-interactive`, model claude-opus-5.5) authors every file and runs the builds, tests and smoke checks. The engine (`engine/**`) was written by Jerry with Kiro; which Kiro tools he used is not logged yet. Under Ian's standing authorization (`docs/PROTOCOL.md` section 6A), Kiro also commits each task on its own worktree branch and integrates it into `main` one task at a time: cherry-pick, scope check, ancestry check, push without force. The integration rows in `docs/KIRO_USAGE.md` list every `main` SHA pushed this way.
 
 Each task has one git worktree and one branch, and several Kiro sessions run in parallel on disjoint claimed paths (claims on the board in `BRIEFING.md` section 6). No two writers touch the same file.
 
@@ -30,7 +30,7 @@ Deploys to Cloudflare Pages ran from Kiro only after a passing smoke test (usage
 
 - **Spec.** `.kiro/specs/rare-disease-detective/requirements.md` (12 requirements in EARS form, for example "WHEN the user submits text longer than 8,000 characters THE SYSTEM SHALL keep the text…"), `design.md` (architecture, components, error handling, testing strategy and correctness properties P1–P14) and `tasks.md` (five parallel lanes with owners and paths). Written by Kiro in `f77cc31` together with the interface contract `docs/CONTRACT.md` v0.1.
 - **Contract next to the spec.** `docs/CONTRACT.md` fixes request and response shapes, error codes, timeouts and demo cases. The spec refers to contract sections instead of repeating them, and the contract wins on conflict. Contract changes follow a written process (section 14) and are logged in its changelog: v0.1.1 (`629c869`, new primary demo case) and v0.1.2 (`18556d7`, timeouts, overlap counting, question filter, trial relevance).
-- **Ticks.** Kiro ticks tasks as they ship (T09b, `5508f1a`): 11 ticked, 24 open in `tasks.md`. Partially done items carry a note saying what is missing.
+- **Ticks.** Kiro ticks tasks as they ship (T09b, `5508f1a`). The ticks in `tasks.md` are as of 13:30 ET; work shipped since then (for example the rank, questions, trials and brief functions, the brief and trials UI, and the smoke script `00ff364`) is not ticked yet, and an update is in progress. Partially done items carry a note saying what is missing.
 - **The spec changed when the evidence changed.** T09c (`629c869`) made `demo-npc1` the primary demo case after the T23 benchmark showed Monarch ranks its source condition first, while Duchenne ranks #40 for `demo-dmd`. Requirements, design, tasks and contract were updated in the same commit.
 
 ### Specs compared with vibe coding
