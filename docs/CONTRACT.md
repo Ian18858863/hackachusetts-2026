@@ -1,6 +1,6 @@
 # Interface contract: Rare Disease Detective
 
-> **v0.1.3 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.** v0.1.1, v0.1.2 and v0.1.3 are non-breaking (v0.1.1: new primary demo case; v0.1.2: timeouts, overlap counting, next-questions filter, trial relevance and temporary demo fallbacks, as implemented in Ian's functions fallback; v0.1.3: broader-term matches count only through an HP: shared ancestor, `/api/rank` is served by the engine, and `dataVersions.hpo` is the pinned HPO_VERSION); see the changelog in section 14.
+> **v0.1.4 DRAFT — pending APPROVE by Jerry (engine fields) and Ian.** v0.1.1 to v0.1.4 are non-breaking (v0.1.1: new primary demo case; v0.1.2: timeouts, overlap counting, next-questions filter, trial relevance and temporary demo fallbacks, as implemented in Ian's functions fallback; v0.1.3: broader-term matches count only through an HP: shared ancestor, `/api/rank` is served by the engine, and `dataVersions.hpo` is the pinned HPO_VERSION; v0.1.4: fallback question ordering under a partial hierarchy check, and demo recordings for demo-npc1, demo-marfan and demo-cdls); see the changelog in section 14.
 > Contract version string in every response: `"0.1"`. Single file editor: Ian's Kiro (T09).
 > Kiro spec that implements this contract: [`.kiro/specs/rare-disease-detective/`](../.kiro/specs/rare-disease-detective/requirements.md).
 > This file is the source of truth for request and response shapes. If the spec and this file disagree, this file wins and the spec gets fixed.
@@ -573,6 +573,8 @@ Owner: Ian (`functions/api/next-questions.ts`). Engine: `nextQuestions`, `getDem
 
 `ORPHA:99999` / "Example disease B" is a placeholder, not a real candidate. The Marfan frequency was read from the JAX API on 2026-10-24. Failed upstream: demo cache by `demoRankKey(observed, excluded, candidates.length)` if present, else 504/502 retryable.
 
+Ian's temporary fallback (v0.1.4, T18o; `functions/_lib/fallback/questions.ts` and `hierarchy.ts`): the hierarchy filter of step 5 runs inside one budget of at most 40 subrequests per invocation, Cache API calls included, and the 5 s time budget. The ancestors of the observed terms are looked up first. Features are then checked lazily in score order, only as many as are still needed to fill `limit`. Each kept feature is in one tier: checked (its own lookup and every observed lookup succeeded), partly checked (its own lookup succeeded, some observed lookups did not) or unchecked (its own lookup failed, timed out, was refused by the budget or was not reached). The output is checked, then partly checked, then unchecked, each in score order, so a feature whose check was skipped or partial never comes before a checked one. When every lookup succeeds the output is plain score order. JAX annotation and ancestor reads use the Cloudflare edge cache (`fetch` with `cf.cacheTtlByStatus`) for 2xx responses only; errors are never cached.
+
 ### 7.6 GET /api/trials
 
 Owner: Ian (`functions/api/trials.ts`). Engine: `searchTrials`, `getDemoTrials`. Timeout 6 s. Cache 6 h, key = normalised condition.
@@ -839,6 +841,8 @@ export interface DemoCase extends DemoCaseSummary {
 
 Temporary fallback copies (v0.1.2): until `engine/demo/**` contains `demo-npc1`, Ian's functions hold fallback copies for that case only: the prepared extraction (`functions/_lib/fallback/demoCases.ts`) and one recorded rank, next-questions and trials response (`functions/_lib/fallback/demoRecorded.ts`). The recorded responses are used only when the live upstream fails (timeout or 5xx) and the request matches the recorded one exactly (same `demoRankKey`; next-questions also the same candidate ids; trials the same normalised condition). The engine's `getDemoCase`, `getDemoRanking`, `getDemoQuestions` and `getDemoTrials` take precedence. Both files are deleted once `engine/demo` has `demo-npc1`.
 
+Fallback recordings (v0.1.4, T18l, T18q): `functions/_lib/fallback/demoRecorded.ts` now holds, for `demo-npc1`, one recorded `/api/rank` response, one `/api/next-questions` response for the 5 candidates the app sends (the top 5 of that ranking) and one `/api/trials` response for the top candidate; and, for `demo-marfan` and `demo-cdls`, one recorded `/api/rank` response each (rank only). They are used only when an upstream fails (timeout or 5xx) and the request matches the recorded one exactly, and are served with `source: "demo"` and `dataVersions.demoCache`. The engine's own recordings (`engine/demo/recorded/`) are tried first.
+
 Demo cache contents per case: narrative, prepared extraction, one recorded `/api/rank` response for the prepared term set (limit 5), the matching `/api/next-questions` response, and `/api/trials` for the top candidate. Each recorded payload keeps its original `dataVersions` plus `demoCache`. Target size: five cases, under 400 KB total (open question 5).
 
 ## 10. Upstream services, timeouts and caching
@@ -859,7 +863,7 @@ Demo cache contents per case: narrative, prepared extraction, one recorded `/api
 - One retry with 300 ms backoff for idempotent GETs on 5xx or network error, only if the remaining budget allows.
 - Subrequests: the Cloudflare Workers free plan allows 50 subrequests per invocation, and Cache API calls count toward that limit. Functions that fan out (next-questions) must stay under it.
 - Cache keys are built from sorted, deduplicated ids so term order never changes the key.
-- Demo fallback on upstream failure (v0.1.2): the engine's demo cache first, then Ian's temporary `demo-npc1` copies (section 9) only on an exact key match; otherwise 504/502 retryable.
+- Demo fallback on upstream failure (v0.1.2; v0.1.4): the engine's demo cache (`engine/demo/recorded/`) first, then Ian's temporary recordings (section 9: `demo-npc1` rank, next-questions and trials; `demo-marfan` and `demo-cdls` rank only) only on an exact key match, served with `source: "demo"`; otherwise 504/502 retryable.
 - OMIM: links only. No OMIM API calls, no OMIM data beyond ids and names already in HPO annotations and Monarch xrefs.
 
 ## 11. Properties for property-based tests (T08)
@@ -932,6 +936,9 @@ Changelog:
   - `[CONTRACT CHANGE] §7.4 engine also exports rankCandidatesWithReport (enrichment.complete); /api/rank does not cache a response with incomplete enrichment (T18h); /api/rank is served by the engine since T18k (RDD_ENGINE_PATH_RANK = "engine"); breaking no`.
   - `[CONTRACT CHANGE] §5/§15 open question 6 resolved: dataVersions.hpo is the pinned constant HPO_VERSION in engine/hpo.ts ("2026-09-01"), never "unknown"; /api/brief defaults hpo to it when the ranking's dataVersions has none (T18m); the pin is a label, not checked against the release the JAX API serves; breaking no`.
   - `[CONTRACT CHANGE] §7.2 POST /api/extract may return 429 RATE_LIMITED (retryable, Retry-After) when one IP exceeds 10 live extractions per minute or 60 per hour; demo-case requests are never limited (T18p); breaking no`.
+- 0.1.4 (2026-10-24, draft; Ian's Kiro for Ian):
+  - `[CONTRACT CHANGE] §7.5 Ian's temporary next-questions fallback checks features lazily in score order within the budget (≤ 40 subrequests incl. Cache API, 5 s); output keeps score order among fully checked features and never places a feature whose hierarchy check was skipped or partial ahead of a checked one (checked → partly checked → unchecked); JAX reads use the Cloudflare edge cache for 2xx only (T18o); breaking no`.
+  - `[CONTRACT CHANGE] §9/§10 Ian's temporary fallback recordings cover demo-npc1 (rank, next-questions for the 5 candidates the app sends, trials) and demo-marfan and demo-cdls (rank only); used only when an upstream fails and the request matches exactly; served with source "demo"; the engine's recordings (engine/demo/recorded/) are tried first (T18l, T18q); breaking no`.
 
 ## 15. Open questions
 
