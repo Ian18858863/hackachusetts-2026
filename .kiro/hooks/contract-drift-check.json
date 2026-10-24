@@ -1,0 +1,16 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "contract-drift-check",
+      "description": "When the agent saves docs/CONTRACT.md, ask the agent to compare the contract with the rare-disease-detective spec (requirements.md, design.md, tasks.md) and app/src/shared/contract.ts if present, and report spec drift as a list. Report only: the prompt forbids editing any file.",
+      "trigger": "PostFileSave",
+      "matcher": "(^|/)docs/CONTRACT\\.md$",
+      "action": {
+        "type": "agent",
+        "prompt": "docs/CONTRACT.md was just saved. Run a read-only spec drift check. HARD RULE: do not create, edit, rename or delete any file, and do not run git commit, push, reset, clean or any deploy. Only read files and reply in chat.\n\n1. Read docs/CONTRACT.md (note its version and changelog).\n2. Read .kiro/specs/rare-disease-detective/requirements.md, .kiro/specs/rare-disease-detective/design.md and .kiro/specs/rare-disease-detective/tasks.md.\n3. If app/src/shared/contract.ts exists, read it; if it does not exist, say so in one line and skip it.\n4. Compare them: endpoint paths and methods, request and response fields and their types, shared TypeScript types, engine function signatures, error codes, timeouts, demo case ids, attribution and safety strings, the contract version each spec file cites, and any requirement or task that refers to a contract section that no longer matches.\n\nReply with a list titled 'Spec drift vs docs/CONTRACT.md <version>'. One item per mismatch, in this form: '<file>:<section or line> | contract says X | file says Y | suggested owner (per contract section 14)'. If you find nothing, reply 'No drift found' and list the files you compared. Do not fix anything: contract and spec edits go through the change process in docs/CONTRACT.md section 14, done by the named editor."
+      },
+      "enabled": true
+    }
+  ]
+}

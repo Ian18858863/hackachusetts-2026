@@ -1,0 +1,17 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "typecheck-app-on-save",
+      "description": "When the agent saves a TypeScript file under app/src, run the app typecheck (tsc --noEmit for tsconfig.app.json and tsconfig.node.json) and report errors to the agent. Read-only: never edits files, commits, pushes or deploys. Output goes to stderr so a failing check reaches the agent.",
+      "trigger": "PostFileSave",
+      "matcher": "(^|/)app/src/.+\\.tsx?$",
+      "action": {
+        "type": "command",
+        "command": "npm --prefix app run --silent typecheck 1>&2"
+      },
+      "timeout": 90,
+      "enabled": true
+    }
+  ]
+}
