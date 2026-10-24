@@ -57,7 +57,7 @@
 
 .lead {
   min-width: 0;
-  padding: var(--s-6) var(--space-10) var(--s-6);
+  padding: var(--s-7) var(--s-7) var(--s-6);
   border-radius: var(--r-l);
   background: var(--surface);
 }
@@ -101,10 +101,12 @@
 }
 
 .leadName {
-  margin-top: var(--s-2);
+  margin-top: var(--s-3);
   font-family: var(--f-display);
-  font-size: var(--t-xl);
-  font-weight: var(--weight-medium);
+  font-size: clamp(2rem, 3.2vw, 2.875rem);
+  font-weight: 500;
+  min-width: 0;
+  contain: inline-size;
   line-height: 1.12;
   letter-spacing: var(--tracking-tight);
 }
@@ -130,11 +132,48 @@
   margin-top: var(--s-3);
 }
 
+/* 12-dot overlap meter beside the number (T35b). */
+.meter {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-left: var(--s-3);
+  align-self: center;
+}
+
+.meter i {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1px var(--mark-off);
+}
+
+.meter i[data-kind='exact'] {
+  background: var(--accent);
+  box-shadow: none;
+}
+
+.meter i[data-kind='broader'] {
+  box-shadow: inset 0 0 0 1.5px var(--accent);
+}
+
+@media (max-width: 600px) {
+  .lead {
+    padding: var(--s-6) var(--s-5) var(--s-5);
+  }
+
+  .meter {
+    flex-basis: 100%;
+    margin-left: 0;
+  }
+}
+
 .leadScore b {
   display: block;
   font-family: var(--f-display);
   font-size: var(--t-2xl);
-  font-weight: var(--weight-medium);
+  font-weight: 500;
   line-height: 1;
   letter-spacing: var(--tracking-tight);
   white-space: nowrap;
