@@ -31,6 +31,7 @@ export default defineMessages(
     heroLede: 'Turn years of scattered notes into a specialist-ready brief in minutes.',
     heroSafetyRest: ' Possible matches to discuss with a doctor, each with the evidence behind it.',
     tryDemo: 'Try the demo case',
+    forFamilies: 'For families',
     howLink: 'How it works',
     demoNote: 'Opens a synthetic demo case with no sign-up. Not a real patient.',
     proofAlt:
@@ -114,6 +115,7 @@ export default defineMessages(
       heroLede: '把多年零散的症状描述，在几分钟内整理成一份可交给专科医生的简报。',
       heroSafetyRest: '列出可与医生讨论的可能匹配，并附上每一项背后的证据。',
       tryDemo: '试用演示病例',
+      forFamilies: '面向家庭',
       howLink: '工作原理',
       demoNote: '打开一个合成的演示病例，无需注册。并非真实患者。',
       proofAlt:
@@ -193,6 +195,7 @@ export default defineMessages(
       heroLede: '何年分もの散らばった記録を、数分で専門医向けサマリーにまとめます。',
       heroSafetyRest: '医師と相談するための一致候補を、それぞれの根拠とともに示します。',
       tryDemo: 'デモ症例を試す',
+      forFamilies: 'ご家族の方へ',
       howLink: '仕組み',
       demoNote: '登録不要で、合成のデモ症例が開きます。実在の患者ではありません。',
       proofAlt:
@@ -275,6 +278,7 @@ export default defineMessages(
       heroLede: 'Convierta años de notas dispersas en un resumen para el especialista en minutos.',
       heroSafetyRest: ' Posibles coincidencias para comentar con un médico, cada una con la evidencia que la respalda.',
       tryDemo: 'Probar el caso de demostración',
+      forFamilies: 'Para familias',
       howLink: 'Cómo funciona',
       demoNote: 'Abre un caso de demostración sintético, sin registro. No es un paciente real.',
       proofAlt:
@@ -358,6 +362,7 @@ export default defineMessages(
       heroLede: '여러 해 동안 흩어진 기록을 몇 분 만에 전문의용 요약서로 정리합니다.',
       heroSafetyRest: ' 의사와 상의할 가능한 일치 항목을 각각의 근거와 함께 보여 줍니다.',
       tryDemo: '데모 사례 사용해 보기',
+      forFamilies: '가족을 위한 안내',
       howLink: '작동 방식',
       demoNote: '가입 없이 합성 데모 사례가 열립니다. 실제 환자가 아닙니다.',
       proofAlt:
@@ -439,6 +444,7 @@ export default defineMessages(
       heroLede: 'Transformez des années de notes éparses en une synthèse pour le spécialiste en quelques minutes.',
       heroSafetyRest: ' Des correspondances possibles à discuter avec un médecin, chacune avec les éléments qui l’appuient.',
       tryDemo: 'Essayer le cas de démonstration',
+      forFamilies: 'Pour les familles',
       howLink: 'Fonctionnement',
       demoNote: 'Ouvre un cas de démonstration synthétique, sans inscription. Ce n’est pas un vrai patient.',
       proofAlt:

@@ -12,7 +12,9 @@
   width: 100%;
   max-width: var(--content-max);
   margin-inline: auto;
-  padding: var(--s-7) var(--gutter) 0;
+  padding: var(--s-8) var(--gutter) 0;
+  /* Step changes dissolve as one layer (View Transitions, base.css). */
+  view-transition-name: step-view;
 }
 
 .main:focus {
@@ -21,9 +23,15 @@
 
 .view {
   display: grid;
-  gap: var(--s-6);
+  gap: var(--s-7);
   min-width: 0;
-  animation: dissolve var(--dur-base) var(--ease) both;
+}
+
+/* Browsers without View Transitions get a plain opacity dissolve instead. */
+@supports not (view-transition-name: none) {
+  .view {
+    animation: dissolve var(--dur-base) var(--ease) both;
+  }
 }
 
 .body {
@@ -44,7 +52,7 @@
 /* Short laptop screens (about 1000×600): keep the first content above the fold. */
 @media (max-height: 700px) and (min-width: 901px) {
   .main {
-    padding-top: var(--s-5);
+    padding-top: var(--s-6);
   }
 }
 

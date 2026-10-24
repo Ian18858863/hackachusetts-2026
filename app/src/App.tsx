@@ -1,4 +1,4 @@
-import { useEffect, useRef, type ComponentType, type MouseEvent } from 'react';
+import { useLayoutEffect, useRef, type ComponentType, type MouseEvent } from 'react';
 import styles from './App.module.css';
 import { PrimitivesPreview } from './components/shell/PrimitivesPreview';
 import { StepHeader } from './components/shell/StepHeader';
@@ -56,7 +56,7 @@ function Shell() {
 
   // On view change, move focus to the main region so keyboard and screen
   // reader users start at the new content (not on first load).
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (previousKey.current === viewKey) return;
     previousKey.current = viewKey;
     mainRef.current?.focus({ preventScroll: true });

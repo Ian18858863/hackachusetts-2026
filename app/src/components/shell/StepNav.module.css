@@ -67,8 +67,8 @@
   }
 }
 
-/* Up to 1120px (beside the brand, or under it on tablet and phone): scroll inside the row, never the page. */
-@media (max-width: 1120px) {
+/* The row never spills into its neighbours: when the labels are wider than the slot it scrolls inside its own box. */
+@media all {
   .list {
     overflow-x: auto;
     overscroll-behavior-x: contain;

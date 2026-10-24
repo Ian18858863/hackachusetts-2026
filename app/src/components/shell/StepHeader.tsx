@@ -6,6 +6,7 @@ import shell from '../../shared/i18n/messages/shell';
 import { getStep, STEPS, type StepId } from '../../shared/steps';
 import { useCase } from '../../shared/store';
 import { DataOriginLabel, DemoCaseLabel, Disclaimer, OfflineMockLabel } from '../../shared/ui';
+import { headingText, useFitHeading } from '../ui/useFitHeading';
 import styles from './StepHeader.module.css';
 
 interface PayloadInfo {
@@ -27,6 +28,8 @@ export function StepHeader({ step }: { step: StepId }) {
   const { caseObject, meta } = useCase();
   const t = useT(shell);
   const mockEndpoints = useOfflineMockEndpoints();
+  const title = headingText(t(`${step}Title`));
+  const titleRef = useFitHeading<HTMLHeadingElement>(title);
   const demoTitle = caseObject.demo ? findDemoCase(caseObject.demo.caseId)?.title : undefined;
 
   const payload = payloadFor(step, caseObject.lastRanking?.response, meta);
@@ -50,7 +53,9 @@ export function StepHeader({ step }: { step: StepId }) {
           </>
         )}
       </p>
-      <h1 className={styles.title}>{t(`${step}Title`)}</h1>
+      <h1 ref={titleRef} className={styles.title}>
+        {title}
+      </h1>
       <p className={styles.lede}>
         {def.showsResults && (
           <>

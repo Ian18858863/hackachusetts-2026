@@ -1,41 +1,29 @@
-import { useId, type ChangeEvent } from 'react';
-import { LOCALES, LOCALE_META, parseLocale, useLocale, useT } from '../../shared/i18n';
+import { LOCALES, LOCALE_META, useLocale, useT } from '../../shared/i18n';
 import common from '../../shared/i18n/messages/common';
-import styles from './LanguageSwitcher.module.css';
+import { Dropdown } from '../ui/Dropdown';
+
+const OPTIONS = LOCALES.map((code) => ({
+  value: code,
+  label: LOCALE_META[code].nativeName,
+  lang: LOCALE_META[code].htmlLang,
+}));
 
 /**
- * Compact native <select> at the right end of the top bar. Options show each
- * language's own name; the label ("Language", translated) is for assistive tech.
+ * Language switcher at the right end of the top bar: an in-page dropdown
+ * (button + listbox, T35). Options show each language's own name; the
+ * translated "Language" label names the control for assistive tech.
  */
 export function LanguageSwitcher({ className }: { className?: string }) {
   const { locale, setLocale } = useLocale();
   const t = useT(common);
-  const id = useId();
-
-  function onChange(event: ChangeEvent<HTMLSelectElement>) {
-    const next = parseLocale(event.target.value);
-    if (next) setLocale(next);
-  }
-
   return (
-    <div className={[styles.wrap, className].filter(Boolean).join(' ')}>
-      <label htmlFor={id} className="sr-only">
-        {t('languageLabel')}
-      </label>
-      <select
-        id={id}
-        className={styles.select}
-        value={locale}
-        onChange={onChange}
-        title={t('languageLabel')}
-        data-testid="language-switcher"
-      >
-        {LOCALES.map((code) => (
-          <option key={code} value={code} lang={LOCALE_META[code].htmlLang}>
-            {LOCALE_META[code].nativeName}
-          </option>
-        ))}
-      </select>
-    </div>
+    <Dropdown
+      className={className}
+      value={locale}
+      options={OPTIONS}
+      onChange={setLocale}
+      label={t('languageLabel')}
+      testId="language-switcher"
+    />
   );
 }
