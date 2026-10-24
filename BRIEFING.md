@@ -1,6 +1,6 @@
 # Team Briefing — Hackachusetts 2026 (read this first)
 
-Last updated: 2026-10-24. **v4.1 — topic recorded 2026-10-24 ~12:00 ET by Ian's Kiro.** **v4 was approved by all three humans (Ian, Peter, Jerry) in the team chat at ~11:35 ET.** This version preserves the original event rules, topic research, and submission requirements, and adopts the faster 3-person coordination workflow.
+Last updated: 2026-10-24. **v4.2 — topic approved by all three humans and claims recorded 2026-10-24 ~12:10 ET by Ian's Kiro.** **v4 was approved by all three humans (Ian, Peter, Jerry) in the team chat at ~11:35 ET.** This version preserves the original event rules, topic research, and submission requirements, and adopts the faster 3-person coordination workflow.
 
 This is the single source of shared **decisions and current task claims**. The companion [`docs/PROTOCOL.md`](docs/PROTOCOL.md) (Assistant × Kiro Agent Collaboration Protocol v4) is the operational handbook for human teammates, their AI Assistants, and Kiro coding Agents.
 
@@ -29,6 +29,7 @@ This is the single source of shared **decisions and current task claims**. The c
 | Our venue | UMass Boston |
 | Team | Ian (`Ian18858863`, repo admin), Qirong Wang (`qirongwangpeter`), Jerry (`lolershark`) |
 | Repo | https://github.com/Ian18858863/hackachusetts-2026 (private now; must be **public** at submission) |
+| Live demo | https://hackachusetts-2026.pages.dev (app at `/app/`; skeleton first deployed 12:02 ET from main `53263d4`; verified 200 on `/`, `/app/`, `/api/health` at 12:03 ET) |
 | Build window | 11:30 → 18:00. Submission window 18:00–20:00. **Hard deadline 20:00. Our target: submitted by 19:00.** |
 | Judging | Remote, 20:00–23:00. About 50 finalists notified at midnight. Finals Sunday 10/25, 11:00–14:00 at WHOOP HQ |
 | Prizes per track | 1st $3,500 · 2nd $1,000 · 3rd $500. Bonus: Best Use of Kiro (1-year Kiro Pro Max). Top 50 finalists get WHOOP straps |
@@ -61,7 +62,7 @@ Sources: official rules `https://docs.google.com/document/d/1aDagPzc29sNGHdycZ-3
 
 ## 4. Topic status
 
-**Topic: SELECTED — Rare Disease Detective, Healthcare & Biotech track.** Ian selected it at 11:50 ET on 2026-10-24 and announced it in the team chat. Peter's and Jerry's explicit "APPROVE topic" replies: **requested, pending**.
+**Topic: CONFIRMED by all three humans — Rare Disease Detective, Healthcare & Biotech track.** Ian selected it at 11:50 ET on 2026-10-24 and announced it in the team chat. Peter and Jerry each replied "APPROVE topic — Rare Disease Detective (Healthcare & Biotech)" at ~12:05 ET.
 
 - **Product name:** working name "Rare Disease Detective" (final name TBD).
 - **Positioning (Ian):** "Paste a symptom history; watch the possible conditions rank step by step with the evidence behind each, plus which specialist to see and which tests to ask about. Positioned as a diagnostic-support assistant for clinicians and families, extensible to hospital systems and genetic testing."
@@ -122,8 +123,8 @@ Full research with all links: [docs/research/health-visions.md](docs/research/he
 
 | Decision | Status / current answer | Approval owner |
 |---|---|---|
-| Final product topic and name | **CONFIRMED by Ian 11:50 ET**. Working name Rare Disease Detective (final name TBD); Peter/Jerry "APPROVE topic" requested, pending | Three humans; Ian records decision |
-| Track | **CONFIRMED by Ian 11:50 ET**. Healthcare & Biotech; Peter/Jerry "APPROVE topic" requested, pending | Three humans |
+| Final product topic and name | **CONFIRMED by all three humans** (Ian 11:50 ET; Peter and Jerry ~12:05 ET). Working name Rare Disease Detective (final name TBD) | Three humans; Ian records decision |
+| Track | **CONFIRMED by all three humans** (Ian 11:50 ET; Peter and Jerry ~12:05 ET). Healthcare & Biotech | Three humans |
 | Working roles | **PROPOSED starting claims** in section 6, flexible after announcement | Each human claims; Ian updates board |
 | Frontend/backend/hosting stack | **CONFIRMED (~11:35 ET)**. `app/` is Vite + React + TypeScript, served under `/app`. Backend APIs are Cloudflare Pages Functions in the repo-root `functions/` folder, one file per endpoint (`functions/api/<name>.ts`), each claimed separately. Deployment to Ian's Cloudflare Pages runs from the repo root; `scripts/build-site.sh` builds `landing/` into `dist/` and `app/` into `dist/app/`. Peter chooses the landing stack (same stack recommended); landing must output to `landing/dist` via `npm run build` | Three humans |
 | API and medical-module contract | **PENDING**. Must be agreed in `docs/CONTRACT.md` before dependent interfaces are built | Ian + affected owners |
@@ -131,7 +132,7 @@ Full research with all links: [docs/research/health-visions.md](docs/research/he
 | Runtime LLM provider, account, key | **PENDING**. Keys remain in ignored local/hosting secrets, never committed | Owner + Ian |
 | Open-source license | **PENDING**; select a suitable license before repo publication | Three humans |
 | Integration, demo and deployment | **CONFIRMED (~11:35 ET): Ian**, with repository-admin access (already Ian) | Three humans |
-| Deployment authorization | **CONFIRMED (~11:35 ET)**. Ian pre-approved deploying the demo to his Cloudflare Pages through his Kiro **only after a real smoke test passes**. Making the repo public and submitting the form stay Ian's personal actions | Ian |
+| Deployment authorization | **CONFIRMED (~11:35 ET)**. Ian pre-approved deploying the demo to his Cloudflare Pages through his Kiro **only after a real smoke test passes**. Making the repo public and submitting the form stay Ian's personal actions. First deploy done 12:02 ET after a passing smoke test | Ian |
 | Submission representative | Ian was previously proposed; confirm explicitly | Three humans |
 
 **Topic-specific work may now start**, still only within explicitly claimed paths (section 6). Medical content must follow the section 4 safety framing and the contract in `docs/CONTRACT.md` (being drafted under T09). Do not invent medical facts.
@@ -147,20 +148,22 @@ Statuses: `OPEN` → `CLAIMED` → `IN_PROGRESS` → `REVIEWING` → `QA` → `P
 | Task ID / task | Suggested owner | Owned area / conflict boundary | Status | ETA (ET) |
 |---|---|---|---|---|
 | T01 Main demo shell, core frontend + backend | Ian | Main application routes, demo API, root project config; exact paths assigned after stack choice. Will be split into claimed feature tasks T13–T18 after T09 and T12 | OPEN | TBD |
-| T01a Topic-neutral app shell | Ian | `app/**`; no deployment config inside `app/` | IN_PROGRESS (Ian) | 12:15 |
+| T01a Topic-neutral app shell | Ian | `app/**`; no deployment config inside `app/` | PUSHED (`5d54ab95d65a4f110bd401e21e3e78d31a71b106`) | 12:15 |
 | T02 Unified visual steering + honest remediation of 10:55 draft | Ian | `.kiro/steering/design.md` only; log correction handled via separately claimed T10 | PUSHED (`38291acacb9d7895e17c7ecf088e4eafbd937c3d`) | 12:00 |
 | T02b Re-author team steering | Ian | `.kiro/steering/team.md` only | PUSHED (`cac4d5aad6a8c072a99f7397dfca1cd47acdcc8a`) | 12:10 |
-| T03 Deployment path + full-app smoke checks | Ian | `wrangler.toml` at repo root, `scripts/build-site.sh`, `functions/api/health.ts`, Cloudflare Pages project; deployment secrets outside repo | REVIEWING (Ian; QA waits for T01a) | 12:30 |
-| T04 Topic-neutral landing skeleton | Peter | **Dedicated landing area only** (`landing/` or exact agreed route)—not the main demo route | OPEN | TBD |
+| T03 Deployment path + full-app smoke checks | Ian | `wrangler.toml` at repo root, `scripts/build-site.sh`, `functions/api/health.ts`, Cloudflare Pages project; deployment secrets outside repo; claim extended to `.gitignore` for `.dev.vars` and `.wrangler/` | DEPLOYED_VERIFIED (pushed `53263d4fe019fd1265f82df97e8a30f5cab0151a`; live https://hackachusetts-2026.pages.dev verified 12:03 ET) | 12:30 |
+| T04 Topic-neutral landing skeleton | Peter | `landing/**` | IN_PROGRESS (Peter) | TBD (Peter) |
 | T05 Pitch narrative + under-3-minute video storyboard | Peter | Presentation/copy assets; never claim a feature works without a real demo | OPEN | TBD |
 | T06 README skeleton + Kiro write-up draft | Peter | `README.md` (exclusive once claimed); Kiro write-up from **real usage log**, not made-up entries | OPEN | TBD |
-| T07 Domain module + approved public datasets | Jerry | Domain-specific library/data folder; suggested path `engine/**` (see T09 contract) | OPEN (topic confirmed; waiting for Jerry's claim with exact paths) | TBD |
-| T08 Module tests / property-based test use | Jerry | Tests under claimed module (suggested `engine/**`, see T09 contract); record true Kiro usage | OPEN (topic confirmed; waiting for Jerry's claim with exact paths) | TBD |
-| T09 API contract, mock response examples | Ian + relevant owners approve; **Ian is sole file editor**; Jerry approves the engine interface fields | `docs/CONTRACT.md`, `.kiro/specs/rare-disease-detective/**` | CLAIMED (Ian) | 12:30 |
+| T07 Domain module + approved public datasets | Jerry | `engine/**` (repo-root TypeScript domain engine; runs on Cloudflare Workers, fetch only, no fs; called from `functions/api/*`) | CLAIMED (Jerry) | TBD (Jerry) |
+| T08 Module tests / property-based test use | Jerry | `engine/test/**` (property-based tests with fast-check); record true Kiro usage | CLAIMED (Jerry) | TBD (Jerry) |
+| T09 API contract, mock response examples | Ian + relevant owners approve; **Ian is sole file editor**; Jerry approves the engine interface fields | `docs/CONTRACT.md`, `.kiro/specs/rare-disease-detective/**` | IN_PROGRESS (Ian); contract v0.1 draft, then Jerry APPROVE | 12:25 (v0.1 draft) |
 | T10 Kiro usage record aggregation + correct early inaccurate entry | Ian/Kiro is sole file editor; all members supply **actual** usage evidence | `docs/KIRO_USAGE.md` | PUSHED (`e4d0c8e83cb41664f0f4cd86902ac4c0a507a03b`) | 11:50 |
 | T11 Team board updates | Ian, or named one-time delegate | `BRIEFING.md`, `docs/PROTOCOL.md` | DONE (`fa0180f`); rolling board updates continue as T11c | 11:45 |
-| T11c Topic decision record + board refresh | Ian | `BRIEFING.md` | IN_PROGRESS (Ian) | 12:05 |
-| T12 Art direction note | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | CLAIMED (Ian) | 12:25 |
+| T11c Topic decision record + board refresh | Ian | `BRIEFING.md` | PUSHED (`b1804930bc9388dc2a01b0b12405522c053bde1e`) | 12:05 |
+| T11d Topic approval, teammate claims and first deploy on the board | Ian | `BRIEFING.md` | IN_PROGRESS (Ian) | 12:15 |
+| T12 Art direction note | Ian; Ian approves | `docs/ART_DIRECTION.md`, `docs/art-direction/**` | IN_PROGRESS (Ian); Ian picks option A or B | 12:25 |
+| T19 Kiro CLI custom agents and safe agent hooks | Ian | `.kiro/agents/**`, `.kiro/hooks/**` | IN_PROGRESS (Ian) | 12:25 |
 
 **What a claim must include in group chat:** task ID, human owner, exact paths (or an explicit pending-path blocker), ETA, interface dependencies, and current Git main SHA. A teammate can take over an abandoned task **only after the original owner releases it in chat**; update this board. Do not let an Agent quietly self-claim overlapping files.
 
