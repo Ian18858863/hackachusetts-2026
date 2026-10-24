@@ -1,0 +1,6 @@
+# Cloudflare Pages project config. Build with ./scripts/build-site.sh, then
+# deploy from the repo root with `npx wrangler pages deploy`.
+# No secrets here: set them with `npx wrangler pages secret put NAME`.
+name = "hackachusetts-2026"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-07-29"

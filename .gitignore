@@ -6,3 +6,6 @@ build/
 .env.*
 .DS_Store
 *.log
+# Cloudflare Pages: local Functions secrets (.dev.vars) and wrangler state; never commit.
+.dev.vars
+.wrangler/
