@@ -17,7 +17,8 @@ The team needs a reproducible way to tell whether a change to symptom interpreta
 
 ## Requirement 1: Verified sources
 
-1.1 EVERY case SHALL cite a PMC id, a source URL, title, journal and year, retrieved from Europe PMC, and SHALL record whether Europe PMC lists it as open access.
+1.1 EVERY case SHALL cite a PMC id, a source URL, title, journal and year, retrieved from Europe PMC, and SHALL record its licence classification (`oa-cc`, `author-manuscript` or `free-to-read`) from the PMC record. Being free to read on PMC SHALL NOT count as open access.
+1.1a Development cases SHALL be `oa-cc`. WHEN a held-out case is not `oa-cc` THE record SHALL carry a documented `accessException` with reason and decision.
 1.2 EVERY case SHALL record the diagnosis, how it was confirmed (for example a named gene variant or an enzyme assay) and a short evidence quote (at most 30 words) found in the article.
 1.3 EVERY gold phenotype SHALL carry a short evidence quote from the article, or SHALL be marked as not found in the article text with the reason.
 1.4 THE corpus SHALL NOT contain invented cases, symptoms, citations, HPO mappings or confirmations, and SHALL NOT copy long passages from articles.
@@ -56,6 +57,9 @@ The team needs a reproducible way to tell whether a change to symptom interpreta
 6.2 Metrics SHALL include phenotype extraction coverage (recall of `inNote` gold terms), missed phenotype rate, predicted terms not in the gold set, Top-1 accuracy and Top-5 recall.
 6.3 Disease matching SHALL compare identifiers (MONDO, OMIM, ORPHA) from the case record, not names, and SHALL NOT contain any per-disease rule.
 6.4 Held-out results SHALL be produced only by a frozen extractor or ranker and SHALL be recorded with the git SHA that produced them.
+6.4a A formal evaluation SHALL reject a submission that is missing any expected case, repeats a case id, contains an unknown case id, is malformed, or ranks only some cases. Formal Top-1 and Top-5 SHALL be computed over all expected cases.
+6.4b A formal evaluation SHALL reject predictions whose split, extractor, full git SHA or input hash is missing, or whose input hash differs from the committed inputs, the current notes, or the inputs file at the recorded SHA.
+6.4c An exploratory evaluation MAY score partial submissions, SHALL be labelled exploratory, and SHALL NOT report an official Top-1 or Top-5.
 6.5 Reports SHALL NOT claim a model was trained or retrained.
 
 ## Out of scope
