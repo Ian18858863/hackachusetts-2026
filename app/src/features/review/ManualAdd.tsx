@@ -1,10 +1,13 @@
 import { useEffect, useId, useRef, useState, type KeyboardEvent, type RefObject } from 'react';
 import { isAbortError, searchTerms, toApiRequestError, type ApiRequestError, type DataOrigin } from '../../shared/api';
 import { LIMITS, type CaseTerm, type HpoTerm, type TermRef } from '../../shared/contract';
+import { useT } from '../../shared/i18n';
+import review from '../../shared/i18n/messages/review';
+import common from '../../shared/i18n/messages/common';
 import { Button, Icon, OfflineMockLabel, Spinner, useOnlineStatus } from '../../shared/ui';
 import { LocalIcon } from './LocalIcon';
 import styles from './ManualAdd.module.css';
-import { statusWord } from './model';
+import { statusWordKey } from './model';
 import { StatusToggle, type PresenceStatus } from './StatusToggle';
 
 const DEBOUNCE_MS = 300;
@@ -32,6 +35,8 @@ export function ManualAdd({
   inputRef?: RefObject<HTMLInputElement | null>;
   intro?: string;
 }) {
+  const t = useT(review);
+  const tc = useT(common);
   const baseId = useId();
   const inputId = `${baseId}-input`;
   const listId = `${baseId}-list`;
@@ -82,7 +87,7 @@ export function ManualAdd({
 
   const choose = (term: HpoTerm) => {
     onAdd({ id: term.id, label: term.label }, addAs);
-    setLastAdded(`Added ${term.label} as ${statusWord(addAs)}.`);
+    setLastAdded(t('added', { label: term.label, status: t(statusWordKey(addAs)) }));
     setQuery('');
     setOpen(false);
     setActiveIndex(-1);
@@ -125,18 +130,17 @@ export function ManualAdd({
     <section className={styles.add} aria-labelledby={`${baseId}-title`}>
       <div className={styles.head}>
         <h3 id={`${baseId}-title`} className={styles.title}>
-          Add a feature
+          {t('addTitle')}
         </h3>
         <p id={hintId} className={styles.hint}>
-          {intro ??
-            'Missing something? Search the Human Phenotype Ontology in plain words, for example “long fingers” or “falls often”.'}
+          {intro ?? t('addHint')}
         </p>
       </div>
 
       <div className={styles.controls}>
         <div className={styles.inputWrap}>
           <label htmlFor={inputId} className="sr-only">
-            Search for a feature
+            {t('searchLabel')}
           </label>
           <LocalIcon name="search" size={18} className={styles.searchIcon} />
           <input
@@ -148,7 +152,7 @@ export function ManualAdd({
             role="combobox"
             autoComplete="off"
             spellCheck={false}
-            placeholder={online ? 'Search features' : 'Search needs a connection'}
+            placeholder={online ? t('searchPlaceholder') : t('searchOffline')}
             disabled={!online}
             value={query}
             maxLength={LIMITS.termsQueryMax}
@@ -173,13 +177,13 @@ export function ManualAdd({
         </div>
         <div className={styles.addAs}>
           <span className={styles.addAsLabel} aria-hidden="true">
-            Add as
+            {t('addAs')}
           </span>
           <StatusToggle
             name={`${baseId}-add-as`}
             idPrefix={`${baseId}-add-as`}
             value={addAs}
-            legend="Add the chosen feature as"
+            legend={t('addAsLegend')}
             onChange={setAddAs}
             size="sm"
           />
@@ -188,7 +192,7 @@ export function ManualAdd({
 
       <div className={styles.results} data-open={showList || undefined}>
         {/* The listbox always exists so aria-controls points at a real element. */}
-        <ul id={listId} role="listbox" aria-label="Matching features" className={styles.list} hidden={!showList || results.length === 0}>
+        <ul id={listId} role="listbox" aria-label={t('resultsLabel')} className={styles.list} hidden={!showList || results.length === 0}>
           {results.map((term, index) => {
             const already = existing(term.id);
             return (
@@ -211,7 +215,7 @@ export function ManualAdd({
                 {term.definition && <span className={styles.optionDef}>{term.definition}</span>}
                 {already && already.status !== 'removed' && (
                   <span className={styles.optionNote}>
-                    Already in the list as {statusWord(already.status)}. Choosing it sets it to {statusWord(addAs)}.
+                    {t('alreadyInList', { current: t(statusWordKey(already.status)), next: t(statusWordKey(addAs)) })}
                   </span>
                 )}
               </li>
@@ -222,19 +226,19 @@ export function ManualAdd({
         {showList && search.state === 'done' && (
           <p className={styles.status}>
             {results.length === 0
-              ? `No features match “${search.q}”. Try other everyday words.`
-              : `${results.length} ${results.length === 1 ? 'match' : 'matches'}. Use the arrow keys and Enter to add one.`}
+              ? t('noMatches', { q: search.q })
+              : t(results.length === 1 ? 'matchesOne' : 'matchesOther', { count: results.length })}
             {search.origin === 'mock' && <OfflineMockLabel />}
           </p>
         )}
-        {showList && search.state === 'loading' && <p className={styles.status}>Searching the HPO for “{search.q}”</p>}
+        {showList && search.state === 'loading' && <p className={styles.status}>{t('searching', { q: search.q })}</p>}
         {showList && search.state === 'error' && (
           <div className={styles.error}>
             <Icon name="alert" size={16} />
             <span>{search.error.message}</span>
             {search.error.retryable && (
               <Button size="sm" variant="ghost" onClick={() => setAttempt((n) => n + 1)}>
-                Try again
+                {tc('tryAgain')}
               </Button>
             )}
           </div>
@@ -244,8 +248,8 @@ export function ManualAdd({
       <p className="sr-only" aria-live="polite">
         {showList && search.state === 'done'
           ? results.length === 0
-            ? 'No matching features.'
-            : `${results.length} matching features.`
+            ? t('srNoMatches')
+            : t('srMatches', { count: results.length })
           : ''}
       </p>
       {lastAdded && (

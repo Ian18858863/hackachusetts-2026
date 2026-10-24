@@ -1,5 +1,7 @@
 import { useId, useRef, useState, type Ref } from 'react';
 import { DEMO_CASES } from '../../shared/mocks';
+import { useT } from '../../shared/i18n';
+import intake from '../../shared/i18n/messages/intake';
 import { Button, Icon } from '../../shared/ui';
 import styles from './DemoPicker.module.css';
 
@@ -23,6 +25,7 @@ export function DemoPicker({
   onPick: (caseId: string) => void;
   headingRef?: Ref<HTMLHeadingElement>;
 }) {
+  const t = useT(intake);
   const headingId = useId();
   const [pending, setPending] = useState<string | null>(null);
   const confirmRef = useRef<HTMLButtonElement>(null);
@@ -41,10 +44,10 @@ export function DemoPicker({
     <section className={styles.picker} aria-labelledby={headingId} data-testid="demo-picker">
       <div className={styles.head}>
         <h2 id={headingId} className={styles.title} ref={headingRef} tabIndex={-1}>
-          Try a demo patient
+          {t('pickerTitle')}
         </h2>
         <p className={styles.note}>
-          Synthetic notes written from published cases. Not real patients.
+          {t('pickerNote')}
         </p>
       </div>
 
@@ -76,7 +79,7 @@ export function DemoPicker({
                 <span className={styles.optionMain}>
                   <span className={styles.optionTitle}>
                     {demo.title}
-                    {index === 0 && <span className={styles.tag}>Start here</span>}
+                    {index === 0 && <span className={styles.tag}>{t('startHere')}</span>}
                   </span>
                   <span id={`${headingId}-${demo.caseId}`} className={styles.optionMeta}>
                     <span className={styles.demoLabel}>
@@ -84,7 +87,7 @@ export function DemoPicker({
                       <span>{demo.label}</span>
                     </span>
                     <span className={styles.counts}>
-                      {present} features present, {absent} not present
+                      {t('demoCounts', { present, absent })}
                     </span>
                   </span>
                 </span>
@@ -92,14 +95,14 @@ export function DemoPicker({
               </button>
 
               {isPending && (
-                <div className={styles.confirm} role="group" aria-label="Replace your notes">
-                  <p>Opening this demo patient replaces the notes you typed in this browser.</p>
+                <div className={styles.confirm} role="group" aria-label={t('confirmGroup')}>
+                  <p>{t('confirmText')}</p>
                   <div className={styles.confirmActions}>
                     <Button size="sm" ref={confirmRef} onClick={() => onPick(demo.caseId)}>
-                      Replace my notes
+                      {t('confirmReplace')}
                     </Button>
                     <Button size="sm" variant="ghost" onClick={() => setPending(null)}>
-                      Keep my notes
+                      {t('confirmKeep')}
                     </Button>
                   </div>
                 </div>

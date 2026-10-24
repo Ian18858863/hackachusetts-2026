@@ -1,3 +1,5 @@
+import { useT } from '../../shared/i18n';
+import review from '../../shared/i18n/messages/review';
 import styles from './StatusToggle.module.css';
 
 import type { PresenceStatus } from './model';
@@ -29,9 +31,10 @@ export function StatusToggle({
   /** data-testid for each radio, used by the scripted demo video. */
   testIds?: Partial<Record<PresenceStatus, string>>;
 }) {
+  const t = useT(review);
   const options: Array<{ value: PresenceStatus; label: string }> = [
-    { value: 'observed', label: 'Present' },
-    { value: 'excluded', label: 'Not present' },
+    { value: 'observed', label: t('present') },
+    { value: 'excluded', label: t('notPresent') },
   ];
   return (
     <fieldset className={styles.toggle} data-size={size}>

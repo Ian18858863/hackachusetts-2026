@@ -10,6 +10,8 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { LIMITS, type HpoId, type TermRef } from '../../shared/contract';
 import { findDemoCase, PRIMARY_DEMO_CASE_ID } from '../../shared/mocks';
+import { useT } from '../../shared/i18n';
+import review from '../../shared/i18n/messages/review';
 import { termCounts, useCase, useCaseActions } from '../../shared/store';
 import {
   ApiErrorState,
@@ -30,11 +32,12 @@ import {
   rememberRemovedFrom,
   restoreStatus,
   scrollBehavior,
-  statusWord,
+  statusWordKey,
   type NumberedTerm,
   type PresenceStatus,
 } from './model';
 import { NotesPanel } from './NotesPanel';
+import { rich } from './rich';
 import styles from './ReviewStep.module.css';
 import { TermRow } from './TermRow';
 
@@ -50,6 +53,8 @@ export function ReviewStep() {
   const { runExtraction, setTermStatus, addManualTerm, goToStep, loadDemoCase } = useCaseActions();
   const announce = useAnnounce();
   const online = useOnlineStatus();
+  const t = useT(review);
+  const statusWord = (status: PresenceStatus) => t(statusWordKey(status));
 
   const [activeId, setActiveId] = useState<HpoId | null>(null);
   const [lastRemoved, setLastRemoved] = useState<Removed | null>(null);
@@ -80,7 +85,7 @@ export function ReviewStep() {
   const changeStatus = (item: NumberedTerm, status: PresenceStatus) => {
     setTermStatus(item.term.hpoId, status);
     pendingFocus.current = radioId(item.term.hpoId, status);
-    announce(`Feature ${item.n}, ${item.term.label}, marked as ${statusWord(status)}.`);
+    announce(t('announceStatus', { n: item.n, label: item.term.label, status: statusWord(status) }));
   };
 
   const remove = (item: NumberedTerm) => {
@@ -91,14 +96,14 @@ export function ReviewStep() {
     setLastRemoved({ hpoId: item.term.hpoId, label: item.term.label, n: item.n, previous });
     setActiveId(null);
     pendingFocus.current = 'undo';
-    announce(`Feature ${item.n}, ${item.term.label}, removed. Undo is available.`);
+    announce(t('announceRemoved', { n: item.n, label: item.term.label }));
   };
 
   const restore = (hpoId: HpoId, label: string, n: number, status: PresenceStatus) => {
     setTermStatus(hpoId, status);
     if (lastRemoved?.hpoId === hpoId) setLastRemoved(null);
     pendingFocus.current = radioId(hpoId, status);
-    announce(`Feature ${n}, ${label}, restored as ${statusWord(status)}.`);
+    announce(t('announceRestored', { n, label, status: statusWord(status) }));
   };
 
   const jumpTo = (hpoId: HpoId) => {
@@ -112,7 +117,7 @@ export function ReviewStep() {
   // ManualAdd shows its own visible confirmation; the announcement is the one spoken channel.
   const addManual = (term: TermRef, status: PresenceStatus) => {
     addManualTerm(term, status);
-    announce(`Added ${term.label} as ${statusWord(status)}.`);
+    announce(t('added', { label: term.label, status: statusWord(status) }));
   };
 
   const tryDemo = () => {
@@ -122,7 +127,7 @@ export function ReviewStep() {
   // ---- Loading (also the ?demo= deep link) -------------------------------
   if (extractStatus.state === 'loading') {
     return (
-      <LoadingPanel step="Reading the notes and finding features">
+      <LoadingPanel step={t('loadingStep')}>
         <div className={styles.layout}>
           <div className={styles.notesCol}>
             <div className={styles.skeletonNotes}>
@@ -148,11 +153,11 @@ export function ReviewStep() {
   if (!hasTerms) {
     const manualIntro =
       error?.code === 'LLM_UNAVAILABLE' || error?.code === 'NO_TERMS_FOUND'
-        ? 'Search the Human Phenotype Ontology in plain words and add each feature yourself.'
+        ? t('manualIntro')
         : undefined;
     const demoButton = (
       <Button variant="secondary" onClick={tryDemo} disabled={!online} data-testid="review-try-demo">
-        {online ? 'Try a demo patient' : 'Demo patients need a connection'}
+        {online ? t('tryDemo') : t('demoNeedsConnection')}
       </Button>
     );
     return (
@@ -164,7 +169,7 @@ export function ReviewStep() {
             actions={
               <>
                 <Button variant="ghost" onClick={() => goToStep('notes')}>
-                  Back to the notes
+                  {t('backToNotes')}
                 </Button>
                 {(error.code === 'LLM_UNAVAILABLE' || !error.retryable) && demoButton}
               </>
@@ -174,16 +179,16 @@ export function ReviewStep() {
           <EmptyState
             icon="list"
             titleLevel={2}
-            title={caseObject.notes.trim() ? 'No features found yet' : 'No notes yet'}
+            title={caseObject.notes.trim() ? t('emptyNoFeaturesTitle') : t('emptyNoNotesTitle')}
             description={
               caseObject.notes.trim()
-                ? 'Your notes are kept. Read them again, describe things in other everyday words, or add features by hand below.'
-                : 'Start by describing what you have noticed, open a demo patient, or add features by hand below.'
+                ? t('emptyNoFeaturesText')
+                : t('emptyNoNotesText')
             }
             action={
               <div className={styles.emptyActions}>
                 <Button onClick={() => goToStep('notes')} iconStart={<Icon name="notes" size={16} />}>
-                  {caseObject.notes.trim() ? 'Back to the notes' : 'Write the notes'}
+                  {caseObject.notes.trim() ? t('backToNotes') : t('writeNotes')}
                 </Button>
                 {demoButton}
               </div>
@@ -199,10 +204,10 @@ export function ReviewStep() {
   const extraction = meta.extraction;
   const sourceLine = extraction
     ? extraction.model === 'demo-prepared'
-      ? 'Prepared reading of this demo patient’s notes. Each feature is a Human Phenotype Ontology (HPO) term, quoted from the words it came from.'
+      ? t('sourceDemo')
       : extraction.model === 'offline-mock'
         ? null
-        : `Phrases proposed by the language model ${extraction.model}, then each one confirmed against the Human Phenotype Ontology (HPO). The model does not rank or diagnose.`
+        : t('sourceModel', { model: extraction.model })
     : null;
   const warnings = extraction?.warnings ?? [];
   const hasNotes = caseObject.notes.trim().length > 0;
@@ -228,7 +233,7 @@ export function ReviewStep() {
           onRetry={() => void runExtraction()}
           actions={
             <Button variant="ghost" size="sm" onClick={() => goToStep('notes')}>
-              Back to the notes
+              {t('backToNotes')}
             </Button>
           }
         />
@@ -249,17 +254,14 @@ export function ReviewStep() {
 
         <div className={styles.listCol}>
           <header className={styles.listHead}>
-            <h2 className={styles.listTitle}>Features found</h2>
+            <h2 className={styles.listTitle}>{t('featuresFound')}</h2>
             <p className={styles.summary}>
-              <span className="num">{counts.observed}</span> present
-              <span aria-hidden="true"> · </span>
-              <span className="num">{counts.excluded}</span> not present
-              {counts.removed > 0 && (
-                <>
-                  <span aria-hidden="true"> · </span>
-                  <span className="num">{counts.removed}</span> removed
-                </>
-              )}
+              {rich(t(counts.removed > 0 ? 'summaryWithRemoved' : 'summary'), {
+                observed: <span className="num">{counts.observed}</span>,
+                excluded: <span className="num">{counts.excluded}</span>,
+                removed: <span className="num">{counts.removed}</span>,
+                sep: <span aria-hidden="true"> · </span>,
+              })}
             </p>
             {sourceLine && <p className={styles.source}>{sourceLine}</p>}
           </header>
@@ -268,34 +270,32 @@ export function ReviewStep() {
             <section className={styles.group} aria-labelledby="group-present">
               <h3 id="group-present" className={styles.groupTitle}>
                 <span className={styles.groupMark} data-status="observed" aria-hidden="true" />
-                Present
+                {t('present')}
                 <span className={styles.groupCount}>{present.length}</span>
               </h3>
               <p className={styles.groupNote}>
-                Keeping a feature as present confirms it. Check each one against your own words.
+                {t('presentNote')}
               </p>
               {present.length > 0 ? (
                 <ul className={styles.rows}>{rows(present)}</ul>
               ) : (
-                <p className={styles.groupEmpty}>No features kept as present. Matching needs at least one.</p>
+                <p className={styles.groupEmpty}>{t('presentEmpty')}</p>
               )}
             </section>
 
             <section className={styles.group} aria-labelledby="group-absent">
               <h3 id="group-absent" className={styles.groupTitle}>
                 <span className={styles.groupMark} data-status="excluded" aria-hidden="true" />
-                Not present
+                {t('notPresent')}
                 <span className={styles.groupCount}>{absent.length}</span>
               </h3>
               <p className={styles.groupNote}>
-                Things the notes say have not happened. They help rule possible matches out.
+                {t('absentNote')}
               </p>
               {absent.length > 0 ? (
                 <ul className={styles.rows}>{rows(absent)}</ul>
               ) : (
-                <p className={styles.groupEmpty}>
-                  Nothing marked as not present. Use “Not present” on a feature that has not happened.
-                </p>
+                <p className={styles.groupEmpty}>{t('absentEmpty')}</p>
               )}
             </section>
 
@@ -303,7 +303,7 @@ export function ReviewStep() {
               <details className={styles.removed}>
                 <summary className={styles.removedSummary}>
                   <Icon name="chevronRight" size={16} className={styles.chevron} />
-                  Removed <span className={styles.groupCount}>{removed.length}</span>
+                  {t('removedGroup')} <span className={styles.groupCount}>{removed.length}</span>
                 </summary>
                 <ul className={styles.removedList}>
                   {removed.map(({ term, n }) => {
@@ -320,21 +320,21 @@ export function ReviewStep() {
                             variant="ghost"
                             size="sm"
                             onClick={() => restore(term.hpoId, term.label, n, known)}
-                            aria-label={`Restore feature ${n}, ${term.label}, as ${statusWord(known)}`}
+                            aria-label={t('restoreAria', { n, label: term.label, status: statusWord(known) })}
                             data-testid={`term-restore-${term.hpoId}`}
                             iconStart={<LocalIcon name="undo" size={14} />}
                           >
-                            Restore as {statusWord(known)}
+                            {t('restoreAsStatus', { status: statusWord(known) })}
                           </Button>
                         ) : (
                           // The earlier status is unknown: the user chooses, nothing is guessed.
-                          <span className={styles.restoreChoice} role="group" aria-label={`Restore feature ${n}, ${term.label}`}>
-                            <span className={styles.restoreAsk}>Restore as</span>
+                          <span className={styles.restoreChoice} role="group" aria-label={t('restoreGroupAria', { n, label: term.label })}>
+                            <span className={styles.restoreAsk}>{t('restoreAsAsk')}</span>
                             <Button variant="ghost" size="sm" onClick={() => restore(term.hpoId, term.label, n, 'observed')}>
-                              Present
+                              {t('present')}
                             </Button>
                             <Button variant="ghost" size="sm" onClick={() => restore(term.hpoId, term.label, n, 'excluded')}>
-                              Not present
+                              {t('notPresent')}
                             </Button>
                           </span>
                         )}
@@ -350,7 +350,7 @@ export function ReviewStep() {
             <section className={styles.warnings} aria-labelledby="reading-notes">
               <h3 id="reading-notes" className={styles.warningsTitle}>
                 <Icon name="info" size={16} />
-                Notes on the reading
+                {t('readingNotes')}
               </h3>
               <ul>
                 {warnings.map((w, i) => (
@@ -370,9 +370,7 @@ export function ReviewStep() {
           <div className={styles.actionInfo}>
             {lastRemoved ? (
               <p className={styles.undo}>
-                <span>
-                  Removed feature {lastRemoved.n}, {lastRemoved.label}.
-                </span>
+                <span>{t('removedFeature', { n: lastRemoved.n, label: lastRemoved.label })}</span>
                 <Button
                   ref={undoRef}
                   variant="secondary"
@@ -381,19 +379,21 @@ export function ReviewStep() {
                   data-testid="term-undo"
                   iconStart={<LocalIcon name="undo" size={14} />}
                 >
-                  Undo
+                  {t('undo')}
                 </Button>
               </p>
             ) : counts.observed === 0 ? (
-              <p className={styles.hint}>Keep at least one feature as present to look for matches.</p>
+              <p className={styles.hint}>{t('hintNeedOne')}</p>
             ) : counts.observed < LIMITS.rankRecommendedObserved ? (
               <p className={styles.hint}>
-                {LIMITS.rankRecommendedObserved} or more present features usually give more useful matches.
+                {t('hintRecommended', { min: LIMITS.rankRecommendedObserved })}
               </p>
             ) : (
               <p className={styles.hint}>
-                <span className="num">{counts.observed}</span> present and{' '}
-                <span className="num">{counts.excluded}</span> not present features will be compared.
+                {rich(t('hintCompare'), {
+                  observed: <span className="num">{counts.observed}</span>,
+                  excluded: <span className="num">{counts.excluded}</span>,
+                })}
               </p>
             )}
           </div>
@@ -404,7 +404,7 @@ export function ReviewStep() {
             data-testid="see-matches"
             iconEnd={<Icon name="arrowRight" size={16} />}
           >
-            See possible matches
+            {t('seeMatches')}
           </Button>
         </div>
       </div>

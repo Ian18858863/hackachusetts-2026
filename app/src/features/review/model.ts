@@ -92,8 +92,9 @@ export function segmentNotes(notes: string, items: readonly NumberedTerm[]): Not
   return segments;
 }
 
-export function statusWord(status: CaseTerm['status']): string {
-  return status === 'observed' ? 'present' : status === 'excluded' ? 'not present' : 'removed';
+/** The review message key for a status word ("present", "not present", "removed"). */
+export function statusWordKey(status: CaseTerm['status']): 'statusPresent' | 'statusNotPresent' | 'statusRemoved' {
+  return status === 'observed' ? 'statusPresent' : status === 'excluded' ? 'statusNotPresent' : 'statusRemoved';
 }
 
 // ---------------------------------------------------------------------------

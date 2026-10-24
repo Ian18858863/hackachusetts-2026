@@ -1,4 +1,6 @@
 import type { HpoId } from '../../shared/contract';
+import { useT } from '../../shared/i18n';
+import review from '../../shared/i18n/messages/review';
 import { Button } from '../../shared/ui';
 import { LocalIcon } from './LocalIcon';
 import { domKey, type NumberedTerm } from './model';
@@ -23,6 +25,7 @@ export function TermRow({
   onStatus: (item: NumberedTerm, status: PresenceStatus) => void;
   onRemove: (item: NumberedTerm) => void;
 }) {
+  const t = useT(review);
   const { term, n, range } = item;
   const key = domKey(term.hpoId);
   const status: PresenceStatus = term.status === 'excluded' ? 'excluded' : 'observed';
@@ -49,15 +52,15 @@ export function TermRow({
 
       <div className={styles.text}>
         <p className={styles.plain}>
-          <span className="sr-only">Feature {n}: </span>
+          <span className="sr-only">{t('srFeature', { n })}</span>
           {plain}
         </p>
         <p className={styles.term}>
-          {status === 'excluded' && <span className={styles.absentTag}>Not present</span>}
-          {term.quote ? <span className={styles.label}>{term.label}</span> : <span>Added by you</span>}
+          {status === 'excluded' && <span className={styles.absentTag}>{t('notPresent')}</span>}
+          {term.quote ? <span className={styles.label}>{term.label}</span> : <span>{t('addedByYou')}</span>}
           <span className={`code ${styles.id}`}>{term.hpoId}</span>
-          {term.quote && !range && <span className={styles.flag}>Not found in the current notes</span>}
-          {lessCertain && <span className={styles.flag}>Less certain match, please check</span>}
+          {term.quote && !range && <span className={styles.flag}>{t('notInNotes')}</span>}
+          {lessCertain && <span className={styles.flag}>{t('lessCertain')}</span>}
         </p>
       </div>
 
@@ -65,7 +68,7 @@ export function TermRow({
         name={`status-${key}`}
         idPrefix={`status-${key}`}
         value={status}
-        legend={`Feature ${n}, ${term.quote ?? term.label}`}
+        legend={t('toggleLegend', { n, text: term.quote ?? term.label })}
         onChange={(next) => onStatus(item, next)}
         testIds={{ observed: `term-keep-${term.hpoId}`, excluded: `term-absent-${term.hpoId}` }}
       />
@@ -74,11 +77,11 @@ export function TermRow({
         size="sm"
         className={styles.remove}
         onClick={() => onRemove(item)}
-        aria-label={`Remove feature ${n}, ${term.label}`}
+        aria-label={t('removeAria', { n, label: term.label })}
         data-testid={`term-remove-${term.hpoId}`}
         iconStart={<LocalIcon name="close" size={14} />}
       >
-        Remove
+        {t('remove')}
       </Button>
     </li>
   );

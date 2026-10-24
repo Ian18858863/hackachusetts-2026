@@ -1,7 +1,9 @@
 import { useId, useState } from 'react';
 import type { HpoId } from '../../shared/contract';
+import { useT } from '../../shared/i18n';
+import review from '../../shared/i18n/messages/review';
 import { Icon } from '../../shared/ui';
-import { domKey, segmentNotes, statusWord, type NumberedTerm } from './model';
+import { domKey, segmentNotes, statusWordKey, type NumberedTerm } from './model';
 import styles from './NotesPanel.module.css';
 
 /**
@@ -23,6 +25,7 @@ export function NotesPanel({
   onActivate: (hpoId: HpoId | null) => void;
   onJump: (hpoId: HpoId) => void;
 }) {
+  const t = useT(review);
   const headingId = useId();
   const bodyId = useId();
   const [expanded, setExpanded] = useState(false);
@@ -33,10 +36,10 @@ export function NotesPanel({
     <section className={styles.panel} aria-labelledby={headingId}>
       <header className={styles.head}>
         <h2 id={headingId} className={styles.title}>
-          Your notes
+          {t('yourNotes')}
         </h2>
         <p className={styles.meta}>
-          {linked} {linked === 1 ? 'phrase' : 'phrases'} linked to features
+          {t(linked === 1 ? 'linkedOne' : 'linkedOther', { count: linked })}
         </p>
       </header>
 
@@ -67,7 +70,7 @@ export function NotesPanel({
                 <button
                   type="button"
                   className={styles.footnote}
-                  aria-label={`Feature ${n}: ${term.label}, ${statusWord(term.status)}. Go to this feature`}
+                  aria-label={t('footnoteAria', { n, label: term.label, status: t(statusWordKey(term.status)) })}
                   onFocus={() => onActivate(term.hpoId)}
                   onBlur={() => onActivate(null)}
                   onClick={() => onJump(term.hpoId)}
@@ -87,18 +90,18 @@ export function NotesPanel({
         aria-controls={bodyId}
         onClick={() => setExpanded((v) => !v)}
       >
-        <span>{expanded ? 'Show less of the notes' : 'Show all of the notes'}</span>
+        <span>{expanded ? t('showLess') : t('showAll')}</span>
         <Icon name="chevronRight" size={16} className={styles.chevron} />
       </button>
 
       <p className={styles.legend}>
         <span className={styles.legendItem}>
           <span className={styles.legendSwatch} data-status="observed" aria-hidden="true" />
-          Present
+          {t('present')}
         </span>
         <span className={styles.legendItem}>
           <span className={styles.legendSwatch} data-status="excluded" aria-hidden="true" />
-          Not present
+          {t('notPresent')}
         </span>
       </p>
     </section>

@@ -10,6 +10,9 @@ import type { ApiRequestError } from '../../shared/api';
 import { LIMITS } from '../../shared/contract';
 import { findDemoCase } from '../../shared/mocks';
 import { useCase, useCaseActions } from '../../shared/store';
+import { useT } from '../../shared/i18n';
+import common from '../../shared/i18n/messages/common';
+import intake from '../../shared/i18n/messages/intake';
 import { Button, Icon, useOnlineStatus } from '../../shared/ui';
 import { DemoPicker } from './DemoPicker';
 import { intakeErrorCopy, type IntakeNextAction } from './errorCopy';
@@ -61,6 +64,7 @@ export function IntakeStep() {
   const { caseObject, extractStatus } = useCase();
   const { setNotes, runExtraction, loadDemoCase, goToStep } = useCaseActions();
   const online = useOnlineStatus();
+  const t = useT(intake);
 
   const fieldId = useId();
   const hintId = `${fieldId}-hint`;
@@ -160,21 +164,19 @@ export function IntakeStep() {
   return (
     <div className={styles.intake}>
       <p className={styles.promise}>
-        Turn scattered notes into a specialist-ready brief: possible conditions to discuss with a doctor, each with
-        the evidence behind it.
+        {t('promise')}
       </p>
 
       <form className={styles.form} onSubmit={submit} noValidate>
         <div className={styles.field} data-invalid={problem?.kind === 'empty' || isOver || undefined}>
           <div className={styles.labelRow}>
             <label htmlFor={fieldId} className={styles.label}>
-              Symptom history
+              {t('fieldLabel')}
             </label>
-            {demoTitle && <span className={styles.loaded}>Demo patient: {demoTitle.toLowerCase()}</span>}
+            {demoTitle && <span className={styles.loaded}>{t('demoLoaded', { title: demoTitle.toLowerCase() })}</span>}
           </div>
           <p id={hintId} className={styles.hint}>
-            Who it is about, their age, and what you have noticed and when. Things that have not happened help too,
-            such as “has never had a seizure”.
+            {t('fieldHint')}
           </p>
           <textarea
             ref={textareaRef}
@@ -186,19 +188,19 @@ export function IntakeStep() {
             aria-describedby={describedBy}
             aria-invalid={problem?.kind === 'empty' || isOver || undefined}
             data-testid="notes-input"
-            placeholder="For example: Our daughter is 3. She started walking late and falls a lot…"
+            placeholder={t('placeholder')}
             spellCheck
             rows={7}
           />
           <div className={styles.fieldFoot}>
             <p className={styles.privacy}>
               <Icon name="info" size={14} />
-              <span>Your notes stay in this browser. They are sent only to find the features and are not stored on our server.</span>
+              <span>{t('privacy')}</span>
             </p>
             <p id={countId} className={styles.count} data-over={isOver || undefined} data-near={remaining < 500 || undefined}>
               {isOver
-                ? `${formatCount(-remaining)} characters over the ${formatCount(MAX)} limit`
-                : `${formatCount(remaining)} of ${formatCount(MAX)} characters left`}
+                ? t('countOver', { over: formatCount(-remaining), max: formatCount(MAX) })
+                : t('countLeft', { left: formatCount(remaining), max: formatCount(MAX) })}
             </p>
           </div>
         </div>
@@ -215,31 +217,31 @@ export function IntakeStep() {
             disabled={!online}
             iconEnd={busy ? undefined : <Icon name="arrowRight" size={16} />}
           >
-            {busy ? 'Reading the notes' : 'Find the features'}
+            {busy ? t('submitBusy') : t('submit')}
           </Button>
           {hasTerms && !busy && (
             <Button variant="ghost" onClick={() => goToStep('features')}>
-              Back to the {caseObject.terms.length} features found
+              {t('backToFeatures', { count: caseObject.terms.length })}
             </Button>
           )}
           <p className={styles.actionNote} aria-live="polite">
             {!online
-              ? 'You are offline. Reconnect to read the notes.'
+              ? t('noteOffline')
               : busy
-                ? 'Matching phrases to medical features. This can take up to 20 seconds.'
-                : 'Next you check each feature against the words it came from.'}
+                ? t('noteBusy')
+                : t('noteIdle')}
           </p>
         </div>
       </form>
 
       <div className={styles.divider} role="presentation">
-        <span>or</span>
+        <span>{t('divider')}</span>
       </div>
 
       <DemoPicker
         hasOwnNotes={hasOwnNotes || overflow !== null}
         disabled={busy || !online}
-        disabledReason={!online ? 'You are offline. Demo patients load from the server, so reconnect to open one.' : undefined}
+        disabledReason={!online ? t('pickerOffline') : undefined}
         onPick={pickDemo}
         headingRef={pickerHeadingRef}
       />
@@ -258,11 +260,13 @@ function ProblemView({
   onAction: (action: IntakeNextAction) => void;
   busy: boolean;
 }) {
+  const t = useT(intake);
+  const tc = useT(common);
   if (problem.kind === 'empty') {
     return (
       <p className={styles.inlineProblem}>
         <Icon name="info" size={16} />
-        <span>Add a few sentences about what you have noticed first. Everyday words are fine.</span>
+        <span>{t('problemEmpty')}</span>
       </p>
     );
   }
@@ -271,19 +275,20 @@ function ProblemView({
       <p className={styles.inlineProblem} data-tone="danger">
         <Icon name="alert" size={16} />
         <span>
-          Text is too long. The limit is {formatCount(MAX)} characters
-          {overBy > 0 ? `; shorten it by ${formatCount(overBy)}` : ''}. Your text is kept.
+          {overBy > 0
+            ? t('problemTooLongBy', { max: formatCount(MAX), over: formatCount(overBy) })
+            : t('problemTooLong', { max: formatCount(MAX) })}
         </span>
       </p>
     );
   }
 
-  const copy = intakeErrorCopy(problem.error);
+  const copy = intakeErrorCopy(problem.error, t, tc);
   const labels: Record<IntakeNextAction, string> = {
-    retry: 'Try again',
-    demo: 'Choose a demo patient',
-    manual: 'Add features by hand',
-    shorten: 'Edit the notes',
+    retry: tc('tryAgain'),
+    demo: t('actionDemo'),
+    manual: t('actionManual'),
+    shorten: t('actionShorten'),
   };
   return (
     <div className={styles.apiProblem} role="group" aria-label={copy.title}>
@@ -308,7 +313,7 @@ function ProblemView({
           ))}
         </div>
         <p className={styles.apiCode}>
-          {problem.error.status === null ? 'No HTTP response' : `HTTP ${problem.error.status}`} · {problem.error.code}
+          {problem.error.status === null ? t('noHttpResponse') : t('httpStatus', { status: problem.error.status })} · {problem.error.code}
         </p>
       </div>
     </div>
