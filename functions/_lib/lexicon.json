@@ -1,1 +1,320 @@
-[]
+[
+  {
+    "phrase": "my muscles seem weak",
+    "hpoId": "HP:0001324",
+    "label": "Muscle weakness",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my baby feels floppy when I pick her up",
+    "hpoId": "HP:0001252",
+    "label": "Hypotonia",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "he seems unusually floppy",
+    "hpoId": "HP:0001252",
+    "label": "Hypotonia",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my baby has very little muscle tone",
+    "hpoId": "HP:0001252",
+    "label": "Hypotonia",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "keeps falling",
+    "hpoId": "HP:0002359",
+    "label": "Frequent falls",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "he keeps falling when he walks",
+    "hpoId": "HP:0002359",
+    "label": "Frequent falls",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "I fall over a lot when I try to walk",
+    "hpoId": "HP:0002359",
+    "label": "Frequent falls",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my son walks on his toes",
+    "hpoId": "HP:0030051",
+    "label": "Tip-toe gait",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "walks on his toes",
+    "hpoId": "HP:0030051",
+    "label": "Tip-toe gait",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "she walks on her tiptoes all the time",
+    "hpoId": "HP:0030051",
+    "label": "Tip-toe gait",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my child was late learning to walk",
+    "hpoId": "HP:0001270",
+    "label": "Motor delay",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "he could not crawl when other babies did",
+    "hpoId": "HP:0001270",
+    "label": "Motor delay",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "she lost words she used to say",
+    "hpoId": "HP:0002376",
+    "label": "Developmental regression",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my child stopped doing things he once could do",
+    "hpoId": "HP:0002376",
+    "label": "Developmental regression",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "he has gone backwards in skills",
+    "hpoId": "HP:0002376",
+    "label": "Developmental regression",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "her first words came very late",
+    "hpoId": "HP:0000750",
+    "label": "Delayed speech and language development",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my child is slow to learn to talk",
+    "hpoId": "HP:0000750",
+    "label": "Delayed speech and language development",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "the whites of the eyes look blue",
+    "hpoId": "HP:0000592",
+    "label": "Blue sclerae",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "his eyes have a blue tint where they should be white",
+    "hpoId": "HP:0000592",
+    "label": "Blue sclerae",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "the whites of her eyes are bluish",
+    "hpoId": "HP:0000592",
+    "label": "Blue sclerae",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "her upper eyelids droop",
+    "hpoId": "HP:0000508",
+    "label": "Ptosis",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "his eyelids hang down over his eyes",
+    "hpoId": "HP:0000508",
+    "label": "Ptosis",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "her head is smaller than other babies heads",
+    "hpoId": "HP:0000252",
+    "label": "Microcephaly",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "his head size seems unusually small",
+    "hpoId": "HP:0000252",
+    "label": "Microcephaly",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my child does not sweat when everyone else does",
+    "hpoId": "HP:0000970",
+    "label": "Anhidrosis",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "I get burning pain in my hands and feet",
+    "hpoId": "HP:0031006",
+    "label": "Acroparesthesia",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my fingers and toes often tingle and burn",
+    "hpoId": "HP:0031006",
+    "label": "Acroparesthesia",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my hands and feet feel like pins and needles",
+    "hpoId": "HP:0031006",
+    "label": "Acroparesthesia",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "I have broken bones over and over",
+    "hpoId": "HP:0002757",
+    "label": "Recurrent fractures",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my child gets fractures after small bumps",
+    "hpoId": "HP:0002757",
+    "label": "Recurrent fractures",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my child is much shorter than other children",
+    "hpoId": "HP:0004322",
+    "label": "Short stature",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "I have always been unusually short",
+    "hpoId": "HP:0004322",
+    "label": "Short stature",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "she is small for her age in height",
+    "hpoId": "HP:0004322",
+    "label": "Short stature",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "she has a sideways curve in her spine",
+    "hpoId": "HP:0002650",
+    "label": "Scoliosis",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "the doctor says his back curves to the side",
+    "hpoId": "HP:0002650",
+    "label": "Scoliosis",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "his spine bends sideways",
+    "hpoId": "HP:0002650",
+    "label": "Scoliosis",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "I get short of breath easily",
+    "hpoId": "HP:0002094",
+    "label": "Dyspnea",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "it is hard to catch my breath",
+    "hpoId": "HP:0002094",
+    "label": "Dyspnea",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my child sometimes stops breathing while asleep",
+    "hpoId": "HP:0010535",
+    "label": "Sleep apnea",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "he has pauses in breathing at night",
+    "hpoId": "HP:0010535",
+    "label": "Sleep apnea",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "her breathing stops for short moments during sleep",
+    "hpoId": "HP:0010535",
+    "label": "Sleep apnea",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my stomach often hurts",
+    "hpoId": "HP:0002027",
+    "label": "Abdominal pain",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "I get strong stomach pain",
+    "hpoId": "HP:0002027",
+    "label": "Abdominal pain",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "I have recurring belly cramps",
+    "hpoId": "HP:0002027",
+    "label": "Abdominal pain",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "I have frequent loose stools",
+    "hpoId": "HP:0002014",
+    "label": "Diarrhea",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "I keep getting diarrhea",
+    "hpoId": "HP:0002014",
+    "label": "Diarrhea",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my bowel movements are runny many times a day",
+    "hpoId": "HP:0002014",
+    "label": "Diarrhea",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "his skin has turned yellow",
+    "hpoId": "HP:0000952",
+    "label": "Jaundice",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "she sometimes has seizures",
+    "hpoId": "HP:0001250",
+    "label": "Seizure",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "he has episodes where he stiffens and jerks",
+    "hpoId": "HP:0001250",
+    "label": "Seizure",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "she repeatedly bangs on the table",
+    "hpoId": "HP:0000733",
+    "label": "Motor stereotypy",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "he repeats the same movements again and again",
+    "hpoId": "HP:0000733",
+    "label": "Motor stereotypy",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  },
+  {
+    "phrase": "my child rocks or twists her hands repeatedly",
+    "hpoId": "HP:0000733",
+    "label": "Motor stereotypy",
+    "source": "Peter, checked on hpo.jax.org 2026-10-24"
+  }
+]
