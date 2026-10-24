@@ -54,7 +54,11 @@
 /* Short laptop screens (about 1000×600): keep the first content above the fold. */
 @media (max-height: 700px) and (min-width: 901px) {
   .main {
-    padding-top: var(--s-6);
+    padding-top: var(--s-5);
+  }
+
+  .view {
+    gap: var(--s-5);
   }
 }
 

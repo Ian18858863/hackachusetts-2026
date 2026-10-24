@@ -6,9 +6,9 @@
  * Type: Noto Serif (and Noto Serif SC/JP/KR per language) at weight 500 for
  * every heading and number; Inter 400/600 for everything else.
  *
- * Contrast on --bg #0a0a09 (WCAG 2.2, computed): --ink #eeebe4 16.9:1,
- * --ink-2 #bcb8af 10.0:1, --ink-3 #8f8b83 5.9:1, --accent #a9bcf5 10.6:1,
- * --accent-ink #0b1430 on --accent 10.3:1, --ink-3 on --surface #161614 5.5:1.
+ * Contrast on --bg #0a0a09 (WCAG 2.2, computed): --ink #eeebe4 16.6:1,
+ * --ink-2 #bcb8af 10.0:1, --ink-3 #8f8b83 5.8:1, --accent #a9bcf5 10.6:1,
+ * --accent-ink #0b1430 on --accent 9.7:1, --ink-3 on --surface #161614 5.3:1.
  *
  * Names match the app's token names (--ink, --hair, --surface ...) so shared
  * components such as ui/Dropdown render correctly on this sheet.
