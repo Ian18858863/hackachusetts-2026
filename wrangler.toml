@@ -4,3 +4,10 @@
 name = "hackachusetts-2026"
 pages_build_output_dir = "dist"
 compatibility_date = "2026-07-29"
+
+# Workers AI binding used by functions/_lib/llm.ts (POST /api/extract).
+# No API key: billed to the Cloudflare account. `wrangler pages dev` calls it
+# remotely on the logged-in account, which needs a workers.dev subdomain
+# registered on that account.
+[ai]
+binding = "AI"
