@@ -49,7 +49,7 @@ export const PHENOPACKET_STORE_ATTRIBUTION = 'phenopacket-store, BSD-3-Clause.';
 
 // ---- Problem (health-visions.md, "The problem in numbers") --------------------
 // The numbers and their captions are translated in i18n/messages/landing.ts
-// (stat1Value ... stat3Label, surveyNote); source titles and links stay here, in English.
+// (stat1Value ... stat3Label); source titles and links stay here, in English.
 export interface Cite {
   source: string;
   href: string;

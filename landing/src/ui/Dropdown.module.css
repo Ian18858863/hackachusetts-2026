@@ -12,7 +12,7 @@
   min-height: var(--tap-min, 44px);
   max-width: 10rem;
   padding: 0 14px 0 16px;
-  border: 1px solid var(--hair);
+  border: 1px solid var(--color-border-strong, var(--mark-none));
   border-radius: var(--r-pill);
   background: transparent;
   color: var(--ink-2);
