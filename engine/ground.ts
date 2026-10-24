@@ -12,7 +12,7 @@
 // - The returned label is always the HPO primary name.
 // - One term per HPO id (first kept); output in order of `start`.
 
-import { InvalidInput } from "./errors";
+import { InvalidInput, UpstreamError, UpstreamTimeout } from "./errors";
 import { HPO_VERSION, lookupTerm, normalizeHpoId, searchHpo, searchVariants, termMatchesLabel } from "./hpo";
 import type {
   Confidence,
@@ -33,10 +33,35 @@ const LOWER_CONFIDENCE: Readonly<Record<Confidence, Confidence>> = {
   low: "low",
 };
 
+/**
+ * A proposal that could not be verified because at least one of its HPO
+ * lookups failed and no lookup confirmed a term. Dropped with a warning that
+ * says "could not be verified", never "no matching HPO term confirmed".
+ * `answered` / `tried` count the query forms that got an answer.
+ */
+interface LookupFailed {
+  failed: unknown;
+  answered: number;
+  tried: number;
+}
+
+/** true for failures that mean the HPO service itself is not answering (not a rejected query). */
+function isProviderFailure(err: unknown): boolean {
+  if (err instanceof UpstreamTimeout) return true;
+  return err instanceof UpstreamError && (err.status === null || err.status === 429 || err.status >= 500);
+}
+
 interface Resolved {
   term: HpoTerm;
   grounding: Grounding;
   note?: string;
+}
+
+/** Plain-English reason for a failed lookup, without stack details. */
+function lookupError(err: unknown): string {
+  if (err instanceof UpstreamTimeout) return "timed out";
+  if (err instanceof UpstreamError) return err.status === null ? "no usable answer" : `HTTP ${err.status}`;
+  return "unexpected error";
 }
 
 /** Short, single-line echo of untrusted text for warnings. */
@@ -85,8 +110,11 @@ function memo<T>(fn: (key: string) => Promise<T>): (key: string) => Promise<T> {
 /**
  * Ground LLM term proposals against the HPO API.
  * Throws InvalidInput for a non-string or over-long text or a non-array
- * proposals list; UpstreamTimeout / UpstreamError when the HPO API fails.
- * Individual bad proposals are dropped with a warning, never thrown.
+ * proposals list. Each proposal is looked up on its own: a proposal whose HPO
+ * lookups fail (e.g. HTTP 400 for one odd query) is dropped with a "could not
+ * be verified" warning and the others are still grounded. It throws
+ * UpstreamTimeout / UpstreamError only when the HPO service gave no usable
+ * answer at all to this call (provider down; see the end of the function).
  */
 export async function groundTerms(
   text: string,
@@ -101,32 +129,68 @@ export async function groundTerms(
   const lookup = memo((id) => lookupTerm(id, deps));
   const search = memo((q) => searchHpo(q, SEARCH_LIMIT, deps));
 
-  async function byLabel(label: string): Promise<HpoTerm | null> {
+  // Whether the HPO service gave any usable answer during this call.
+  let anySuccess = false;
+
+  /**
+   * Label search over the query variants. A variant whose request fails is
+   * skipped and the next one is tried, so one bad query never hides a match.
+   * If no variant finds a term, `failed` is the first failure (if any variant
+   * failed at all), so an incomplete search is never reported as "no match".
+   */
+  async function byLabel(label: string): Promise<{ term: HpoTerm | null; failed: unknown; answered: number; tried: number }> {
+    let failed: unknown = null;
+    let answered = 0;
+    let tried = 0;
     for (const q of searchVariants(label)) {
-      const hit = (await search(q)).find((t) => termMatchesLabel(t, label));
-      if (hit) return hit;
+      tried++;
+      let rows: HpoTerm[];
+      try {
+        rows = await search(q);
+      } catch (err) {
+        failed ??= err;
+        continue;
+      }
+      answered++;
+      anySuccess = true;
+      const hit = rows.find((t) => termMatchesLabel(t, label));
+      if (hit) return { term: hit, failed: null, answered, tried };
     }
-    return null;
+    return { term: null, failed, answered, tried };
   }
 
-  async function resolve(p: TermProposal): Promise<Resolved | null> {
+  async function resolve(p: TermProposal): Promise<Resolved | LookupFailed | null> {
     const label = typeof p.label === "string" ? p.label : "";
     const suppliedRaw = p.hpoId;
     const supplied = normalizeHpoId(suppliedRaw);
     let note: string | undefined;
+    let idError: unknown = null; // set when the suggested id could not be checked
 
     if (supplied) {
-      const t = await lookup(supplied);
+      let t: HpoTerm | null = null;
+      let lookupFailed = false;
+      try {
+        t = await lookup(supplied);
+        anySuccess = true;
+      } catch (err) {
+        lookupFailed = true; // fall back to the label; the id is never trusted unverified
+        idError = err;
+      }
       if (t && termMatchesLabel(t, label)) return { term: t, grounding: "exact-id" };
-      note = t
-        ? `suggested id ${supplied} is "${t.label}", which does not match "${show(label)}"`
-        : `suggested id ${supplied} does not exist in HPO`;
+      note = lookupFailed
+        ? `suggested id ${supplied} could not be checked`
+        : t
+          ? `suggested id ${supplied} is "${t.label}", which does not match "${show(label)}"`
+          : `suggested id ${supplied} does not exist in HPO`;
     } else if (suppliedRaw !== undefined && suppliedRaw !== null && suppliedRaw !== "") {
       note = "suggested id is not a valid HPO id";
     }
 
-    if (label.trim() === "") return null;
-    const t = await byLabel(label);
+    if (label.trim() === "") return idError ? { failed: idError, answered: 0, tried: 1 } : null;
+    const r = await byLabel(label);
+    const t = r.term;
+    // No term confirmed and some lookup (id check or a query form) failed: not verified, not "not found".
+    if (!t && (r.failed || idError)) return { failed: r.failed ?? idError, answered: r.answered, tried: r.tried + (idError ? 1 : 0) };
     if (!t) return null;
     const resolved: Resolved = { term: t, grounding: "label-search" };
     if (note) resolved.note = note;
@@ -143,6 +207,7 @@ export async function groundTerms(
   const terms: ExtractedTerm[] = [];
   const taken = new Set<number>();
   const keptIds = new Set<string>();
+  const failures: unknown[] = [];
 
   proposals.forEach((p, i) => {
     if (!valid[i]) {
@@ -153,6 +218,12 @@ export async function groundTerms(
     const r = resolutions[i] ?? null;
     if (!r) {
       warnings.push(`Dropped '${show(phrase)}': no matching HPO term confirmed`);
+      return;
+    }
+    if ("failed" in r) {
+      failures.push(r.failed);
+      const partial = r.answered > 0 ? `; ${r.answered} of ${r.tried} lookups answered with no match` : "";
+      warnings.push(`Dropped '${show(phrase)}': the HPO lookup failed (${lookupError(r.failed)}${partial}), so the term could not be verified`);
       return;
     }
     if (keptIds.has(r.term.id)) {
@@ -182,5 +253,15 @@ export async function groundTerms(
   });
 
   terms.sort((a, b) => a.start - b.start || a.end - b.end);
+  // Per-proposal failures never abort the call: each failed proposal is dropped
+  // with a warning (contract 7.2 step 5), and zero grounded terms is the normal
+  // empty result (7.2 step 6 -> 422 in the function).
+  // One exception (DECISION FOR IAN, contract 4 vs 7.2): if the HPO service gave
+  // no usable answer at all during this call and the failures were service
+  // failures (timeout, network, 429 or 5xx), the provider is down, so the
+  // UpstreamTimeout / UpstreamError is thrown (-> 504 / 502, retryable) instead of
+  // an empty result that would read as "no terms found". A rejected query (4xx
+  // such as the HTTP 400 for typographic punctuation) never triggers this.
+  if (terms.length === 0 && !anySuccess && failures.length > 0 && failures.every(isProviderFailure)) throw failures[0];
   return { terms, warnings, dataVersions: { hpo: HPO_VERSION, fetchedAt: now().toISOString() } };
 }

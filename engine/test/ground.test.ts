@@ -169,7 +169,9 @@ describe("groundTerms: inputs, upstream and runtime", () => {
     await expect(groundTerms(TEXT, [p("never had seizures", "Seizure")], mock.deps)).rejects.toBeInstanceOf(
       UpstreamError,
     );
-    expect(mock.calls).toHaveLength(2);
+    // R6.3: after the first query form fails, the next form ("seizure") is tried too:
+    // 2 query forms x (1 try + 1 retry) = 4 calls. Still an UpstreamError overall.
+    expect(mock.calls).toHaveLength(4);
   });
 
   it("calls fetch without a `this` binding (Workers Illegal invocation guard)", async () => {

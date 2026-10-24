@@ -121,7 +121,8 @@ function singularWord(w: string): string {
 
 /** Lower case, NFKC, hyphens/underscores/slashes as spaces, other punctuation dropped, single spaces. */
 function plainWords(label: string): string[] {
-  return label
+  // Unicode dashes and quotes first, so "long–slender" splits like "long-slender".
+  return normalizeQueryPunctuation(label)
     .normalize("NFKC")
     .toLowerCase()
     .replace(/[-_/]/g, " ")
@@ -131,13 +132,27 @@ function plainWords(label: string): string[] {
 }
 
 /**
+ * Typographic punctuation the JAX search rejects with HTTP 400 (checked
+ * 2026-10-24 17:52 ET: "Gowers’ sign", "long–slender fingers" and "“seizure”"
+ * all gave 400; the ASCII forms gave 200). Only these are rewritten; letters,
+ * digits and everything else are left alone. Used for search queries only:
+ * the patient text, quotes and offsets are never changed.
+ */
+export function normalizeQueryPunctuation(s: string): string {
+  return s
+    .replace(/[\u2018\u2019\u201A\u201B\uFF07]/g, "'") // curly / low / reversed single quotes, fullwidth apostrophe
+    .replace(/[\u201C\u201D\u201E\u201F\uFF02]/g, '"') // curly / low / reversed double quotes, fullwidth quote
+    .replace(/[\u2010\u2011\u2012\u2013\u2014\u2015\u2212\uFE58\uFE63\uFF0D]/g, "-"); // hyphen and dash variants, minus sign
+}
+
+/**
  * Search queries to try for a proposed label, in order and deduplicated:
  * the label as given, its punctuation-free form, and its singular form.
  * The JAX search ranks "Seizures" -> HP:0001250 only 9th, "Seizure" 1st (2026-10-24).
  */
 export function searchVariants(label: string): string[] {
   const words = plainWords(label);
-  const variants = [label.trim(), words.join(" "), words.map(singularWord).join(" ")];
+  const variants = [normalizeQueryPunctuation(label).trim(), words.join(" "), words.map(singularWord).join(" ")];
   return [...new Set(variants)].filter((q) => q.length >= 2);
 }
 
