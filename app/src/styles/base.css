@@ -140,45 +140,6 @@ a:hover {
   border: 0;
 }
 
-/*
- * Step change (T35): View Transitions dissolve. The old step blurs out
- * (10px, 0.45s) while the new one comes into focus from 12px blur (0.7s).
- * The rest of the page (top bar, footer) swaps without animation. Browsers
- * without the API, and reduced motion (useHashRoute skips the transition),
- * change the step directly.
- */
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-}
-
-::view-transition-old(step-view) {
-  animation: vt-out 0.45s var(--ease-soft) both;
-}
-
-::view-transition-new(step-view) {
-  animation: vt-in 0.7s var(--ease-soft) both;
-}
-
-::view-transition-group(step-view) {
-  animation-duration: 0.7s;
-  animation-timing-function: var(--ease-soft);
-}
-
-@keyframes vt-out {
-  to {
-    opacity: 0;
-    filter: blur(10px);
-  }
-}
-
-@keyframes vt-in {
-  from {
-    opacity: 0;
-    filter: blur(12px);
-  }
-}
-
 /* Reduced motion: the page is complete and static. */
 @media (prefers-reduced-motion: reduce) {
   *,

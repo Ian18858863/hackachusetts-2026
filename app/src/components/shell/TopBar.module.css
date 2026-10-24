@@ -95,7 +95,7 @@
  * still labelled in every step's intro (StepHeader kicker and demo label).
  */
 /* The demo chip only shows when the bar has room; every step labels the demo case in its intro. */
-@media (max-width: 1399px) {
+@media (max-width: 1599px) {
   .chip {
     display: none;
   }

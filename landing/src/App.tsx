@@ -76,7 +76,6 @@ function BlurTitle({ text }: { text: string }) {
   let i = 0;
   return (
     <>
-      <span className="sr-only">{text}</span>
       <span aria-hidden="true">
         {words.map((word, w) =>
           /^\s+$/.test(word) ? (
@@ -212,7 +211,7 @@ function Hero() {
           <b>{t('kickerLead')}</b>
           {t('kickerRest')}
         </p>
-        <h1 id="hero-title" ref={titleRef}>
+        <h1 id="hero-title" ref={titleRef} aria-label={title}>
           <BlurTitle text={title} />
         </h1>
         <p className="lede">{t('heroLede')}</p>

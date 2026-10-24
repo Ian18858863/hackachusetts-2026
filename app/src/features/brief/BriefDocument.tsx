@@ -13,6 +13,7 @@ import { useLocale, useT } from '../../shared/i18n';
 import briefMessages from '../../shared/i18n/messages/brief';
 import common from '../../shared/i18n/messages/common';
 import { Icon } from '../../shared/ui';
+import { headingText, useFitHeading } from '../../components/ui/useFitHeading';
 import styles from './BriefDocument.module.css';
 import { candidateIds, formatDateTime, frequencyText, overlapWords, versionPairs } from './format';
 
@@ -31,6 +32,8 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
   const t = useT(briefMessages);
   const tc = useT(common);
   const { locale } = useLocale();
+  const title = headingText(brief.title);
+  const titleRef = useFitHeading<HTMLHeadingElement>(title, { min: 20 });
 
   return (
     <article className={styles.doc} aria-labelledby={id('title')}>
@@ -44,8 +47,8 @@ export function BriefDocument({ brief, phenopacketId, offlineMock, idPrefix }: B
           </p>
         </div>
         <div className={styles.titleRow}>
-        <h2 id={id('title')} className={styles.title}>
-          {brief.title}
+        <h2 id={id('title')} ref={titleRef} className={styles.title}>
+          {title}
         </h2>
         <dl className={styles.summary}>
           {summary.ageText && (
