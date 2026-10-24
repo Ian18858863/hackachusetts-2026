@@ -1,0 +1,114 @@
+{
+  "caseId": "HO-06",
+  "split": "heldout",
+  "origin": "T33 hand-off (Ian team research, 2026-10-24); re-verified by T38",
+  "source": {
+    "pmcid": "PMC12033654",
+    "pmid": "40219777",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12033654/",
+    "title": "Blue Sclera to Brittle Bones: A Rare Case of Osteogenesis Imperfecta With Dentinogenesis Imperfecta and Nephrocalcinosis.",
+    "journal": "Journal of investigative medicine high impact case reports",
+    "year": 2025,
+    "patient": "Single patient",
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY-NC",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© 2025 American Federation for Medical Research 2025 American Federation for Medical Research https://creativecommons.org/licenses/by-nc/4.0/ This article is distributed under the terms of the Creativ",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
+  },
+  "diagnosis": {
+    "name": "osteogenesis imperfecta type 1",
+    "mondo": "MONDO:0008146",
+    "acceptedIds": [
+      "MONDO:0008146"
+    ],
+    "genes": [
+      "COL1A1"
+    ],
+    "confirmation": {
+      "method": "genetic+clinical",
+      "summary": "COL1A1 mutation on genetic testing, with typical clinical features.",
+      "evidence": [
+        "Genetic testing revealed mutations in COL1A1, confirming the diagnosis of OI Type I"
+      ]
+    }
+  },
+  "note": {
+    "text": "Since I was a small child, I've broken bones many times, especially in my arms and legs. My bones often ache, and my legs have a curved shape. I'm shorter than most people my age, and the whites of my eyes look unusually blue. My teeth have a brownish color and chip easily. My gums are often swollen and bleed.",
+    "voice": "patient",
+    "author": "T33 hand-off (assistant-written from the article; not the patient's words)"
+  },
+  "phenotypes": [
+    {
+      "hpoId": "HP:0002757",
+      "label": "Recurrent fractures",
+      "origin": "T33",
+      "t33Label": "Recurrent fractures",
+      "evidence": "blue sclera, multiple fractures, dental abnormalities, bowing of long bones, a short stature",
+      "inNote": true,
+      "notePhrase": "I've broken bones many times"
+    },
+    {
+      "hpoId": "HP:0002653",
+      "label": "Bone pain",
+      "origin": "T33",
+      "t33Label": "Bone pain",
+      "evidence": "He reported delayed motor milestones and recurrent bone pain",
+      "inNote": true,
+      "notePhrase": "My bones often ache"
+    },
+    {
+      "hpoId": "HP:0006487",
+      "label": "Bowing of the long bones",
+      "origin": "T33",
+      "t33Label": "Bowing of the long bones",
+      "evidence": "blue sclera, multiple fractures, dental abnormalities, bowing of long bones, a short stature",
+      "inNote": true,
+      "notePhrase": "my legs have a curved shape"
+    },
+    {
+      "hpoId": "HP:0004322",
+      "label": "Short stature",
+      "origin": "T33",
+      "t33Label": "Short stature",
+      "evidence": "blue sclera, multiple fractures, dental abnormalities, bowing of long bones, a short stature",
+      "inNote": true,
+      "notePhrase": "I'm shorter than most people my age"
+    },
+    {
+      "hpoId": "HP:0000592",
+      "label": "Blue sclerae",
+      "origin": "T33",
+      "t33Label": "Blue sclerae",
+      "evidence": "blue sclera, multiple fractures, dental abnormalities, bowing of long bones, a short stature",
+      "inNote": true,
+      "notePhrase": "the whites of my eyes look unusually blue"
+    },
+    {
+      "hpoId": "HP:0000703",
+      "label": "Dentinogenesis imperfecta",
+      "origin": "T33",
+      "t33Label": "Dentinogenesis imperfecta",
+      "evidence": "A Rare Case of Osteogenesis Imperfecta With Dentinogenesis Imperfecta and Nephrocalcinosis",
+      "inNote": true,
+      "notePhrase": "My teeth have a brownish color and chip easily"
+    },
+    {
+      "hpoId": "HP:0000225",
+      "label": "Gingival bleeding",
+      "origin": "T33",
+      "t33Label": "Gingival bleeding",
+      "evidence": "a chief complaint of swollen gums that were easy to bleed",
+      "inNote": true,
+      "notePhrase": "My gums are often swollen and bleed"
+    }
+  ],
+  "uncertainty": [
+    "Nephrocalcinosis is reported in the article but is not in the note or the T33 list."
+  ]
+}

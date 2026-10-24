@@ -1,0 +1,114 @@
+{
+  "caseId": "DEV-06",
+  "split": "dev",
+  "origin": "T38 research (Peter's Kiro, 2026-10-24)",
+  "source": {
+    "pmcid": "PMC6498611",
+    "pmid": "31046699",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6498611/",
+    "title": "Case report: a rare case of Hunter syndrome (type II mucopolysaccharidosis) in a girl.",
+    "journal": "BMC medical genetics",
+    "year": 2019,
+    "patient": "Single patient (girl, 4 years old)",
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© The Author(s). 2019 https://creativecommons.org/licenses/by/4.0/ Open Access This article is distributed under the terms of the Creative Commons Attribution 4.0 International License ( http://creati",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
+  },
+  "diagnosis": {
+    "name": "mucopolysaccharidosis type 2",
+    "mondo": "MONDO:0010674",
+    "acceptedIds": [
+      "MONDO:0010674",
+      "MONDO:0016315",
+      "MONDO:0016316"
+    ],
+    "genes": [
+      "IDS"
+    ],
+    "confirmation": {
+      "method": "enzyme+genetic",
+      "summary": "Near-absent iduronate sulfatase activity with normal alpha-L-iduronidase, and a hemizygous IDS deletion.",
+      "evidence": [
+        "a sharp decrease in the activity of iduronate sulfatase in the blood",
+        "Molecular genetic analysis revealed a hemizygous deletion in the IDS gene"
+      ]
+    }
+  },
+  "note": {
+    "text": "Our daughter sat at nine months and walked at fifteen months, a little later than other children. From about eighteen months she stopped growing as she should, and her joints became stiff. Now, at four, she often complains that her legs hurt. A doctor told us her facial features look coarse. Urine tests showed she loses large amounts of certain sugar chains.",
+    "voice": "parent",
+    "author": "Peter's Kiro, written from the article's findings; not the parent's words"
+  },
+  "phenotypes": [
+    {
+      "hpoId": "HP:0001270",
+      "label": "Motor delay",
+      "origin": "T38",
+      "evidence": "Early motor development proceeded with a slight delay",
+      "inNote": true,
+      "notePhrase": "a little later than other children"
+    },
+    {
+      "hpoId": "HP:0001510",
+      "label": "Growth delay",
+      "origin": "T38",
+      "evidence": "entered the hospital with growth retardation, pain in the lower limbs, and joint stiffness, noted from the age of 18 months",
+      "inNote": true,
+      "notePhrase": "she stopped growing as she should"
+    },
+    {
+      "hpoId": "HP:0001387",
+      "label": "Joint stiffness",
+      "origin": "T38",
+      "evidence": "entered the hospital with growth retardation, pain in the lower limbs, and joint stiffness, noted from the age of 18 months",
+      "inNote": true,
+      "notePhrase": "her joints became stiff"
+    },
+    {
+      "hpoId": "HP:0012514",
+      "label": "Lower limb pain",
+      "origin": "T38",
+      "evidence": "entered the hospital with growth retardation, pain in the lower limbs, and joint stiffness, noted from the age of 18 months",
+      "inNote": true,
+      "notePhrase": "her legs hurt"
+    },
+    {
+      "hpoId": "HP:0000280",
+      "label": "Coarse facial features",
+      "origin": "T38",
+      "evidence": "due to the presence of a Hurler-like facial phenotype",
+      "inNote": true,
+      "notePhrase": "her facial features look coarse",
+      "comment": "'Hurler-like facial phenotype' implies coarse facies; this is an interpretation."
+    },
+    {
+      "hpoId": "HP:0002159",
+      "label": "Heparan sulfate excretion in urine",
+      "origin": "T38",
+      "evidence": "revealed an increased renal excretion of heparan and dermatan sulfates",
+      "inNote": true,
+      "notePhrase": "loses large amounts of certain sugar chains",
+      "comment": "Lay wording is too general to tell heparan from dermatan sulfate."
+    },
+    {
+      "hpoId": "HP:0008301",
+      "label": "Dermatan sulfate excretion in urine",
+      "origin": "T38",
+      "evidence": "revealed an increased renal excretion of heparan and dermatan sulfates",
+      "inNote": true,
+      "notePhrase": "loses large amounts of certain sugar chains",
+      "comment": "As above."
+    }
+  ],
+  "uncertainty": [
+    "The girl also has Turner syndrome from a partial Xq deletion (46,X,del(X)(q22.1)); a ranker could reasonably return it. Only MPS II is the gold answer here.",
+    "Coarse facial features is interpreted from 'Hurler-like facial phenotype'."
+  ]
+}

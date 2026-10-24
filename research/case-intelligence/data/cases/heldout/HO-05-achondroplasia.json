@@ -1,0 +1,124 @@
+{
+  "caseId": "HO-05",
+  "split": "heldout",
+  "origin": "T33 hand-off (Ian team research, 2026-10-24); re-verified by T38",
+  "source": {
+    "pmcid": "PMC13381835",
+    "pmid": "42519733",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13381835/",
+    "title": "Early initiation of therapy with vosoritide: case report. Description of the first Italian patient affected by achondroplasia treated with vosoritide before 2 years of age.",
+    "journal": "Frontiers in pediatrics",
+    "year": 2026,
+    "patient": "Single patient (girl, followed from birth)",
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© 2026 Kalapurackal and Wanker. 2026 Kalapurackal and Wanker https://creativecommons.org/licenses/by/4.0/ This is an open-access article distributed under the terms of the Creative Commons Attribution",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
+  },
+  "diagnosis": {
+    "name": "achondroplasia",
+    "mondo": "MONDO:0007037",
+    "acceptedIds": [
+      "MONDO:0007037"
+    ],
+    "genes": [
+      "FGFR3"
+    ],
+    "confirmation": {
+      "method": "genetic+clinical",
+      "summary": "De novo heterozygous FGFR3 c.1138G>A on amniocentesis, confirmed at birth clinically and by newborn genetic testing.",
+      "evidence": [
+        "documented a de novo heterozygous mutation of the FGFR3 gene (c.1138G>A)",
+        "The diagnosis was confirmed at birth due to typical clinical manifestations (rhizomelia, relative macrocephaly, midface hypoplasia) and genetic testing on the newborn"
+      ]
+    }
+  },
+  "note": {
+    "text": "Before my daughter was born, scans showed that the upper parts of her legs were much shorter than expected. After she was born, her arms and legs looked short compared with the rest of her body, and the shape of her face looked different. She had trouble breathing during her first two days and needed help. Doctors later found a narrow opening at the base of her skull and a few brief pauses in breathing while she slept. She was small for her age and her muscles seemed a little floppy.",
+    "voice": "parent",
+    "author": "T33 hand-off (assistant-written from the article; not the parent's words)"
+  },
+  "phenotypes": [
+    {
+      "hpoId": "HP:0008905",
+      "label": "Rhizomelia",
+      "origin": "T33",
+      "t33Label": "Rhizomelia",
+      "evidence": "typical clinical manifestations (rhizomelia, relative macrocephaly, midface hypoplasia)",
+      "inNote": true,
+      "notePhrase": "her arms and legs looked short compared with the rest of her body"
+    },
+    {
+      "hpoId": "HP:0011800",
+      "label": "Midface retrusion",
+      "origin": "T33",
+      "t33Label": "Midface retrusion",
+      "evidence": "typical clinical manifestations (rhizomelia, relative macrocephaly, midface hypoplasia)",
+      "inNote": true,
+      "notePhrase": "the shape of her face looked different",
+      "comment": "The note is vague; 'face looked different' does not by itself specify the midface."
+    },
+    {
+      "hpoId": "HP:0004482",
+      "label": "Relative macrocephaly",
+      "origin": "T38",
+      "evidence": "typical clinical manifestations (rhizomelia, relative macrocephaly, midface hypoplasia)",
+      "inNote": false,
+      "comment": "Not in the note."
+    },
+    {
+      "hpoId": "HP:0002098",
+      "label": "Respiratory distress",
+      "origin": "T33",
+      "t33Label": "Respiratory distress",
+      "evidence": "CPAP was administered for the first two days of life due to initial respiratory distress",
+      "inNote": true,
+      "notePhrase": "trouble breathing during her first two days"
+    },
+    {
+      "hpoId": "HP:0002677",
+      "label": "Small foramen magnum",
+      "origin": "T33",
+      "t33Label": "Small foramen magnum",
+      "evidence": "MRI: foramen magnum stenosis with no signs of medullary compression",
+      "inNote": true,
+      "notePhrase": "a narrow opening at the base of her skull"
+    },
+    {
+      "hpoId": "HP:0010535",
+      "label": "Sleep apnea",
+      "origin": "T33",
+      "t33Label": "Sleep apnea",
+      "evidence": "Polysomnography: rare brief central apneas, with no severe desaturations",
+      "inNote": true,
+      "notePhrase": "brief pauses in breathing while she slept"
+    },
+    {
+      "hpoId": "HP:0004322",
+      "label": "Short stature",
+      "origin": "T33",
+      "t33Label": "Short stature",
+      "evidence": "length = 42 cm (−2.19 SDS)",
+      "inNote": true,
+      "notePhrase": "She was small for her age"
+    },
+    {
+      "hpoId": "HP:0001252",
+      "label": "Hypotonia",
+      "origin": "T33",
+      "t33Label": "Hypotonia",
+      "evidence": "Due to slight hypotonia and as per international consensus",
+      "inNote": true,
+      "notePhrase": "her muscles seemed a little floppy"
+    }
+  ],
+  "uncertainty": [
+    "The prenatal finding is a short femur (5th percentile); the note's 'much shorter than expected' slightly overstates it."
+  ]
+}

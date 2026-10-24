@@ -1,0 +1,130 @@
+{
+  "caseId": "HO-10",
+  "split": "heldout",
+  "origin": "T33 hand-off (Ian team research, 2026-10-24); re-verified by T38",
+  "source": {
+    "pmcid": "PMC11698633",
+    "pmid": "39324476",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11698633/",
+    "title": "Case Report of Friedreich's Ataxia and ALG1 -Related Biochemical Abnormalities in a Patient With Progressive Spastic Paraplegia.",
+    "journal": "American journal of medical genetics. Part A",
+    "year": 2025,
+    "patient": "Single patient (15-year-old boy)",
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "author-manuscript",
+      "license": null,
+      "inPmcOpenSet": true,
+      "manuscriptId": "NIHMS2024171",
+      "statement": "This file is available for text mining. It may also be used consistent with the principles of fair use under the copyright law.",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    },
+    "accessException": {
+      "reason": "NIH author manuscript (NIHMS2024171). PMC states the file is available for text mining and may be used under fair use; it is not under a Creative Commons licence.",
+      "decision": "Kept in the held-out split: the held-out set is defined as the 10 T33 cases and has already been scored once, so replacing the case would rewrite the evaluation history. Flagged as an exception to the open-access requirement.",
+      "use": "Only short quotes (at most 30 words) for verification and a paraphrased note; article text is not stored in the repository or redistributed.",
+      "eligibleForDevelopment": false,
+      "humanConfirmation": "pending (Peter)"
+    }
+  },
+  "diagnosis": {
+    "name": "Friedreich ataxia",
+    "mondo": "MONDO:0100339",
+    "acceptedIds": [
+      "MONDO:0100339",
+      "MONDO:0100340"
+    ],
+    "genes": [
+      "FXN"
+    ],
+    "confirmation": {
+      "method": "genetic",
+      "summary": "Biallelic pathogenic GAA repeat expansions in FXN on research genome sequencing, confirmed by CLIA-certified testing.",
+      "evidence": [
+        "research genome sequencing identified biallelic pathogenic GAA repeat expansions in FXN, later confirmed through CLIA-certified testing"
+      ]
+    }
+  },
+  "note": {
+    "text": "My son started walking on his toes when he was around two. By six he needed braces, and over the following years his legs became increasingly stiff. He often loses his balance, and his walking looks shaky and awkward. Doctors also found a problem with the thickness of his heart muscle and a sideways curve in his back. His knees and hips have become hard to straighten, and he has sometimes struggled with bladder control.",
+    "voice": "parent",
+    "author": "T33 hand-off (assistant-written from the article; not the parent's words)"
+  },
+  "phenotypes": [
+    {
+      "hpoId": "HP:0030051",
+      "label": "Tip-toe gait",
+      "origin": "T38",
+      "evidence": "Toe walking was pronounced at age two years, and he started wearing braces at age 6 years",
+      "inNote": true,
+      "notePhrase": "walking on his toes"
+    },
+    {
+      "hpoId": "HP:0002061",
+      "label": "Lower limb spasticity",
+      "origin": "T33",
+      "t33Label": "Lower limb spasticity",
+      "evidence": "By age 13 years, he had significant lower extremity spasticity",
+      "inNote": true,
+      "notePhrase": "his legs became increasingly stiff"
+    },
+    {
+      "hpoId": "HP:0001288",
+      "label": "Gait disturbance",
+      "origin": "T33",
+      "t33Label": "Gait disturbance",
+      "evidence": "his spasticity worsened following a growth spurt, and his gait appeared ataxic",
+      "inNote": true,
+      "notePhrase": "his walking looks shaky and awkward"
+    },
+    {
+      "hpoId": "HP:0001251",
+      "label": "Ataxia",
+      "origin": "T33",
+      "t33Label": "Ataxia",
+      "evidence": "his spasticity worsened following a growth spurt, and his gait appeared ataxic",
+      "inNote": true,
+      "notePhrase": "He often loses his balance"
+    },
+    {
+      "hpoId": "HP:0001639",
+      "label": "Hypertrophic cardiomyopathy",
+      "origin": "T33",
+      "t33Label": "Hypertrophic cardiomyopathy",
+      "evidence": "He received a diagnosis of ADHD and hypertrophic cardiomyopathy at age 7 years",
+      "inNote": true,
+      "notePhrase": "a problem with the thickness of his heart muscle"
+    },
+    {
+      "hpoId": "HP:0002650",
+      "label": "Scoliosis",
+      "origin": "T33",
+      "t33Label": "Scoliosis",
+      "evidence": "MRI spine and brain at ages 8 years were normal except for scoliosis",
+      "inNote": true,
+      "notePhrase": "a sideways curve in his back"
+    },
+    {
+      "hpoId": "HP:0034392",
+      "label": "Joint contracture",
+      "origin": "T33",
+      "t33Label": "Joint contracture",
+      "evidence": "He developed knee and hip flexion contractures",
+      "inNote": true,
+      "notePhrase": "His knees and hips have become hard to straighten"
+    },
+    {
+      "hpoId": "HP:0000011",
+      "label": "Neurogenic bladder",
+      "origin": "T38",
+      "evidence": "He had symptoms of neurogenic bladder dysfunction",
+      "inNote": true,
+      "notePhrase": "struggled with bladder control"
+    }
+  ],
+  "uncertainty": [
+    "Europe PMC does not flag the article as open access; full text was retrieved from NCBI PMC efetch.",
+    "The patient also carries ALG1 variants (one likely pathogenic, one VOUS); the authors conclude FRDA explains all his features."
+  ]
+}

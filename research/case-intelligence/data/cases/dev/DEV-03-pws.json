@@ -1,0 +1,140 @@
+{
+  "caseId": "DEV-03",
+  "split": "dev",
+  "origin": "T38 research (Peter's Kiro, 2026-10-24)",
+  "source": {
+    "pmcid": "PMC10522161",
+    "pmid": "27982202",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10522161/",
+    "title": "A boy with Prader-Willi syndrome: unmasking precocious puberty during growth hormone replacement therapy.",
+    "journal": "Archives of endocrinology and metabolism",
+    "year": 2016,
+    "patient": "Single patient (boy)",
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "https://creativecommons.org/licenses/by/4.0/ This is an Open Access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution, and r",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
+  },
+  "diagnosis": {
+    "name": "Prader-Willi syndrome",
+    "mondo": "MONDO:0008300",
+    "acceptedIds": [
+      "MONDO:0008300"
+    ],
+    "genes": [],
+    "confirmation": {
+      "method": "genetic+clinical",
+      "summary": "Holm and Cassidy clinical score 9; methylation-specific PCR showed only the methylated maternal allele.",
+      "evidence": [
+        "the genetic test demonstrated only the methylated maternal allele, thus confirming the clinical diagnosis of PWS by the methylation-specific PCR"
+      ]
+    }
+  },
+  "note": {
+    "text": "At birth our son was very floppy, both testicles had not come down, and he sucked weakly and gained little weight in the first month. He kept growing poorly as a baby. Around age two he started eating all the time and put on weight quickly. By six he was shorter than nearly all boys his age and carried a lot of body fat. His hands and feet are small, his knees angle inward, and he has some mild trouble with learning.",
+    "voice": "parent",
+    "author": "Peter's Kiro, written from the article's findings; not the parent's words"
+  },
+  "phenotypes": [
+    {
+      "hpoId": "HP:0001252",
+      "label": "Hypotonia",
+      "origin": "T38",
+      "evidence": "Hypotonia and bilateral cryptorchidism were present at birth",
+      "inNote": true,
+      "notePhrase": "very floppy"
+    },
+    {
+      "hpoId": "HP:0000028",
+      "label": "Cryptorchidism",
+      "origin": "T38",
+      "evidence": "Hypotonia and bilateral cryptorchidism were present at birth",
+      "inNote": true,
+      "notePhrase": "both testicles had not come down"
+    },
+    {
+      "hpoId": "HP:0002033",
+      "label": "Poor suck",
+      "origin": "T38",
+      "evidence": "poor sucking and low weight gain during the first month of life",
+      "inNote": true,
+      "notePhrase": "he sucked weakly"
+    },
+    {
+      "hpoId": "HP:0001508",
+      "label": "Failure to thrive",
+      "origin": "T38",
+      "evidence": "Failure to thrive was diagnosed in the next months",
+      "inNote": true,
+      "notePhrase": "He kept growing poorly as a baby"
+    },
+    {
+      "hpoId": "HP:0002591",
+      "label": "Polyphagia",
+      "origin": "T38",
+      "evidence": "At the age of 2, he began to develop hyperphagia, followed by rapid weight gain",
+      "inNote": true,
+      "notePhrase": "started eating all the time"
+    },
+    {
+      "hpoId": "HP:0001513",
+      "label": "Obesity",
+      "origin": "T38",
+      "evidence": "he was referred to our pediatric endocrinology unit for evaluation of obesity and short stature",
+      "inNote": true,
+      "notePhrase": "carried a lot of body fat"
+    },
+    {
+      "hpoId": "HP:0004322",
+      "label": "Short stature",
+      "origin": "T38",
+      "evidence": "His height was below the 3rd percentile",
+      "inNote": true,
+      "notePhrase": "shorter than nearly all boys his age"
+    },
+    {
+      "hpoId": "HP:0200055",
+      "label": "Small hand",
+      "origin": "T38",
+      "evidence": "low ears implantation, relatively small hands and feet, valgus knee, and mild learning disabilities",
+      "inNote": true,
+      "notePhrase": "His hands and feet are small"
+    },
+    {
+      "hpoId": "HP:0001773",
+      "label": "Short foot",
+      "origin": "T38",
+      "evidence": "low ears implantation, relatively small hands and feet, valgus knee, and mild learning disabilities",
+      "inNote": true,
+      "notePhrase": "His hands and feet are small",
+      "comment": "HPO has no 'small foot' term; Short foot is the closest. Accepted with this caveat."
+    },
+    {
+      "hpoId": "HP:0002857",
+      "label": "Genu valgum",
+      "origin": "T38",
+      "evidence": "low ears implantation, relatively small hands and feet, valgus knee, and mild learning disabilities",
+      "inNote": true,
+      "notePhrase": "his knees angle inward"
+    },
+    {
+      "hpoId": "HP:0001328",
+      "label": "Specific learning disability",
+      "origin": "T38",
+      "evidence": "low ears implantation, relatively small hands and feet, valgus knee, and mild learning disabilities",
+      "inNote": true,
+      "notePhrase": "some mild trouble with learning",
+      "comment": "The article says 'mild learning disabilities' without specifying type; this term may be too specific."
+    }
+  ],
+  "uncertainty": [
+    "Specific learning disability may be too specific for 'mild learning disabilities'.",
+    "Later precocious puberty and behaviour changes under growth hormone are not coded."
+  ]
+}

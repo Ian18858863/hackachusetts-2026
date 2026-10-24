@@ -1,0 +1,194 @@
+{
+  "checkedAt": "2026-10-24T23:10:00.815Z",
+  "source": "https://pmc.ncbi.nlm.nih.gov/api/oai/v1/mh/?verb=GetRecord&metadataPrefix=pmc_fm",
+  "cases": [
+    {
+      "caseId": "DEV-01",
+      "pmcid": "PMC8524855",
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© The Author(s) 2021 https://creativecommons.org/licenses/by/4.0/ Open Access This article is licensed under a Creative Commons Attribution 4.0 International License, which permits use, sharing, adapt",
+      "accessException": null
+    },
+    {
+      "caseId": "DEV-02",
+      "pmcid": "PMC4878062",
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© Hwang et al. 2016 https://creativecommons.org/licenses/by/4.0/ Open Access This article is distributed under the terms of the Creative Commons Attribution 4.0 International License ( http://creative",
+      "accessException": null
+    },
+    {
+      "caseId": "DEV-03",
+      "pmcid": "PMC10522161",
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "https://creativecommons.org/licenses/by/4.0/ This is an Open Access article distributed under the terms of the Creative Commons Attribution License, which permits unrestricted use, distribution, and r",
+      "accessException": null
+    },
+    {
+      "caseId": "DEV-04",
+      "pmcid": "PMC6788382",
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "Copyright © 2019 Chen, Zhu, Hao, Feng and Zhang. 2019 Chen, Zhu, Hao, Feng and Zhang https://creativecommons.org/licenses/by/4.0/ This is an open-access article distributed under the terms of the Crea",
+      "accessException": null
+    },
+    {
+      "caseId": "DEV-05",
+      "pmcid": "PMC5615464",
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© The Author(s). 2017 https://creativecommons.org/licenses/by/4.0/ Open Access This article is distributed under the terms of the Creative Commons Attribution 4.0 International License ( http://creati",
+      "accessException": null
+    },
+    {
+      "caseId": "DEV-06",
+      "pmcid": "PMC6498611",
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© The Author(s). 2019 https://creativecommons.org/licenses/by/4.0/ Open Access This article is distributed under the terms of the Creative Commons Attribution 4.0 International License ( http://creati",
+      "accessException": null
+    },
+    {
+      "caseId": "DEV-07",
+      "pmcid": "PMC5968380",
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "Copyright © 2018 Sanjad, Aoun, Yammine, Bassyouni and Karam. 2018 Sanjad, Aoun, Yammine, Bassyouni and Karam https://creativecommons.org/licenses/by/4.0/ This is an open-access article distributed und",
+      "accessException": null
+    },
+    {
+      "caseId": "HO-01",
+      "pmcid": "PMC11349674",
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "Copyright © 2024 Gjorgjievski, Karanfilovski, Arsov, Vidimliski, Andreevska, Selim, Dejanov, Jordanova, Marinova, Paskalev and Nikolov. 2024 Gjorgjievski, Karanfilovski, Arsov, Vidimliski, Andreevska,",
+      "accessException": null
+    },
+    {
+      "caseId": "HO-02",
+      "pmcid": "PMC9626657",
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© 2022 The Authors. JIMD Reports published by John Wiley &amp; Sons Ltd on behalf of SSIEM. https://creativecommons.org/licenses/by/4.0/ This is an open access article under the terms of the http://cr",
+      "accessException": null
+    },
+    {
+      "caseId": "HO-03",
+      "pmcid": "PMC10277605",
+      "classification": "oa-cc",
+      "license": "CC BY-NC-ND",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© 2023 The Author(s) 2023 https://creativecommons.org/licenses/by-nc-nd/4.0/ This is an open access article under the CC BY-NC-ND license (http://creativecommons.org/licenses/by-nc-nd/4.0/).",
+      "accessException": null
+    },
+    {
+      "caseId": "HO-04",
+      "pmcid": "PMC12170415",
+      "classification": "free-to-read",
+      "license": null,
+      "inPmcOpenSet": false,
+      "manuscriptId": null,
+      "statement": "AJTR Copyright © 2025 2025",
+      "accessException": {
+        "reason": "Publisher copyright (\"AJTR Copyright © 2025\"); not in the PMC open-access set and no Creative Commons licence. Free to read on PMC only.",
+        "decision": "Kept in the held-out split: the held-out set is defined as the 10 T33 cases and has already been scored once, so replacing the case would rewrite the evaluation history. Flagged as an exception to the open-access requirement.",
+        "use": "Only short quotes (at most 30 words) for verification and a paraphrased note; article text is not stored in the repository or redistributed.",
+        "eligibleForDevelopment": false,
+        "humanConfirmation": "pending (Peter)"
+      }
+    },
+    {
+      "caseId": "HO-05",
+      "pmcid": "PMC13381835",
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© 2026 Kalapurackal and Wanker. 2026 Kalapurackal and Wanker https://creativecommons.org/licenses/by/4.0/ This is an open-access article distributed under the terms of the Creative Commons Attribution",
+      "accessException": null
+    },
+    {
+      "caseId": "HO-06",
+      "pmcid": "PMC12033654",
+      "classification": "oa-cc",
+      "license": "CC BY-NC",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© 2025 American Federation for Medical Research 2025 American Federation for Medical Research https://creativecommons.org/licenses/by-nc/4.0/ This article is distributed under the terms of the Creativ",
+      "accessException": null
+    },
+    {
+      "caseId": "HO-07",
+      "pmcid": "PMC5102842",
+      "classification": "oa-cc",
+      "license": "CC BY-NC",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "Copyright © 2016 The Korean Academy of Asthma, Allergy and Clinical Immunology &#8226; The Korean Academy of Pediatric Allergy and Respiratory Disease 2016 https://creativecommons.org/licenses/by-nc/4",
+      "accessException": null
+    },
+    {
+      "caseId": "HO-08",
+      "pmcid": "PMC13491777",
+      "classification": "oa-cc",
+      "license": "CC BY-NC-ND",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© The Author(s) 2026 2026 https://creativecommons.org/licenses/by-nc-nd/4.0/ Open Access This article is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International Lic",
+      "accessException": null
+    },
+    {
+      "caseId": "HO-09",
+      "pmcid": "PMC2694857",
+      "classification": "free-to-read",
+      "license": null,
+      "inPmcOpenSet": false,
+      "manuscriptId": null,
+      "statement": "© Springer Science+Business Media B.V. 2008",
+      "accessException": {
+        "reason": "Publisher copyright (\"© Springer Science+Business Media B.V. 2008\"); not in the PMC open-access set and no Creative Commons licence. Free to read on PMC only. Europe PMC metadata lists the licence as \"cc by\", but the PMC record carries only the publisher copyright, so that claim is not relied on.",
+        "decision": "Kept in the held-out split: the held-out set is defined as the 10 T33 cases and has already been scored once, so replacing the case would rewrite the evaluation history. Flagged as an exception to the open-access requirement.",
+        "use": "Only short quotes (at most 30 words) for verification and a paraphrased note; article text is not stored in the repository or redistributed.",
+        "eligibleForDevelopment": false,
+        "humanConfirmation": "pending (Peter)"
+      }
+    },
+    {
+      "caseId": "HO-10",
+      "pmcid": "PMC11698633",
+      "classification": "author-manuscript",
+      "license": null,
+      "inPmcOpenSet": true,
+      "manuscriptId": "NIHMS2024171",
+      "statement": "This file is available for text mining. It may also be used consistent with the principles of fair use under the copyright law.",
+      "accessException": {
+        "reason": "NIH author manuscript (NIHMS2024171). PMC states the file is available for text mining and may be used under fair use; it is not under a Creative Commons licence.",
+        "decision": "Kept in the held-out split: the held-out set is defined as the 10 T33 cases and has already been scored once, so replacing the case would rewrite the evaluation history. Flagged as an exception to the open-access requirement.",
+        "use": "Only short quotes (at most 30 words) for verification and a paraphrased note; article text is not stored in the repository or redistributed.",
+        "eligibleForDevelopment": false,
+        "humanConfirmation": "pending (Peter)"
+      }
+    }
+  ]
+}

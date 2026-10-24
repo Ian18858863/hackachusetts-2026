@@ -1,0 +1,1405 @@
+{
+  "source": "https://ontology.jax.org/api/hp/terms/{id}",
+  "fetchedAt": "2026-10-24T22:44:53.638Z",
+  "latestGithubReleaseAtFetch": "v2026-09-01",
+  "releaseNote": "The JAX ontology API does not state which HPO release it serves; latestGithubReleaseAtFetch is context only.",
+  "attribution": "This product uses the Human Phenotype Ontology. Find out more at https://hpo.jax.org",
+  "terms": {
+    "HP:0000011": {
+      "requestedId": "HP:0000011",
+      "found": true,
+      "id": "HP:0000011",
+      "name": "Neurogenic bladder",
+      "synonyms": [
+        "Lack of bladder control due to nervous system injury"
+      ]
+    },
+    "HP:0000019": {
+      "requestedId": "HP:0000019",
+      "found": true,
+      "id": "HP:0000019",
+      "name": "Urinary hesitancy",
+      "synonyms": [
+        "Difficulty with flow"
+      ]
+    },
+    "HP:0000028": {
+      "requestedId": "HP:0000028",
+      "found": true,
+      "id": "HP:0000028",
+      "name": "Cryptorchidism",
+      "synonyms": [
+        "Cryptorchism",
+        "Undescended testes",
+        "Undescended testis"
+      ]
+    },
+    "HP:0000093": {
+      "requestedId": "HP:0000093",
+      "found": true,
+      "id": "HP:0000093",
+      "name": "Proteinuria",
+      "synonyms": [
+        "High urine protein levels",
+        "Protein in urine"
+      ]
+    },
+    "HP:0000098": {
+      "requestedId": "HP:0000098",
+      "found": true,
+      "id": "HP:0000098",
+      "name": "Tall stature",
+      "synonyms": [
+        "Accelerated linear growth",
+        "Increased body height",
+        "Increased linear growth",
+        "Tall stature"
+      ]
+    },
+    "HP:0000121": {
+      "requestedId": "HP:0000121",
+      "found": true,
+      "id": "HP:0000121",
+      "name": "Nephrocalcinosis",
+      "synonyms": [
+        "Too much calcium deposited in kidneys",
+        "Increased calcium level in kidney"
+      ]
+    },
+    "HP:0000225": {
+      "requestedId": "HP:0000225",
+      "found": true,
+      "id": "HP:0000225",
+      "name": "Gingival bleeding",
+      "synonyms": [
+        "Bleeding gums",
+        "Gingival haemorrhage",
+        "Gingival hemorrhage",
+        "Gingivorrhagia"
+      ]
+    },
+    "HP:0000252": {
+      "requestedId": "HP:0000252",
+      "found": true,
+      "id": "HP:0000252",
+      "name": "Microcephaly",
+      "synonyms": [
+        "Abnormally small head",
+        "Decreased size of head",
+        "Small head",
+        "Small skull",
+        "Abnormally small cranium",
+        "Abnormally small skull",
+        "Decreased circumference of cranium",
+        "Decreased size of cranium",
+        "Decreased size of skull",
+        "Reduced head circumference",
+        "Small head circumference",
+        "small cranium",
+        "small calvarium"
+      ]
+    },
+    "HP:0000256": {
+      "requestedId": "HP:0000256",
+      "found": true,
+      "id": "HP:0000256",
+      "name": "Macrocephaly",
+      "synonyms": [
+        "Big calvaria",
+        "Big cranium",
+        "Big head",
+        "Big skull",
+        "Increased size of head",
+        "Large calvaria",
+        "Large cranium",
+        "Large skull",
+        "Increased size of cranium",
+        "Increased size of skull",
+        "Large head",
+        "Large head circumference",
+        "Macrocephalus",
+        "Macrocrania",
+        "Megacephaly"
+      ]
+    },
+    "HP:0000280": {
+      "requestedId": "HP:0000280",
+      "found": true,
+      "id": "HP:0000280",
+      "name": "Coarse facial features",
+      "synonyms": [
+        "Coarse face",
+        "Coarse facial appearance",
+        "Coarse facial features",
+        "Coarse facies",
+        "Rounded and heavy facial features",
+        "Thickened facial skin with coarse facial features"
+      ]
+    },
+    "HP:0000337": {
+      "requestedId": "HP:0000337",
+      "found": true,
+      "id": "HP:0000337",
+      "name": "Broad forehead",
+      "synonyms": [
+        "Bitemporal widening",
+        "Broad forehead",
+        "Increased bitemporal dimension",
+        "Increased bitemporal width",
+        "Increased width of the forehead",
+        "Intertemporal widening",
+        "Wide forehead"
+      ]
+    },
+    "HP:0000508": {
+      "requestedId": "HP:0000508",
+      "found": true,
+      "id": "HP:0000508",
+      "name": "Ptosis",
+      "synonyms": [
+        "Blepharoptosis",
+        "Drooping upper eyelid",
+        "Eyelid ptosis",
+        "Palpebral ptosis",
+        "Eye drop"
+      ]
+    },
+    "HP:0000531": {
+      "requestedId": "HP:0000531",
+      "found": true,
+      "id": "HP:0000531",
+      "name": "Corneal crystals",
+      "synonyms": [
+        "Corneal deposits"
+      ]
+    },
+    "HP:0000592": {
+      "requestedId": "HP:0000592",
+      "found": true,
+      "id": "HP:0000592",
+      "name": "Blue sclerae",
+      "synonyms": [
+        "Blue outer white part of eyeball",
+        "Blue sclera",
+        "Bluish sclerae",
+        "Gray sclerae",
+        "Grey sclerae",
+        "Whites of eyes are a bluish-gray color",
+        "Whites of eyes are a bluish-gray colour"
+      ]
+    },
+    "HP:0000703": {
+      "requestedId": "HP:0000703",
+      "found": true,
+      "id": "HP:0000703",
+      "name": "Dentinogenesis imperfecta",
+      "synonyms": []
+    },
+    "HP:0000717": {
+      "requestedId": "HP:0000717",
+      "found": true,
+      "id": "HP:0000717",
+      "name": "Autism",
+      "synonyms": [
+        "Autism"
+      ]
+    },
+    "HP:0000733": {
+      "requestedId": "HP:0000733",
+      "found": true,
+      "id": "HP:0000733",
+      "name": "Motor stereotypy",
+      "synonyms": [
+        "Abnormal repetitive mannerism",
+        "Repetitive behavior",
+        "Repetitive behaviour Stereotypic behaviour",
+        "Repetitive movements",
+        "Repetitive, stereotypic behavior",
+        "Stereotyped",
+        "Stereotyped behavior",
+        "Stereotyped behaviors",
+        "Stereotyped behaviour",
+        "Stereotyped behaviours",
+        "Stereotypic behaviour",
+        "Stereotypic behaviours",
+        "Stereotypical motor behavior",
+        "Stereotypical motor behaviors",
+        "Stereotypical motor behaviour",
+        "Stereotypical motor behaviours",
+        "Stimming",
+        "repetitive behaviour"
+      ]
+    },
+    "HP:0000737": {
+      "requestedId": "HP:0000737",
+      "found": true,
+      "id": "HP:0000737",
+      "name": "Irritability",
+      "synonyms": [
+        "Cranky",
+        "Easily annoyed",
+        "Easily bothered",
+        "Easily upset",
+        "Grumpy",
+        "Hot-temper",
+        "Irritability",
+        "Irritable",
+        "Quick temper",
+        "Short fuse",
+        "Short tempered"
+      ]
+    },
+    "HP:0000750": {
+      "requestedId": "HP:0000750",
+      "found": true,
+      "id": "HP:0000750",
+      "name": "Delayed speech and language development",
+      "synonyms": [
+        "Deficiency of speech development",
+        "Delayed language development",
+        "Delayed speech",
+        "Delayed speech acquisition",
+        "Delayed speech and language development",
+        "Delayed speech development",
+        "Impaired speech and language development",
+        "Impaired speech development",
+        "Language delay",
+        "Language delayed",
+        "Language development deficit",
+        "Late-onset speech development",
+        "Poor language development",
+        "Speech and language delay",
+        "Speech and language difficulties",
+        "Speech delay",
+        "Poor speech acquisition",
+        "Poor speech development",
+        "Speech difficulties"
+      ]
+    },
+    "HP:0000751": {
+      "requestedId": "HP:0000751",
+      "found": true,
+      "id": "HP:0000751",
+      "name": "Personality changes",
+      "synonyms": [
+        "Personality change",
+        "Personality changes"
+      ]
+    },
+    "HP:0000790": {
+      "requestedId": "HP:0000790",
+      "found": true,
+      "id": "HP:0000790",
+      "name": "Hematuria",
+      "synonyms": [
+        "High urine occult blood",
+        "Blood in urine"
+      ]
+    },
+    "HP:0000822": {
+      "requestedId": "HP:0000822",
+      "found": true,
+      "id": "HP:0000822",
+      "name": "Hypertension",
+      "synonyms": [
+        "Arterial hypertension",
+        "Systemic hypertension",
+        "High blood pressure"
+      ]
+    },
+    "HP:0000969": {
+      "requestedId": "HP:0000969",
+      "found": true,
+      "id": "HP:0000969",
+      "name": "Edema",
+      "synonyms": [
+        "Soft tissue swelling",
+        "Dropsy",
+        "Fluid retention",
+        "Hydrops",
+        "Oedema",
+        "Water retention"
+      ]
+    },
+    "HP:0000970": {
+      "requestedId": "HP:0000970",
+      "found": true,
+      "id": "HP:0000970",
+      "name": "Anhidrosis",
+      "synonyms": [
+        "Anhydrosis",
+        "Lack of sweating",
+        "Sudomotor dysfunction",
+        "Sweating dysfunction"
+      ]
+    },
+    "HP:0000975": {
+      "requestedId": "HP:0000975",
+      "found": true,
+      "id": "HP:0000975",
+      "name": "Hyperhidrosis",
+      "synonyms": [
+        "Diaphoresis",
+        "Excessive sweating",
+        "Increased sweating",
+        "Profuse sweating",
+        "Sweating",
+        "Sweating profusely",
+        "Sweating, increased"
+      ]
+    },
+    "HP:0001053": {
+      "requestedId": "HP:0001053",
+      "found": true,
+      "id": "HP:0001053",
+      "name": "Hypopigmented skin patches",
+      "synonyms": [
+        "Patchy loss of skin color",
+        "Patchy loss of skin colour"
+      ]
+    },
+    "HP:0001250": {
+      "requestedId": "HP:0001250",
+      "found": true,
+      "id": "HP:0001250",
+      "name": "Seizure",
+      "synonyms": [
+        "Epileptic seizure",
+        "Seizures",
+        "Epilepsy"
+      ]
+    },
+    "HP:0001251": {
+      "requestedId": "HP:0001251",
+      "found": true,
+      "id": "HP:0001251",
+      "name": "Ataxia",
+      "synonyms": [
+        "Cerebellar ataxia"
+      ]
+    },
+    "HP:0001252": {
+      "requestedId": "HP:0001252",
+      "found": true,
+      "id": "HP:0001252",
+      "name": "Hypotonia",
+      "synonyms": [
+        "Low muscle tone",
+        "Low or weak muscle tone",
+        "Muscle hypotonia",
+        "Muscular hypotonia",
+        "Central hypotonia",
+        "Peripheral hypotonia"
+      ]
+    },
+    "HP:0001260": {
+      "requestedId": "HP:0001260",
+      "found": true,
+      "id": "HP:0001260",
+      "name": "Dysarthria",
+      "synonyms": [
+        "Difficulty articulating speech",
+        "Dysarthric speech"
+      ]
+    },
+    "HP:0001263": {
+      "requestedId": "HP:0001263",
+      "found": true,
+      "id": "HP:0001263",
+      "name": "Global developmental delay",
+      "synonyms": [
+        "Delayed cognitive development",
+        "Delayed development",
+        "Delayed developmental milestones",
+        "Delayed intellectual development",
+        "Delayed milestones",
+        "Delayed psychomotor development",
+        "Developmental delay",
+        "Developmental delay in early childhood",
+        "Developmental delay, global",
+        "Developmental retardation",
+        "GDD",
+        "Lack of psychomotor development",
+        "Motor and developmental delay",
+        "Motormental retardation",
+        "Psychomotor delay",
+        "Psychomotor development deficiency",
+        "Psychomotor development failure",
+        "Psychomotor developmental delay",
+        "Retarded development",
+        "Retarded mental development",
+        "Retarded psychomotor development",
+        "Cognitive delay",
+        "Mental and motor retardation"
+      ]
+    },
+    "HP:0001270": {
+      "requestedId": "HP:0001270",
+      "found": true,
+      "id": "HP:0001270",
+      "name": "Motor delay",
+      "synonyms": [
+        "Delay in development of motor milestones",
+        "Delay in motor development",
+        "Delayed development of motor milestones",
+        "Delayed early motor milestones",
+        "Delayed motor development",
+        "Delayed motor milestones",
+        "Locomotor delay",
+        "Motor developmental delay",
+        "Motor developmental milestones not achieved",
+        "Motor retardation",
+        "Retarded motor development",
+        "Slow development of motor milestones",
+        "No development of motor milestones"
+      ]
+    },
+    "HP:0001288": {
+      "requestedId": "HP:0001288",
+      "found": true,
+      "id": "HP:0001288",
+      "name": "Gait disturbance",
+      "synonyms": [
+        "Abnormal gait",
+        "Abnormal walk",
+        "Difficulty in walking",
+        "Gait abnormalities",
+        "Gait difficulties",
+        "Gait disturbances",
+        "Impaired gait",
+        "Walking disability"
+      ]
+    },
+    "HP:0001324": {
+      "requestedId": "HP:0001324",
+      "found": true,
+      "id": "HP:0001324",
+      "name": "Muscle weakness",
+      "synonyms": [
+        "Muscle weakness",
+        "Muscular weakness"
+      ]
+    },
+    "HP:0001328": {
+      "requestedId": "HP:0001328",
+      "found": true,
+      "id": "HP:0001328",
+      "name": "Specific learning disability",
+      "synonyms": []
+    },
+    "HP:0001337": {
+      "requestedId": "HP:0001337",
+      "found": true,
+      "id": "HP:0001337",
+      "name": "Tremor",
+      "synonyms": [
+        "Tremor",
+        "Tremors"
+      ]
+    },
+    "HP:0001344": {
+      "requestedId": "HP:0001344",
+      "found": true,
+      "id": "HP:0001344",
+      "name": "Absent speech",
+      "synonyms": [
+        "Absent speech development",
+        "Lack of language development",
+        "Lack of speech",
+        "No speech development",
+        "No speech or language development",
+        "Nonverbal"
+      ]
+    },
+    "HP:0001347": {
+      "requestedId": "HP:0001347",
+      "found": true,
+      "id": "HP:0001347",
+      "name": "Hyperreflexia",
+      "synonyms": [
+        "Increased deep tendon reflexes",
+        "Increased reflexes"
+      ]
+    },
+    "HP:0001387": {
+      "requestedId": "HP:0001387",
+      "found": true,
+      "id": "HP:0001387",
+      "name": "Joint stiffness",
+      "synonyms": [
+        "Joint stiffness",
+        "Stiff joint",
+        "Stiff joints"
+      ]
+    },
+    "HP:0001394": {
+      "requestedId": "HP:0001394",
+      "found": true,
+      "id": "HP:0001394",
+      "name": "Cirrhosis",
+      "synonyms": [
+        "Hepatic cirrhosis",
+        "Scar tissue replaces healthy tissue in the liver",
+        "Liver cirrhosis"
+      ]
+    },
+    "HP:0001508": {
+      "requestedId": "HP:0001508",
+      "found": true,
+      "id": "HP:0001508",
+      "name": "Failure to thrive",
+      "synonyms": [
+        "Undergrowth",
+        "FTT",
+        "Faltering weight",
+        "Postnatal failure to thrive",
+        "Weight faltering",
+        "Poor weight gain"
+      ]
+    },
+    "HP:0001510": {
+      "requestedId": "HP:0001510",
+      "found": true,
+      "id": "HP:0001510",
+      "name": "Growth delay",
+      "synonyms": [
+        "Delayed growth",
+        "Growth deficiency",
+        "Growth delay",
+        "Growth failure",
+        "Growth retardation",
+        "Poor growth",
+        "Retarded growth",
+        "Very poor growth"
+      ]
+    },
+    "HP:0001513": {
+      "requestedId": "HP:0001513",
+      "found": true,
+      "id": "HP:0001513",
+      "name": "Obesity",
+      "synonyms": [
+        "Having too much body fat",
+        "Obesity"
+      ]
+    },
+    "HP:0001639": {
+      "requestedId": "HP:0001639",
+      "found": true,
+      "id": "HP:0001639",
+      "name": "Hypertrophic cardiomyopathy",
+      "synonyms": [
+        "Cardiomyopathy, hypertrophic",
+        "Enlarged and thickened heart muscle",
+        "HCM"
+      ]
+    },
+    "HP:0001773": {
+      "requestedId": "HP:0001773",
+      "found": true,
+      "id": "HP:0001773",
+      "name": "Short foot",
+      "synonyms": [
+        "Hypoplastic feet",
+        "Short feet",
+        "Short foot",
+        "Small feet"
+      ]
+    },
+    "HP:0001903": {
+      "requestedId": "HP:0001903",
+      "found": true,
+      "id": "HP:0001903",
+      "name": "Anemia",
+      "synonyms": [
+        "Anaemia",
+        "Low number of red blood cells or haemoglobin",
+        "Low number of red blood cells or hemoglobin",
+        "Decreased haemoglobin",
+        "Decreased hemoglobin"
+      ]
+    },
+    "HP:0001942": {
+      "requestedId": "HP:0001942",
+      "found": true,
+      "id": "HP:0001942",
+      "name": "Metabolic acidosis",
+      "synonyms": []
+    },
+    "HP:0001943": {
+      "requestedId": "HP:0001943",
+      "found": true,
+      "id": "HP:0001943",
+      "name": "Hypoglycemia",
+      "synonyms": [
+        "Hypoglycaemia",
+        "Low blood sugar"
+      ]
+    },
+    "HP:0001994": {
+      "requestedId": "HP:0001994",
+      "found": true,
+      "id": "HP:0001994",
+      "name": "Renal Fanconi syndrome",
+      "synonyms": [
+        "De toni-fanconi-debre syndrome",
+        "Renal tubular fanconi syndrome"
+      ]
+    },
+    "HP:0001999": {
+      "requestedId": "HP:0001999",
+      "found": true,
+      "id": "HP:0001999",
+      "name": "Abnormal facial shape",
+      "synonyms": [
+        "Deformity of face",
+        "Malformation of face",
+        "Abnormal facial shape",
+        "Abnormal morphology of the face",
+        "Distinctive facies",
+        "Dysmorphic facial features",
+        "Dysmorphic facies",
+        "Facial dysmorphism",
+        "Unusual facial appearance",
+        "Unusual facies",
+        "Distortion of face",
+        "Funny looking face"
+      ]
+    },
+    "HP:0002014": {
+      "requestedId": "HP:0002014",
+      "found": true,
+      "id": "HP:0002014",
+      "name": "Diarrhea",
+      "synonyms": [
+        "Diarrhea",
+        "Diarrhoea",
+        "Watery stool"
+      ]
+    },
+    "HP:0002019": {
+      "requestedId": "HP:0002019",
+      "found": true,
+      "id": "HP:0002019",
+      "name": "Constipation",
+      "synonyms": [
+        "Constipation",
+        "Costiveness",
+        "Dyschezia"
+      ]
+    },
+    "HP:0002027": {
+      "requestedId": "HP:0002027",
+      "found": true,
+      "id": "HP:0002027",
+      "name": "Abdominal pain",
+      "synonyms": [
+        "Gastro pain",
+        "Gastrointestinal pain",
+        "Abdominal pain",
+        "Pain in stomach",
+        "Stomach pain",
+        "Abdominal discomfort",
+        "Upset stomach"
+      ]
+    },
+    "HP:0002033": {
+      "requestedId": "HP:0002033",
+      "found": true,
+      "id": "HP:0002033",
+      "name": "Poor suck",
+      "synonyms": [
+        "Poor suck",
+        "Poor sucking",
+        "Sucking weakness"
+      ]
+    },
+    "HP:0002046": {
+      "requestedId": "HP:0002046",
+      "found": true,
+      "id": "HP:0002046",
+      "name": "Heat intolerance",
+      "synonyms": [
+        "Heat intolerance",
+        "Intolerance to heat and fevers"
+      ]
+    },
+    "HP:0002061": {
+      "requestedId": "HP:0002061",
+      "found": true,
+      "id": "HP:0002061",
+      "name": "Lower limb spasticity",
+      "synonyms": [
+        "Lower extremities spasticity",
+        "Lower extremity spasticity",
+        "Spastic lower extremities",
+        "Spastic lower extremity",
+        "Spastic lower limb",
+        "Spastic lower limbs",
+        "Spasticity in lower extremities",
+        "Spasticity in lower extremity",
+        "Spasticity in lower limb",
+        "Spasticity in lower limbs",
+        "Spasticity of lower extremities",
+        "Spasticity of lower extremity",
+        "Spasticity of lower limb",
+        "Spasticity of lower limbs"
+      ]
+    },
+    "HP:0002094": {
+      "requestedId": "HP:0002094",
+      "found": true,
+      "id": "HP:0002094",
+      "name": "Dyspnea",
+      "synonyms": [
+        "Abnormal breathing",
+        "Breathing difficulty",
+        "Difficult to breathe",
+        "Difficulty breathing",
+        "Dyspnoea",
+        "Shortness of breath",
+        "Trouble breathing",
+        "Panting"
+      ]
+    },
+    "HP:0002098": {
+      "requestedId": "HP:0002098",
+      "found": true,
+      "id": "HP:0002098",
+      "name": "Respiratory distress",
+      "synonyms": [
+        "Breathing difficulties",
+        "Labored breathing",
+        "Laboured breathing"
+      ]
+    },
+    "HP:0002133": {
+      "requestedId": "HP:0002133",
+      "found": true,
+      "id": "HP:0002133",
+      "name": "Status epilepticus",
+      "synonyms": [
+        "Prolonged seizure",
+        "Repeated seizure without recovery",
+        "Repeated seizures without recovery between them"
+      ]
+    },
+    "HP:0002136": {
+      "requestedId": "HP:0002136",
+      "found": true,
+      "id": "HP:0002136",
+      "name": "Broad-based gait",
+      "synonyms": [
+        "Broad based gait",
+        "Wide based gait",
+        "Wide based walk",
+        "Wide-based gait"
+      ]
+    },
+    "HP:0002159": {
+      "requestedId": "HP:0002159",
+      "found": true,
+      "id": "HP:0002159",
+      "name": "Heparan sulfate excretion in urine",
+      "synonyms": [
+        "Heparan sulphate excretion in urine"
+      ]
+    },
+    "HP:0002313": {
+      "requestedId": "HP:0002313",
+      "found": true,
+      "id": "HP:0002313",
+      "name": "Spastic paraparesis",
+      "synonyms": []
+    },
+    "HP:0002317": {
+      "requestedId": "HP:0002317",
+      "found": true,
+      "id": "HP:0002317",
+      "name": "Unsteady gait",
+      "synonyms": [
+        "Gait instability",
+        "Unsteady walk"
+      ]
+    },
+    "HP:0002342": {
+      "requestedId": "HP:0002342",
+      "found": true,
+      "id": "HP:0002342",
+      "name": "Moderate intellectual disability",
+      "synonyms": [
+        "IQ between 34 and 49",
+        "Intellectual disability, moderate",
+        "Mental retardation, moderate",
+        "Moderate mental deficiency",
+        "Moderate mental retardation"
+      ]
+    },
+    "HP:0002373": {
+      "requestedId": "HP:0002373",
+      "found": true,
+      "id": "HP:0002373",
+      "name": "Febrile seizure (within the age range of 3 months to 6 years)",
+      "synonyms": [
+        "Febrile convulsion",
+        "Febrile seizures",
+        "Seizures, febrile, in early childhood",
+        "Seizures, generalized, associated with fever"
+      ]
+    },
+    "HP:0002376": {
+      "requestedId": "HP:0002376",
+      "found": true,
+      "id": "HP:0002376",
+      "name": "Developmental regression",
+      "synonyms": [
+        "Loss of acquired milestones",
+        "Loss of developmental milestones",
+        "Loss of milestones",
+        "Mental deterioration in childhood",
+        "Neurodevelopmental regression",
+        "Psychomotor regression",
+        "Psychomotor regression beginning in infancy",
+        "Psychomotor regression in infants",
+        "Psychomotor regression, progressive"
+      ]
+    },
+    "HP:0002527": {
+      "requestedId": "HP:0002527",
+      "found": true,
+      "id": "HP:0002527",
+      "name": "Falls",
+      "synonyms": [
+        "Falls"
+      ]
+    },
+    "HP:0002591": {
+      "requestedId": "HP:0002591",
+      "found": true,
+      "id": "HP:0002591",
+      "name": "Polyphagia",
+      "synonyms": [
+        "Hyperphagia",
+        "Voracious appetite",
+        "Increased appetite"
+      ]
+    },
+    "HP:0002650": {
+      "requestedId": "HP:0002650",
+      "found": true,
+      "id": "HP:0002650",
+      "name": "Scoliosis",
+      "synonyms": [
+        "Cobb angle greater than ten degrees"
+      ]
+    },
+    "HP:0002653": {
+      "requestedId": "HP:0002653",
+      "found": true,
+      "id": "HP:0002653",
+      "name": "Bone pain",
+      "synonyms": [
+        "Bone pain"
+      ]
+    },
+    "HP:0002677": {
+      "requestedId": "HP:0002677",
+      "found": true,
+      "id": "HP:0002677",
+      "name": "Small foramen magnum",
+      "synonyms": [
+        "Foramen magnum stenosis",
+        "Little foramen magnum",
+        "Narrow foramen magnum",
+        "Hypoplasia of foramen magnum",
+        "Stenosis of foramen magnum"
+      ]
+    },
+    "HP:0002757": {
+      "requestedId": "HP:0002757",
+      "found": true,
+      "id": "HP:0002757",
+      "name": "Recurrent fractures",
+      "synonyms": [
+        "Frequent fractures",
+        "Increased fracture rate",
+        "Increased fractures",
+        "Multiple fractures",
+        "Multiple spontaneous fractures",
+        "Recurrent fractures",
+        "Varying degree of multiple fractures"
+      ]
+    },
+    "HP:0002857": {
+      "requestedId": "HP:0002857",
+      "found": true,
+      "id": "HP:0002857",
+      "name": "Genu valgum",
+      "synonyms": [
+        "Genu valga",
+        "Genu valgus",
+        "Genua valga",
+        "Knee joint valgus deformity",
+        "Knock knees"
+      ]
+    },
+    "HP:0003072": {
+      "requestedId": "HP:0003072",
+      "found": true,
+      "id": "HP:0003072",
+      "name": "Hypercalcemia",
+      "synonyms": [
+        "Elevated calcium(2+) concentration",
+        "Elevated calcium(2+) level",
+        "Elevated calcium(2+) level in blood",
+        "High blood calcium levels",
+        "Hypercalcaemia",
+        "Increased calcium in blood",
+        "Increased calcium(2+) concentration",
+        "Increased calcium(2+) level",
+        "Increased calcium(2+) level in blood"
+      ]
+    },
+    "HP:0003076": {
+      "requestedId": "HP:0003076",
+      "found": true,
+      "id": "HP:0003076",
+      "name": "Glycosuria",
+      "synonyms": [
+        "Glucose in urine",
+        "Glucosuria"
+      ]
+    },
+    "HP:0003259": {
+      "requestedId": "HP:0003259",
+      "found": true,
+      "id": "HP:0003259",
+      "name": "Elevated circulating creatinine concentration",
+      "synonyms": [
+        "Elevated creatinine",
+        "Elevated serum creatinine",
+        "High blood creatinine level",
+        "Increased creatinine",
+        "Increased serum creatinine"
+      ]
+    },
+    "HP:0003307": {
+      "requestedId": "HP:0003307",
+      "found": true,
+      "id": "HP:0003307",
+      "name": "Hyperlordosis",
+      "synonyms": [
+        "Lordosis",
+        "Prominent swayback"
+      ]
+    },
+    "HP:0003355": {
+      "requestedId": "HP:0003355",
+      "found": true,
+      "id": "HP:0003355",
+      "name": "Aminoaciduria",
+      "synonyms": [
+        "High urine amino acid levels",
+        "Hyperaminoaciduria",
+        "Increased levels of animo acids in urine",
+        "Abnormal urinary amino-acid findings"
+      ]
+    },
+    "HP:0003394": {
+      "requestedId": "HP:0003394",
+      "found": true,
+      "id": "HP:0003394",
+      "name": "Muscle spasm",
+      "synonyms": [
+        "Muscle cramps",
+        "Muscle spasms",
+        "Nocturnal hand and foot cramps",
+        "Nocturnal leg cramp",
+        "Sleep-related dystonia"
+      ]
+    },
+    "HP:0003537": {
+      "requestedId": "HP:0003537",
+      "found": true,
+      "id": "HP:0003537",
+      "name": "Hypouricemia",
+      "synonyms": [
+        "Decreased uric acid concentration",
+        "Decreased uric acid level",
+        "Decreased uric acid level in blood",
+        "Low blood uric acid levels",
+        "Reduced uric acid concentration",
+        "Reduced uric acid level",
+        "Reduced uric acid level in blood"
+      ]
+    },
+    "HP:0003551": {
+      "requestedId": "HP:0003551",
+      "found": true,
+      "id": "HP:0003551",
+      "name": "Difficulty climbing stairs",
+      "synonyms": [
+        "Difficulty walking up stairs"
+      ]
+    },
+    "HP:0004322": {
+      "requestedId": "HP:0004322",
+      "found": true,
+      "id": "HP:0004322",
+      "name": "Short stature",
+      "synonyms": [
+        "Decreased body height",
+        "Height less than 3rd percentile",
+        "Short stature",
+        "Small stature",
+        "Stature below 3rd percentile"
+      ]
+    },
+    "HP:0004372": {
+      "requestedId": "HP:0004372",
+      "found": true,
+      "id": "HP:0004372",
+      "name": "Reduced consciousness",
+      "synonyms": [
+        "Disturbances of consciousness",
+        "Lowered consciousness",
+        "Reduced consciousness/confusion"
+      ]
+    },
+    "HP:0004381": {
+      "requestedId": "HP:0004381",
+      "found": true,
+      "id": "HP:0004381",
+      "name": "Supravalvular aortic stenosis",
+      "synonyms": []
+    },
+    "HP:0004482": {
+      "requestedId": "HP:0004482",
+      "found": true,
+      "id": "HP:0004482",
+      "name": "Relative macrocephaly",
+      "synonyms": [
+        "Disproportionately large head",
+        "Macrocephaly, relative",
+        "Relatively large head"
+      ]
+    },
+    "HP:0004923": {
+      "requestedId": "HP:0004923",
+      "found": true,
+      "id": "HP:0004923",
+      "name": "Hyperphenylalaninemia",
+      "synonyms": [
+        "Elevated phenylalanine concentration",
+        "Elevated phenylalanine level",
+        "Elevated phenylalanine level in blood",
+        "Increased phenylalanine concentration",
+        "Increased phenylalanine level",
+        "Increased phenylalanine level in blood"
+      ]
+    },
+    "HP:0005280": {
+      "requestedId": "HP:0005280",
+      "found": true,
+      "id": "HP:0005280",
+      "name": "Depressed nasal bridge",
+      "synonyms": [
+        "Depressed bridge of nose",
+        "Depressed nasal bridge",
+        "Depressed nasal root",
+        "Flat bridge of nose",
+        "Flat nasal bridge",
+        "Flat nasal root",
+        "Flat, nasal bridge",
+        "Flattened nasal bridge",
+        "Low nasal bridge",
+        "Low nasal root",
+        "Retruded bridge of nose",
+        "Retruded nasal bridge",
+        "Concave bridge of nose",
+        "Concave nasal bridge",
+        "Depressed nasal root/bridge"
+      ]
+    },
+    "HP:0006487": {
+      "requestedId": "HP:0006487",
+      "found": true,
+      "id": "HP:0006487",
+      "name": "Bowing of the long bones",
+      "synonyms": [
+        "Bowed long bones",
+        "Bowing of long bones",
+        "Bowing of the long bones",
+        "Camptomelia",
+        "Diaphyseal bowing",
+        "Diaphyseal bowing of long bones"
+      ]
+    },
+    "HP:0008081": {
+      "requestedId": "HP:0008081",
+      "found": true,
+      "id": "HP:0008081",
+      "name": "Pes valgus",
+      "synonyms": [
+        "Valgus foot deformity",
+        "Everted heel",
+        "Heel valgus",
+        "Valgus deformity of the hindfoot"
+      ]
+    },
+    "HP:0008301": {
+      "requestedId": "HP:0008301",
+      "found": true,
+      "id": "HP:0008301",
+      "name": "Dermatan sulfate excretion in urine",
+      "synonyms": [
+        "Dermatan sulphate excretion in urine"
+      ]
+    },
+    "HP:0008905": {
+      "requestedId": "HP:0008905",
+      "found": true,
+      "id": "HP:0008905",
+      "name": "Rhizomelia",
+      "synonyms": [
+        "Disproportionately short upper portion of limb",
+        "Rhizomelic dwarfism",
+        "Rhizomelic limb shortening",
+        "Rhizomelic short limbs",
+        "Rhizomelic short stature",
+        "Rhizomelic shortening",
+        "Short stature, rhizomelic",
+        "Symmetrical rhizomelic limb shortening"
+      ]
+    },
+    "HP:0010535": {
+      "requestedId": "HP:0010535",
+      "found": true,
+      "id": "HP:0010535",
+      "name": "Sleep apnea",
+      "synonyms": [
+        "Pauses in breathing while sleeping",
+        "Sleep apnoea"
+      ]
+    },
+    "HP:0010794": {
+      "requestedId": "HP:0010794",
+      "found": true,
+      "id": "HP:0010794",
+      "name": "Impaired visuospatial constructive cognition",
+      "synonyms": []
+    },
+    "HP:0010910": {
+      "requestedId": "HP:0010910",
+      "found": true,
+      "id": "HP:0010910",
+      "name": "Hypervalinemia",
+      "synonyms": [
+        "Elevated valine concentration",
+        "Elevated valine level",
+        "Elevated valine level in blood",
+        "High blood valine concentration",
+        "Increased valine concentration",
+        "Increased valine level",
+        "Increased valine level in blood"
+      ]
+    },
+    "HP:0010911": {
+      "requestedId": "HP:0010911",
+      "found": true,
+      "id": "HP:0010911",
+      "name": "Hyperleucinemia",
+      "synonyms": [
+        "Elevated leucine concentration",
+        "Elevated leucine level",
+        "Elevated leucine level in blood",
+        "High blood leucine concentration",
+        "Increased leucine concentration",
+        "Increased leucine level",
+        "Increased leucine level in blood"
+      ]
+    },
+    "HP:0011800": {
+      "requestedId": "HP:0011800",
+      "found": true,
+      "id": "HP:0011800",
+      "name": "Midface retrusion",
+      "synonyms": [
+        "Small midface",
+        "Decreased size of midface",
+        "Flat midface",
+        "Hypoplasia of midface",
+        "Midface deficiency",
+        "Midface hypoplasia",
+        "Midface retrusion",
+        "Midface, flat",
+        "Retrusive midface",
+        "Underdevelopment of midface",
+        "Decreased projection of midface",
+        "Hypotrophic midface"
+      ]
+    },
+    "HP:0011968": {
+      "requestedId": "HP:0011968",
+      "found": true,
+      "id": "HP:0011968",
+      "name": "Feeding difficulties",
+      "synonyms": [
+        "Decreased oral intake",
+        "Feeding difficulties",
+        "Feeding problems",
+        "Poor feeding"
+      ]
+    },
+    "HP:0012027": {
+      "requestedId": "HP:0012027",
+      "found": true,
+      "id": "HP:0012027",
+      "name": "Laryngeal edema",
+      "synonyms": [
+        "Laryngeal oedema"
+      ]
+    },
+    "HP:0012408": {
+      "requestedId": "HP:0012408",
+      "found": true,
+      "id": "HP:0012408",
+      "name": "Medullary nephrocalcinosis",
+      "synonyms": []
+    },
+    "HP:0012514": {
+      "requestedId": "HP:0012514",
+      "found": true,
+      "id": "HP:0012514",
+      "name": "Lower limb pain",
+      "synonyms": [
+        "Leg pain",
+        "Lower limb pain"
+      ]
+    },
+    "HP:0012622": {
+      "requestedId": "HP:0012622",
+      "found": true,
+      "id": "HP:0012622",
+      "name": "Chronic kidney disease",
+      "synonyms": [
+        "CKD",
+        "Chronic kidney disease",
+        "Loss of renal function",
+        "Progressive renal failure",
+        "Progressive renal insufficiency",
+        "Renal failure, progressive",
+        "Renal insufficiency, progressive"
+      ]
+    },
+    "HP:0020073": {
+      "requestedId": "HP:0020073",
+      "found": true,
+      "id": "HP:0020073",
+      "name": "Hypopigmented macule",
+      "synonyms": []
+    },
+    "HP:0030051": {
+      "requestedId": "HP:0030051",
+      "found": true,
+      "id": "HP:0030051",
+      "name": "Tip-toe gait",
+      "synonyms": [
+        "Tiptoe gait",
+        "Toe walking",
+        "Walking on tiptoes"
+      ]
+    },
+    "HP:0031006": {
+      "requestedId": "HP:0031006",
+      "found": true,
+      "id": "HP:0031006",
+      "name": "Acroparesthesia",
+      "synonyms": []
+    },
+    "HP:0033748": {
+      "requestedId": "HP:0033748",
+      "found": true,
+      "id": "HP:0033748",
+      "name": "Hypoesthesia",
+      "synonyms": [
+        "Hypoaesthesia",
+        "Numbness"
+      ]
+    },
+    "HP:0034392": {
+      "requestedId": "HP:0034392",
+      "found": true,
+      "id": "HP:0034392",
+      "name": "Joint contracture",
+      "synonyms": [
+        "Contracture"
+      ]
+    },
+    "HP:0100543": {
+      "requestedId": "HP:0100543",
+      "found": true,
+      "id": "HP:0100543",
+      "name": "Cognitive impairment",
+      "synonyms": [
+        "Abnormality of cognition",
+        "Cognitive abnormality",
+        "Cognitive defects",
+        "Cognitive deficits",
+        "Cognitive impairment",
+        "Intellectual impairment"
+      ]
+    },
+    "HP:0100665": {
+      "requestedId": "HP:0100665",
+      "found": true,
+      "id": "HP:0100665",
+      "name": "Angioedema",
+      "synonyms": [
+        "Angioneurotic edema",
+        "Angioneurotic oedema",
+        "Angiooedema",
+        "Quincke edema",
+        "Quincke oedema"
+      ]
+    },
+    "HP:0200032": {
+      "requestedId": "HP:0200032",
+      "found": true,
+      "id": "HP:0200032",
+      "name": "Kayser-Fleischer ring",
+      "synonyms": [
+        "Fleischer's ring",
+        "Fleischer-Kayser ring",
+        "Fleischer-Struempell ring"
+      ]
+    },
+    "HP:0200055": {
+      "requestedId": "HP:0200055",
+      "found": true,
+      "id": "HP:0200055",
+      "name": "Small hand",
+      "synonyms": [
+        "Disproportionately small hands",
+        "Small hand",
+        "Small hands"
+      ]
+    },
+    "HP:6000855": {
+      "requestedId": "HP:6000855",
+      "found": true,
+      "id": "HP:6000855",
+      "name": "Cold intolerance",
+      "synonyms": [
+        "Cold sensitivity"
+      ]
+    },
+    "HP:6000955": {
+      "requestedId": "HP:6000955",
+      "found": true,
+      "id": "HP:6000955",
+      "name": "Corneal cystine crystals",
+      "synonyms": []
+    }
+  }
+}

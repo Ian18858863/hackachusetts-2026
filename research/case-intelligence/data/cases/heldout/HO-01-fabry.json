@@ -1,0 +1,139 @@
+{
+  "caseId": "HO-01",
+  "split": "heldout",
+  "origin": "T33 hand-off (Ian team research, 2026-10-24); re-verified by T38",
+  "source": {
+    "pmcid": "PMC11349674",
+    "pmid": "39205943",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11349674/",
+    "title": "Case report: First diagnosis of Fabry disease in North Macedonia in a patient presenting with kidney failure on hemodialysis.",
+    "journal": "Frontiers in genetics",
+    "year": 2024,
+    "patient": "Index case (45-year-old man)",
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "Copyright © 2024 Gjorgjievski, Karanfilovski, Arsov, Vidimliski, Andreevska, Selim, Dejanov, Jordanova, Marinova, Paskalev and Nikolov. 2024 Gjorgjievski, Karanfilovski, Arsov, Vidimliski, Andreevska,",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
+  },
+  "diagnosis": {
+    "name": "Fabry disease",
+    "mondo": "MONDO:0010526",
+    "acceptedIds": [
+      "MONDO:0010526"
+    ],
+    "genes": [
+      "GLA"
+    ],
+    "confirmation": {
+      "method": "genetic+enzyme+biomarker",
+      "summary": "Hemizygous pathogenic GLA c.443G>A; near-absent GLA activity and raised Lyso-Gb3.",
+      "evidence": [
+        "Genetic testing identified a known pathogenic GLA missense variant c.443G>A or p.(Ser148Asn) in the hemizygous state",
+        "almost undetectable GLA activity (0.1 μmol/L/h, normal: >2.8 μmol/L/h) and greatly elevated Lyso-Gb3"
+      ]
+    }
+  },
+  "note": {
+    "text": "I've had burning pain in my arms and legs since I was young. I often get stomach cramps and struggle in both hot and cold weather. I hardly sweat at all. Over the last several years, doctors have told me my blood pressure was high and my kidneys were getting worse. I now need regular treatment to clean my blood, and tests have also shown problems with my urine and heart.",
+    "voice": "patient",
+    "author": "T33 hand-off (assistant-written from the article; not the patient's words)"
+  },
+  "phenotypes": [
+    {
+      "hpoId": "HP:0031006",
+      "label": "Acroparesthesia",
+      "origin": "T38",
+      "evidence": "history of acroparesthesias, abdominal cramps, anhidrosis, and cornea verticillata",
+      "inNote": true,
+      "notePhrase": "burning pain in my arms and legs"
+    },
+    {
+      "hpoId": "HP:0002027",
+      "label": "Abdominal pain",
+      "origin": "T33",
+      "t33Label": "Abdominal pain",
+      "evidence": "intermittent abdominal pain, as well as cold and heat intolerance",
+      "inNote": true,
+      "notePhrase": "stomach cramps"
+    },
+    {
+      "hpoId": "HP:0002046",
+      "label": "Heat intolerance",
+      "origin": "T38",
+      "evidence": "intermittent abdominal pain, as well as cold and heat intolerance",
+      "inNote": true,
+      "notePhrase": "struggle in both hot and cold weather"
+    },
+    {
+      "hpoId": "HP:6000855",
+      "label": "Cold intolerance",
+      "origin": "T38",
+      "evidence": "intermittent abdominal pain, as well as cold and heat intolerance",
+      "inNote": true,
+      "notePhrase": "struggle in both hot and cold weather"
+    },
+    {
+      "hpoId": "HP:0000970",
+      "label": "Anhidrosis",
+      "origin": "T33",
+      "t33Label": "Anhidrosis",
+      "evidence": "intermittent abdominal cramps, anhidrosis, and hypertension",
+      "inNote": true,
+      "notePhrase": "I hardly sweat at all"
+    },
+    {
+      "hpoId": "HP:0000822",
+      "label": "Hypertension",
+      "origin": "T33",
+      "t33Label": "Hypertension",
+      "evidence": "intermittent abdominal cramps, anhidrosis, and hypertension",
+      "inNote": true,
+      "notePhrase": "my blood pressure was high"
+    },
+    {
+      "hpoId": "HP:0012622",
+      "label": "Chronic kidney disease",
+      "origin": "T33",
+      "t33Label": "Chronic kidney disease",
+      "evidence": "a patient presenting with kidney failure on hemodialysis",
+      "inNote": true,
+      "notePhrase": "my kidneys were getting worse"
+    },
+    {
+      "hpoId": "HP:0000093",
+      "label": "Proteinuria",
+      "origin": "T33",
+      "t33Label": "Proteinuria",
+      "evidence": "proteinuria (2.2 g/24 h, reference value: < 0.2 g/24 h)",
+      "inNote": false,
+      "comment": "The note only says 'problems with my urine', which does not name protein loss."
+    },
+    {
+      "hpoId": "HP:0001639",
+      "label": "Hypertrophic cardiomyopathy",
+      "origin": "T33",
+      "t33Label": "Hypertrophic cardiomyopathy",
+      "evidence": "Cardiac magnetic resonance imaging (MRI) demonstrated concentric hypertrophic cardiomyopathy",
+      "inNote": false,
+      "comment": "The note only says 'problems with my heart'."
+    },
+    {
+      "hpoId": "HP:0001903",
+      "label": "Anemia",
+      "origin": "T33",
+      "t33Label": "Anemia",
+      "evidence": "anemia (Hgb 78 g/L, reference value: 120–180 g/L)",
+      "inNote": false,
+      "comment": "Laboratory finding; not in the note."
+    }
+  ],
+  "uncertainty": [
+    "The article describes several affected relatives; only the index case is used."
+  ]
+}

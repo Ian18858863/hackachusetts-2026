@@ -1,0 +1,122 @@
+{
+  "caseId": "HO-08",
+  "split": "heldout",
+  "origin": "T33 hand-off (Ian team research, 2026-10-24); re-verified by T38",
+  "source": {
+    "pmcid": "PMC13491777",
+    "pmid": "42286513",
+    "url": "https://pmc.ncbi.nlm.nih.gov/articles/PMC13491777/",
+    "title": "Clinical characterization and developmental follow-up of a child with Sotos syndrome carrying a novel NSD1 variant.",
+    "journal": "BMC pediatrics",
+    "year": 2026,
+    "patient": "Single patient (17-month-old boy at presentation)",
+    "textAccess": "fulltext",
+    "access": {
+      "classification": "oa-cc",
+      "license": "CC BY-NC-ND",
+      "inPmcOpenSet": true,
+      "manuscriptId": null,
+      "statement": "© The Author(s) 2026 2026 https://creativecommons.org/licenses/by-nc-nd/4.0/ Open Access This article is licensed under a Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International Lic",
+      "checkedVia": "PMC OAI-PMH pmc_fm",
+      "checkedAt": "2026-10-24"
+    }
+  },
+  "diagnosis": {
+    "name": "Sotos syndrome",
+    "mondo": "MONDO:0019349",
+    "acceptedIds": [
+      "MONDO:0019349"
+    ],
+    "genes": [
+      "NSD1"
+    ],
+    "confirmation": {
+      "method": "genetic",
+      "summary": "De novo nonsense NSD1 c.3910C>T on whole-exome sequencing, absent in both parents.",
+      "evidence": [
+        "Whole-exome sequencing(WES) revealed a novel de novo nonsense pathogenic variant in NSD1:c.3910 C > T"
+      ]
+    }
+  },
+  "note": {
+    "text": "My little boy is 17 months old and still hasn't said any words. He cannot crawl yet and can stand only if someone helps him. His head and body seem much bigger than those of children his age. His forehead is broad and his upper eyelids droop a little. He has trouble staying steady when he stands, and his feet seem to turn outward.",
+    "voice": "parent",
+    "author": "T33 hand-off (assistant-written from the article; not the parent's words)"
+  },
+  "phenotypes": [
+    {
+      "hpoId": "HP:0001344",
+      "label": "Absent speech",
+      "origin": "T33",
+      "t33Label": "Absent speech",
+      "evidence": "referred to the child health clinic with the chief complaint of “no speech to date.”",
+      "inNote": true,
+      "notePhrase": "still hasn't said any words"
+    },
+    {
+      "hpoId": "HP:0001270",
+      "label": "Motor delay",
+      "origin": "T33",
+      "t33Label": "Motor delay",
+      "evidence": "independent sitting at 10 months, but he was unable to crawl",
+      "inNote": true,
+      "notePhrase": "He cannot crawl yet and can stand only if someone helps him"
+    },
+    {
+      "hpoId": "HP:0000256",
+      "label": "Macrocephaly",
+      "origin": "T33",
+      "t33Label": "Macrocephaly",
+      "evidence": "head circumference was 55 cm ( z score: +5.76)",
+      "inNote": true,
+      "notePhrase": "His head and body seem much bigger"
+    },
+    {
+      "hpoId": "HP:0000098",
+      "label": "Tall stature",
+      "origin": "T33",
+      "t33Label": "Tall stature",
+      "evidence": "height was 94 cm (z score: +4.63)",
+      "inNote": true,
+      "notePhrase": "His head and body seem much bigger"
+    },
+    {
+      "hpoId": "HP:0000337",
+      "label": "Broad forehead",
+      "origin": "T33",
+      "t33Label": "Broad forehead",
+      "evidence": "Dysmorphic features included a broad forehead, a depressed nasal bridge, and bilateral ptosis of the upper eyelids",
+      "inNote": true,
+      "notePhrase": "His forehead is broad"
+    },
+    {
+      "hpoId": "HP:0000508",
+      "label": "Ptosis",
+      "origin": "T33",
+      "t33Label": "Ptosis",
+      "evidence": "Dysmorphic features included a broad forehead, a depressed nasal bridge, and bilateral ptosis of the upper eyelids",
+      "inNote": true,
+      "notePhrase": "his upper eyelids droop a little"
+    },
+    {
+      "hpoId": "HP:0005280",
+      "label": "Depressed nasal bridge",
+      "origin": "T33",
+      "t33Label": "Depressed nasal bridge",
+      "evidence": "Dysmorphic features included a broad forehead, a depressed nasal bridge, and bilateral ptosis of the upper eyelids",
+      "inNote": false,
+      "comment": "Not in the note."
+    },
+    {
+      "hpoId": "HP:0008081",
+      "label": "Pes valgus",
+      "origin": "T38",
+      "evidence": "He could stand with support but was unstable, with bilateral valgus deformity of the feet",
+      "inNote": true,
+      "notePhrase": "his feet seem to turn outward"
+    }
+  ],
+  "uncertainty": [
+    "'Tall stature' and 'Macrocephaly' come from one combined note phrase."
+  ]
+}

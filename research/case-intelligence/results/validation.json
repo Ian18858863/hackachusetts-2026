@@ -1,0 +1,39 @@
+{
+  "errors": [],
+  "warnings": [
+    {
+      "code": "ACCESS_EXCEPTION",
+      "where": "HO-04",
+      "message": "free-to-read: Kept in the held-out split; human confirmation pending (Peter)"
+    },
+    {
+      "code": "MANUAL_SOURCE_CHECK",
+      "where": "HO-04",
+      "message": "quotes were checked by hand; verify-sources cannot re-check them"
+    },
+    {
+      "code": "ACCESS_EXCEPTION",
+      "where": "HO-09",
+      "message": "free-to-read: Kept in the held-out split; human confirmation pending (Peter)"
+    },
+    {
+      "code": "MANUAL_SOURCE_CHECK",
+      "where": "HO-09",
+      "message": "quotes were checked by hand; verify-sources cannot re-check them"
+    },
+    {
+      "code": "ACCESS_EXCEPTION",
+      "where": "HO-10",
+      "message": "author-manuscript: Kept in the held-out split; human confirmation pending (Peter)"
+    }
+  ],
+  "stats": {
+    "cases": 17,
+    "dev": 7,
+    "heldout": 10,
+    "phenotypes": 135,
+    "notePhenotypes": 123,
+    "dictionaryVerified": 44,
+    "dictionaryRejected": 15
+  }
+}
