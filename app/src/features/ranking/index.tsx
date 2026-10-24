@@ -1,35 +1,33 @@
 /**
- * Possible matches with evidence (spec task 3.4; Requirements 3, 4, 9.2, 12.4).
+ * Possible matches with evidence (spec task 3.4; Requirements 3, 4, 9.2, 12.4),
+ * laid out as in docs/art-direction/final.html: the closest overlap in one
+ * rounded panel with its full evidence, candidates 2 to 5 quieter at the side,
+ * "Compare side by side" below, then the features used (folded).
  *
  * The ranking follows the feature set by itself (useAutoRank): first ranking at
- * once, later changes after a short pause, previous results kept visible and
- * marked as updating. Signature motion: evidence rows fill in behind each
- * case file and the case files slide to their new order (useFlip); under
+ * once, later changes after a short pause, previous results kept visible with
+ * an "Updating" status line of fixed height. Signature motion: evidence rows
+ * line up behind rank 1 and side entries slide to their new order; under
  * reduced motion the final state appears at once.
  *
  * The shell already renders the h1, the safety line, the demo and mock labels
  * and the footer credits; TrialsPanel renders below this component.
  */
-import { useEffect, useMemo, useRef, useState } from 'react';
-import type { CaseRanking, CaseTerm, HpoId } from '../../shared/contract';
+import { useEffect, useMemo, useState } from 'react';
+import { LIMITS, type CaseRanking, type HpoId, type RankResponse } from '../../shared/contract';
 import { useCase, useCaseActions } from '../../shared/store';
-import {
-  ApiErrorState,
-  Button,
-  EmptyState,
-  Icon,
-  LoadingPanel,
-  Skeleton,
-  Spinner,
-} from '../../shared/ui';
+import { ApiErrorState, Button, EmptyState, Icon, LoadingPanel, Skeleton, Spinner } from '../../shared/ui';
 import { useQuestionsSync } from '../questions/useQuestionsSync';
-import { CandidateCard, type EnterRows } from './CandidateCard';
-import { FeatureAside } from './FeatureAside';
+import { CompareMatrix } from './CompareMatrix';
+import { FeatureSummary } from './FeatureSummary';
+import { LeadCandidate } from './LeadCandidate';
+import { OtherCandidates } from './OtherCandidates';
+import { indexFeatures } from './evidence';
 import { SOURCE_NAMES, formatDateTime, formatTime, plural, versionEntries } from './format';
-import { changeFor, evidenceKeys, rankDelta } from './rankingChange';
+import type { EnterRows } from './parts';
+import { changeFor, evidenceKeys, rankDelta, type RankingChange } from './rankingChange';
 import styles from './ranking.module.css';
 import { useAutoRank, type AutoRank } from './useAutoRank';
-import { useFlip } from './useFlip';
 
 export function RankingStep() {
   const { caseObject, extractStatus } = useCase();
@@ -38,172 +36,200 @@ export function RankingStep() {
   // Keep "What to check next" (and so the brief) in step with each ranking.
   useQuestionsSync();
   const [activeTerm, setActiveTerm] = useState<HpoId | null>(null);
-
-  const { observed, excluded, footnotes } = useMemo(() => featureLists(caseObject.terms), [caseObject.terms]);
+  const features = useMemo(() => indexFeatures(caseObject), [caseObject]);
   const ranking = caseObject.lastRanking;
 
   if (!auto.canRank) {
     if (extractStatus.state === 'loading') {
       return (
-        <LoadingPanel step="Reading the notes and finding features">
-          <ResultsSkeleton />
-        </LoadingPanel>
+        <div data-testid="ranking">
+          <LoadingPanel step="Reading the notes and finding features">
+            <ResultsSkeleton />
+          </LoadingPanel>
+        </div>
       );
     }
     return (
-      <EmptyState
-        icon="compare"
-        title="No present features to match yet"
-        description="Possible matches appear here once at least one feature is kept as present."
-        action={
-          <Button variant="primary" onClick={() => goToStep('features')} iconEnd={<Icon name="arrowRight" size={18} />}>
-            Review the features
-          </Button>
-        }
-      />
+      <div data-testid="ranking">
+        <EmptyState
+          icon="compare"
+          title="No present features to match yet"
+          description="Possible matches appear here once at least one feature is kept as present."
+          action={
+            <Button onClick={() => goToStep('features')} iconEnd={<Icon name="arrowRight" size={18} />}>
+              Review the features
+            </Button>
+          }
+        />
+      </div>
     );
   }
 
   const updating = auto.phase === 'loading' || auto.phase === 'scheduled';
+  const few = features.observed.length < LIMITS.rankRecommendedObserved;
+  const link = { activeTerm, onActivate: setActiveTerm };
 
   return (
-    <div className={styles.layout}>
-      <section className={styles.results} aria-labelledby="ranking-results-title" aria-busy={updating || undefined}>
-        <h2 id="ranking-results-title" className="sr-only">
-          Possible matches, ranked
-        </h2>
-        {ranking && <RankStatus auto={auto} ranking={ranking} />}
+    <div className={styles.page} data-testid="ranking" aria-busy={updating || undefined}>
+      {ranking && <RankStatus auto={auto} ranking={ranking} />}
+      {few && (
+        <p className={styles.note}>
+          <Icon name="info" size={18} />
+          <span>
+            With fewer than {LIMITS.rankRecommendedObserved} present features, matches are usually less useful. Adding
+            more features from the notes can help.
+          </span>
+        </p>
+      )}
 
-        {ranking ? (
-          <>
-            {auto.phase === 'error' && auto.error && (
-              <ApiErrorState error={auto.error} onRetry={auto.rankNow} compact titleLevel={3} />
-            )}
-            <CandidateList
-              ranking={ranking}
-              footnotes={footnotes}
-              observedCount={ranking.request.observed.length}
-              activeTerm={activeTerm}
-              onActivate={setActiveTerm}
-              selectedId={caseObject.selectedCandidateId}
-              onSelect={selectCandidate}
-              stale={auto.stale}
-            />
-            <RankingSources ranking={ranking} />
-          </>
-        ) : auto.phase === 'error' && auto.error ? (
-          <ApiErrorState
-            error={auto.error}
-            onRetry={auto.rankNow}
-            actions={
-              <Button variant="secondary" onClick={() => goToStep('features')}>
-                Review the features
-              </Button>
-            }
+      {ranking ? (
+        <>
+          {auto.phase === 'error' && auto.error && (
+            <ApiErrorState error={auto.error} onRetry={auto.rankNow} compact titleLevel={3} />
+          )}
+          <Results
+            ranking={ranking}
+            features={features}
+            selectedId={caseObject.selectedCandidateId}
+            onSelect={selectCandidate}
+            {...link}
           />
-        ) : auto.phase === 'offline' ? (
-          <EmptyState
-            icon="cloudOff"
-            title="Ranking needs a connection"
-            description="Your features are saved in this browser. The ranking starts when you are back online."
+          <FeatureSummary
+            observed={features.observed}
+            excluded={features.excluded}
+            onEdit={() => goToStep('features')}
+            {...link}
           />
-        ) : (
-          <LoadingPanel step={`Matching ${plural(auto.request.observed.length, 'present feature')} with known conditions`}>
-            <ResultsSkeleton />
-          </LoadingPanel>
-        )}
-      </section>
-
-      <FeatureAside
-        observed={observed}
-        excluded={excluded}
-        footnotes={footnotes}
-        activeTerm={activeTerm}
-        onActivate={setActiveTerm}
-        onEdit={() => goToStep('features')}
-      />
+          <RankingSources ranking={ranking} />
+        </>
+      ) : auto.phase === 'error' && auto.error ? (
+        <ApiErrorState
+          error={auto.error}
+          onRetry={auto.rankNow}
+          actions={
+            <Button variant="secondary" onClick={() => goToStep('features')}>
+              Review the features
+            </Button>
+          }
+        />
+      ) : auto.phase === 'offline' ? (
+        <EmptyState
+          icon="cloudOff"
+          title="Ranking needs a connection"
+          description="Your features are saved in this browser. The ranking starts when you are back online."
+        />
+      ) : (
+        <LoadingPanel step={`Matching ${plural(auto.request.observed.length, 'present feature')} with known conditions`}>
+          <ResultsSkeleton />
+        </LoadingPanel>
+      )}
     </div>
   );
 }
 
 // ---------------------------------------------------------------------------
 
-function CandidateList({
+function Results({
   ranking,
-  footnotes,
-  observedCount,
-  activeTerm,
-  onActivate,
+  features,
   selectedId,
   onSelect,
-  stale,
+  activeTerm,
+  onActivate,
 }: {
   ranking: CaseRanking;
-  footnotes: Map<HpoId, number>;
-  observedCount: number;
-  activeTerm: HpoId | null;
-  onActivate(id: HpoId | null): void;
+  features: ReturnType<typeof indexFeatures>;
   selectedId: string | null;
   onSelect(id: string): void;
-  stale: boolean;
+  activeTerm: HpoId | null;
+  onActivate(id: HpoId | null): void;
 }) {
   const { response } = ranking;
+  const animate = useMotionOnce(response);
   const change = changeFor(response);
+  const link = { activeTerm, onActivate };
+  const [lead, ...others] = response.candidates;
 
-  // Decide once per ranking whether its evidence motion plays, so later
-  // re-renders (hover, selection) never cut an animation short.
-  const [entry, setEntry] = useState(() => ({ response, animate: Boolean(change && !change.motionPlayed) }));
+  if (!lead) {
+    return (
+      <EmptyState
+        icon="compare"
+        title="No possible matches found"
+        description="The ranking service found no conditions for these features. Adding more features from the notes may help."
+        titleLevel={2}
+      />
+    );
+  }
+
+  const observedCount = ranking.request.observed.length;
+  return (
+    <>
+      <section className={styles.results} aria-label="Ranked possible matches">
+        <LeadCandidate
+          candidate={lead}
+          index={features.index}
+          observedCount={observedCount}
+          delta={rankDelta(change, lead)}
+          enter={animate ? enterFor(change, lead.diseaseId, response, true) : null}
+          selected={selectedId === lead.diseaseId}
+          onSelect={() => onSelect(lead.diseaseId)}
+          {...link}
+        />
+        <OtherCandidates
+          entries={others.map((c) => ({
+            candidate: c,
+            delta: rankDelta(change, c),
+            enter: animate ? enterFor(change, c.diseaseId, response, false) : null,
+          }))}
+          response={response}
+          index={features.index}
+          observedCount={observedCount}
+          selectedId={selectedId}
+          onSelect={onSelect}
+          {...link}
+        />
+      </section>
+      {response.candidates.length > 1 && (
+        <CompareMatrix
+          candidates={response.candidates}
+          observed={ranking.request.observed}
+          index={features.index}
+          {...link}
+        />
+      )}
+    </>
+  );
+}
+
+/**
+ * Decide once per ranking whether its motion plays, so later re-renders
+ * (hover, selection) never cut it short, and revisiting the step does not
+ * replay it.
+ */
+function useMotionOnce(response: RankResponse): boolean {
+  const make = () => ({ response, animate: Boolean(changeFor(response) && !changeFor(response)?.motionPlayed) });
+  const [entry, setEntry] = useState(make);
   let current = entry;
   if (entry.response !== response) {
-    current = { response, animate: Boolean(change && !change.motionPlayed) };
+    current = make();
     setEntry(current);
   }
   useEffect(() => {
     const played = changeFor(response);
     if (played) played.motionPlayed = true;
   }, [response]);
+  return current.animate;
+}
 
-  const listRef = useRef<HTMLOListElement>(null);
-  useFlip(listRef, response);
-
-  if (response.candidates.length === 0) {
-    return (
-      <EmptyState
-        icon="compare"
-        title="No possible matches found"
-        description="The ranking service found no conditions for these features. Adding more features from the notes may help."
-        titleLevel={3}
-      />
-    );
-  }
-
-  return (
-    <ol ref={listRef} className={styles.list} data-stale={stale || undefined}>
-      {response.candidates.map((c, index) => {
-        let enter: EnterRows = null;
-        if (current.animate) {
-          const before = change?.previousEvidence?.get(c.diseaseId);
-          enter = before ? new Set([...evidenceKeys(c)].filter((k) => !before.has(k))) : 'all';
-        }
-        return (
-          <li key={c.diseaseId} data-flip-id={c.diseaseId} className={styles.item}>
-            <CandidateCard
-              candidate={c}
-              footnotes={footnotes}
-              observedCount={observedCount}
-              delta={rankDelta(change, c)}
-              enter={enter}
-              index={index}
-              activeTerm={activeTerm}
-              onActivate={onActivate}
-              selected={selectedId === c.diseaseId}
-              onSelect={() => onSelect(c.diseaseId)}
-            />
-          </li>
-        );
-      })}
-    </ol>
-  );
+/** New rows only; everything when the candidate is new here or newly first. */
+function enterFor(change: RankingChange | undefined, id: string, response: RankResponse, isLead: boolean): EnterRows {
+  if (!change) return null;
+  const before = change.previousEvidence?.get(id);
+  const wasLead = change.previousRanks?.get(id) === 1;
+  if (!before || (isLead && !wasLead)) return 'all';
+  const candidate = response.candidates.find((c) => c.diseaseId === id);
+  if (!candidate) return null;
+  return new Set([...evidenceKeys(candidate)].filter((k) => !before.has(k)));
 }
 
 // ---------------------------------------------------------------------------
@@ -303,37 +329,24 @@ function RankingSources({ ranking }: { ranking: CaseRanking }) {
 
 function ResultsSkeleton() {
   return (
-    <div className={styles.skeletonList}>
-      {[12, 6, 6].map((rows, i) => (
-        <div key={i} className={styles.skeletonCard}>
-          <div className={styles.skeletonHead}>
-            <Skeleton width="var(--space-10)" height="var(--space-10)" radius="md" />
-            <span className={styles.skeletonTitle}>
-              <Skeleton width="60%" height="1.25em" />
-              <Skeleton width="40%" height="0.85em" />
-            </span>
-            <Skeleton width="var(--space-32)" height="var(--size-label-min)" radius="pill" />
+    <div className={styles.results}>
+      <div className={styles.skeletonLead}>
+        <Skeleton width="var(--space-32)" height="var(--s-5)" radius="pill" />
+        <Skeleton width="70%" height="var(--t-xl)" />
+        <Skeleton width="55%" height="var(--t-md)" />
+        {Array.from({ length: 8 }, (_, r) => (
+          <Skeleton key={r} height="var(--s-6)" radius="sm" />
+        ))}
+      </div>
+      <div className={styles.skeletonOthers}>
+        {[0, 1, 2].map((i) => (
+          <div key={i} className={styles.skeletonAlt}>
+            <Skeleton width="80%" height="var(--t-lg)" />
+            <Skeleton width="65%" height="var(--t-sm)" />
+            <Skeleton width="90%" height="var(--s-5)" />
           </div>
-          {Array.from({ length: rows }, (_, r) => (
-            <Skeleton key={r} height="1em" width={r % 3 === 2 ? '72%' : '100%'} />
-          ))}
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
   );
-}
-
-// ---------------------------------------------------------------------------
-
-/** Present and not-present terms in note order (manual terms last), numbered as footnotes. */
-function featureLists(terms: CaseTerm[]) {
-  const byPosition = (a: CaseTerm, b: CaseTerm) =>
-    (a.start ?? Number.MAX_SAFE_INTEGER) - (b.start ?? Number.MAX_SAFE_INTEGER) || a.label.localeCompare(b.label);
-  const observed = terms.filter((t) => t.status === 'observed').sort(byPosition);
-  const excluded = terms.filter((t) => t.status === 'excluded').sort(byPosition);
-  const footnotes = new Map<HpoId, number>();
-  [...observed, ...excluded].forEach((t) => {
-    if (!footnotes.has(t.hpoId)) footnotes.set(t.hpoId, footnotes.size + 1);
-  });
-  return { observed, excluded, footnotes };
 }

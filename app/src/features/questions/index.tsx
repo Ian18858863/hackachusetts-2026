@@ -23,7 +23,7 @@ import {
   useAnnounce,
 } from '../../shared/ui';
 import { FrequencyMark } from '../ranking/FrequencyMark';
-import { plural } from '../ranking/format';
+import { NOT_LISTED_FOR_CONDITION, plural } from '../ranking/format';
 import { useAutoRank } from '../ranking/useAutoRank';
 import styles from './questions.module.css';
 import { topCandidateIds, useQuestionsSync } from './useQuestionsSync';
@@ -31,6 +31,14 @@ import { topCandidateIds, useQuestionsSync } from './useQuestionsSync';
 type Answer = { status: 'observed' | 'excluded'; previous: TermStatus | null };
 
 export function QuestionsStep() {
+  return (
+    <div data-testid="questions">
+      <QuestionsBody />
+    </div>
+  );
+}
+
+function QuestionsBody() {
   const { caseObject } = useCase();
   const { goToStep, addManualTerm, setTermStatus } = useCaseActions();
   const announce = useAnnounce();
@@ -182,7 +190,7 @@ export function QuestionsStep() {
         )}
       </div>
 
-      <ol className={styles.list} data-stale={refreshing || undefined}>
+      <ol className={styles.list} aria-busy={refreshing || undefined}>
         {questions.map((q, index) => (
           <QuestionItem
             key={q.hpoId}
@@ -198,8 +206,9 @@ export function QuestionsStep() {
       </ol>
 
       <p className={styles.footnote}>
-        Each question names a feature from HPO disease annotations. “Not listed” means the annotations do not list
-        it for that condition, not that it never occurs.
+        Each question names a feature from HPO disease annotations. “Not listed for this condition” means the
+        annotations do not list the feature for that condition, not that it never occurs there. “Frequency not
+        listed” means the feature is listed without a frequency.
       </p>
     </div>
   );
@@ -228,7 +237,7 @@ function QuestionItem({
   const answered = status === 'observed' || status === 'excluded';
 
   return (
-    <li className={styles.item} data-answered={answered || undefined}>
+    <li className={styles.item} data-answered={answered || undefined} data-testid={`question-${q.hpoId}`}>
       <span className={styles.number} aria-hidden="true">
         {index + 1}
       </span>
@@ -259,10 +268,10 @@ function QuestionItem({
             </>
           ) : (
             <>
-              <Button variant="secondary" onClick={() => onAnswer('observed')}>
+              <Button variant="secondary" onClick={() => onAnswer('observed')} data-testid={`answer-yes-${q.hpoId}`}>
                 Yes
               </Button>
-              <Button variant="secondary" onClick={() => onAnswer('excluded')}>
+              <Button variant="secondary" onClick={() => onAnswer('excluded')} data-testid={`answer-no-${q.hpoId}`}>
                 No
               </Button>
               <span className={styles.answerHint}>Yes adds it as present, No as not present</span>
@@ -279,10 +288,18 @@ function QuestionItem({
             return (
               <li key={d.diseaseId} className={styles.compareRow}>
                 <span className={styles.compareName}>
-                  {c && <span className={styles.comparedRank}>{c.rank}</span>}
+                  {c && (
+                    <span className={styles.comparedRank} data-first={c.rank === 1 || undefined}>
+                      {c.rank}
+                    </span>
+                  )}
                   {c?.name ?? d.diseaseId}
                 </span>
-                <FrequencyMark frequency={d.frequency} showRaw={false} />
+                <FrequencyMark
+                  frequency={d.frequency}
+                  noneWord={NOT_LISTED_FOR_CONDITION}
+                  tone={c?.rank === 1 ? 'accent' : 'neutral'}
+                />
               </li>
             );
           })}
